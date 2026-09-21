@@ -9,7 +9,7 @@ PanelWindow {
     property var modelData: null
     readonly property string localRoot: decodeURIComponent(Qt.resolvedUrl("../../").toString()).replace("file://", "").replace(/\/$/, "")
     readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || localRoot
-    readonly property string bridgePath: anvilRoot + "/src/daemon/constellation-bridge"
+    readonly property string bridgePath: anvilRoot + "/src/daemon/anvil-library-bridge"
     readonly property string daemonPath: anvilRoot + "/src/ui/AnvilDaemon.qml"
     readonly property color bg: "#080b0f"
     readonly property color panel: "#12171d"
@@ -24,6 +24,11 @@ PanelWindow {
     property bool navOpen: false
     property bool powerMenuActive: false
     property bool gameIsLoading: false
+    property bool libraryScanRunning: true
+    property string libraryScanMessage: "Mounting cartridges"
+    property string mediaStatusLabel: "Scanning"
+    property string updateStatusLabel: "Checking"
+    property bool updateAvailable: false
     property int selectedStoreTile: 0
     property int selectedGameIndex: 0
 
@@ -73,46 +78,6 @@ PanelWindow {
     WlrLayershell.exclusiveZone: -1
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     WlrLayershell.namespace: "anvil-launcher"
-    Component.onCompleted: {
-        if (gameModel.count === 0) {
-            gameModel.append({
-                "name": "ASTROBOTANICA",
-                "path": "",
-                "launch_command": "",
-                "proton": "Proton Experimental",
-                "tags": ["Adventure"],
-                "hero": "",
-                "grid": "",
-                "logo": "",
-                "steamgriddb_id": "",
-                "dummy": true
-            });
-            gameModel.append({
-                "name": "Bluey: The Videogame",
-                "path": "",
-                "launch_command": "",
-                "proton": "Proton Experimental",
-                "tags": ["Family"],
-                "hero": "",
-                "grid": "",
-                "logo": "",
-                "steamgriddb_id": "",
-                "dummy": true
-            });
-            gameModel.append({
-                "name": "Card Shop Simulator",
-                "path": "",
-                "launch_command": "",
-                "proton": "Proton Experimental",
-                "tags": ["Sim"],
-                "hero": "",
-                "grid": "",
-                "logo": "",
-                "steamgriddb_id": "",
-                "dummy": true
-            });
-        }
-    }
 
     anchors {
         top: true
@@ -176,15 +141,24 @@ PanelWindow {
             onStreamFinished: {
                 try {
                     let payload = text.trim();
-                    let games = payload.length > 0 ? JSON.parse(payload) : [];
-                    if (games.length > 0) {
-                        gameModel.clear();
-                        for (let i = 0; i < games.length; i++) gameModel.append(games[i])
-                        selectedGameIndex = 0;
-                    }
+                    let status = payload.length > 0 ? JSON.parse(payload) : {};
+                    let games = Array.isArray(status) ? status : (status.games || []);
+                    gameModel.clear();
+                    for (let i = 0; i < games.length; i++) gameModel.append(games[i]);
+                    selectedGameIndex = 0;
+                    mediaStatusLabel = status.drives && status.drives.length > 0 ? status.drives.length + " media" : "No media";
+                    if (status.mounted && status.mounted.length > 0)
+                        mediaStatusLabel = "Mounted " + status.mounted.length;
+                    updateStatusLabel = status.update && status.update.label ? status.update.label : "Update status unavailable";
+                    updateAvailable = status.update && status.update.available;
+                    libraryScanMessage = games.length > 0 ? games.length + " cartridges ready" : "No cartridge library found";
                 } catch (e) {
                     console.log("Anvil bridge parse error: " + e);
+                    libraryScanMessage = "Library scan failed";
+                    mediaStatusLabel = "Scan failed";
+                    updateStatusLabel = "Update check skipped";
                 }
+                libraryScanRunning = false;
             }
         }
 
@@ -511,7 +485,9 @@ PanelWindow {
             Text {
                 text: {
                     let game = currentGame();
-                    return game ? game.name : "Anvil Library";
+                    if (game)
+                        return game.name;
+                    return libraryScanRunning ? "Scanning Cartridges" : "Anvil Library";
                 }
                 color: fg
                 font.pixelSize: Math.min(84, Math.max(48, anvil.width * 0.035))
@@ -522,7 +498,7 @@ PanelWindow {
             }
 
             Text {
-                text: "A dedicated game client for local cartridges today and an indie-first store tomorrow."
+                text: libraryScanRunning ? "Mounting USB and SD media, reading cartridge files, and checking for Anvil updates." : "A dedicated game client for local cartridges today and an indie-first store tomorrow."
                 color: "#c5c8c9"
                 font.pixelSize: 16
                 width: Math.min(560, parent.width)
@@ -562,7 +538,7 @@ PanelWindow {
                 }
 
                 Text {
-                    text: gameModel.count + " GAMES"
+                    text: libraryScanRunning ? "SCANNING" : gameModel.count + " GAMES"
                     color: muted
                     font.pixelSize: 11
                     font.bold: true
@@ -624,11 +600,11 @@ PanelWindow {
 
             Repeater {
                 model: [{
-                    "label": "Drive",
-                    "value": "44E1"
+                    "label": "Media",
+                    "value": mediaStatusLabel
                 }, {
-                    "label": "Artwork",
-                    "value": "Grid API"
+                    "label": "Updates",
+                    "value": updateStatusLabel
                 }, {
                     "label": "Mode",
                     "value": "Anvil"
@@ -656,9 +632,12 @@ PanelWindow {
                         Text {
                             anchors.horizontalCenter: parent.horizontalCenter
                             text: modelData.value
-                            color: fg
-                            font.pixelSize: 15
+                            color: modelData.label === "Updates" && updateAvailable ? emberLight : fg
+                            font.pixelSize: 13
                             font.bold: true
+                            width: parent.width - 16
+                            horizontalAlignment: Text.AlignHCenter
+                            elide: Text.ElideRight
                         }
 
                     }
@@ -903,7 +882,7 @@ PanelWindow {
                             }
 
                             Text {
-                                text: gameModel.count + " cartridge entries"
+                                text: libraryScanRunning ? "scanning cartridge media" : gameModel.count + " cartridge entries"
                                 color: muted
                                 font.pixelSize: 11
                                 font.bold: true
@@ -1109,7 +1088,11 @@ PanelWindow {
                     }
 
                     Text {
-                        text: currentGame() ? currentGame().name : "Select a Game"
+                        text: {
+                            if (currentGame())
+                                return currentGame().name;
+                            return libraryScanRunning ? "Scanning Cartridges" : "No Cartridges Found";
+                        }
                         color: fg
                         font.pixelSize: 58
                         font.bold: true
@@ -1119,7 +1102,7 @@ PanelWindow {
                     }
 
                     Text {
-                        text: currentGame() ? (currentGame().proton || "Proton Experimental") + " / " + (currentGame().steamgriddb_id ? "GridDB artwork linked" : "Local cartridge metadata") : ""
+                        text: currentGame() ? (currentGame().proton || "Proton Experimental") + " / " + (currentGame().steamgriddb_id ? "GridDB artwork linked" : "Local cartridge metadata") : libraryScanMessage
                         color: muted
                         font.pixelSize: 13
                         font.bold: true
@@ -1374,7 +1357,7 @@ PanelWindow {
                     }
 
                     Repeater {
-                        model: ["49 local games indexed by Constellation", "SteamGridDB artwork fetcher ready for an API key", "Server-packaged cartridges are the next backend step"]
+                        model: ["Local cartridges indexed for Constellation testing", "SteamGridDB artwork fetcher ready for an API key", "Constellation-backed cartridges are the next backend step"]
 
                         Rectangle {
                             width: parent.width
@@ -1648,7 +1631,7 @@ PanelWindow {
 
         anchors.fill: parent
         color: bg
-        opacity: gameIsLoading ? 1 : 0
+        opacity: gameIsLoading || libraryScanRunning ? 1 : 0
         visible: opacity > 0
         z: 100
 
@@ -1665,7 +1648,7 @@ PanelWindow {
 
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "Starting"
+                text: gameIsLoading ? "Starting" : "Preparing Library"
                 color: muted
                 font.pixelSize: 18
                 font.bold: true
@@ -1674,12 +1657,22 @@ PanelWindow {
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: {
+                    if (libraryScanRunning)
+                        return "Scanning Cartridges";
                     let game = currentGame();
                     return game ? game.name : "Game";
                 }
                 color: fg
                 font.pixelSize: 40
                 font.bold: true
+            }
+
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: libraryScanRunning ? libraryScanMessage : ""
+                color: "#c5c8c9"
+                font.pixelSize: 14
+                visible: libraryScanRunning
             }
 
         }

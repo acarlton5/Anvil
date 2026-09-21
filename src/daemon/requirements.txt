@@ -1,4 +1,4 @@
-# Constellation daemon has no external dependencies by default.
+# Anvil local library daemon has no external dependencies by default.
 # It uses only Python stdlib (urllib, json, os, etc.)
 #
 # Optional (for future filesystem watching):

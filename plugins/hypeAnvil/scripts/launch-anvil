@@ -114,7 +114,7 @@ if [ "$install_session" -eq 1 ]; then
 fi
 
 if [ "$fetch_art" -eq 1 ]; then
-    exec env ANVIL_ROOT="$anvil_root" python3 "$anvil_root/src/daemon/constellation.py" --fetch-art --scan
+    exec env ANVIL_ROOT="$anvil_root" python3 "$anvil_root/src/daemon/anvil_library.py" --fetch-art --scan
 fi
 
 if [ -n "$section" ]; then
