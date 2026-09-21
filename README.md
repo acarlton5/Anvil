@@ -18,11 +18,15 @@ Steam-style store, library, overlay, and cartridge-based distribution model.
 HypeShell can provide a desktop/shell integration point for launching Anvil, but
 Anvil owns the game library, game metadata, artwork fetching, Proton runner, and
 future store/community UX. Anvil is the Steam-like client made by Legend Forge.
-Constellation is the backend and platform technology Anvil is built on; while
-that backend is growing, local cartridge files under removable media act as the
-test provider for Constellation-shaped library data. Keep client platform code
-in this repo so Anvil can become installable on any Linux distro without
-requiring the full HypeShell desktop.
+Anvilworks is the developer and publisher service layer used by Anvil,
+comparable in role to Steamworks. It uses Constellation for distributed
+identity, entitlement, discovery, and delivery infrastructure. While those
+integrations are growing, local cartridge files under removable media act as an
+offline library provider. Keep Anvil client code in this repo so it can become
+installable on any Linux distro without requiring the full HypeShell desktop.
+
+See [docs/ecosystem.md](docs/ecosystem.md) for the product boundaries and the
+implementation roadmap.
 
 ## Development
 
