@@ -1,7 +1,5 @@
 import QtQuick
-import QtQuick.Effects
 import Quickshell
-import Quickshell.Io
 import Quickshell.Wayland
 
 PanelWindow {
@@ -9,15 +7,13 @@ PanelWindow {
 
     property var modelData: null
     readonly property color ink: "#f4f8ff"
-    readonly property color muted: "#9aa7b7"
-    readonly property color quiet: "#667487"
-    readonly property color panel: "#141a23"
-    readonly property color panel2: "#1d2531"
-    readonly property color stroke: "#2e3948"
-    readonly property color accent: "#23d5e8"
+    readonly property color muted: "#a7b0bd"
+    readonly property color panel: "#20242c"
+    readonly property color stroke: "#384350"
+    readonly property color accent: "#24a7ff"
 
     function runMenuAction(action) {
-        if (action === "Resume Game")
+        if (action === "Back to Game" || action === "Resume Game")
             root.overlayActive = false;
         else if (action === "Exit Game")
             root.killGame();
@@ -39,9 +35,110 @@ PanelWindow {
         right: true
     }
 
+    ListModel {
+        id: dockModel
+
+        ListElement {
+            icon: "i"
+            label: "Info"
+            active: false
+        }
+
+        ListElement {
+            icon: "*"
+            label: "Settings"
+            active: false
+        }
+
+        ListElement {
+            icon: "/"
+            label: "Notes"
+            active: false
+        }
+
+        ListElement {
+            icon: "T"
+            label: "Timer"
+            active: false
+        }
+
+        ListElement {
+            icon: "N"
+            label: "News"
+            active: false
+        }
+
+        ListElement {
+            icon: "C"
+            label: "Chat"
+            active: false
+        }
+
+        ListElement {
+            icon: "D"
+            label: "Download"
+            active: false
+        }
+
+        ListElement {
+            icon: "W"
+            label: "Tools"
+            active: false
+        }
+
+        ListElement {
+            icon: "P"
+            label: "Pictures"
+            active: false
+        }
+
+        ListElement {
+            icon: "F"
+            label: "Friends"
+            active: true
+        }
+
+        ListElement {
+            icon: "A"
+            label: "Anvil"
+            active: true
+        }
+
+        ListElement {
+            icon: "G"
+            label: "Controller"
+            active: false
+        }
+
+        ListElement {
+            icon: "O"
+            label: "Web"
+            active: false
+        }
+
+        ListElement {
+            icon: "REC"
+            label: "Capture"
+            active: false
+        }
+
+        ListElement {
+            icon: "S"
+            label: "System"
+            active: false
+        }
+
+        ListElement {
+            icon: "v"
+            label: "More"
+            active: false
+        }
+
+    }
+
     Rectangle {
         anchors.fill: parent
-        color: "#b005070b"
+        color: "#b805070b"
     }
 
     Rectangle {
@@ -50,17 +147,17 @@ PanelWindow {
         gradient: Gradient {
             GradientStop {
                 position: 0
-                color: "#ee080b10"
+                color: "#d006080d"
             }
 
             GradientStop {
-                position: 0.5
-                color: "#aa080b10"
+                position: 0.48
+                color: "#99080c12"
             }
 
             GradientStop {
                 position: 1
-                color: "#f0080b10"
+                color: "#e005070b"
             }
 
         }
@@ -68,399 +165,59 @@ PanelWindow {
     }
 
     Rectangle {
-        id: leftPanel
-
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        width: 380
-        color: "#f00d1118"
-        border.color: stroke
-
-        Column {
-            anchors.fill: parent
-            anchors.margins: 26
-            spacing: 18
-
-            Row {
-                spacing: 12
-
-                Rectangle {
-                    width: 44
-                    height: 44
-                    radius: 8
-                    color: "#111821"
-                    border.color: accent
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: "A"
-                        color: ink
-                        font.pixelSize: 24
-                        font.bold: true
-                    }
-
-                }
-
-                Column {
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 1
-
-                    Text {
-                        text: "Anvil Overlay"
-                        color: ink
-                        font.pixelSize: 24
-                        font.bold: true
-                    }
-
-                    Text {
-                        text: "In-game controls"
-                        color: muted
-                        font.pixelSize: 13
-                        font.bold: true
-                    }
-
-                }
-
-            }
-
-            ListView {
-                id: menuList
-
-                width: parent.width
-                height: 350
-                spacing: 8
-                focus: true
-                Keys.onUpPressed: decrementCurrentIndex()
-                Keys.onDownPressed: incrementCurrentIndex()
-                Keys.onEscapePressed: root.overlayActive = false
-                Keys.onReturnPressed: runMenuAction(model.get(currentIndex).name)
-
-                model: ListModel {
-                    ListElement {
-                        name: "Resume Game"
-                        detail: "Return to play"
-                    }
-
-                    ListElement {
-                        name: "Friends"
-                        detail: "Party and messages"
-                    }
-
-                    ListElement {
-                        name: "Achievements"
-                        detail: "Recent unlocks"
-                    }
-
-                    ListElement {
-                        name: "Controller"
-                        detail: "Input and layout"
-                    }
-
-                    ListElement {
-                        name: "Settings"
-                        detail: "Audio, display, system"
-                    }
-
-                    ListElement {
-                        name: "Exit Game"
-                        detail: "Stop current process"
-                    }
-
-                }
-
-                delegate: Rectangle {
-                    width: menuList.width
-                    height: 58
-                    radius: 8
-                    color: ListView.isCurrentItem ? "#263242" : "transparent"
-                    border.color: ListView.isCurrentItem ? accent : "transparent"
-
-                    Column {
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.left: parent.left
-                        anchors.leftMargin: 16
-                        anchors.right: parent.right
-                        anchors.rightMargin: 16
-                        spacing: 1
-
-                        Text {
-                            text: model.name
-                            color: ink
-                            font.pixelSize: 17
-                            font.bold: true
-                        }
-
-                        Text {
-                            text: model.detail
-                            color: ListView.isCurrentItem ? muted : quiet
-                            font.pixelSize: 12
-                        }
-
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            menuList.currentIndex = index;
-                            runMenuAction(model.name);
-                        }
-                    }
-
-                }
-
-            }
-
-            Rectangle {
-                width: parent.width
-                height: 122
-                radius: 8
-                color: panel
-                border.color: stroke
-
-                Column {
-                    anchors.fill: parent
-                    anchors.margins: 16
-                    spacing: 8
-
-                    Text {
-                        text: "Session"
-                        color: muted
-                        font.pixelSize: 12
-                        font.bold: true
-                    }
-
-                    Text {
-                        text: "Performance Mode"
-                        color: ink
-                        font.pixelSize: 20
-                        font.bold: true
-                    }
-
-                    Text {
-                        text: "Desktop load trimmed for Anvil. Overlay stays on the dedicated quick path."
-                        color: muted
-                        font.pixelSize: 13
-                        wrapMode: Text.WordWrap
-                        width: parent.width
-                    }
-
-                }
-
-            }
-
-        }
-
+        width: 250
+        color: "#55070a0f"
     }
 
-    Rectangle {
-        id: rightPanel
-
-        anchors.right: parent.right
+    Column {
+        anchors.left: parent.left
+        anchors.leftMargin: 18
         anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        width: 360
-        color: "#ed0d1118"
-        border.color: stroke
+        anchors.topMargin: 14
+        spacing: 6
+        z: 10
 
-        Column {
-            anchors.fill: parent
-            anchors.margins: 24
-            spacing: 18
+        Text {
+            text: Qt.formatTime(new Date(), "h:mm AP")
+            color: ink
+            font.pixelSize: 18
+            font.bold: true
+        }
+
+        Text {
+            text: Qt.formatDate(new Date(), "ddd, MMM d")
+            color: muted
+            font.pixelSize: 11
+            font.bold: true
+        }
+
+        Text {
+            text: "6 minutes - this session"
+            color: muted
+            font.pixelSize: 11
+        }
+
+        Rectangle {
+            width: 86
+            height: 26
+            radius: 2
+            color: "#27313d"
+            border.color: "#3b4653"
 
             Text {
-                text: "Achievements"
-                color: ink
-                font.pixelSize: 24
+                anchors.centerIn: parent
+                text: "EXIT GAME"
+                color: "#d8dee7"
+                font.pixelSize: 10
                 font.bold: true
             }
 
-            Repeater {
-                model: ["First Boot", "Cartridge Ready", "Overlay Online", "Library Indexed"]
-
-                Rectangle {
-                    width: parent.width
-                    height: 76
-                    radius: 8
-                    color: panel
-                    border.color: stroke
-
-                    Rectangle {
-                        width: 44
-                        height: 44
-                        radius: 8
-                        anchors.left: parent.left
-                        anchors.leftMargin: 14
-                        anchors.verticalCenter: parent.verticalCenter
-                        color: "#202b39"
-                        border.color: index < 2 ? accent : stroke
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: index < 2 ? "OK" : "--"
-                            color: index < 2 ? accent : quiet
-                            font.pixelSize: 12
-                            font.bold: true
-                        }
-
-                    }
-
-                    Column {
-                        anchors.left: parent.left
-                        anchors.leftMargin: 70
-                        anchors.right: parent.right
-                        anchors.rightMargin: 12
-                        anchors.verticalCenter: parent.verticalCenter
-                        spacing: 2
-
-                        Text {
-                            text: modelData
-                            color: ink
-                            font.pixelSize: 15
-                            font.bold: true
-                        }
-
-                        Text {
-                            text: index < 2 ? "Unlocked today" : "In progress"
-                            color: muted
-                            font.pixelSize: 12
-                        }
-
-                    }
-
-                }
-
-            }
-
-            Rectangle {
-                width: parent.width
-                height: 134
-                radius: 8
-                color: "#121821"
-                border.color: stroke
-
-                Column {
-                    anchors.fill: parent
-                    anchors.margins: 16
-                    spacing: 8
-
-                    Text {
-                        text: "Friends"
-                        color: ink
-                        font.pixelSize: 19
-                        font.bold: true
-                    }
-
-                    Text {
-                        text: "Party, chat, invites, and broadcast controls will dock here."
-                        color: muted
-                        font.pixelSize: 13
-                        wrapMode: Text.WordWrap
-                        width: parent.width
-                    }
-
-                }
-
-            }
-
-        }
-
-    }
-
-    Rectangle {
-        id: centerPanel
-
-        anchors.left: leftPanel.right
-        anchors.leftMargin: 22
-        anchors.right: rightPanel.left
-        anchors.rightMargin: 22
-        anchors.top: parent.top
-        anchors.topMargin: 54
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 54
-        radius: 8
-        color: "#d010151d"
-        border.color: "#233041"
-
-        Column {
-            anchors.fill: parent
-            anchors.margins: 26
-            spacing: 18
-
-            Row {
-                width: parent.width
-                height: 86
-                spacing: 16
-
-                Rectangle {
-                    width: 86
-                    height: 86
-                    radius: 8
-                    color: panel2
-                    border.color: stroke
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: "LIVE"
-                        color: accent
-                        font.pixelSize: 18
-                        font.bold: true
-                    }
-
-                }
-
-                Column {
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width - 110
-                    spacing: 5
-
-                    Text {
-                        text: "Quick Access"
-                        color: ink
-                        font.pixelSize: 34
-                        font.bold: true
-                    }
-
-                    Text {
-                        text: "A Steam-style overlay, reworked for Anvil's darker HypeShell surface."
-                        color: muted
-                        font.pixelSize: 15
-                        wrapMode: Text.WordWrap
-                        width: parent.width
-                    }
-
-                }
-
-            }
-
-            Grid {
-                columns: 2
-                spacing: 14
-
-                Repeater {
-                    model: ["Screenshot", "Record Clip", "Controller Layout", "Store Page", "Patch Notes", "Return to Library"]
-
-                    Rectangle {
-                        width: Math.max(220, (centerPanel.width - 82) / 2)
-                        height: 96
-                        radius: 8
-                        color: "#171f2a"
-                        border.color: stroke
-
-                        Text {
-                            anchors.left: parent.left
-                            anchors.leftMargin: 18
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: modelData
-                            color: ink
-                            font.pixelSize: 18
-                            font.bold: true
-                        }
-
-                    }
-
-                }
-
+            MouseArea {
+                anchors.fill: parent
+                onClicked: runMenuAction("Exit Game")
             }
 
         }
@@ -469,23 +226,360 @@ PanelWindow {
 
     Row {
         anchors.right: parent.right
-        anchors.rightMargin: 28
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 18
-        spacing: 22
+        anchors.rightMargin: 14
+        anchors.top: parent.top
+        anchors.topMargin: 14
+        spacing: 10
+        z: 10
 
-        Text {
-            text: "B / ESC  Resume"
-            color: muted
-            font.pixelSize: 14
-            font.bold: true
+        Column {
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: 2
+
+            Text {
+                anchors.right: parent.right
+                text: "Back to Game"
+                color: ink
+                font.pixelSize: 14
+                font.bold: true
+            }
+
+            Text {
+                anchors.right: parent.right
+                text: "(Shift+Tab)"
+                color: muted
+                font.pixelSize: 10
+                font.bold: true
+            }
+
         }
 
-        Text {
-            text: "A / ENTER  Select"
-            color: muted
-            font.pixelSize: 14
-            font.bold: true
+        Rectangle {
+            width: 38
+            height: 38
+            radius: 2
+            color: "#303642"
+            border.color: "#46515f"
+
+            Text {
+                anchors.centerIn: parent
+                text: "X"
+                color: ink
+                font.pixelSize: 18
+                font.bold: true
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: runMenuAction("Back to Game")
+            }
+
+        }
+
+    }
+
+    Text {
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        anchors.topMargin: 38
+        text: "ANVIL"
+        color: "#dde8f5"
+        opacity: 0.9
+        font.pixelSize: 32
+        font.bold: true
+        z: 8
+    }
+
+    Rectangle {
+        id: friendsPanel
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        anchors.topMargin: Math.max(118, parent.height * 0.12)
+        width: 306
+        height: Math.min(635, parent.height - 220)
+        radius: 2
+        color: panel
+        border.color: "#11151b"
+        z: 12
+        clip: true
+
+        Column {
+            anchors.fill: parent
+            spacing: 0
+
+            Rectangle {
+                width: parent.width
+                height: 76
+                color: "#303843"
+
+                Row {
+                    anchors.fill: parent
+                    anchors.margins: 9
+                    spacing: 10
+
+                    Rectangle {
+                        width: 54
+                        height: 54
+                        radius: 3
+                        color: "#48535f"
+                        border.color: "#6b7785"
+
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.margins: 4
+                            radius: 2
+                            color: "#6d8e77"
+                            opacity: 0.55
+                        }
+
+                    }
+
+                    Column {
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: parent.width - 96
+                        spacing: 5
+
+                        Rectangle {
+                            width: parent.width
+                            height: 16
+                            radius: 2
+                            color: "#6e7b72"
+                            opacity: 0.45
+                        }
+
+                        Text {
+                            text: "Online"
+                            color: "#83d48a"
+                            font.pixelSize: 11
+                            font.bold: true
+                        }
+
+                    }
+
+                    Text {
+                        text: "v  X"
+                        color: "#c4ccd5"
+                        font.pixelSize: 13
+                        font.bold: true
+                    }
+
+                }
+
+            }
+
+            Rectangle {
+                width: parent.width
+                height: 43
+                color: "#252b34"
+
+                Column {
+                    anchors.fill: parent
+                    anchors.margins: 8
+                    spacing: 3
+
+                    Text {
+                        text: "Drag Friends & Chats here for easy access"
+                        color: "#20bfea"
+                        font.pixelSize: 10
+                    }
+
+                    Rectangle {
+                        anchors.right: parent.right
+                        width: 54
+                        height: 16
+                        radius: 2
+                        color: "#179bc0"
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "GOT IT!"
+                            color: ink
+                            font.pixelSize: 9
+                            font.bold: true
+                        }
+
+                    }
+
+                }
+
+            }
+
+            Rectangle {
+                width: parent.width
+                height: 27
+                color: "#616a75"
+
+                Row {
+                    anchors.fill: parent
+                    anchors.leftMargin: 10
+                    anchors.rightMargin: 8
+                    spacing: 10
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "FRIENDS"
+                        color: ink
+                        font.pixelSize: 11
+                        font.bold: true
+                        width: parent.width - 88
+                    }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "Q"
+                        color: "#d8e0ea"
+                        font.pixelSize: 12
+                        font.bold: true
+                    }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "+"
+                        color: "#d8e0ea"
+                        font.pixelSize: 15
+                        font.bold: true
+                    }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "*"
+                        color: "#d8e0ea"
+                        font.pixelSize: 14
+                        font.bold: true
+                    }
+
+                }
+
+            }
+
+            Rectangle {
+                width: parent.width
+                height: friendsPanel.height - 238
+                color: "#1d2028"
+
+                Text {
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+                    anchors.top: parent.top
+                    anchors.topMargin: 14
+                    text: "+Offline [5]"
+                    color: "#c4cad2"
+                    font.pixelSize: 11
+                }
+
+            }
+
+            Rectangle {
+                width: parent.width
+                height: 34
+                color: "#5b6570"
+
+                Row {
+                    anchors.fill: parent
+                    anchors.leftMargin: 8
+                    anchors.rightMargin: 8
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "v GROUP CHATS"
+                        color: "#dbe2ea"
+                        font.pixelSize: 11
+                        font.bold: true
+                        width: parent.width - 28
+                    }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "+"
+                        color: "#dbe2ea"
+                        font.pixelSize: 18
+                        font.bold: true
+                    }
+
+                }
+
+            }
+
+            Rectangle {
+                width: parent.width
+                height: 58
+                color: "#252d37"
+
+                Row {
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 9
+
+                    Rectangle {
+                        width: 30
+                        height: 30
+                        radius: 15
+                        color: "#202b38"
+                        border.color: "#7c49ff"
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "A"
+                            color: "#9e75ff"
+                            font.pixelSize: 16
+                            font.bold: true
+                        }
+
+                    }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "SALVATION"
+                        color: "#d8dee7"
+                        font.pixelSize: 13
+                    }
+
+                }
+
+            }
+
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.NoButton
+            focus: true
+            Keys.onEscapePressed: runMenuAction("Back to Game")
+            Keys.onReturnPressed: runMenuAction("Back to Game")
+        }
+
+    }
+
+    Row {
+        id: dock
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 30
+        spacing: 6
+        z: 12
+
+        Repeater {
+            model: dockModel
+
+            Rectangle {
+                width: model.icon === "REC" ? 44 : 36
+                height: 36
+                radius: 2
+                color: model.active ? accent : "#27313d"
+                border.color: model.active ? "#45bdff" : "#3c4652"
+
+                Text {
+                    anchors.centerIn: parent
+                    text: model.icon
+                    color: model.active ? "#eef8ff" : "#d4dbe4"
+                    font.pixelSize: model.icon === "REC" ? 10 : 14
+                    font.bold: true
+                }
+
+            }
+
         }
 
     }
