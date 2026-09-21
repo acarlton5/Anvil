@@ -11,16 +11,16 @@ PanelWindow {
     readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || localRoot
     readonly property string bridgePath: anvilRoot + "/src/daemon/anvil-library-bridge"
     readonly property string daemonPath: anvilRoot + "/src/ui/AnvilDaemon.qml"
-    readonly property color bg: "#05070a"
-    readonly property color panel: "#10151c"
-    readonly property color panelRaised: "#161d25"
-    readonly property color line: "#4a3329"
+    readonly property color bg: "#050609"
+    readonly property color panel: "#101419"
+    readonly property color panelRaised: "#171d23"
+    readonly property color line: "#2f3740"
     readonly property color fg: "#f5f5f2"
-    readonly property color muted: "#b4aaa3"
+    readonly property color muted: "#aeb6bd"
     readonly property color ember: "#ff6537"
     readonly property color emberLight: "#ff8a66"
     readonly property color forgeGold: "#d9ad5f"
-    readonly property color relayBlue: "#d9ad5f"
+    readonly property color relayBlue: "#7aa8ff"
     readonly property color green: "#65d797"
     readonly property int sidebarWidth: 112
     readonly property int contentLeft: sidebarWidth + 44
@@ -70,6 +70,27 @@ PanelWindow {
         return navModel.get(Math.max(0, Math.min(activeSection, navModel.count - 1))).label;
     }
 
+    function currentSectionSubtitle() {
+        switch (activeSection) {
+        case 0:
+            return "Resume";
+        case 1:
+            return "Installed and removable games";
+        case 2:
+            return "Discovery, demos, wishlists";
+        case 3:
+            return "Friends, hubs, activity";
+        case 4:
+            return "Apps, builds, publishing";
+        case 5:
+            return "Queue, verify, update";
+        case 6:
+            return "Session and runtime";
+        default:
+            return "Anvil";
+        }
+    }
+
     function launchGame() {
         let game = currentGame();
         if (!game || game.dummy || !game.launch_command)
@@ -104,37 +125,37 @@ PanelWindow {
 
         ListElement {
             label: "Home"
-            icon: "H"
+            icon: "◆"
         }
 
         ListElement {
             label: "Library"
-            icon: "L"
+            icon: "▦"
         }
 
         ListElement {
             label: "Store"
-            icon: "S"
+            icon: "⬢"
         }
 
         ListElement {
             label: "Community"
-            icon: "C"
+            icon: "◌"
         }
 
         ListElement {
             label: "Forgeworks"
-            icon: "F"
+            icon: "⚒"
         }
 
         ListElement {
             label: "Downloads"
-            icon: "D"
+            icon: "↓"
         }
 
         ListElement {
             label: "Settings"
-            icon: "G"
+            icon: "⚙"
         }
 
     }
@@ -145,19 +166,19 @@ PanelWindow {
         ListElement {
             title: "Featured"
             eyebrow: "FORGE FRONT"
-            body: "Hero capsules, trailers, demos, wishlists, and launch-week promotions."
+            body: "Featured releases, demos, launches, and events."
         }
 
         ListElement {
             title: "Discovery"
             eyebrow: "DISCOVERY QUEUE"
-            body: "Tags, reviews, curator rails, friend activity, and event-driven recommendations."
+            body: "Curated rails shaped by tags, friends, and play."
         }
 
         ListElement {
             title: "Cartridges"
             eyebrow: "LOCAL + ONLINE"
-            body: "Physical-style libraries today, signed Forgepipe builds and online grants tomorrow."
+            body: "Local game media now. Signed Forgepipe builds next."
         }
 
     }
@@ -167,19 +188,19 @@ PanelWindow {
 
         ListElement {
             title: "Patch notes from Legend Forge"
-            body: "Anvil Session now mounts removable game media and refreshes the library on launch."
+            body: "Anvil Session mounts removable media and refreshes the library on launch."
             meta: "News"
         }
 
         ListElement {
             title: "Screenshots and clips"
-            body: "Anvil Capture mock lane for screenshots, short clips, and timeline markers."
+            body: "Capture lane for screenshots, clips, and timeline markers."
             meta: "Activity"
         }
 
         ListElement {
             title: "Guides, reviews, discussions"
-            body: "Game hubs collect player posts, verified reviews, guides, workshop notes, and events."
+            body: "Game hubs for posts, reviews, guides, workshop notes, and events."
             meta: "Hub"
         }
 
@@ -190,25 +211,25 @@ PanelWindow {
 
         ListElement {
             title: "App onboarding"
-            body: "Create an app, assign package IDs, invite testers, and generate sandbox entitlements."
+            body: "Create apps, package IDs, tester grants, and sandbox entitlements."
             state: "Mock"
         }
 
         ListElement {
             title: "Forgepipe builds"
-            body: "Upload depots, sign manifests, promote branches, roll back builds, and verify installs."
+            body: "Upload depots, sign manifests, promote branches, and verify installs."
             state: "Next"
         }
 
         ListElement {
             title: "Player platform APIs"
-            body: "Achievements, cloud saves, lobbies, relay, inventory, and rich presence."
+            body: "Achievements, cloud saves, lobbies, relay, inventory, and presence."
             state: "Planned"
         }
 
         ListElement {
             title: "Partner operations"
-            body: "Reviews, analytics, crash reports, keys, refunds, payouts, and moderation queues."
+            body: "Reviews, analytics, crash reports, keys, refunds, payouts, and moderation."
             state: "Planned"
         }
 
@@ -219,21 +240,21 @@ PanelWindow {
 
         ListElement {
             title: "Cartridge scan"
-            body: "USB and SD libraries are indexed into Anvil Library records."
+            body: "USB and SD libraries indexed into Anvil Library."
             value: "Live"
             progress: 100
         }
 
         ListElement {
             title: "Client update"
-            body: "Signed Anvil client release check with staged apply and rollback."
+            body: "Signed Anvil release check with staged apply and rollback."
             value: "Mock"
             progress: 42
         }
 
         ListElement {
             title: "Forgepipe install"
-            body: "Future depot download, verify, repair, move, uninstall, and delta update flow."
+            body: "Depot download, verify, repair, move, uninstall, and delta updates."
             value: "Design"
             progress: 24
         }
@@ -245,19 +266,19 @@ PanelWindow {
 
         ListElement {
             title: "Anvil Session"
-            body: "Dedicated Wayland session, controller navigation, game focus, logout, and cleanup."
+            body: "Dedicated Wayland session, controller navigation, focus, logout, and cleanup."
             value: "Installed by plugin"
         }
 
         ListElement {
             title: "Anvil Runtime"
-            body: "Per-game Proton selection, prefixes, launch logs, overlay hooks, and exit recovery."
+            body: "Per-game Proton, prefixes, launch logs, overlay hooks, and exit recovery."
             value: "Prototype"
         }
 
         ListElement {
             title: "Anvil Cloud"
-            body: "Save sync, settings sync, offline queue, and conflict resolution."
+            body: "Save sync, settings sync, offline queue, and conflicts."
             value: "Mock"
         }
 
@@ -316,12 +337,12 @@ PanelWindow {
         gradient: Gradient {
             GradientStop {
                 position: 0
-                color: "#24110d"
+                color: "#151b22"
             }
 
             GradientStop {
                 position: 0.22
-                color: "#120d0d"
+                color: "#0b0f14"
             }
 
             GradientStop {
@@ -382,40 +403,64 @@ PanelWindow {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        height: 64
-        color: "#b805070a"
-        border.color: "#1f2730"
+        height: 76
+        color: "#d8050609"
+        border.color: "#202832"
         z: 20
 
         Row {
             anchors.left: parent.left
             anchors.leftMargin: contentLeft
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 12
+            spacing: 14
 
-            Text {
+            Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
-                text: currentSectionLabel()
-                color: "#d7dbde"
-                font.pixelSize: 18
-                font.bold: true
-                font.letterSpacing: 0
+                width: 3
+                height: 38
+                radius: 2
+                color: ember
             }
 
-            Text {
+            Column {
                 anchors.verticalCenter: parent.verticalCenter
-                text: "/"
-                color: "#46515c"
-                font.pixelSize: 16
-                font.bold: true
+                spacing: 3
+
+                Text {
+                    text: currentSectionLabel()
+                    color: fg
+                    font.pixelSize: 20
+                    font.bold: true
+                    font.letterSpacing: 0
+                }
+
+                Text {
+                    text: currentSectionSubtitle()
+                    color: muted
+                    font.pixelSize: 11
+                    font.bold: true
+                    font.letterSpacing: 0
+                }
+
             }
 
-            Text {
+            Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
-                text: activeSection === 4 ? "Forgeworks mock" : "Anvil Session mock"
-                color: muted
-                font.pixelSize: 13
-                font.bold: true
+                width: 106
+                height: 28
+                radius: 8
+                color: "#17212a"
+                border.color: "#2f3a45"
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "SESSION"
+                    color: forgeGold
+                    font.pixelSize: 10
+                    font.bold: true
+                    font.letterSpacing: 0
+                }
+
             }
 
         }
@@ -430,8 +475,8 @@ PanelWindow {
                 width: 92
                 height: 36
                 radius: 8
-                color: "#1a120e"
-                border.color: "#27323d"
+                color: "#131a21"
+                border.color: "#2c3743"
 
                 Text {
                     anchors.centerIn: parent
@@ -447,12 +492,12 @@ PanelWindow {
                 width: 38
                 height: 36
                 radius: 8
-                color: powerMenuActive ? "#30201a" : "#1a120e"
+                color: powerMenuActive ? "#30201a" : "#131a21"
                 border.color: powerMenuActive ? ember : "#27323d"
 
                 Text {
                     anchors.centerIn: parent
-                    text: "IO"
+                    text: "⏻"
                     color: powerMenuActive ? emberLight : muted
                     font.pixelSize: 11
                     font.bold: true
@@ -476,7 +521,7 @@ PanelWindow {
         anchors.top: parent.top
         anchors.bottom: bottomHints.top
         width: sidebarWidth
-        color: "#f0070a0e"
+        color: "#f006080c"
         border.color: "#202833"
         z: 24
 
@@ -498,7 +543,7 @@ PanelWindow {
                     width: 58
                     height: 58
                     radius: 8
-                    color: "#1b1411"
+                    color: "#171d23"
                     border.color: ember
 
                     Text {
@@ -516,7 +561,7 @@ PanelWindow {
             Rectangle {
                 width: parent.width
                 height: 1
-                color: "#3d2b22"
+                color: "#26313c"
             }
 
             Repeater {
@@ -526,22 +571,32 @@ PanelWindow {
                     width: parent.width
                     height: 58
                     radius: 8
-                    color: activeSection === index ? "#2a211b" : "transparent"
-                    border.color: activeSection === index ? ember : "transparent"
+                    color: activeSection === index ? "#1b242d" : "transparent"
+                    border.color: activeSection === index ? "#3c4855" : "transparent"
+
+                    Rectangle {
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 3
+                        height: 34
+                        radius: 2
+                        color: ember
+                        visible: activeSection === index
+                    }
 
                     Rectangle {
                         anchors.centerIn: parent
                         width: 44
                         height: 44
                         radius: 8
-                        color: activeSection === index ? ember : "#1a120e"
+                        color: activeSection === index ? ember : "#121820"
                         border.color: activeSection === index ? ember : "#2d3844"
 
                         Text {
                             anchors.centerIn: parent
                             text: model.icon
                             color: activeSection === index ? "#160b07" : muted
-                            font.pixelSize: 15
+                            font.pixelSize: 19
                             font.bold: true
                         }
 
@@ -594,7 +649,7 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
-            anchors.topMargin: 64
+            anchors.topMargin: 76
             height: Math.max(470, parent.height * 0.62)
             visible: heroImage.source === ""
 
@@ -642,7 +697,7 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
-            anchors.topMargin: 64
+            anchors.topMargin: 76
             height: Math.max(470, parent.height * 0.62)
 
             gradient: Gradient {
@@ -683,7 +738,7 @@ PanelWindow {
             spacing: 16
 
             Text {
-                text: "FEATURED CARTRIDGE"
+                text: gameModel.count > 0 ? "NOW READY" : "ANVIL SESSION"
                 color: "#d1d3d4"
                 font.pixelSize: 11
                 font.bold: true
@@ -707,7 +762,7 @@ PanelWindow {
             }
 
             Text {
-                text: libraryScanRunning ? "Mounting USB and SD media, reading cartridge files, and checking for Anvil updates." : "A dedicated game client for local cartridges today and an indie-first store tomorrow."
+                text: libraryScanRunning ? "Mounting removable media and building your launch shelf." : "Your cartridge library, tuned for the couch and ready to play."
                 color: "#c5c8c9"
                 font.pixelSize: 16
                 width: Math.min(560, parent.width)
@@ -824,7 +879,7 @@ PanelWindow {
                     width: 132
                     height: 86
                     color: "#bb0f141a"
-                    border.color: "#3d2b22"
+                    border.color: "#2c3743"
 
                     Column {
                         anchors.centerIn: parent
@@ -871,7 +926,7 @@ PanelWindow {
                 anchors.left: parent.left
                 anchors.leftMargin: contentLeft
                 anchors.top: parent.top
-                text: activeSection === 0 ? "Recently Indexed" : "Store Preview"
+                text: "Continue Playing"
                 color: fg
                 font.pixelSize: 22
                 font.bold: true
@@ -906,8 +961,8 @@ PanelWindow {
                     width: 390
                     height: 226
                     radius: 8
-                    color: "#192027"
-                    border.color: ListView.isCurrentItem ? ember : "#4a3329"
+                    color: panelRaised
+                    border.color: ListView.isCurrentItem ? ember : "#32404d"
                     border.width: ListView.isCurrentItem ? 3 : 1
                     clip: true
                     scale: ListView.isCurrentItem ? 1.06 : 0.92
@@ -1063,8 +1118,8 @@ PanelWindow {
                 width: 360
                 height: parent.height
                 radius: 8
-                color: "#ee0d1118"
-                border.color: line
+                color: "#e80c1015"
+                border.color: "#26313c"
                 clip: true
 
                 Column {
@@ -1074,8 +1129,8 @@ PanelWindow {
                     Rectangle {
                         width: parent.width
                         height: 74
-                        color: "#12171d"
-                        border.color: line
+                        color: "#131920"
+                        border.color: "#26313c"
 
                         Column {
                             anchors.left: parent.left
@@ -1084,14 +1139,14 @@ PanelWindow {
                             spacing: 4
 
                             Text {
-                                text: "Library"
+                                text: "All Games"
                                 color: fg
                                 font.pixelSize: 20
                                 font.bold: true
                             }
 
                             Text {
-                                text: libraryScanRunning ? "scanning cartridge media" : gameModel.count + " cartridge entries"
+                                text: libraryScanRunning ? "scanning media" : gameModel.count + " ready"
                                 color: muted
                                 font.pixelSize: 11
                                 font.bold: true
@@ -1123,7 +1178,7 @@ PanelWindow {
                         delegate: Rectangle {
                             width: libraryList.width
                             height: 54
-                            color: selectedGameIndex === index ? "#242025" : (index % 2 === 0 ? "#0f141a" : "#111820")
+                            color: selectedGameIndex === index ? "#1f2933" : (index % 2 === 0 ? "#0f141a" : "#111820")
                             border.color: selectedGameIndex === index ? ember : "transparent"
 
                             Rectangle {
@@ -1206,8 +1261,8 @@ PanelWindow {
                 width: parent.width - librarySidebar.width - 24
                 height: parent.height
                 radius: 8
-                color: "#dd0f141a"
-                border.color: line
+                color: "#d90c1015"
+                border.color: "#26313c"
                 clip: true
 
                 Image {
@@ -1233,17 +1288,17 @@ PanelWindow {
 
                         GradientStop {
                             position: 0
-                            color: "#1a222b"
+                            color: "#131c25"
                         }
 
                         GradientStop {
                             position: 0.58
-                            color: "#2b3034"
+                            color: "#26313a"
                         }
 
                         GradientStop {
                             position: 1
-                            color: "#523421"
+                            color: "#27333c"
                         }
 
                     }
@@ -1373,7 +1428,7 @@ PanelWindow {
 
                     Repeater {
                         model: [{
-                            "label": "Path",
+                            "label": "Location",
                             "value": currentGame() ? currentGame().path.split("/").pop() : ""
                         }, {
                             "label": "Artwork",
@@ -1386,8 +1441,8 @@ PanelWindow {
                         Rectangle {
                             width: Math.max(180, parent.width / 3)
                             height: 86
-                            color: "#bb12171d"
-                            border.color: line
+                            color: "#aa121820"
+                            border.color: "#2c3743"
 
                             Column {
                                 anchors.centerIn: parent
@@ -1448,8 +1503,8 @@ PanelWindow {
                 width: parent.width * 0.58
                 height: parent.height
                 radius: 8
-                color: "#e0140d09"
-                border.color: selectedStoreTile === 0 ? ember : line
+                color: "#e00d1117"
+                border.color: selectedStoreTile === 0 ? ember : "#2c3743"
                 clip: true
 
                 Rectangle {
@@ -1460,17 +1515,17 @@ PanelWindow {
 
                         GradientStop {
                             position: 0
-                            color: "#1a100c"
+                            color: "#101922"
                         }
 
                         GradientStop {
                             position: 0.58
-                            color: "#332017"
+                            color: "#1d2a34"
                         }
 
                         GradientStop {
                             position: 1
-                            color: "#6b3922"
+                            color: "#58311f"
                         }
 
                     }
@@ -1501,7 +1556,7 @@ PanelWindow {
                     }
 
                     Text {
-                        text: "A mock storefront for featured games, demos, wishlists, reviews, events, and cartridge-to-online publishing."
+                        text: "Featured games, demos, wishlists, reviews, events, and cartridge-to-online publishing."
                         color: "#d5d7d9"
                         font.pixelSize: 15
                         wrapMode: Text.WordWrap
@@ -1519,7 +1574,7 @@ PanelWindow {
                                 width: 124
                                 height: 46
                                 radius: 8
-                                color: index === 1 ? ember : "#cc111820"
+                                color: index === 1 ? ember : "#cc131a22"
                                 border.color: index === 1 ? ember : "#3a4652"
 
                                 Text {
@@ -1557,8 +1612,8 @@ PanelWindow {
                         width: parent.width
                         height: (storePage.height - 188) / 3
                         radius: 8
-                        color: selectedStoreTile === index ? "#2b1d15" : "#16100d"
-                        border.color: selectedStoreTile === index ? ember : line
+                        color: selectedStoreTile === index ? "#1f2933" : "#121820"
+                        border.color: selectedStoreTile === index ? ember : "#2c3743"
                         scale: selectedStoreTile === index ? 1.02 : 0.97
 
                         Rectangle {
@@ -1647,7 +1702,7 @@ PanelWindow {
                 width: parent.width * 0.64
                 height: parent.height
                 radius: 8
-                color: "#e0140d09"
+                color: "#e00d1117"
                 border.color: ember
 
                 Column {
@@ -1663,7 +1718,7 @@ PanelWindow {
                     }
 
                     Text {
-                        text: "Friends, patch notes, screenshots, developer posts, and discussions will live here as Anvil grows into a full client."
+                        text: "Friends, patch notes, captures, developer posts, and game hubs."
                         color: muted
                         font.pixelSize: 15
                         wrapMode: Text.WordWrap
@@ -1677,8 +1732,8 @@ PanelWindow {
                             width: parent.width
                             height: 118
                             radius: 8
-                            color: index === 0 ? "#2b1d15" : "#17110e"
-                            border.color: index === 0 ? ember : line
+                            color: index === 0 ? "#1f2933" : "#121820"
+                            border.color: index === 0 ? ember : "#2c3743"
 
                             Column {
                                 anchors.verticalCenter: parent.verticalCenter
@@ -1727,8 +1782,8 @@ PanelWindow {
                 width: parent.width * 0.36 - 20
                 height: parent.height
                 radius: 8
-                color: "#dd120c09"
-                border.color: line
+                color: "#dd0d1117"
+                border.color: "#2c3743"
 
                 Column {
                     anchors.fill: parent
@@ -1749,7 +1804,7 @@ PanelWindow {
                             width: parent.width
                             height: 68
                             radius: 8
-                            color: index === 0 ? "#2b1d15" : "#1a120e"
+                            color: index === 0 ? "#1f2933" : "#121820"
 
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
@@ -1794,7 +1849,7 @@ PanelWindow {
                 width: parent.width * 0.42
                 height: parent.height
                 radius: 8
-                color: "#e0140d09"
+                color: "#e00d1117"
                 border.color: forgeGold
 
                 Column {
@@ -1810,7 +1865,7 @@ PanelWindow {
                     }
 
                     Text {
-                        text: "Developer and publisher services for shipping on Anvil: apps, builds, entitlements, SDKs, player APIs, and store operations."
+                        text: "Developer and publisher services for shipping on Anvil."
                         color: muted
                         font.pixelSize: 14
                         wrapMode: Text.WordWrap
@@ -1822,7 +1877,7 @@ PanelWindow {
                         width: parent.width
                         height: 132
                         radius: 8
-                        color: "#2b1d15"
+                        color: "#1f2933"
                         border.color: ember
 
                         Column {
@@ -1863,8 +1918,8 @@ PanelWindow {
                             width: parent.width
                             height: 48
                             radius: 8
-                            color: index === 1 ? "#3a2418" : "#1a120e"
-                            border.color: index === 1 ? forgeGold : line
+                            color: index === 1 ? "#27313a" : "#121820"
+                            border.color: index === 1 ? forgeGold : "#2c3743"
 
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
@@ -1896,8 +1951,8 @@ PanelWindow {
                         width: parent.width
                         height: (forgeworksPage.height - 184) / 4
                         radius: 8
-                        color: model.state === "Next" ? "#2b1d15" : "#17110e"
-                        border.color: model.state === "Next" ? forgeGold : line
+                        color: model.state === "Next" ? "#1f2933" : "#121820"
+                        border.color: model.state === "Next" ? forgeGold : "#2c3743"
 
                         Row {
                             anchors.fill: parent
@@ -1908,7 +1963,7 @@ PanelWindow {
                                 width: 92
                                 height: parent.height
                                 radius: 8
-                                color: model.state === "Next" ? "#3a2418" : "#1a120e"
+                                color: model.state === "Next" ? "#27313a" : "#121820"
                                 border.color: model.state === "Next" ? forgeGold : "#303a45"
 
                                 Text {
@@ -1981,7 +2036,7 @@ PanelWindow {
             }
 
             Text {
-                text: "Mock queue for scans, client updates, installs, verification, repair, and rollback."
+                text: "Scans, client updates, installs, verification, repair, and rollback."
                 color: muted
                 font.pixelSize: 14
             }
@@ -1993,8 +2048,8 @@ PanelWindow {
                     width: parent.width
                     height: 142
                     radius: 8
-                    color: index === 0 ? "#2b1d15" : "#17110e"
-                    border.color: index === 0 ? ember : line
+                    color: index === 0 ? "#1f2933" : "#121820"
+                    border.color: index === 0 ? ember : "#2c3743"
 
                     Column {
                         anchors.left: parent.left
@@ -2039,7 +2094,7 @@ PanelWindow {
                             width: parent.width
                             height: 8
                             radius: 4
-                            color: "#31231c"
+                            color: "#28313a"
 
                             Rectangle {
                                 anchors.left: parent.left
@@ -2099,8 +2154,8 @@ PanelWindow {
                         width: (settingsGrid.width - 14) / 2
                         height: 184
                         radius: 8
-                        color: index === 0 ? "#2b1d15" : "#17110e"
-                        border.color: index === 0 ? ember : line
+                        color: index === 0 ? "#1f2933" : "#121820"
+                        border.color: index === 0 ? ember : "#2c3743"
 
                         Column {
                             anchors.fill: parent
@@ -2146,7 +2201,7 @@ PanelWindow {
 
     Rectangle {
         anchors.fill: parent
-        color: "#dd05070b"
+        color: "#dd050609"
         opacity: powerMenuActive ? 1 : 0
         visible: opacity > 0
         z: 30
@@ -2174,8 +2229,8 @@ PanelWindow {
         height: 318
         anchors.centerIn: parent
         radius: 8
-        color: "#f0141a20"
-        border.color: line
+        color: "#f0101419"
+        border.color: "#2c3743"
         visible: powerMenuActive
         opacity: powerMenuActive ? 1 : 0
         z: 50
@@ -2198,9 +2253,9 @@ PanelWindow {
                 Rectangle {
                     width: parent.width
                     height: 50
-                    radius: 9
-                    color: index === 3 ? "#241914" : "#1a120e"
-                    border.color: index === 3 ? ember : line
+                    radius: 8
+                    color: index === 3 ? "#1f2933" : "#121820"
+                    border.color: index === 3 ? ember : "#2c3743"
 
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
@@ -2236,8 +2291,8 @@ PanelWindow {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         height: 62
-        color: "#e005070a"
-        border.color: "#3d2b22"
+        color: "#e0050609"
+        border.color: "#202832"
         z: 20
 
         Row {
