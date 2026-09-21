@@ -58,6 +58,12 @@ ARTWORK_MAP = {
     "grid":  "grid.png",
     "logo":  "logo.png",
 }
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
+ARTWORK_ROLE_HINTS = {
+    "hero": ("hero", "header", "capsule", "landscape", "background", "banner"),
+    "grid": ("grid", "cover", "poster", "library", "capsule", "portrait"),
+    "logo": ("logo", "clearlogo"),
+}
 
 
 def _truthy(value):
@@ -309,19 +315,34 @@ def build_game_entry(cartridge, game_path, drive_root):
     artwork_dir = os.path.join(game_path, "artwork")
     hero = find_artwork(game_path, artwork_dir, [
         "hero.jpg",
+        "hero.png",
+        "hero.webp",
         "library_hero.jpg",
+        "library_hero.png",
         "header.jpg",
+        "header.png",
         "capsule_616x353.jpg",
-    ])
+        "capsule_616x353.png",
+    ], "hero")
     grid = find_artwork(game_path, artwork_dir, [
         "grid.png",
+        "grid.jpg",
+        "grid.webp",
+        "cover.jpg",
+        "cover.png",
+        "poster.jpg",
+        "poster.png",
         "library_600x900.jpg",
         "library_600x900.png",
+        "library_600x900.webp",
         "capsule_616x353.jpg",
+        "capsule_616x353.png",
         "capsule_231x87.jpg",
+        "capsule_231x87.png",
         "header.jpg",
-    ])
-    logo = find_artwork(game_path, artwork_dir, ["logo.png"])
+        "header.png",
+    ], "grid")
+    logo = find_artwork(game_path, artwork_dir, ["logo.png", "logo.jpg", "logo.webp", "clearlogo.png"], "logo")
 
     return {
         "name": name,
@@ -338,17 +359,42 @@ def build_game_entry(cartridge, game_path, drive_root):
     }
 
 
-def find_artwork(game_path, artwork_dir, candidates):
-    """Look for artwork in both the game root and artwork/ subfolder."""
-    for candidate in candidates:
-        # Check artwork/ subfolder first
-        path = os.path.join(artwork_dir, candidate)
-        if os.path.isfile(path):
-            return path
-        # Check game root
-        path = os.path.join(game_path, candidate)
-        if os.path.isfile(path):
-            return path
+def _image_files(directory):
+    if not os.path.isdir(directory):
+        return []
+    images = []
+    try:
+        for entry in os.listdir(directory):
+            path = os.path.join(directory, entry)
+            if os.path.isfile(path) and os.path.splitext(entry.lower())[1] in IMAGE_EXTENSIONS:
+                images.append(path)
+    except OSError:
+        return []
+    return sorted(images)
+
+
+def find_artwork(game_path, artwork_dir, candidates, role="hero"):
+    """Look for artwork in common locations with case-insensitive fallbacks."""
+    search_dirs = [artwork_dir, game_path]
+    lowered_candidates = {candidate.lower() for candidate in candidates}
+
+    for directory in search_dirs:
+        for path in _image_files(directory):
+            if os.path.basename(path).lower() in lowered_candidates:
+                return path
+
+    hints = ARTWORK_ROLE_HINTS.get(role, ())
+    for directory in search_dirs:
+        for path in _image_files(directory):
+            name = os.path.basename(path).lower()
+            if any(hint in name for hint in hints):
+                return path
+
+    for directory in search_dirs:
+        images = _image_files(directory)
+        if images:
+            return images[0]
+
     return None
 
 

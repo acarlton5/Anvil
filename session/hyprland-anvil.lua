@@ -4,6 +4,7 @@ hl = require("hyprland")
 local home = os.getenv("HOME") or ""
 local anvil_root = os.getenv("ANVIL_ROOT") or (home .. "/Projects/Projects/Anvil")
 local daemon = anvil_root .. "/src/ui/AnvilDaemon.qml"
+local overlay_toggle = "ANVIL_ROOT=" .. anvil_root .. " qs ipc --any-display -p " .. daemon .. " call anvil toggle"
 
 hl.monitor({ name = "", resolution = "preferred", position = "auto", scale = "auto" })
 
@@ -26,4 +27,5 @@ hl.misc({
 hl.exec_once("ANVIL_ROOT=" .. anvil_root .. " qs -p " .. daemon)
 
 -- Overlay Hotkey
-hl.bind("SUPER + SHIFT + O", hl.dsp.exec_cmd("ANVIL_ROOT=" .. anvil_root .. " qs -p " .. daemon .. " ipc call anvil toggle"))
+hl.bind("SHIFT + TAB", hl.dsp.exec_cmd(overlay_toggle))
+hl.bind("SUPER + SHIFT + O", hl.dsp.exec_cmd(overlay_toggle))

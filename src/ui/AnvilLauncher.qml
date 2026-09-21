@@ -60,6 +60,22 @@ PanelWindow {
         return String(game.tags).toUpperCase();
     }
 
+    function initials(name) {
+        if (!name)
+            return "A";
+
+        let words = String(name).replace(/[^A-Za-z0-9 ]/g, " ").split(/\s+/).filter((word) => {
+            return word.length > 0;
+        });
+        if (words.length === 0)
+            return "A";
+
+        if (words.length === 1)
+            return words[0].slice(0, 2).toUpperCase();
+
+        return (words[0][0] + words[1][0]).toUpperCase();
+    }
+
     function selectSection(index) {
         activeSection = Math.max(0, Math.min(index, navModel.count - 1));
     }
@@ -977,6 +993,36 @@ PanelWindow {
                         anchors.fill: parent
                         visible: (model.hero || model.grid || "") === ""
 
+                        Text {
+                            anchors.centerIn: parent
+                            text: initials(model.name)
+                            color: "#f6d0be"
+                            opacity: 0.68
+                            font.pixelSize: 82
+                            font.bold: true
+                        }
+
+                        Rectangle {
+                            anchors.left: parent.left
+                            anchors.leftMargin: 18
+                            anchors.top: parent.top
+                            anchors.topMargin: 18
+                            width: 42
+                            height: 42
+                            radius: 8
+                            color: "#181f27"
+                            border.color: ember
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: "◆"
+                                color: emberLight
+                                font.pixelSize: 20
+                                font.bold: true
+                            }
+
+                        }
+
                         gradient: Gradient {
                             orientation: Gradient.Horizontal
 
@@ -1213,6 +1259,15 @@ PanelWindow {
                                     visible: source !== ""
                                 }
 
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: initials(model.name)
+                                    color: emberLight
+                                    font.pixelSize: 9
+                                    font.bold: true
+                                    visible: (model.grid || model.hero || "") === ""
+                                }
+
                             }
 
                             Column {
@@ -1287,6 +1342,15 @@ PanelWindow {
                     anchors.top: parent.top
                     height: Math.max(320, parent.height * 0.48)
                     visible: gameArt(currentGame()) === ""
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: initials(currentGame() ? currentGame().name : "Anvil")
+                        color: "#f6d0be"
+                        opacity: 0.58
+                        font.pixelSize: 124
+                        font.bold: true
+                    }
 
                     gradient: Gradient {
                         orientation: Gradient.Horizontal

@@ -6,11 +6,13 @@ PanelWindow {
     id: overlayWindow
 
     property var modelData: null
+    property var closeHandler: null
+    property var killHandler: null
     readonly property color ink: "#f4f8ff"
-    readonly property color muted: "#b4aaa3"
-    readonly property color panel: "#201b18"
-    readonly property color panelDeep: "#17110e"
-    readonly property color stroke: "#4a3329"
+    readonly property color muted: "#aeb6bd"
+    readonly property color panel: "#111820"
+    readonly property color panelDeep: "#080c11"
+    readonly property color stroke: "#2f3a45"
     readonly property color ember: "#ff6537"
     readonly property color emberLight: "#ff9a73"
     readonly property color forgeGold: "#d9ad5f"
@@ -44,10 +46,15 @@ PanelWindow {
     }
 
     function runMenuAction(action) {
-        if (action === "Back to Game" || action === "Resume Game")
-            root.overlayActive = false;
-        else if (action === "Exit Game")
-            root.killGame();
+        if (action === "Back to Game" || action === "Resume Game") {
+            if (closeHandler)
+                closeHandler();
+
+        } else if (action === "Exit Game") {
+            if (killHandler)
+                killHandler();
+
+        }
     }
 
     color: "transparent"
@@ -162,7 +169,7 @@ PanelWindow {
         }
 
         ListElement {
-            icon: "🔧"
+            icon: "⌘"
             label: "Tools"
             title: "RUNTIME TOOLS"
             hint: "Logs, compatibility, repair, and developer test helpers."
@@ -188,7 +195,7 @@ PanelWindow {
         }
 
         ListElement {
-            icon: "👥"
+            icon: "◉"
             label: "Friends"
             title: "ANVIL FRIENDS"
             hint: "Friends, chats, parties, invites, and pinned groups."
@@ -214,7 +221,7 @@ PanelWindow {
         }
 
         ListElement {
-            icon: "🎮"
+            icon: "◇"
             label: "Controller"
             title: "ANVIL INPUT"
             hint: "Input profiles, glyphs, rumble, and layout switching."
@@ -282,7 +289,7 @@ PanelWindow {
 
     Rectangle {
         anchors.fill: parent
-        color: "#bc050403"
+        color: "#c5050609"
     }
 
     Rectangle {
@@ -291,17 +298,17 @@ PanelWindow {
         gradient: Gradient {
             GradientStop {
                 position: 0
-                color: "#da130806"
+                color: "#d60b1016"
             }
 
             GradientStop {
                 position: 0.48
-                color: "#8f130d0a"
+                color: "#90111720"
             }
 
             GradientStop {
                 position: 1
-                color: "#e0040303"
+                color: "#ea050609"
             }
 
         }
@@ -351,8 +358,8 @@ PanelWindow {
             width: 86
             height: 26
             radius: 2
-            color: "#332119"
-            border.color: "#6b3b27"
+            color: "#17212a"
+            border.color: stroke
 
             Text {
                 anchors.centerIn: parent
@@ -405,8 +412,8 @@ PanelWindow {
             width: 38
             height: 38
             radius: 2
-            color: "#332119"
-            border.color: "#6b3b27"
+            color: "#17212a"
+            border.color: stroke
 
             Text {
                 anchors.centerIn: parent
@@ -432,7 +439,7 @@ PanelWindow {
         width: 148
         height: 50
         radius: 6
-        color: "#22140e"
+        color: "#121820"
         border.color: ember
         z: 22
 
@@ -474,7 +481,7 @@ PanelWindow {
             height: model.wide ? 178 : 252
             radius: 4
             color: panel
-            border.color: selectedDockIndex === index ? ember : "#1a0e0a"
+            border.color: selectedDockIndex === index ? ember : stroke
             visible: moduleVisible(model.label)
             z: selectedDockIndex === index ? 18 : 12
             clip: true
@@ -493,7 +500,7 @@ PanelWindow {
                 anchors.top: parent.top
                 anchors.topMargin: 3
                 height: 48
-                color: "#34241c"
+                color: "#18212a"
 
                 MouseArea {
                     anchors.fill: parent
@@ -517,7 +524,7 @@ PanelWindow {
                         width: 30
                         height: 30
                         radius: 3
-                        color: "#1a100d"
+                        color: "#0d131a"
                         border.color: ember
 
                         Text {
@@ -564,7 +571,7 @@ PanelWindow {
                 anchors.right: parent.right
                 anchors.top: moduleHeader.bottom
                 height: 38
-                color: "#251b16"
+                color: "#101820"
 
                 Rectangle {
                     anchors.left: parent.left
@@ -627,7 +634,7 @@ PanelWindow {
                     width: parent.width
                     height: 6
                     radius: 3
-                    color: "#2d211b"
+                    color: "#27313a"
 
                     Rectangle {
                         anchors.left: parent.left
@@ -680,8 +687,8 @@ PanelWindow {
                 width: model.icon.length > 1 ? 44 : 38
                 height: 38
                 radius: 2
-                color: moduleVisible(model.label) ? ember : "#2a211d"
-                border.color: selectedDockIndex === index ? emberLight : "#5b392a"
+                color: moduleVisible(model.label) ? ember : "#17212a"
+                border.color: selectedDockIndex === index ? emberLight : stroke
                 border.width: selectedDockIndex === index ? 2 : 1
                 scale: selectedDockIndex === index ? 1.08 : 1
 

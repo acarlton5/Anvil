@@ -65,6 +65,12 @@ ShellRoot {
             model: Quickshell.screens
 
             AnvilOverlay {
+                closeHandler: function() {
+                    root.overlayActive = false;
+                }
+                killHandler: function() {
+                    root.killGame();
+                }
             }
 
         }
