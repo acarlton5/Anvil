@@ -15,6 +15,7 @@ Usage:
 import argparse
 import json
 import os
+import shlex
 import sys
 import re
 import urllib.request
@@ -25,6 +26,8 @@ from pathlib import Path
 # Where to look for mounted game drives
 MEDIA_ROOTS = ["/run/media"]
 GAMES_DIR_NAME = "Games"
+ANVIL_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_RUNNER = ANVIL_ROOT / "scripts" / "anvil-proton-run"
 
 # SteamGridDB API
 SGDB_API_BASE = "https://www.steamgriddb.com/api/v2"
@@ -151,9 +154,17 @@ def build_game_entry(cartridge, game_path, drive_root):
     # Build the launch command for anvil-proton-run
     launch_cmd = ""
     if abs_exe:
-        launch_cmd = (
-            f"anvil-proton-run '{name}' '{proton}' '{abs_exe}' {clean_options}"
-        )
+        runner = os.environ.get("ANVIL_PROTON_RUN", "")
+        if not runner:
+            runner = str(DEFAULT_RUNNER if DEFAULT_RUNNER.is_file() else "anvil-proton-run")
+        launch_cmd = " ".join([
+            shlex.quote(runner),
+            shlex.quote(name),
+            shlex.quote(proton),
+            shlex.quote(abs_exe),
+        ])
+        if clean_options:
+            launch_cmd = f"{launch_cmd} {clean_options}"
 
     # Check for artwork
     artwork_dir = os.path.join(game_path, "artwork")

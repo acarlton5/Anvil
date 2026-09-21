@@ -65,4 +65,11 @@ DESKTOP
 sudo install -D -m 644 "$desktop_file" /usr/share/wayland-sessions/anvil.desktop
 unlink "$desktop_file"
 
+for legacy_path in \
+    /usr/local/share/wayland-sessions/hypeshell-gamermode.desktop \
+    /usr/share/wayland-sessions/hypeshell-gamermode.desktop \
+    /usr/local/bin/hypeshell-gamer-session; do
+    sudo sh -c '[ ! -e "$1" ] || unlink "$1"' sh "$legacy_path"
+done
+
 echo "Anvil session installed. Log out and choose Anvil from the greeter."
