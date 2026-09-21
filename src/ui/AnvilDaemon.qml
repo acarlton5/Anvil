@@ -44,6 +44,9 @@ ShellRoot {
             model: Quickshell.screens
 
             AnvilLauncher {
+                launchHandler: function(command) {
+                    root.startGame(command);
+                }
             }
 
         }

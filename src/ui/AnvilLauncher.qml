@@ -7,6 +7,7 @@ PanelWindow {
     id: anvil
 
     property var modelData: null
+    property var launchHandler: null
     readonly property string localRoot: decodeURIComponent(Qt.resolvedUrl("../../").toString()).replace("file://", "").replace(/\/$/, "")
     readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || localRoot
     readonly property string bridgePath: anvilRoot + "/src/daemon/anvil-library-bridge"
@@ -98,7 +99,11 @@ PanelWindow {
 
         gameIsLoading = true;
         console.log("Launching: " + game.name);
-        launcher.command = ["qs", "-p", daemonPath, "ipc", "call", "anvil", "launch", game.launch_command];
+        if (launchHandler) {
+            launchHandler(game.launch_command);
+            return ;
+        }
+        launcher.command = ["qs", "ipc", "-p", daemonPath, "call", "anvil", "launch", game.launch_command];
         launcher.running = true;
     }
 
