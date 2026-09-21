@@ -22,8 +22,8 @@ PanelWindow {
     readonly property color forgeGold: "#d9ad5f"
     readonly property color relayBlue: "#66b8ff"
     readonly property color green: "#65d797"
+    readonly property int sidebarWidth: 244
     property int activeSection: Number(Quickshell.env("ANVIL_SECTION") || 0)
-    property bool navOpen: false
     property bool powerMenuActive: false
     property bool gameIsLoading: false
     property bool libraryScanRunning: true
@@ -60,7 +60,13 @@ PanelWindow {
 
     function selectSection(index) {
         activeSection = Math.max(0, Math.min(index, navModel.count - 1));
-        navOpen = false;
+    }
+
+    function currentSectionLabel() {
+        if (navModel.count === 0)
+            return "Home";
+
+        return navModel.get(Math.max(0, Math.min(activeSection, navModel.count - 1))).label;
     }
 
     function launchGame() {
@@ -97,30 +103,37 @@ PanelWindow {
 
         ListElement {
             label: "Home"
+            icon: "A"
         }
 
         ListElement {
             label: "Library"
+            icon: "L"
         }
 
         ListElement {
             label: "Store"
+            icon: "S"
         }
 
         ListElement {
             label: "Community"
+            icon: "C"
         }
 
         ListElement {
             label: "Forgeworks"
+            icon: "F"
         }
 
         ListElement {
             label: "Downloads"
+            icon: "D"
         }
 
         ListElement {
             label: "Settings"
+            icon: "G"
         }
 
     }
@@ -375,78 +388,33 @@ PanelWindow {
 
         Row {
             anchors.left: parent.left
-            anchors.leftMargin: 54
+            anchors.leftMargin: sidebarWidth + 32
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 11
-
-            Rectangle {
-                width: 34
-                height: 34
-                radius: 8
-                color: "#1a1412"
-                border.color: ember
-                border.width: 1
-
-                Text {
-                    anchors.centerIn: parent
-                    text: "A"
-                    color: emberLight
-                    font.pixelSize: 21
-                    font.bold: true
-                }
-
-            }
+            spacing: 12
 
             Text {
                 anchors.verticalCenter: parent.verticalCenter
-                text: "ANVIL"
-                color: fg
-                font.pixelSize: 15
+                text: currentSectionLabel()
+                color: "#d7dbde"
+                font.pixelSize: 18
                 font.bold: true
                 font.letterSpacing: 0
             }
 
-        }
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "/"
+                color: "#46515c"
+                font.pixelSize: 16
+                font.bold: true
+            }
 
-        Row {
-            anchors.centerIn: parent
-            spacing: 4
-
-            Repeater {
-                model: navModel
-
-                Rectangle {
-                    width: 108
-                    height: 42
-                    radius: 8
-                    color: activeSection === index ? "#22ffffff" : "transparent"
-                    border.color: activeSection === index ? "#33ffffff" : "transparent"
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: model.label
-                        color: activeSection === index ? fg : muted
-                        font.pixelSize: 13
-                        font.bold: true
-                    }
-
-                    Rectangle {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.bottom: parent.bottom
-                        anchors.bottomMargin: 4
-                        width: 52
-                        height: 2
-                        color: ember
-                        visible: activeSection === index
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: selectSection(index)
-                    }
-
-                }
-
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: activeSection === 4 ? "Forgeworks mock" : "Anvil Session mock"
+                color: muted
+                font.pixelSize: 13
+                font.bold: true
             }
 
         }
@@ -492,6 +460,178 @@ PanelWindow {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: powerMenuActive = !powerMenuActive
+                }
+
+            }
+
+        }
+
+    }
+
+    Rectangle {
+        id: sideNav
+
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.bottom: bottomHints.top
+        width: sidebarWidth
+        color: "#f0070a0e"
+        border.color: "#26313c"
+        z: 24
+
+        Column {
+            anchors.fill: parent
+            anchors.margins: 20
+            spacing: 12
+
+            Row {
+                width: parent.width
+                height: 48
+                spacing: 12
+
+                Rectangle {
+                    width: 42
+                    height: 42
+                    radius: 8
+                    color: "#1b1411"
+                    border.color: ember
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "A"
+                        color: emberLight
+                        font.pixelSize: 24
+                        font.bold: true
+                    }
+
+                }
+
+                Column {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width - 54
+                    spacing: 2
+
+                    Text {
+                        text: "ANVIL"
+                        color: fg
+                        font.pixelSize: 18
+                        font.bold: true
+                    }
+
+                    Text {
+                        text: "Legend Forge"
+                        color: muted
+                        font.pixelSize: 11
+                        font.bold: true
+                    }
+
+                }
+
+            }
+
+            Rectangle {
+                width: parent.width
+                height: 1
+                color: "#26313c"
+            }
+
+            Repeater {
+                model: navModel
+
+                Rectangle {
+                    width: parent.width
+                    height: 44
+                    radius: 8
+                    color: activeSection === index ? "#242026" : "transparent"
+                    border.color: activeSection === index ? ember : "transparent"
+
+                    Row {
+                        anchors.fill: parent
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 12
+                        spacing: 12
+
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 32
+                            height: 30
+                            radius: 8
+                            color: activeSection === index ? ember : "#151b22"
+                            border.color: activeSection === index ? ember : "#2d3844"
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: model.icon
+                                color: activeSection === index ? "#160b07" : muted
+                                font.pixelSize: 13
+                                font.bold: true
+                            }
+
+                        }
+
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: model.label
+                            color: activeSection === index ? fg : muted
+                            font.pixelSize: 15
+                            font.bold: activeSection === index
+                            width: parent.width - 58
+                            elide: Text.ElideRight
+                        }
+
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: selectSection(index)
+                    }
+
+                }
+
+            }
+
+            Item {
+                width: parent.width
+                height: Math.max(0, sideNav.height - 40 - 48 - 12 - 1 - 12 - navModel.count * 56 - 96)
+            }
+
+            Rectangle {
+                width: parent.width
+                height: 90
+                radius: 8
+                color: "#121820"
+                border.color: line
+
+                Column {
+                    anchors.fill: parent
+                    anchors.margins: 14
+                    spacing: 7
+
+                    Text {
+                        text: mediaStatusLabel
+                        color: green
+                        font.pixelSize: 13
+                        font.bold: true
+                        width: parent.width
+                        elide: Text.ElideRight
+                    }
+
+                    Text {
+                        text: updateStatusLabel
+                        color: updateAvailable ? emberLight : muted
+                        font.pixelSize: 12
+                        width: parent.width
+                        elide: Text.ElideRight
+                    }
+
+                    Text {
+                        text: libraryScanRunning ? "Preparing library" : gameModel.count + " games indexed"
+                        color: muted
+                        font.pixelSize: 12
+                        width: parent.width
+                        elide: Text.ElideRight
+                    }
+
                 }
 
             }
@@ -594,7 +734,7 @@ PanelWindow {
             id: heroCopy
 
             anchors.left: parent.left
-            anchors.leftMargin: 72
+            anchors.leftMargin: sidebarWidth + 34
             anchors.top: parent.top
             anchors.topMargin: 148
             width: Math.min(720, parent.width * 0.44)
@@ -786,7 +926,7 @@ PanelWindow {
 
             Text {
                 anchors.left: parent.left
-                anchors.leftMargin: 72
+                anchors.leftMargin: sidebarWidth + 34
                 anchors.top: parent.top
                 text: activeSection === 0 ? "Recently Indexed" : "Store Preview"
                 color: fg
@@ -803,19 +943,18 @@ PanelWindow {
                 height: 198
                 orientation: ListView.Horizontal
                 spacing: 14
-                leftMargin: 72
+                leftMargin: sidebarWidth + 34
                 rightMargin: 72
                 model: gameModel
                 currentIndex: selectedGameIndex
-                focus: !navOpen && !powerMenuActive && activeSection === 0
-                preferredHighlightBegin: 72
-                preferredHighlightEnd: 384
+                focus: !powerMenuActive && activeSection === 0
+                preferredHighlightBegin: sidebarWidth + 34
+                preferredHighlightEnd: sidebarWidth + 346
                 highlightRangeMode: ListView.StrictlyEnforceRange
                 Keys.onLeftPressed: decrementCurrentIndex()
                 Keys.onRightPressed: incrementCurrentIndex()
                 onCurrentIndexChanged: selectedGameIndex = currentIndex
                 Keys.onReturnPressed: launchGame()
-                Keys.onTabPressed: navOpen = true
                 Keys.onEscapePressed: powerMenuActive = false
 
                 delegate: Rectangle {
@@ -966,7 +1105,7 @@ PanelWindow {
 
         Row {
             anchors.left: parent.left
-            anchors.leftMargin: 54
+            anchors.leftMargin: sidebarWidth + 34
             anchors.right: parent.right
             anchors.rightMargin: 54
             anchors.top: parent.top
@@ -1027,7 +1166,7 @@ PanelWindow {
                         model: gameModel
                         currentIndex: selectedGameIndex
                         clip: true
-                        focus: activeSection === 1 && !navOpen && !powerMenuActive
+                        focus: activeSection === 1 && !powerMenuActive
                         Keys.onUpPressed: {
                             decrementCurrentIndex();
                             selectedGameIndex = currentIndex;
@@ -1037,7 +1176,6 @@ PanelWindow {
                             selectedGameIndex = currentIndex;
                         }
                         Keys.onReturnPressed: launchGame()
-                        Keys.onTabPressed: navOpen = true
 
                         delegate: Rectangle {
                             width: libraryList.width
@@ -1354,7 +1492,7 @@ PanelWindow {
 
         Row {
             anchors.left: parent.left
-            anchors.leftMargin: 72
+            anchors.leftMargin: sidebarWidth + 34
             anchors.right: parent.right
             anchors.rightMargin: 72
             anchors.top: parent.top
@@ -1545,7 +1683,7 @@ PanelWindow {
 
         Row {
             anchors.left: parent.left
-            anchors.leftMargin: 72
+            anchors.leftMargin: sidebarWidth + 34
             anchors.right: parent.right
             anchors.rightMargin: 72
             anchors.top: parent.top
@@ -1692,7 +1830,7 @@ PanelWindow {
 
         Row {
             anchors.left: parent.left
-            anchors.leftMargin: 72
+            anchors.leftMargin: sidebarWidth + 34
             anchors.right: parent.right
             anchors.rightMargin: 72
             anchors.top: parent.top
@@ -1877,7 +2015,7 @@ PanelWindow {
 
         Column {
             anchors.left: parent.left
-            anchors.leftMargin: 72
+            anchors.leftMargin: sidebarWidth + 34
             anchors.right: parent.right
             anchors.rightMargin: 72
             anchors.top: parent.top
@@ -1981,7 +2119,7 @@ PanelWindow {
 
         Column {
             anchors.left: parent.left
-            anchors.leftMargin: 72
+            anchors.leftMargin: sidebarWidth + 34
             anchors.right: parent.right
             anchors.rightMargin: 72
             anchors.top: parent.top
@@ -1996,6 +2134,8 @@ PanelWindow {
             }
 
             Grid {
+                id: settingsGrid
+
                 width: parent.width
                 columns: 2
                 rowSpacing: 14
@@ -2005,7 +2145,7 @@ PanelWindow {
                     model: settingsModel
 
                     Rectangle {
-                        width: (settingsPage.width - 158) / 2
+                        width: (settingsGrid.width - 14) / 2
                         height: 154
                         radius: 8
                         color: "#dd12171d"
@@ -2056,14 +2196,13 @@ PanelWindow {
     Rectangle {
         anchors.fill: parent
         color: "#dd05070b"
-        opacity: navOpen || powerMenuActive ? 1 : 0
+        opacity: powerMenuActive ? 1 : 0
         visible: opacity > 0
         z: 30
 
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                navOpen = false;
                 powerMenuActive = false;
             }
         }
@@ -2071,70 +2210,6 @@ PanelWindow {
         Behavior on opacity {
             NumberAnimation {
                 duration: 160
-            }
-
-        }
-
-    }
-
-    Rectangle {
-        id: navRail
-
-        width: 320
-        anchors.top: topbar.bottom
-        anchors.bottom: bottomHints.top
-        x: navOpen ? 0 : -width
-        color: "#f00d1118"
-        border.color: line
-        z: 40
-
-        Column {
-            anchors.fill: parent
-            anchors.margins: 24
-            spacing: 18
-
-            Text {
-                text: "Anvil"
-                color: fg
-                font.pixelSize: 30
-                font.bold: true
-            }
-
-            Repeater {
-                model: navModel
-
-                Rectangle {
-                    width: parent.width
-                    height: 54
-                    radius: 9
-                    color: activeSection === index ? "#22ffffff" : "transparent"
-                    border.color: activeSection === index ? ember : "transparent"
-
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.left: parent.left
-                        anchors.leftMargin: 16
-                        text: model.label
-                        color: activeSection === index ? fg : muted
-                        font.pixelSize: 18
-                        font.bold: activeSection === index
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: selectSection(index)
-                    }
-
-                }
-
-            }
-
-        }
-
-        Behavior on x {
-            NumberAnimation {
-                duration: 220
-                easing.type: Easing.OutCubic
             }
 
         }
