@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+"""
+constellation-bridge — Thin wrapper invoked by the QML UI.
+
+Scans all game drives and outputs the JSON library to stdout, then exits.
+The QML Process component reads stdout and parses the JSON.
+"""
+import sys
+import os
+
+# Add the daemon directory to the path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from constellation import find_game_drives, scan_games
+import json
+
+def main():
+    drives = find_game_drives()
+    if not drives:
+        print("[]")
+        return
+
+    games = scan_games(drives)
+    print(json.dumps(games))
+
+if __name__ == "__main__":
+    main()

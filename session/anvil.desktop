@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Anvil OS
+Comment=High-performance Wayland session for gaming
+Exec=sh -lc 'root="${ANVIL_ROOT:-$HOME/Projects/Projects/Anvil}"; [ -d "$root" ] || root="$HOME/DevBox/Projects/Anvil"; exec "$root/session/anvil-session.sh"'
+Type=Application
+DesktopNames=Anvil

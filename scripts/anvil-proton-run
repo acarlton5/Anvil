@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -lt 3 ]]; then
+    echo "usage: anvil-proton-run GAME_NAME PROTON_TARGET EXE_PATH [LAUNCH_OPTIONS...]" >&2
+    exit 64
+fi
+
+game_name="$1"
+proton_target="$2"
+exe_path="$3"
+shift 3
+options="$*"
+
+steam_dir="${STEAM_DIR:-$HOME/.local/share/Steam}"
+prefix_dir="${ANVIL_PREFIX_DIR:-$HOME/.local/share/anvil/prefixes/$game_name}"
+
+mkdir -p "$prefix_dir"
+
+if [[ "$proton_target" == "GE-Proton"* ]]; then
+    proton_bin="$(find "$steam_dir/compatibilitytools.d" -maxdepth 1 -type d -name 'GE-Proton*' 2>/dev/null | sort | tail -n 1)/proton"
+elif [[ "$proton_target" == *"Experimental"* ]]; then
+    proton_bin="$steam_dir/steamapps/common/Proton - Experimental/proton"
+else
+    proton_bin="$(find "$steam_dir/compatibilitytools.d" -maxdepth 1 -type d -name 'GE-Proton*' 2>/dev/null | sort | tail -n 1)/proton"
+fi
+
+if [[ ! -f "$proton_bin" ]]; then
+    echo "ERROR: Proton binary not found for '$proton_target'." >&2
+    exit 1
+fi
+
+export STEAM_COMPAT_DATA_PATH="$prefix_dir"
+export STEAM_COMPAT_CLIENT_INSTALL_PATH="$steam_dir"
+
+eval "$options" "\"$proton_bin\"" run "\"$exe_path\""
