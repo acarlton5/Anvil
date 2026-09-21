@@ -7,10 +7,13 @@ PanelWindow {
 
     property var modelData: null
     readonly property color ink: "#f4f8ff"
-    readonly property color muted: "#a7b0bd"
-    readonly property color panel: "#20242c"
-    readonly property color stroke: "#384350"
-    readonly property color accent: "#24a7ff"
+    readonly property color muted: "#b4aaa3"
+    readonly property color panel: "#201b18"
+    readonly property color stroke: "#4a3329"
+    readonly property color accent: "#ff6537"
+    readonly property color ember: "#ff6537"
+    readonly property color emberLight: "#ff9a73"
+    readonly property color forgeGold: "#d9ad5f"
     property int selectedDockIndex: 9
 
     function runMenuAction(action) {
@@ -32,7 +35,17 @@ PanelWindow {
     WlrLayershell.exclusiveZone: -1
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     WlrLayershell.namespace: "anvil-overlay"
-    Component.onCompleted: friendsPanel.forceActiveFocus()
+    Component.onCompleted: {
+        friendsPanel.x = (overlayWindow.width - friendsPanel.width) / 2;
+        friendsPanel.y = Math.max(118, overlayWindow.height * 0.12);
+        forgePulse.x = overlayWindow.width - forgePulse.width - 76;
+        forgePulse.y = Math.max(132, overlayWindow.height * 0.18);
+        cartridgeWidget.x = 36;
+        cartridgeWidget.y = Math.max(154, overlayWindow.height * 0.22);
+        sessionWidget.x = overlayWindow.width - sessionWidget.width - 90;
+        sessionWidget.y = Math.max(368, overlayWindow.height * 0.48);
+        friendsPanel.forceActiveFocus();
+    }
 
     anchors {
         top: true
@@ -47,29 +60,29 @@ PanelWindow {
         ListElement {
             icon: "ⓘ"
             label: "Info"
-            title: "SESSION INFO"
-            hint: "Runtime, network, and active game state."
+            title: "ANVIL SESSION"
+            hint: "Session, runtime, network, and cartridge state."
             line1: "Anvil Session / overlay test"
             line2: "Current game: local cartridge preview"
-            line3: "Network: Constellation relay mock"
+            line3: "Relay: Constellation path mock"
         }
 
         ListElement {
             icon: "⚙"
             label: "Settings"
-            title: "QUICK SETTINGS"
-            hint: "Audio, display, notifications, and overlay behavior."
+            title: "FORGE SETTINGS"
+            hint: "Audio, display, notifications, and overlay temper."
             line1: "Performance mode: on"
-            line2: "Overlay opacity: 82%"
-            line3: "Notifications: friends and invites"
+            line2: "Overlay heat: 82%"
+            line3: "Alerts: friends and invites"
         }
 
         ListElement {
             icon: "✎"
             label: "Notes"
-            title: "NOTES"
-            hint: "Scratchpad, guide notes, and per-game reminders."
-            line1: "Pin build notes beside the game"
+            title: "FORGE NOTES"
+            hint: "Scratchpad, guide notes, and per-cartridge reminders."
+            line1: "Pin runtime notes beside the game"
             line2: "Add launch options and Proton notes"
             line3: "Sync notes through Anvil Cloud later"
         }
@@ -87,8 +100,8 @@ PanelWindow {
         ListElement {
             icon: "▤"
             label: "News"
-            title: "NEWS"
-            hint: "Patch notes, events, updates, and developer posts."
+            title: "ANVIL NEWS"
+            hint: "Patch notes, events, updates, and Forge posts."
             line1: "Anvil overlay mock updated"
             line2: "Forgeworks naming pass complete"
             line3: "Cartridge scan detects 49 games"
@@ -97,7 +110,7 @@ PanelWindow {
         ListElement {
             icon: "▣"
             label: "Chat"
-            title: "CHAT"
+            title: "ANVIL CHAT"
             hint: "Messages, party voice, invites, and group chats."
             line1: "SALVATION / group chat"
             line2: "Mira: browsing Forge Front"
@@ -107,7 +120,7 @@ PanelWindow {
         ListElement {
             icon: "↓"
             label: "Download"
-            title: "DOWNLOADS"
+            title: "FORGEPIPE"
             hint: "Installs, updates, verification, repair, and rollback."
             line1: "Cartridge scan: live"
             line2: "Client update: mock queue"
@@ -117,7 +130,7 @@ PanelWindow {
         ListElement {
             icon: "🔧"
             label: "Tools"
-            title: "TOOLS"
+            title: "RUNTIME TOOLS"
             hint: "Logs, compatibility, repair, and developer test helpers."
             line1: "Open game logs"
             line2: "Verify cartridge manifest"
@@ -127,7 +140,7 @@ PanelWindow {
         ListElement {
             icon: "▧"
             label: "Pictures"
-            title: "MEDIA"
+            title: "ANVIL CAPTURE"
             hint: "Screenshots, clips, capture gallery, and sharing."
             line1: "Screenshots: 0 this session"
             line2: "Last clip: none"
@@ -137,7 +150,7 @@ PanelWindow {
         ListElement {
             icon: "👥"
             label: "Friends"
-            title: "FRIENDS"
+            title: "ANVIL FRIENDS"
             hint: "Friends, chats, parties, invites, and pinned groups."
             line1: "+Offline [5]"
             line2: "SALVATION / group chat"
@@ -157,7 +170,7 @@ PanelWindow {
         ListElement {
             icon: "🎮"
             label: "Controller"
-            title: "CONTROLLER"
+            title: "ANVIL INPUT"
             hint: "Input profiles, glyphs, rumble, and layout switching."
             line1: "Profile: Gamepad default"
             line2: "Rumble: enabled"
@@ -187,7 +200,7 @@ PanelWindow {
         ListElement {
             icon: "⚙"
             label: "System"
-            title: "SYSTEM"
+            title: "SESSION SYSTEM"
             hint: "Power, network, display, Bluetooth, and session status."
             line1: "Mode: Anvil Session"
             line2: "Network: Tailscale online"
@@ -208,7 +221,7 @@ PanelWindow {
 
     Rectangle {
         anchors.fill: parent
-        color: "#b805070b"
+        color: "#bc050403"
     }
 
     Rectangle {
@@ -217,17 +230,17 @@ PanelWindow {
         gradient: Gradient {
             GradientStop {
                 position: 0
-                color: "#d006080d"
+                color: "#da130806"
             }
 
             GradientStop {
                 position: 0.48
-                color: "#99080c12"
+                color: "#8f130d0a"
             }
 
             GradientStop {
                 position: 1
-                color: "#e005070b"
+                color: "#e0040303"
             }
 
         }
@@ -239,7 +252,7 @@ PanelWindow {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         width: 250
-        color: "#55070a0f"
+        color: "#55110806"
     }
 
     Column {
@@ -274,8 +287,8 @@ PanelWindow {
             width: 86
             height: 26
             radius: 2
-            color: "#27313d"
-            border.color: "#3b4653"
+            color: "#332119"
+            border.color: "#6b3b27"
 
             Text {
                 anchors.centerIn: parent
@@ -328,8 +341,8 @@ PanelWindow {
             width: 38
             height: 38
             radius: 2
-            color: "#303642"
-            border.color: "#46515f"
+            color: "#332119"
+            border.color: "#6b3b27"
 
             Text {
                 anchors.centerIn: parent
@@ -348,29 +361,212 @@ PanelWindow {
 
     }
 
-    Text {
+    Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: 38
-        text: "ANVIL"
-        color: "#dde8f5"
-        opacity: 0.9
-        font.pixelSize: 32
-        font.bold: true
+        anchors.topMargin: 34
+        width: 148
+        height: 50
+        radius: 6
+        color: "#22140e"
+        border.color: ember
         z: 8
+
+        Row {
+            anchors.centerIn: parent
+            spacing: 9
+
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "◆"
+                color: emberLight
+                font.pixelSize: 24
+                font.bold: true
+            }
+
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "ANVIL"
+                color: ink
+                font.pixelSize: 22
+                font.bold: true
+            }
+
+        }
+
+    }
+
+    Rectangle {
+        id: cartridgeWidget
+
+        width: 238
+        height: 126
+        radius: 4
+        color: "#d016100d"
+        border.color: "#583324"
+        z: 11
+
+        Rectangle {
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: 4
+            color: ember
+        }
+
+        Column {
+            anchors.fill: parent
+            anchors.margins: 14
+            spacing: 7
+
+            Text {
+                text: "CARTRIDGE"
+                color: forgeGold
+                font.pixelSize: 11
+                font.bold: true
+            }
+
+            Text {
+                text: "Local Library"
+                color: ink
+                font.pixelSize: 20
+                font.bold: true
+            }
+
+            Text {
+                text: "49 games indexed / removable media ready"
+                color: muted
+                font.pixelSize: 12
+                wrapMode: Text.WordWrap
+                width: parent.width
+            }
+
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            drag.target: cartridgeWidget
+            onPressed: cartridgeWidget.z = 20
+            onReleased: cartridgeWidget.z = 11
+        }
+
+    }
+
+    Rectangle {
+        id: forgePulse
+
+        width: 258
+        height: 148
+        radius: 4
+        color: "#d018120f"
+        border.color: "#68402d"
+        z: 11
+
+        Column {
+            anchors.fill: parent
+            anchors.margins: 14
+            spacing: 9
+
+            Text {
+                text: "FORGE PULSE"
+                color: forgeGold
+                font.pixelSize: 11
+                font.bold: true
+            }
+
+            Row {
+                spacing: 8
+
+                Repeater {
+                    model: [0.86, 0.68, 0.74, 0.52, 0.91, 0.61]
+
+                    Rectangle {
+                        anchors.bottom: parent.bottom
+                        width: 18
+                        height: 74 * modelData
+                        radius: 2
+                        color: index === 4 ? ember : "#7a4934"
+                    }
+
+                }
+
+            }
+
+            Text {
+                text: "Runtime stable / overlay widgets unlocked"
+                color: muted
+                font.pixelSize: 12
+                width: parent.width
+                elide: Text.ElideRight
+            }
+
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            drag.target: forgePulse
+            onPressed: forgePulse.z = 20
+            onReleased: forgePulse.z = 11
+        }
+
+    }
+
+    Rectangle {
+        id: sessionWidget
+
+        width: 260
+        height: 132
+        radius: 4
+        color: "#d015100c"
+        border.color: "#5d3929"
+        z: 11
+
+        Column {
+            anchors.fill: parent
+            anchors.margins: 14
+            spacing: 8
+
+            Text {
+                text: "SESSION"
+                color: forgeGold
+                font.pixelSize: 11
+                font.bold: true
+            }
+
+            Text {
+                text: "Anvil Runtime"
+                color: ink
+                font.pixelSize: 20
+                font.bold: true
+            }
+
+            Text {
+                text: "Proton Experimental / overlay test mode / Shift+Tab ready"
+                color: muted
+                font.pixelSize: 12
+                wrapMode: Text.WordWrap
+                width: parent.width
+            }
+
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            drag.target: sessionWidget
+            onPressed: sessionWidget.z = 20
+            onReleased: sessionWidget.z = 11
+        }
+
     }
 
     Rectangle {
         id: friendsPanel
 
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
-        anchors.topMargin: Math.max(118, parent.height * 0.12)
         width: 306
         height: Math.min(635, parent.height - 220)
         radius: 2
         color: panel
-        border.color: "#11151b"
+        border.color: "#1a0e0a"
         z: 12
         clip: true
         focus: true
@@ -385,8 +581,24 @@ PanelWindow {
 
             Rectangle {
                 width: parent.width
-                height: 76
-                color: "#303843"
+                height: 3
+                color: ember
+            }
+
+            Rectangle {
+                width: parent.width
+                height: 73
+                color: "#34241c"
+
+                MouseArea {
+                    anchors.fill: parent
+                    drag.target: friendsPanel
+                    onPressed: friendsPanel.z = 20
+                    onReleased: {
+                        friendsPanel.z = 12;
+                        friendsPanel.forceActiveFocus();
+                    }
+                }
 
                 Row {
                     anchors.fill: parent
@@ -397,14 +609,14 @@ PanelWindow {
                         width: 54
                         height: 54
                         radius: 3
-                        color: "#48535f"
-                        border.color: "#6b7785"
+                        color: "#4a3124"
+                        border.color: "#8f5134"
 
                         Rectangle {
                             anchors.fill: parent
                             anchors.margins: 4
                             radius: 2
-                            color: "#6d8e77"
+                            color: ember
                             opacity: 0.55
                         }
 
@@ -425,7 +637,7 @@ PanelWindow {
 
                         Text {
                             text: activeDock().label
-                            color: "#83d48a"
+                            color: forgeGold
                             font.pixelSize: 11
                             font.bold: true
                         }
@@ -439,6 +651,13 @@ PanelWindow {
                         font.bold: true
                     }
 
+                    Text {
+                        text: "DRAG"
+                        color: "#8a776b"
+                        font.pixelSize: 9
+                        font.bold: true
+                    }
+
                 }
 
             }
@@ -446,7 +665,15 @@ PanelWindow {
             Rectangle {
                 width: parent.width
                 height: 43
-                color: "#252b34"
+                color: "#251b16"
+
+                Rectangle {
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    width: 3
+                    color: forgeGold
+                }
 
                 Column {
                     anchors.fill: parent
@@ -455,7 +682,7 @@ PanelWindow {
 
                     Text {
                         text: activeDock().hint
-                        color: "#20bfea"
+                        color: emberLight
                         font.pixelSize: 10
                         width: parent.width - 62
                         elide: Text.ElideRight
@@ -466,7 +693,7 @@ PanelWindow {
                         width: 54
                         height: 16
                         radius: 2
-                        color: "#179bc0"
+                        color: "#7d3d25"
 
                         Text {
                             anchors.centerIn: parent
@@ -485,7 +712,7 @@ PanelWindow {
             Rectangle {
                 width: parent.width
                 height: 27
-                color: "#616a75"
+                color: "#6b4a38"
 
                 Row {
                     anchors.fill: parent
@@ -533,7 +760,7 @@ PanelWindow {
             Rectangle {
                 width: parent.width
                 height: friendsPanel.height - 238
-                color: "#1d2028"
+                color: "#191411"
 
                 Text {
                     anchors.left: parent.left
@@ -571,7 +798,7 @@ PanelWindow {
             Rectangle {
                 width: parent.width
                 height: 34
-                color: "#5b6570"
+                color: "#5a3e30"
 
                 Row {
                     anchors.fill: parent
@@ -602,7 +829,7 @@ PanelWindow {
             Rectangle {
                 width: parent.width
                 height: 58
-                color: "#252d37"
+                color: "#241a15"
 
                 Row {
                     anchors.fill: parent
@@ -613,13 +840,13 @@ PanelWindow {
                         width: 30
                         height: 30
                         radius: 15
-                        color: "#202b38"
-                        border.color: "#7c49ff"
+                        color: "#1a100d"
+                        border.color: ember
 
                         Text {
                             anchors.centerIn: parent
                             text: activeDock().icon
-                            color: "#9e75ff"
+                            color: emberLight
                             font.pixelSize: activeDock().icon.length > 1 ? 11 : 16
                             font.bold: true
                         }
@@ -648,7 +875,7 @@ PanelWindow {
         anchors.bottom: dock.top
         anchors.bottomMargin: 10
         text: activeDock().label
-        color: "#dce8f5"
+        color: forgeGold
         opacity: 0.86
         font.pixelSize: 12
         font.bold: true
@@ -671,14 +898,14 @@ PanelWindow {
                 width: model.icon.length > 1 ? 44 : 38
                 height: 38
                 radius: 2
-                color: selectedDockIndex === index ? accent : "#27313d"
-                border.color: selectedDockIndex === index ? "#45bdff" : "#3c4652"
+                color: selectedDockIndex === index ? ember : "#2a211d"
+                border.color: selectedDockIndex === index ? emberLight : "#5b392a"
                 scale: selectedDockIndex === index ? 1.08 : 1
 
                 Text {
                     anchors.centerIn: parent
                     text: model.icon
-                    color: selectedDockIndex === index ? "#eef8ff" : "#d4dbe4"
+                    color: selectedDockIndex === index ? "#1b0903" : "#dccbc1"
                     font.pixelSize: model.icon.length > 1 ? 10 : 16
                     font.bold: true
                 }
