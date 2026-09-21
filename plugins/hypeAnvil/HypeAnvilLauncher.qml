@@ -52,6 +52,12 @@ Item {
             "action": "settings",
             "categories": ["Anvil"]
         }, {
+            "name": "Test Anvil Overlay",
+            "icon": "material:dashboard_customize",
+            "comment": "Open the in-game overlay mock by itself",
+            "action": "overlay-test",
+            "categories": ["Anvil"]
+        }, {
             "name": "Install Anvil Session",
             "icon": "material:install_desktop",
             "comment": "Install the dedicated Anvil Wayland session",
@@ -113,6 +119,10 @@ Item {
         }
         if (item.action === "settings") {
             runScript(["--section", "6"]);
+            return ;
+        }
+        if (item.action === "overlay-test") {
+            runScript(["--overlay-test"]);
             return ;
         }
         runScript([]);

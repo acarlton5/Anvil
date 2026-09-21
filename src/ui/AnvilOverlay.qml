@@ -17,12 +17,10 @@ PanelWindow {
     readonly property color accent: "#23d5e8"
 
     function runMenuAction(action) {
-        if (action === "Resume Game") {
+        if (action === "Resume Game")
             root.overlayActive = false;
-        } else if (action === "Exit Game") {
-            root.overlayActive = false;
-            killGameProcess.running = true;
-        }
+        else if (action === "Exit Game")
+            root.killGame();
     }
 
     color: "transparent"
@@ -490,12 +488,6 @@ PanelWindow {
             font.bold: true
         }
 
-    }
-
-    Process {
-        id: killGameProcess
-
-        command: ["killall", "anvil-proton-run"]
     }
 
 }

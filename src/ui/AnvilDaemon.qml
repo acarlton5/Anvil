@@ -6,8 +6,8 @@ import Quickshell.Wayland
 ShellRoot {
     id: root
 
-    property bool overlayActive: false
-    property bool gamerActive: true
+    property bool overlayActive: Quickshell.env("ANVIL_OVERLAY_TEST") === "1"
+    property bool gamerActive: Quickshell.env("ANVIL_OVERLAY_TEST") !== "1"
 
     function startGame(command) {
         console.log("Root starting game: " + command);

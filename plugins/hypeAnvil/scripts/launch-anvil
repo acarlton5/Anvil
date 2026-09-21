@@ -5,6 +5,7 @@ section=""
 fetch_art=0
 install_session=0
 logout_after_install=0
+overlay_test=0
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
@@ -14,6 +15,9 @@ while [ "$#" -gt 0 ]; do
             ;;
         --fetch-art)
             fetch_art=1
+            ;;
+        --overlay-test)
+            overlay_test=1
             ;;
         --install-session)
             install_session=1
@@ -119,6 +123,10 @@ fi
 
 if [ -n "$section" ]; then
     export ANVIL_SECTION="$section"
+fi
+
+if [ "$overlay_test" -eq 1 ]; then
+    export ANVIL_OVERLAY_TEST=1
 fi
 
 exec env ANVIL_ROOT="$anvil_root" qs -p "$anvil_root/src/ui/AnvilDaemon.qml"
