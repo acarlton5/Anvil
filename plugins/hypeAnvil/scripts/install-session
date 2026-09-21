@@ -31,15 +31,54 @@ if ! command -v sudo >/dev/null 2>&1; then
     exit 1
 fi
 
-sudo install -D -m 755 "$anvil_root/session/anvil-session.sh" /usr/local/bin/anvil-session
-sudo install -D -m 755 "$anvil_root/scripts/anvil-proton-run" /usr/local/bin/anvil-proton-run
-sudo install -D -m 755 "$anvil_root/session/anvil-session.sh" /usr/local/share/anvil/session/anvil-session.sh
-sudo install -D -m 644 "$anvil_root/session/hyprland-anvil.lua" /usr/local/share/anvil/session/hyprland-anvil.lua
-sudo install -D -m 644 "$anvil_root/src/ui/AnvilDaemon.qml" /usr/local/share/anvil/src/ui/AnvilDaemon.qml
-sudo install -D -m 644 "$anvil_root/src/ui/AnvilLauncher.qml" /usr/local/share/anvil/src/ui/AnvilLauncher.qml
-sudo install -D -m 644 "$anvil_root/src/ui/AnvilOverlay.qml" /usr/local/share/anvil/src/ui/AnvilOverlay.qml
-sudo install -D -m 755 "$anvil_root/src/daemon/constellation-bridge" /usr/local/share/anvil/src/daemon/constellation-bridge
-sudo install -D -m 644 "$anvil_root/src/daemon/constellation.py" /usr/local/share/anvil/src/daemon/constellation.py
+stage_dir="$(mktemp -d)"
+staged_paths=()
+STAGED_RESULT=""
+
+stage_file() {
+    local src="$1"
+    local rel="$2"
+    local dest="$stage_dir/$rel"
+    mkdir -p "$(dirname -- "$dest")"
+    cp "$src" "$dest"
+    staged_paths+=("$dest")
+    STAGED_RESULT="$dest"
+}
+
+cleanup_stage() {
+    for staged in "${staged_paths[@]}"; do
+        [ ! -e "$staged" ] || unlink "$staged"
+    done
+    find "$stage_dir" -depth -type d -empty -exec rmdir {} \; 2>/dev/null || true
+}
+trap cleanup_stage EXIT
+
+stage_file "$anvil_root/session/anvil-session.sh" session/anvil-session.sh
+session_src="$STAGED_RESULT"
+stage_file "$anvil_root/scripts/anvil-proton-run" scripts/anvil-proton-run
+runner_src="$STAGED_RESULT"
+stage_file "$anvil_root/session/hyprland-anvil.lua" session/hyprland-anvil.lua
+hypr_src="$STAGED_RESULT"
+stage_file "$anvil_root/src/ui/AnvilDaemon.qml" src/ui/AnvilDaemon.qml
+daemon_qml_src="$STAGED_RESULT"
+stage_file "$anvil_root/src/ui/AnvilLauncher.qml" src/ui/AnvilLauncher.qml
+launcher_qml_src="$STAGED_RESULT"
+stage_file "$anvil_root/src/ui/AnvilOverlay.qml" src/ui/AnvilOverlay.qml
+overlay_qml_src="$STAGED_RESULT"
+stage_file "$anvil_root/src/daemon/constellation-bridge" src/daemon/constellation-bridge
+bridge_src="$STAGED_RESULT"
+stage_file "$anvil_root/src/daemon/constellation.py" src/daemon/constellation.py
+constellation_src="$STAGED_RESULT"
+
+sudo install -D -m 755 "$session_src" /usr/local/bin/anvil-session
+sudo install -D -m 755 "$runner_src" /usr/local/bin/anvil-proton-run
+sudo install -D -m 755 "$session_src" /usr/local/share/anvil/session/anvil-session.sh
+sudo install -D -m 644 "$hypr_src" /usr/local/share/anvil/session/hyprland-anvil.lua
+sudo install -D -m 644 "$daemon_qml_src" /usr/local/share/anvil/src/ui/AnvilDaemon.qml
+sudo install -D -m 644 "$launcher_qml_src" /usr/local/share/anvil/src/ui/AnvilLauncher.qml
+sudo install -D -m 644 "$overlay_qml_src" /usr/local/share/anvil/src/ui/AnvilOverlay.qml
+sudo install -D -m 755 "$bridge_src" /usr/local/share/anvil/src/daemon/constellation-bridge
+sudo install -D -m 644 "$constellation_src" /usr/local/share/anvil/src/daemon/constellation.py
 
 session_wrapper="$(mktemp)"
 cat > "$session_wrapper" <<'WRAPPER'
