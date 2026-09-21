@@ -11,12 +11,17 @@ PanelWindow {
     readonly property color panel: "#20242c"
     readonly property color stroke: "#384350"
     readonly property color accent: "#24a7ff"
+    property int selectedDockIndex: 9
 
     function runMenuAction(action) {
         if (action === "Back to Game" || action === "Resume Game")
             root.overlayActive = false;
         else if (action === "Exit Game")
             root.killGame();
+    }
+
+    function activeDock() {
+        return dockModel.get(Math.max(0, Math.min(selectedDockIndex, dockModel.count - 1)));
     }
 
     color: "transparent"
@@ -27,6 +32,7 @@ PanelWindow {
     WlrLayershell.exclusiveZone: -1
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     WlrLayershell.namespace: "anvil-overlay"
+    Component.onCompleted: friendsPanel.forceActiveFocus()
 
     anchors {
         top: true
@@ -39,99 +45,163 @@ PanelWindow {
         id: dockModel
 
         ListElement {
-            icon: "i"
+            icon: "ⓘ"
             label: "Info"
-            active: false
+            title: "SESSION INFO"
+            hint: "Runtime, network, and active game state."
+            line1: "Anvil Session / overlay test"
+            line2: "Current game: local cartridge preview"
+            line3: "Network: Constellation relay mock"
         }
 
         ListElement {
-            icon: "*"
+            icon: "⚙"
             label: "Settings"
-            active: false
+            title: "QUICK SETTINGS"
+            hint: "Audio, display, notifications, and overlay behavior."
+            line1: "Performance mode: on"
+            line2: "Overlay opacity: 82%"
+            line3: "Notifications: friends and invites"
         }
 
         ListElement {
-            icon: "/"
+            icon: "✎"
             label: "Notes"
-            active: false
+            title: "NOTES"
+            hint: "Scratchpad, guide notes, and per-game reminders."
+            line1: "Pin build notes beside the game"
+            line2: "Add launch options and Proton notes"
+            line3: "Sync notes through Anvil Cloud later"
         }
 
         ListElement {
-            icon: "T"
+            icon: "◷"
             label: "Timer"
-            active: false
+            title: "SESSION TIMER"
+            hint: "Playtime, break reminders, and family limits."
+            line1: "This session: 6 minutes"
+            line2: "Today: 42 minutes"
+            line3: "Break reminder: disabled"
         }
 
         ListElement {
-            icon: "N"
+            icon: "▤"
             label: "News"
-            active: false
+            title: "NEWS"
+            hint: "Patch notes, events, updates, and developer posts."
+            line1: "Anvil overlay mock updated"
+            line2: "Forgeworks naming pass complete"
+            line3: "Cartridge scan detects 49 games"
         }
 
         ListElement {
-            icon: "C"
+            icon: "▣"
             label: "Chat"
-            active: false
+            title: "CHAT"
+            hint: "Messages, party voice, invites, and group chats."
+            line1: "SALVATION / group chat"
+            line2: "Mira: browsing Forge Front"
+            line3: "Jordan: in Anvil Session"
         }
 
         ListElement {
-            icon: "D"
+            icon: "↓"
             label: "Download"
-            active: false
+            title: "DOWNLOADS"
+            hint: "Installs, updates, verification, repair, and rollback."
+            line1: "Cartridge scan: live"
+            line2: "Client update: mock queue"
+            line3: "Forgepipe install: design"
         }
 
         ListElement {
-            icon: "W"
+            icon: "🔧"
             label: "Tools"
-            active: false
+            title: "TOOLS"
+            hint: "Logs, compatibility, repair, and developer test helpers."
+            line1: "Open game logs"
+            line2: "Verify cartridge manifest"
+            line3: "Restart Anvil Runtime"
         }
 
         ListElement {
-            icon: "P"
+            icon: "▧"
             label: "Pictures"
-            active: false
+            title: "MEDIA"
+            hint: "Screenshots, clips, capture gallery, and sharing."
+            line1: "Screenshots: 0 this session"
+            line2: "Last clip: none"
+            line3: "Storage: local preview"
         }
 
         ListElement {
-            icon: "F"
+            icon: "👥"
             label: "Friends"
-            active: true
+            title: "FRIENDS"
+            hint: "Friends, chats, parties, invites, and pinned groups."
+            line1: "+Offline [5]"
+            line2: "SALVATION / group chat"
+            line3: "No active party"
         }
 
         ListElement {
-            icon: "A"
+            icon: "◆"
             label: "Anvil"
-            active: true
+            title: "ANVIL"
+            hint: "Launcher, store, library, session, and overlay controls."
+            line1: "Return to library"
+            line2: "Open Forge Front"
+            line3: "Switch to desktop"
         }
 
         ListElement {
-            icon: "G"
+            icon: "🎮"
             label: "Controller"
-            active: false
+            title: "CONTROLLER"
+            hint: "Input profiles, glyphs, rumble, and layout switching."
+            line1: "Profile: Gamepad default"
+            line2: "Rumble: enabled"
+            line3: "Gyro: not configured"
         }
 
         ListElement {
-            icon: "O"
+            icon: "◎"
             label: "Web"
-            active: false
+            title: "WEB"
+            hint: "Guides, store pages, patch notes, and browser tabs."
+            line1: "Guide overlay: mock"
+            line2: "Store page: available"
+            line3: "External browser: disabled"
         }
 
         ListElement {
-            icon: "REC"
+            icon: "●"
             label: "Capture"
-            active: false
+            title: "CAPTURE"
+            hint: "Screenshot, replay buffer, recording, and timeline markers."
+            line1: "Replay buffer: off"
+            line2: "Screenshot hotkey: ready"
+            line3: "Recording: stopped"
         }
 
         ListElement {
-            icon: "S"
+            icon: "⚙"
             label: "System"
-            active: false
+            title: "SYSTEM"
+            hint: "Power, network, display, Bluetooth, and session status."
+            line1: "Mode: Anvil Session"
+            line2: "Network: Tailscale online"
+            line3: "Power profile: performance"
         }
 
         ListElement {
-            icon: "v"
+            icon: "⌄"
             label: "More"
-            active: false
+            title: "MORE"
+            hint: "Additional modules and future overlay extensions."
+            line1: "Workshop"
+            line2: "Broadcast"
+            line3: "Forgeworks diagnostics"
         }
 
     }
@@ -303,6 +373,11 @@ PanelWindow {
         border.color: "#11151b"
         z: 12
         clip: true
+        focus: true
+        Keys.onLeftPressed: selectedDockIndex = Math.max(0, selectedDockIndex - 1)
+        Keys.onRightPressed: selectedDockIndex = Math.min(dockModel.count - 1, selectedDockIndex + 1)
+        Keys.onEscapePressed: runMenuAction("Back to Game")
+        Keys.onReturnPressed: runMenuAction("Back to Game")
 
         Column {
             anchors.fill: parent
@@ -344,12 +419,12 @@ PanelWindow {
                             width: parent.width
                             height: 16
                             radius: 2
-                            color: "#6e7b72"
-                            opacity: 0.45
+                            color: accent
+                            opacity: 0.32
                         }
 
                         Text {
-                            text: "Online"
+                            text: activeDock().label
                             color: "#83d48a"
                             font.pixelSize: 11
                             font.bold: true
@@ -379,9 +454,11 @@ PanelWindow {
                     spacing: 3
 
                     Text {
-                        text: "Drag Friends & Chats here for easy access"
+                        text: activeDock().hint
                         color: "#20bfea"
                         font.pixelSize: 10
+                        width: parent.width - 62
+                        elide: Text.ElideRight
                     }
 
                     Rectangle {
@@ -418,7 +495,7 @@ PanelWindow {
 
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: "FRIENDS"
+                        text: activeDock().title
                         color: ink
                         font.pixelSize: 11
                         font.bold: true
@@ -463,8 +540,29 @@ PanelWindow {
                     anchors.leftMargin: 10
                     anchors.top: parent.top
                     anchors.topMargin: 14
-                    text: "+Offline [5]"
+                    text: activeDock().line1
                     color: "#c4cad2"
+                    font.pixelSize: 11
+                }
+
+                Text {
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+                    anchors.top: parent.top
+                    anchors.topMargin: 42
+                    text: activeDock().line2
+                    color: "#d6dbe2"
+                    font.pixelSize: 12
+                    font.bold: selectedDockIndex === 9
+                }
+
+                Text {
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+                    anchors.top: parent.top
+                    anchors.topMargin: 70
+                    text: activeDock().line3
+                    color: muted
                     font.pixelSize: 11
                 }
 
@@ -482,7 +580,7 @@ PanelWindow {
 
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: "v GROUP CHATS"
+                        text: "v " + activeDock().label.toUpperCase()
                         color: "#dbe2ea"
                         font.pixelSize: 11
                         font.bold: true
@@ -520,9 +618,9 @@ PanelWindow {
 
                         Text {
                             anchors.centerIn: parent
-                            text: "A"
+                            text: activeDock().icon
                             color: "#9e75ff"
-                            font.pixelSize: 16
+                            font.pixelSize: activeDock().icon.length > 1 ? 11 : 16
                             font.bold: true
                         }
 
@@ -530,9 +628,11 @@ PanelWindow {
 
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: "SALVATION"
+                        text: activeDock().line2
                         color: "#d8dee7"
                         font.pixelSize: 13
+                        elide: Text.ElideRight
+                        width: parent.width - 48
                     }
 
                 }
@@ -541,14 +641,18 @@ PanelWindow {
 
         }
 
-        MouseArea {
-            anchors.fill: parent
-            acceptedButtons: Qt.NoButton
-            focus: true
-            Keys.onEscapePressed: runMenuAction("Back to Game")
-            Keys.onReturnPressed: runMenuAction("Back to Game")
-        }
+    }
 
+    Text {
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: dock.top
+        anchors.bottomMargin: 10
+        text: activeDock().label
+        color: "#dce8f5"
+        opacity: 0.86
+        font.pixelSize: 12
+        font.bold: true
+        z: 12
     }
 
     Row {
@@ -564,18 +668,34 @@ PanelWindow {
             model: dockModel
 
             Rectangle {
-                width: model.icon === "REC" ? 44 : 36
-                height: 36
+                width: model.icon.length > 1 ? 44 : 38
+                height: 38
                 radius: 2
-                color: model.active ? accent : "#27313d"
-                border.color: model.active ? "#45bdff" : "#3c4652"
+                color: selectedDockIndex === index ? accent : "#27313d"
+                border.color: selectedDockIndex === index ? "#45bdff" : "#3c4652"
+                scale: selectedDockIndex === index ? 1.08 : 1
 
                 Text {
                     anchors.centerIn: parent
                     text: model.icon
-                    color: model.active ? "#eef8ff" : "#d4dbe4"
-                    font.pixelSize: model.icon === "REC" ? 10 : 14
+                    color: selectedDockIndex === index ? "#eef8ff" : "#d4dbe4"
+                    font.pixelSize: model.icon.length > 1 ? 10 : 16
                     font.bold: true
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        selectedDockIndex = index;
+                        friendsPanel.forceActiveFocus();
+                    }
+                }
+
+                Behavior on scale {
+                    NumberAnimation {
+                        duration: 120
+                    }
+
                 }
 
             }
