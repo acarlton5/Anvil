@@ -14,13 +14,13 @@ PanelWindow {
     readonly property color bg: "#05070a"
     readonly property color panel: "#10151c"
     readonly property color panelRaised: "#161d25"
-    readonly property color line: "#29323d"
+    readonly property color line: "#4a3329"
     readonly property color fg: "#f5f5f2"
-    readonly property color muted: "#98a0a9"
+    readonly property color muted: "#b4aaa3"
     readonly property color ember: "#ff6537"
     readonly property color emberLight: "#ff8a66"
     readonly property color forgeGold: "#d9ad5f"
-    readonly property color relayBlue: "#66b8ff"
+    readonly property color relayBlue: "#d9ad5f"
     readonly property color green: "#65d797"
     readonly property int sidebarWidth: 112
     readonly property int contentLeft: sidebarWidth + 44
@@ -429,8 +429,8 @@ PanelWindow {
             Rectangle {
                 width: 92
                 height: 36
-                radius: 10
-                color: "#151b22"
+                radius: 8
+                color: "#1a120e"
                 border.color: "#27323d"
 
                 Text {
@@ -446,8 +446,8 @@ PanelWindow {
             Rectangle {
                 width: 38
                 height: 36
-                radius: 10
-                color: powerMenuActive ? "#30201a" : "#151b22"
+                radius: 8
+                color: powerMenuActive ? "#30201a" : "#1a120e"
                 border.color: powerMenuActive ? ember : "#27323d"
 
                 Text {
@@ -516,7 +516,7 @@ PanelWindow {
             Rectangle {
                 width: parent.width
                 height: 1
-                color: "#26313c"
+                color: "#3d2b22"
             }
 
             Repeater {
@@ -534,7 +534,7 @@ PanelWindow {
                         width: 44
                         height: 44
                         radius: 8
-                        color: activeSection === index ? ember : "#151b22"
+                        color: activeSection === index ? ember : "#1a120e"
                         border.color: activeSection === index ? ember : "#2d3844"
 
                         Text {
@@ -605,7 +605,7 @@ PanelWindow {
                 anchors.topMargin: 70
                 width: 360
                 height: 220
-                radius: 14
+                radius: 8
                 color: "#16ffffff"
                 border.color: "#22ffffff"
                 rotation: -4
@@ -824,7 +824,7 @@ PanelWindow {
                     width: 132
                     height: 86
                     color: "#bb0f141a"
-                    border.color: "#26313c"
+                    border.color: "#3d2b22"
 
                     Column {
                         anchors.centerIn: parent
@@ -907,7 +907,7 @@ PanelWindow {
                     height: 226
                     radius: 8
                     color: "#192027"
-                    border.color: ListView.isCurrentItem ? ember : "#2a323b"
+                    border.color: ListView.isCurrentItem ? ember : "#4a3329"
                     border.width: ListView.isCurrentItem ? 3 : 1
                     clip: true
                     scale: ListView.isCurrentItem ? 1.06 : 0.92
@@ -1062,7 +1062,7 @@ PanelWindow {
 
                 width: 360
                 height: parent.height
-                radius: 12
+                radius: 8
                 color: "#ee0d1118"
                 border.color: line
                 clip: true
@@ -1205,7 +1205,7 @@ PanelWindow {
 
                 width: parent.width - librarySidebar.width - 24
                 height: parent.height
-                radius: 14
+                radius: 8
                 color: "#dd0f141a"
                 border.color: line
                 clip: true
@@ -1323,7 +1323,7 @@ PanelWindow {
                         Rectangle {
                             width: 150
                             height: 48
-                            radius: 10
+                            radius: 8
                             color: ember
 
                             Text {
@@ -1344,7 +1344,7 @@ PanelWindow {
                         Rectangle {
                             width: 150
                             height: 48
-                            radius: 10
+                            radius: 8
                             color: "#cc141a20"
                             border.color: "#44ffffff"
 
@@ -1448,7 +1448,7 @@ PanelWindow {
                 width: parent.width * 0.58
                 height: parent.height
                 radius: 8
-                color: "#e00f141a"
+                color: "#e0140d09"
                 border.color: selectedStoreTile === 0 ? ember : line
                 clip: true
 
@@ -1460,17 +1460,17 @@ PanelWindow {
 
                         GradientStop {
                             position: 0
-                            color: "#151f28"
+                            color: "#1a100c"
                         }
 
                         GradientStop {
                             position: 0.58
-                            color: "#26323a"
+                            color: "#332017"
                         }
 
                         GradientStop {
                             position: 1
-                            color: "#57321f"
+                            color: "#6b3922"
                         }
 
                     }
@@ -1496,7 +1496,7 @@ PanelWindow {
                     Text {
                         text: "Anvil Store"
                         color: fg
-                        font.pixelSize: 52
+                        font.pixelSize: 64
                         font.bold: true
                     }
 
@@ -1513,11 +1513,11 @@ PanelWindow {
                         spacing: 10
 
                         Repeater {
-                            model: ["Wishlist", "Demo", "Follow", "Gift"]
+                            model: ["Wishlist", "Demo", "Follow", "Cart"]
 
                             Rectangle {
-                                width: 104
-                                height: 38
+                                width: 124
+                                height: 46
                                 radius: 8
                                 color: index === 1 ? ember : "#cc111820"
                                 border.color: index === 1 ? ember : "#3a4652"
@@ -1557,8 +1557,9 @@ PanelWindow {
                         width: parent.width
                         height: (storePage.height - 188) / 3
                         radius: 8
-                        color: selectedStoreTile === index ? "#202831" : panel
+                        color: selectedStoreTile === index ? "#2b1d15" : "#16100d"
                         border.color: selectedStoreTile === index ? ember : line
+                        scale: selectedStoreTile === index ? 1.02 : 0.97
 
                         Rectangle {
                             anchors.left: parent.left
@@ -1587,7 +1588,7 @@ PanelWindow {
                             Text {
                                 text: model.title
                                 color: fg
-                                font.pixelSize: 24
+                                font.pixelSize: 30
                                 font.bold: true
                                 width: parent.width
                             }
@@ -1606,6 +1607,13 @@ PanelWindow {
                         MouseArea {
                             anchors.fill: parent
                             onClicked: selectedStoreTile = index
+                        }
+
+                        Behavior on scale {
+                            NumberAnimation {
+                                duration: 140
+                            }
+
                         }
 
                     }
@@ -1636,11 +1644,11 @@ PanelWindow {
             spacing: 20
 
             Rectangle {
-                width: parent.width * 0.58
+                width: parent.width * 0.64
                 height: parent.height
                 radius: 8
-                color: "#dd12171d"
-                border.color: line
+                color: "#e0140d09"
+                border.color: ember
 
                 Column {
                     anchors.fill: parent
@@ -1650,7 +1658,7 @@ PanelWindow {
                     Text {
                         text: "Anvil Community"
                         color: fg
-                        font.pixelSize: 42
+                        font.pixelSize: 58
                         font.bold: true
                     }
 
@@ -1667,10 +1675,10 @@ PanelWindow {
 
                         Rectangle {
                             width: parent.width
-                            height: 96
+                            height: 118
                             radius: 8
-                            color: "#151b22"
-                            border.color: line
+                            color: index === 0 ? "#2b1d15" : "#17110e"
+                            border.color: index === 0 ? ember : line
 
                             Column {
                                 anchors.verticalCenter: parent.verticalCenter
@@ -1682,7 +1690,7 @@ PanelWindow {
 
                                 Text {
                                     text: model.meta
-                                    color: relayBlue
+                                    color: forgeGold
                                     font.pixelSize: 10
                                     font.bold: true
                                 }
@@ -1690,7 +1698,7 @@ PanelWindow {
                                 Text {
                                     text: model.title
                                     color: fg
-                                    font.pixelSize: 17
+                                    font.pixelSize: 22
                                     font.bold: true
                                     elide: Text.ElideRight
                                     width: parent.width
@@ -1716,10 +1724,10 @@ PanelWindow {
             }
 
             Rectangle {
-                width: parent.width * 0.42 - 20
+                width: parent.width * 0.36 - 20
                 height: parent.height
                 radius: 8
-                color: "#dd12171d"
+                color: "#dd120c09"
                 border.color: line
 
                 Column {
@@ -1730,7 +1738,7 @@ PanelWindow {
                     Text {
                         text: "Friends and Hubs"
                         color: fg
-                        font.pixelSize: 23
+                        font.pixelSize: 28
                         font.bold: true
                     }
 
@@ -1739,9 +1747,9 @@ PanelWindow {
 
                         Rectangle {
                             width: parent.width
-                            height: 58
+                            height: 68
                             radius: 8
-                            color: "#171e26"
+                            color: index === 0 ? "#2b1d15" : "#1a120e"
 
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
@@ -1783,11 +1791,11 @@ PanelWindow {
             spacing: 20
 
             Rectangle {
-                width: parent.width * 0.36
+                width: parent.width * 0.42
                 height: parent.height
                 radius: 8
-                color: "#df12171d"
-                border.color: line
+                color: "#e0140d09"
+                border.color: forgeGold
 
                 Column {
                     anchors.fill: parent
@@ -1797,7 +1805,7 @@ PanelWindow {
                     Text {
                         text: "Forgeworks"
                         color: fg
-                        font.pixelSize: 44
+                        font.pixelSize: 56
                         font.bold: true
                     }
 
@@ -1814,8 +1822,8 @@ PanelWindow {
                         width: parent.width
                         height: 132
                         radius: 8
-                        color: "#191f25"
-                        border.color: "#34404d"
+                        color: "#2b1d15"
+                        border.color: ember
 
                         Column {
                             anchors.fill: parent
@@ -1832,7 +1840,7 @@ PanelWindow {
                             Text {
                                 text: "LF-APP-00042"
                                 color: fg
-                                font.pixelSize: 26
+                                font.pixelSize: 34
                                 font.bold: true
                             }
 
@@ -1855,7 +1863,7 @@ PanelWindow {
                             width: parent.width
                             height: 48
                             radius: 8
-                            color: index === 1 ? "#2a211a" : "#151b22"
+                            color: index === 1 ? "#3a2418" : "#1a120e"
                             border.color: index === 1 ? forgeGold : line
 
                             Text {
@@ -1877,7 +1885,7 @@ PanelWindow {
             }
 
             Column {
-                width: parent.width * 0.64 - 20
+                width: parent.width * 0.58 - 20
                 height: parent.height
                 spacing: 12
 
@@ -1888,8 +1896,8 @@ PanelWindow {
                         width: parent.width
                         height: (forgeworksPage.height - 184) / 4
                         radius: 8
-                        color: "#dd12171d"
-                        border.color: line
+                        color: model.state === "Next" ? "#2b1d15" : "#17110e"
+                        border.color: model.state === "Next" ? forgeGold : line
 
                         Row {
                             anchors.fill: parent
@@ -1900,7 +1908,7 @@ PanelWindow {
                                 width: 92
                                 height: parent.height
                                 radius: 8
-                                color: "#161d24"
+                                color: model.state === "Next" ? "#3a2418" : "#1a120e"
                                 border.color: model.state === "Next" ? forgeGold : "#303a45"
 
                                 Text {
@@ -1921,7 +1929,7 @@ PanelWindow {
                                 Text {
                                     text: model.title
                                     color: fg
-                                    font.pixelSize: 22
+                                    font.pixelSize: 26
                                     font.bold: true
                                     width: parent.width
                                     elide: Text.ElideRight
@@ -1968,7 +1976,7 @@ PanelWindow {
             Text {
                 text: "Downloads"
                 color: fg
-                font.pixelSize: 44
+                font.pixelSize: 58
                 font.bold: true
             }
 
@@ -1983,10 +1991,10 @@ PanelWindow {
 
                 Rectangle {
                     width: parent.width
-                    height: 118
+                    height: 142
                     radius: 8
-                    color: "#dd12171d"
-                    border.color: line
+                    color: index === 0 ? "#2b1d15" : "#17110e"
+                    border.color: index === 0 ? ember : line
 
                     Column {
                         anchors.left: parent.left
@@ -2002,7 +2010,7 @@ PanelWindow {
                             Text {
                                 text: model.title
                                 color: fg
-                                font.pixelSize: 20
+                                font.pixelSize: 28
                                 font.bold: true
                                 width: parent.width - 90
                                 elide: Text.ElideRight
@@ -2031,7 +2039,7 @@ PanelWindow {
                             width: parent.width
                             height: 8
                             radius: 4
-                            color: "#222b34"
+                            color: "#31231c"
 
                             Rectangle {
                                 anchors.left: parent.left
@@ -2039,7 +2047,7 @@ PanelWindow {
                                 anchors.bottom: parent.bottom
                                 width: parent.width * model.progress / 100
                                 radius: 4
-                                color: model.value === "Live" ? green : ember
+                                color: model.value === "Live" ? forgeGold : ember
                             }
 
                         }
@@ -2072,7 +2080,7 @@ PanelWindow {
             Text {
                 text: "Settings"
                 color: fg
-                font.pixelSize: 44
+                font.pixelSize: 58
                 font.bold: true
             }
 
@@ -2089,10 +2097,10 @@ PanelWindow {
 
                     Rectangle {
                         width: (settingsGrid.width - 14) / 2
-                        height: 154
+                        height: 184
                         radius: 8
-                        color: "#dd12171d"
-                        border.color: line
+                        color: index === 0 ? "#2b1d15" : "#17110e"
+                        border.color: index === 0 ? ember : line
 
                         Column {
                             anchors.fill: parent
@@ -2102,7 +2110,7 @@ PanelWindow {
                             Text {
                                 text: model.title
                                 color: fg
-                                font.pixelSize: 22
+                                font.pixelSize: 28
                                 font.bold: true
                                 width: parent.width
                                 elide: Text.ElideRight
@@ -2110,8 +2118,8 @@ PanelWindow {
 
                             Text {
                                 text: model.value
-                                color: model.value === "Mock" ? forgeGold : green
-                                font.pixelSize: 11
+                                color: model.value === "Mock" ? forgeGold : emberLight
+                                font.pixelSize: 12
                                 font.bold: true
                             }
 
@@ -2165,7 +2173,7 @@ PanelWindow {
         width: 430
         height: 318
         anchors.centerIn: parent
-        radius: 14
+        radius: 8
         color: "#f0141a20"
         border.color: line
         visible: powerMenuActive
@@ -2191,7 +2199,7 @@ PanelWindow {
                     width: parent.width
                     height: 50
                     radius: 9
-                    color: index === 3 ? "#241914" : "#151b22"
+                    color: index === 3 ? "#241914" : "#1a120e"
                     border.color: index === 3 ? ember : line
 
                     Text {
@@ -2228,8 +2236,8 @@ PanelWindow {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         height: 62
-        color: "#e0080b0f"
-        border.color: "#26313c"
+        color: "#e005070a"
+        border.color: "#3d2b22"
         z: 20
 
         Row {
@@ -2239,7 +2247,7 @@ PanelWindow {
             spacing: 24
 
             Text {
-                text: "TAB  Menu"
+                text: "LB / RB  Sections"
                 color: muted
                 font.pixelSize: 12
                 font.bold: true
