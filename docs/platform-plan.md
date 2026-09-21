@@ -1,4 +1,4 @@
-# Anvilworks Platform Plan
+# Forgeworks Platform Plan
 
 This is the working feature and naming map for building a Legend Forge gaming
 ecosystem comparable to Valve's Steam ecosystem. It is a product plan, not a
@@ -10,17 +10,17 @@ promise to clone every Valve implementation.
 | --- | --- | --- |
 | Valve | Legend Forge | Company, publisher, and platform owner |
 | Steam | Anvil | Store, library, social client, overlay, and game session |
-| Steamworks | Anvilworks | Developer and publisher services, APIs, SDK, and portal |
-| Steamworks Partner | Anvilworks Partner | Publisher onboarding and product administration portal |
-| Steamworks SDK / Web API | Anvilworks SDK / Web API | In-game SDK plus authenticated server APIs |
-| SteamCMD | Anvil CLI | Headless login, build upload, install, update, and server tooling |
-| SteamPipe | Anvil Content | Chunking, manifests, release channels, patching, and delivery |
-| Steam Direct | Anvil Direct | Product submission, fee, review, and release process |
+| Steamworks | Forgeworks | Developer and publisher services, APIs, SDK, and portal |
+| Steamworks Partner | Forgeworks Partner | Publisher onboarding and product administration portal |
+| Steamworks SDK / Web API | Forgeworks SDK / Web API | In-game SDK plus authenticated server APIs |
+| SteamCMD | Forge CLI | Headless login, build upload, install, update, and server tooling |
+| SteamPipe | Forgepipe | Chunking, manifests, release channels, patching, and delivery |
+| Steam Direct | Forge Direct | Product submission, fee, review, and release process |
 | Steam Store | Anvil Store | Catalog, discovery, purchasing, and account licenses |
 | Steam Community | Anvil Community | Profiles, friends, groups, hubs, discussions, and activity |
-| Steam Workshop | Anvil Workshop | User-created content publishing and subscriptions |
-| Steam Community Market | Anvil Market | Player-to-player exchange of eligible platform items |
-| Steam Inventory Service | Anvil Inventory | Durable game item definitions and player inventories |
+| Steam Workshop | The Forge | User-created content publishing and subscriptions |
+| Steam Community Market | Forge Market | Player-to-player exchange of eligible platform items |
+| Steam Inventory Service | Forge Inventory | Durable game item definitions and player inventories |
 | Steam Cloud | Anvil Cloud | Cross-device save and configuration synchronization |
 | Steam Input | Anvil Input | Controller abstraction, remapping, glyphs, and layouts |
 | Steam Overlay | Anvil Overlay | In-game social, browser, capture, invite, and purchase UI |
@@ -31,7 +31,7 @@ promise to clone every Valve implementation.
 | Steam Link | Anvil Link | Receiver and device-pairing experience for Anvil Remote |
 | Steam Broadcast | Anvil Broadcast | One-click live gameplay broadcast into community surfaces |
 | Steam Chat | Anvil Chat | Direct, group, voice, invite, and rich-presence messaging |
-| Steam Guard | Anvil Guard | MFA, sign-in approval, trusted devices, and account recovery |
+| Steam Guard | Forge Guard | MFA, sign-in approval, trusted devices, and account recovery |
 | Steam Families | Anvil Families | Household membership, sharing, parental controls, and playtime |
 | Steam Game Recording / Timeline | Anvil Capture | Background recording, clips, screenshots, and event timeline |
 | Steam Leaderboards | Anvil Leaderboards | Ranked global, regional, and friend score tables |
@@ -44,8 +44,8 @@ promise to clone every Valve implementation.
 | Steam Curators | Anvil Guides | Followable editorial recommendation channels |
 | Steam News / Events | Anvil Events | Developer announcements, events, patch notes, and notifications |
 | Steam Early Access | Anvil Early Access | Clearly labeled in-development releases and developer disclosures |
-| Steam Keys | Anvil Keys | External-sale and promotional license activation codes |
-| Steam Wallet | Anvil Wallet | Stored value, refunds, gifts, and marketplace settlement |
+| Steam Keys | Forge Keys | External-sale and promotional license activation codes |
+| Steam Wallet | Forge Wallet | Stored value, refunds, gifts, and marketplace settlement |
 | Steam Trading Cards | Anvil Collectibles | Optional profile collectibles, badges, and rewards |
 | Steam Points | Anvil Points | Non-cash loyalty rewards and profile customization |
 | SteamVR / OpenVR | Anvil XR | Deferred XR client integration and compatibility program |
@@ -54,9 +54,9 @@ promise to clone every Valve implementation.
 | Deck Verified | Anvil Verified | Device and Linux/runtime compatibility testing and disclosure |
 | Steam Deck / Steam Machine | Unnamed Legend Forge hardware | Do not name hardware until there is a real hardware program |
 
-`Anvilworks` is the canonical name for Legend Forge's developer and publisher
+`Forgeworks` is the canonical name for Legend Forge's developer and publisher
 platform. Legend Forge makes Anvil; developers configure, ship, and operate
-their Anvil games through Anvilworks. Before a commercial launch, the company
+their Anvil games through Forgeworks. Before a commercial launch, the company
 should still complete the normal trademark review for every public product name.
 
 ## What We Need First
@@ -70,7 +70,7 @@ remote sources.
 | Anvil Session | Prototype exists | Clean login session, controller navigation, suspend/logout, and resource cleanup |
 | Anvil Library | Local cartridge scan exists | Stable provider interface, cache, metadata schema, and drive hotplug refresh |
 | Anvil Runtime | Prototype Proton launcher exists | Per-game runtime selection, process supervision, logs, prefixes, and exit recovery |
-| Anvil Content | Not built | Signed manifests, resumable installs, verification, repair, update, rollback, and uninstall |
+| Forgepipe / Anvil Content | Not built | Signed manifests, resumable installs, verification, repair, update, rollback, and uninstall |
 | Anvil Updater | Status check only | Signed client releases with apply/restart/rollback behavior |
 | Identity | Constellation pieces exist | Anvil sign-in, device session, offline token, and account recovery contract |
 | Entitlements | Not connected | One normalized ownership record for cartridge, test grant, key, or purchase |
@@ -92,15 +92,15 @@ remote sources.
 
 - Use Constellation identity behind an Anvil-facing account contract.
 - Define stable App IDs, package IDs, build IDs, and entitlement IDs.
-- Implement device authorization, Anvil Guard, offline licenses, and revocation.
+- Implement device authorization, Forge Guard, offline licenses, and revocation.
 - Build catalog ingestion, store metadata, system requirements, pricing, and regions.
 - Merge cartridge ownership and online ownership into the same Anvil Library model.
 
 ### 3. Publishing and Content Delivery
 
-- Build Anvilworks Partner onboarding, organizations, roles, and audit logs.
-- Build Anvil CLI authentication and application management.
-- Build Anvil Content chunking, compression, hashes, signed manifests, and deduplication.
+- Build Forgeworks Partner onboarding, organizations, roles, and audit logs.
+- Build Forge CLI authentication and application management.
+- Build Forgepipe chunking, compression, hashes, signed manifests, and deduplication.
 - Support depots by OS, architecture, language, DLC, and optional content.
 - Support private test branches, release channels, staged rollout, and rollback.
 - Add malware scanning, policy review, age ratings, and release approval.
@@ -110,7 +110,7 @@ remote sources.
 - Anvil Cloud, Achievements, Stats, Leaderboards, Rich Presence, and Invites.
 - Anvil Community profiles, friends, groups, game hubs, reviews, and events.
 - Anvil Overlay with chat, browser, capture, achievements, invites, and purchases.
-- Anvil Workshop publishing, moderation, dependencies, subscriptions, and updates.
+- The Forge publishing, moderation, dependencies, subscriptions, and updates.
 - Anvil Families, parental controls, household sharing, and playtime management.
 
 ### 5. Multiplayer and Network
@@ -133,7 +133,7 @@ remote sources.
 
 - Anvil Remote and Anvil Link after launch/process/audio/input capture is mature.
 - Anvil Capture and Broadcast after storage, privacy, and moderation exist.
-- Anvil Inventory, Market, Wallet, Collectibles, and Points only after commerce is proven.
+- Forge Inventory, Market, Wallet, Collectibles, and Anvil Points only after commerce is proven.
 - Anvil XR only when there is a supported runtime and device strategy.
 - AnvilOS only after Anvil Session is dependable across multiple Linux distributions.
 - Legend Forge hardware only after software compatibility and update operations are mature.
@@ -152,10 +152,10 @@ Exit criteria: local database, content manager, supervised runtime, install queu
 verification/repair, client updater, controller settings, captures, and useful logs.
 No account or storefront is required.
 
-### Phase 2: Anvilworks Sandbox
+### Phase 2: Forgeworks Sandbox
 
 Exit criteria: developer organization, App ID, test users, entitlement grants,
-Anvil CLI upload, signed build manifest, private release channel, authenticated
+Forge CLI upload, signed build manifest, private release channel, authenticated
 download, and a minimal SDK for identity/ownership.
 
 ### Phase 3: Closed Store Alpha
@@ -190,14 +190,14 @@ approved business and engineering plan.
 5. Add drive hotplug monitoring and incremental refresh instead of boot-only scanning.
 6. Design signed content and client-update manifests before adding remote downloads.
 7. Define App ID, package, build, channel, depot, and entitlement data contracts.
-8. Map the existing Constellation identity and App World APIs onto the Anvilworks boundary.
-9. Build the first Anvil CLI flow: sign in, create app, upload build, grant test license.
+8. Map the existing Constellation identity and App World APIs onto the Forgeworks boundary.
+9. Build the first Forge CLI flow: sign in, create app, upload build, grant test license.
 10. Build a private end-to-end test: publish, grant, install, launch, update, rollback.
 
 ## Non-Goals and Guardrails
 
 - Do not rename upstream Proton, Wine, Gamescope, or other projects as Legend Forge products.
-- Do not expose Constellation internals directly to games; the Anvilworks contract is the boundary.
+- Do not expose Constellation internals directly to games; the Forgeworks contract is the boundary.
 - Do not require AnvilOS. Anvil must remain installable on general Linux distributions.
 - Do not build a real-money player market before identity, commerce, fraud, moderation,
   tax, and account-recovery systems are production-ready.

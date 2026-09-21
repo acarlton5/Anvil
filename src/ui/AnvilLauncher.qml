@@ -19,6 +19,8 @@ PanelWindow {
     readonly property color muted: "#98a0a9"
     readonly property color ember: "#ff6537"
     readonly property color emberLight: "#ff8a66"
+    readonly property color forgeGold: "#d9ad5f"
+    readonly property color relayBlue: "#66b8ff"
     readonly property color green: "#65d797"
     property int activeSection: Number(Quickshell.env("ANVIL_SECTION") || 0)
     property bool navOpen: false
@@ -109,24 +111,146 @@ PanelWindow {
             label: "Community"
         }
 
+        ListElement {
+            label: "Forgeworks"
+        }
+
+        ListElement {
+            label: "Downloads"
+        }
+
+        ListElement {
+            label: "Settings"
+        }
+
     }
 
     ListModel {
         id: storeModel
 
         ListElement {
-            title: "Fresh From The Forge"
-            body: "Playable demos, early builds, and experimental indies staged for Anvil."
+            title: "Featured"
+            eyebrow: "FORGE FRONT"
+            body: "Hero capsules, trailers, demos, wishlists, and launch-week promotions."
         }
 
         ListElement {
-            title: "Creator Terms"
-            body: "A store model built around better revenue cuts and transparent launch tooling."
+            title: "Discovery"
+            eyebrow: "DISCOVERY QUEUE"
+            body: "Tags, reviews, curator rails, friend activity, and event-driven recommendations."
         }
 
         ListElement {
-            title: "Cartridge Sync"
-            body: "USB and SD libraries today, packaged server manifests tomorrow."
+            title: "Cartridges"
+            eyebrow: "LOCAL + ONLINE"
+            body: "Physical-style libraries today, signed Forgepipe builds and online grants tomorrow."
+        }
+
+    }
+
+    ListModel {
+        id: communityModel
+
+        ListElement {
+            title: "Patch notes from Legend Forge"
+            body: "Anvil Session now mounts removable game media and refreshes the library on launch."
+            meta: "News"
+        }
+
+        ListElement {
+            title: "Screenshots and clips"
+            body: "Anvil Capture mock lane for screenshots, short clips, and timeline markers."
+            meta: "Activity"
+        }
+
+        ListElement {
+            title: "Guides, reviews, discussions"
+            body: "Game hubs collect player posts, verified reviews, guides, workshop notes, and events."
+            meta: "Hub"
+        }
+
+    }
+
+    ListModel {
+        id: forgeworksModel
+
+        ListElement {
+            title: "App onboarding"
+            body: "Create an app, assign package IDs, invite testers, and generate sandbox entitlements."
+            state: "Mock"
+        }
+
+        ListElement {
+            title: "Forgepipe builds"
+            body: "Upload depots, sign manifests, promote branches, roll back builds, and verify installs."
+            state: "Next"
+        }
+
+        ListElement {
+            title: "Player platform APIs"
+            body: "Achievements, cloud saves, lobbies, relay, inventory, and rich presence."
+            state: "Planned"
+        }
+
+        ListElement {
+            title: "Partner operations"
+            body: "Reviews, analytics, crash reports, keys, refunds, payouts, and moderation queues."
+            state: "Planned"
+        }
+
+    }
+
+    ListModel {
+        id: downloadModel
+
+        ListElement {
+            title: "Cartridge scan"
+            body: "USB and SD libraries are indexed into Anvil Library records."
+            value: "Live"
+            progress: 100
+        }
+
+        ListElement {
+            title: "Client update"
+            body: "Signed Anvil client release check with staged apply and rollback."
+            value: "Mock"
+            progress: 42
+        }
+
+        ListElement {
+            title: "Forgepipe install"
+            body: "Future depot download, verify, repair, move, uninstall, and delta update flow."
+            value: "Design"
+            progress: 24
+        }
+
+    }
+
+    ListModel {
+        id: settingsModel
+
+        ListElement {
+            title: "Anvil Session"
+            body: "Dedicated Wayland session, controller navigation, game focus, logout, and cleanup."
+            value: "Installed by plugin"
+        }
+
+        ListElement {
+            title: "Anvil Runtime"
+            body: "Per-game Proton selection, prefixes, launch logs, overlay hooks, and exit recovery."
+            value: "Prototype"
+        }
+
+        ListElement {
+            title: "Anvil Cloud"
+            body: "Save sync, settings sync, offline queue, and conflict resolution."
+            value: "Mock"
+        }
+
+        ListElement {
+            title: "Forge Guard"
+            body: "Device trust, sign-in approval, family controls, and account recovery."
+            value: "Mock"
         }
 
     }
@@ -141,14 +265,16 @@ PanelWindow {
             onStreamFinished: {
                 try {
                     let payload = text.trim();
-                    let status = payload.length > 0 ? JSON.parse(payload) : {};
+                    let status = payload.length > 0 ? JSON.parse(payload) : {
+                    };
                     let games = Array.isArray(status) ? status : (status.games || []);
                     gameModel.clear();
-                    for (let i = 0; i < games.length; i++) gameModel.append(games[i]);
+                    for (let i = 0; i < games.length; i++) gameModel.append(games[i])
                     selectedGameIndex = 0;
                     mediaStatusLabel = status.drives && status.drives.length > 0 ? status.drives.length + " media" : "No media";
                     if (status.mounted && status.mounted.length > 0)
                         mediaStatusLabel = "Mounted " + status.mounted.length;
+
                     updateStatusLabel = status.update && status.update.label ? status.update.label : "Update status unavailable";
                     updateAvailable = status.update && status.update.available;
                     libraryScanMessage = games.length > 0 ? games.length + " cartridges ready" : "No cartridge library found";
@@ -277,7 +403,7 @@ PanelWindow {
                 color: fg
                 font.pixelSize: 15
                 font.bold: true
-                font.letterSpacing: 2
+                font.letterSpacing: 0
             }
 
         }
@@ -290,9 +416,9 @@ PanelWindow {
                 model: navModel
 
                 Rectangle {
-                    width: 112
+                    width: 108
                     height: 42
-                    radius: 9
+                    radius: 8
                     color: activeSection === index ? "#22ffffff" : "transparent"
                     border.color: activeSection === index ? "#33ffffff" : "transparent"
 
@@ -479,7 +605,7 @@ PanelWindow {
                 color: "#d1d3d4"
                 font.pixelSize: 11
                 font.bold: true
-                font.letterSpacing: 2
+                font.letterSpacing: 0
             }
 
             Text {
@@ -487,10 +613,11 @@ PanelWindow {
                     let game = currentGame();
                     if (game)
                         return game.name;
+
                     return libraryScanRunning ? "Scanning Cartridges" : "Anvil Library";
                 }
                 color: fg
-                font.pixelSize: Math.min(84, Math.max(48, anvil.width * 0.035))
+                font.pixelSize: 62
                 font.bold: true
                 width: parent.width
                 wrapMode: Text.WordWrap
@@ -626,7 +753,7 @@ PanelWindow {
                             color: muted
                             font.pixelSize: 9
                             font.bold: true
-                            font.letterSpacing: 1
+                            font.letterSpacing: 0
                         }
 
                         Text {
@@ -768,7 +895,7 @@ PanelWindow {
                         color: model.steamgriddb_id ? green : muted
                         font.pixelSize: 9
                         font.bold: true
-                        font.letterSpacing: 1
+                        font.letterSpacing: 0
                     }
 
                     Column {
@@ -1084,13 +1211,14 @@ PanelWindow {
                         color: emberLight
                         font.pixelSize: 11
                         font.bold: true
-                        font.letterSpacing: 2
+                        font.letterSpacing: 0
                     }
 
                     Text {
                         text: {
                             if (currentGame())
                                 return currentGame().name;
+
                             return libraryScanRunning ? "Scanning Cartridges" : "No Cartridges Found";
                         }
                         color: fg
@@ -1190,7 +1318,7 @@ PanelWindow {
                                     color: muted
                                     font.pixelSize: 9
                                     font.bold: true
-                                    font.letterSpacing: 1
+                                    font.letterSpacing: 0
                                 }
 
                                 Text {
@@ -1224,65 +1352,162 @@ PanelWindow {
         anchors.fill: parent
         visible: activeSection === 2
 
-        Column {
+        Row {
             anchors.left: parent.left
             anchors.leftMargin: 72
             anchors.right: parent.right
             anchors.rightMargin: 72
             anchors.top: parent.top
-            anchors.topMargin: 134
-            spacing: 22
+            anchors.topMargin: 118
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 88
+            spacing: 18
 
-            Text {
-                text: "Anvil Store"
-                color: fg
-                font.pixelSize: 56
-                font.bold: true
+            Rectangle {
+                width: parent.width * 0.58
+                height: parent.height
+                radius: 8
+                color: "#e00f141a"
+                border.color: selectedStoreTile === 0 ? ember : line
+                clip: true
+
+                Rectangle {
+                    anchors.fill: parent
+
+                    gradient: Gradient {
+                        orientation: Gradient.Horizontal
+
+                        GradientStop {
+                            position: 0
+                            color: "#151f28"
+                        }
+
+                        GradientStop {
+                            position: 0.58
+                            color: "#26323a"
+                        }
+
+                        GradientStop {
+                            position: 1
+                            color: "#57321f"
+                        }
+
+                    }
+
+                }
+
+                Column {
+                    anchors.left: parent.left
+                    anchors.leftMargin: 34
+                    anchors.right: parent.right
+                    anchors.rightMargin: 34
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 34
+                    spacing: 14
+
+                    Text {
+                        text: "FORGE FRONT"
+                        color: forgeGold
+                        font.pixelSize: 11
+                        font.bold: true
+                    }
+
+                    Text {
+                        text: "Anvil Store"
+                        color: fg
+                        font.pixelSize: 52
+                        font.bold: true
+                    }
+
+                    Text {
+                        text: "A mock storefront for featured games, demos, wishlists, reviews, events, and cartridge-to-online publishing."
+                        color: "#d5d7d9"
+                        font.pixelSize: 15
+                        wrapMode: Text.WordWrap
+                        width: parent.width
+                        lineHeight: 1.25
+                    }
+
+                    Row {
+                        spacing: 10
+
+                        Repeater {
+                            model: ["Wishlist", "Demo", "Follow", "Gift"]
+
+                            Rectangle {
+                                width: 104
+                                height: 38
+                                radius: 8
+                                color: index === 1 ? ember : "#cc111820"
+                                border.color: index === 1 ? ember : "#3a4652"
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: modelData
+                                    color: index === 1 ? "#170b06" : fg
+                                    font.pixelSize: 12
+                                    font.bold: true
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: selectedStoreTile = 0
+                }
+
             }
 
-            Text {
-                text: "A client surface for better indie publishing: demos, updates, storefronts, and cartridge packaging in one place."
-                color: "#bdc1c4"
-                font.pixelSize: 15
-                width: Math.min(720, parent.width)
-                wrapMode: Text.WordWrap
-            }
-
-            Row {
-                spacing: 14
+            Column {
+                width: parent.width * 0.42 - 18
+                height: parent.height
+                spacing: 12
 
                 Repeater {
                     model: storeModel
 
                     Rectangle {
-                        width: Math.max(300, (storePage.width - 186) / 3)
-                        height: 260
-                        radius: 14
-                        color: selectedStoreTile === index ? "#1e252c" : panel
+                        width: parent.width
+                        height: (storePage.height - 188) / 3
+                        radius: 8
+                        color: selectedStoreTile === index ? "#202831" : panel
                         border.color: selectedStoreTile === index ? ember : line
 
                         Rectangle {
                             anchors.left: parent.left
-                            anchors.right: parent.right
                             anchors.top: parent.top
-                            height: 4
+                            anchors.bottom: parent.bottom
+                            width: 4
                             color: ember
-                            radius: 2
+                            visible: selectedStoreTile === index
                         }
 
                         Column {
                             anchors.left: parent.left
                             anchors.right: parent.right
-                            anchors.bottom: parent.bottom
-                            anchors.margins: 22
-                            spacing: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.leftMargin: 24
+                            anchors.rightMargin: 22
+                            spacing: 8
+
+                            Text {
+                                text: model.eyebrow
+                                color: selectedStoreTile === index ? emberLight : forgeGold
+                                font.pixelSize: 10
+                                font.bold: true
+                            }
 
                             Text {
                                 text: model.title
                                 color: fg
-                                font.pixelSize: 25
+                                font.pixelSize: 24
                                 font.bold: true
-                                wrapMode: Text.WordWrap
                                 width: parent.width
                             }
 
@@ -1330,9 +1555,9 @@ PanelWindow {
             spacing: 20
 
             Rectangle {
-                width: parent.width * 0.62
+                width: parent.width * 0.58
                 height: parent.height
-                radius: 14
+                radius: 8
                 color: "#dd12171d"
                 border.color: line
 
@@ -1342,7 +1567,7 @@ PanelWindow {
                     spacing: 16
 
                     Text {
-                        text: "Community"
+                        text: "Anvil Community"
                         color: fg
                         font.pixelSize: 42
                         font.bold: true
@@ -1357,21 +1582,92 @@ PanelWindow {
                     }
 
                     Repeater {
-                        model: ["Local cartridges indexed for Constellation testing", "SteamGridDB artwork fetcher ready for an API key", "Constellation-backed cartridges are the next backend step"]
+                        model: communityModel
 
                         Rectangle {
                             width: parent.width
-                            height: 76
-                            radius: 10
+                            height: 96
+                            radius: 8
                             color: "#151b22"
                             border.color: line
+
+                            Column {
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                anchors.leftMargin: 18
+                                anchors.right: parent.right
+                                anchors.rightMargin: 18
+                                spacing: 5
+
+                                Text {
+                                    text: model.meta
+                                    color: relayBlue
+                                    font.pixelSize: 10
+                                    font.bold: true
+                                }
+
+                                Text {
+                                    text: model.title
+                                    color: fg
+                                    font.pixelSize: 17
+                                    font.bold: true
+                                    elide: Text.ElideRight
+                                    width: parent.width
+                                }
+
+                                Text {
+                                    text: model.body
+                                    color: muted
+                                    font.pixelSize: 12
+                                    wrapMode: Text.WordWrap
+                                    width: parent.width
+                                    lineHeight: 1.2
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            Rectangle {
+                width: parent.width * 0.42 - 20
+                height: parent.height
+                radius: 8
+                color: "#dd12171d"
+                border.color: line
+
+                Column {
+                    anchors.fill: parent
+                    anchors.margins: 24
+                    spacing: 14
+
+                    Text {
+                        text: "Friends and Hubs"
+                        color: fg
+                        font.pixelSize: 23
+                        font.bold: true
+                    }
+
+                    Repeater {
+                        model: ["Alex / Playing a cartridge", "Mira / Browsing Forge Front", "Jordan / In Anvil Session", "Cafe Build Club / 12 online", "Devlog Watch / 4 new posts"]
+
+                        Rectangle {
+                            width: parent.width
+                            height: 58
+                            radius: 8
+                            color: "#171e26"
 
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
-                                anchors.leftMargin: 18
+                                anchors.leftMargin: 16
                                 text: modelData
-                                color: fg
+                                color: muted
                                 font.pixelSize: 14
                                 font.bold: true
                             }
@@ -1384,42 +1680,365 @@ PanelWindow {
 
             }
 
+        }
+
+    }
+
+    Item {
+        id: forgeworksPage
+
+        anchors.fill: parent
+        visible: activeSection === 4
+
+        Row {
+            anchors.left: parent.left
+            anchors.leftMargin: 72
+            anchors.right: parent.right
+            anchors.rightMargin: 72
+            anchors.top: parent.top
+            anchors.topMargin: 124
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 88
+            spacing: 20
+
             Rectangle {
-                width: parent.width * 0.34
+                width: parent.width * 0.36
                 height: parent.height
-                radius: 14
-                color: "#dd12171d"
+                radius: 8
+                color: "#df12171d"
                 border.color: line
 
                 Column {
                     anchors.fill: parent
-                    anchors.margins: 24
+                    anchors.margins: 26
                     spacing: 14
 
                     Text {
-                        text: "Friends Online"
+                        text: "Forgeworks"
                         color: fg
-                        font.pixelSize: 23
+                        font.pixelSize: 44
                         font.bold: true
                     }
 
+                    Text {
+                        text: "Developer and publisher services for shipping on Anvil: apps, builds, entitlements, SDKs, player APIs, and store operations."
+                        color: muted
+                        font.pixelSize: 14
+                        wrapMode: Text.WordWrap
+                        width: parent.width
+                        lineHeight: 1.25
+                    }
+
+                    Rectangle {
+                        width: parent.width
+                        height: 132
+                        radius: 8
+                        color: "#191f25"
+                        border.color: "#34404d"
+
+                        Column {
+                            anchors.fill: parent
+                            anchors.margins: 18
+                            spacing: 8
+
+                            Text {
+                                text: "Sandbox App"
+                                color: forgeGold
+                                font.pixelSize: 12
+                                font.bold: true
+                            }
+
+                            Text {
+                                text: "LF-APP-00042"
+                                color: fg
+                                font.pixelSize: 26
+                                font.bold: true
+                            }
+
+                            Text {
+                                text: "Private branch, 18 tester grants, cartridge provider enabled"
+                                color: muted
+                                font.pixelSize: 12
+                                wrapMode: Text.WordWrap
+                                width: parent.width
+                            }
+
+                        }
+
+                    }
+
                     Repeater {
-                        model: ["Alex / In Game", "Mira / Browsing Store", "Jordan / Away"]
+                        model: ["Create App", "Upload Build", "Grant Testers", "Publish Branch"]
 
                         Rectangle {
                             width: parent.width
-                            height: 58
-                            radius: 9
-                            color: "#171e26"
+                            height: 48
+                            radius: 8
+                            color: index === 1 ? "#2a211a" : "#151b22"
+                            border.color: index === 1 ? forgeGold : line
 
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
                                 anchors.leftMargin: 16
                                 text: modelData
-                                color: muted
+                                color: index === 1 ? forgeGold : fg
                                 font.pixelSize: 14
                                 font.bold: true
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            Column {
+                width: parent.width * 0.64 - 20
+                height: parent.height
+                spacing: 12
+
+                Repeater {
+                    model: forgeworksModel
+
+                    Rectangle {
+                        width: parent.width
+                        height: (forgeworksPage.height - 184) / 4
+                        radius: 8
+                        color: "#dd12171d"
+                        border.color: line
+
+                        Row {
+                            anchors.fill: parent
+                            anchors.margins: 20
+                            spacing: 18
+
+                            Rectangle {
+                                width: 92
+                                height: parent.height
+                                radius: 8
+                                color: "#161d24"
+                                border.color: model.state === "Next" ? forgeGold : "#303a45"
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: model.state
+                                    color: model.state === "Next" ? forgeGold : muted
+                                    font.pixelSize: 12
+                                    font.bold: true
+                                }
+
+                            }
+
+                            Column {
+                                width: parent.width - 110
+                                anchors.verticalCenter: parent.verticalCenter
+                                spacing: 7
+
+                                Text {
+                                    text: model.title
+                                    color: fg
+                                    font.pixelSize: 22
+                                    font.bold: true
+                                    width: parent.width
+                                    elide: Text.ElideRight
+                                }
+
+                                Text {
+                                    text: model.body
+                                    color: muted
+                                    font.pixelSize: 13
+                                    wrapMode: Text.WordWrap
+                                    width: parent.width
+                                    lineHeight: 1.25
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    Item {
+        id: downloadsPage
+
+        anchors.fill: parent
+        visible: activeSection === 5
+
+        Column {
+            anchors.left: parent.left
+            anchors.leftMargin: 72
+            anchors.right: parent.right
+            anchors.rightMargin: 72
+            anchors.top: parent.top
+            anchors.topMargin: 124
+            spacing: 18
+
+            Text {
+                text: "Downloads"
+                color: fg
+                font.pixelSize: 44
+                font.bold: true
+            }
+
+            Text {
+                text: "Mock queue for scans, client updates, installs, verification, repair, and rollback."
+                color: muted
+                font.pixelSize: 14
+            }
+
+            Repeater {
+                model: downloadModel
+
+                Rectangle {
+                    width: parent.width
+                    height: 118
+                    radius: 8
+                    color: "#dd12171d"
+                    border.color: line
+
+                    Column {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.leftMargin: 22
+                        anchors.rightMargin: 22
+                        spacing: 10
+
+                        Row {
+                            width: parent.width
+
+                            Text {
+                                text: model.title
+                                color: fg
+                                font.pixelSize: 20
+                                font.bold: true
+                                width: parent.width - 90
+                                elide: Text.ElideRight
+                            }
+
+                            Text {
+                                text: model.value
+                                color: model.value === "Live" ? green : forgeGold
+                                font.pixelSize: 12
+                                font.bold: true
+                                horizontalAlignment: Text.AlignRight
+                                width: 90
+                            }
+
+                        }
+
+                        Text {
+                            text: model.body
+                            color: muted
+                            font.pixelSize: 12
+                            width: parent.width
+                            elide: Text.ElideRight
+                        }
+
+                        Rectangle {
+                            width: parent.width
+                            height: 8
+                            radius: 4
+                            color: "#222b34"
+
+                            Rectangle {
+                                anchors.left: parent.left
+                                anchors.top: parent.top
+                                anchors.bottom: parent.bottom
+                                width: parent.width * model.progress / 100
+                                radius: 4
+                                color: model.value === "Live" ? green : ember
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    Item {
+        id: settingsPage
+
+        anchors.fill: parent
+        visible: activeSection === 6
+
+        Column {
+            anchors.left: parent.left
+            anchors.leftMargin: 72
+            anchors.right: parent.right
+            anchors.rightMargin: 72
+            anchors.top: parent.top
+            anchors.topMargin: 124
+            spacing: 18
+
+            Text {
+                text: "Settings"
+                color: fg
+                font.pixelSize: 44
+                font.bold: true
+            }
+
+            Grid {
+                width: parent.width
+                columns: 2
+                rowSpacing: 14
+                columnSpacing: 14
+
+                Repeater {
+                    model: settingsModel
+
+                    Rectangle {
+                        width: (settingsPage.width - 158) / 2
+                        height: 154
+                        radius: 8
+                        color: "#dd12171d"
+                        border.color: line
+
+                        Column {
+                            anchors.fill: parent
+                            anchors.margins: 20
+                            spacing: 9
+
+                            Text {
+                                text: model.title
+                                color: fg
+                                font.pixelSize: 22
+                                font.bold: true
+                                width: parent.width
+                                elide: Text.ElideRight
+                            }
+
+                            Text {
+                                text: model.value
+                                color: model.value === "Mock" ? forgeGold : green
+                                font.pixelSize: 11
+                                font.bold: true
+                            }
+
+                            Text {
+                                text: model.body
+                                color: muted
+                                font.pixelSize: 13
+                                wrapMode: Text.WordWrap
+                                width: parent.width
+                                lineHeight: 1.22
                             }
 
                         }
@@ -1659,6 +2278,7 @@ PanelWindow {
                 text: {
                     if (libraryScanRunning)
                         return "Scanning Cartridges";
+
                     let game = currentGame();
                     return game ? game.name : "Game";
                 }

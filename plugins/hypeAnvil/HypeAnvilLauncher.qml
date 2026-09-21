@@ -28,6 +28,30 @@ Item {
             "action": "library",
             "categories": ["Anvil"]
         }, {
+            "name": "Open Anvil Store",
+            "icon": "material:storefront",
+            "comment": "Preview the Anvil Store mock",
+            "action": "store",
+            "categories": ["Anvil"]
+        }, {
+            "name": "Open Forgeworks",
+            "icon": "material:construction",
+            "comment": "Preview developer and publisher services",
+            "action": "forgeworks",
+            "categories": ["Anvil", "Forgeworks"]
+        }, {
+            "name": "Open Anvil Downloads",
+            "icon": "material:download",
+            "comment": "Preview installs, updates, and verification",
+            "action": "downloads",
+            "categories": ["Anvil"]
+        }, {
+            "name": "Open Anvil Settings",
+            "icon": "material:settings",
+            "comment": "Preview session, runtime, cloud, and account settings",
+            "action": "settings",
+            "categories": ["Anvil"]
+        }, {
             "name": "Install Anvil Session",
             "icon": "material:install_desktop",
             "comment": "Install the dedicated Anvil Wayland session",
@@ -73,6 +97,22 @@ Item {
         }
         if (item.action === "library") {
             runScript(["--section", "1"]);
+            return ;
+        }
+        if (item.action === "store") {
+            runScript(["--section", "2"]);
+            return ;
+        }
+        if (item.action === "forgeworks") {
+            runScript(["--section", "4"]);
+            return ;
+        }
+        if (item.action === "downloads") {
+            runScript(["--section", "5"]);
+            return ;
+        }
+        if (item.action === "settings") {
+            runScript(["--section", "6"]);
             return ;
         }
         runScript([]);

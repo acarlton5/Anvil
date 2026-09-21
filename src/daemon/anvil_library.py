@@ -5,7 +5,7 @@ Anvil Library — local cartridge provider for the Anvil client.
 Scans mounted USB/SD drives for game folders with cartridge.json metadata,
 fetches missing artwork from SteamGridDB, and outputs a JSON game library
 that the QML UI consumes. This is an offline Anvil provider; future online
-library providers will enter through Anvilworks services backed by
+library providers will enter through Forgeworks services backed by
 Constellation infrastructure.
 
 Usage:

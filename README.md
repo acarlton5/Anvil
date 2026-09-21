@@ -18,7 +18,7 @@ Steam-style store, library, overlay, and cartridge-based distribution model.
 HypeShell can provide a desktop/shell integration point for launching Anvil, but
 Anvil owns the game library, game metadata, artwork fetching, Proton runner, and
 future store/community UX. Anvil is the Steam-like client made by Legend Forge.
-Anvilworks is the developer and publisher service layer used by Anvil,
+Forgeworks is the developer and publisher service layer used by Anvil,
 comparable in role to Steamworks. It uses Constellation for distributed
 identity, entitlement, discovery, and delivery infrastructure. While those
 integrations are growing, local cartridge files under removable media act as an
