@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+plugin_dir="$(dirname -- "$script_dir")"
+repo_root="$(cd -- "$plugin_dir/../../.." && pwd)"
+
+anvil_root="${1:-${ANVIL_ROOT:-}}"
+if [ -z "$anvil_root" ]; then
+    for candidate in \
+        "$repo_root" \
+        "$HOME/Projects/Projects/Anvil" \
+        "$HOME/DevBox/Projects/Anvil" \
+        "$HOME/Projects/Anvil" \
+        "/opt/anvil" \
+        "/usr/local/share/anvil"; do
+        if [ -f "$candidate/src/ui/AnvilDaemon.qml" ]; then
+            anvil_root="$candidate"
+            break
+        fi
+    done
+fi
+
+if [ -z "$anvil_root" ] || [ ! -f "$anvil_root/src/ui/AnvilDaemon.qml" ]; then
+    echo "Anvil root not found. Pass a path or set ANVIL_ROOT." >&2
+    exit 64
+fi
+
+if ! command -v sudo >/dev/null 2>&1; then
+    echo "sudo is required to install the system session files." >&2
+    exit 1
+fi
+
+sudo install -D -m 755 "$anvil_root/session/anvil-session.sh" /usr/local/bin/anvil-session
+sudo install -D -m 755 "$anvil_root/scripts/anvil-proton-run" /usr/local/bin/anvil-proton-run
+sudo install -D -m 755 "$anvil_root/session/anvil-session.sh" /usr/local/share/anvil/session/anvil-session.sh
+sudo install -D -m 644 "$anvil_root/session/hyprland-anvil.lua" /usr/local/share/anvil/session/hyprland-anvil.lua
+sudo install -D -m 644 "$anvil_root/src/ui/AnvilDaemon.qml" /usr/local/share/anvil/src/ui/AnvilDaemon.qml
+sudo install -D -m 644 "$anvil_root/src/ui/AnvilLauncher.qml" /usr/local/share/anvil/src/ui/AnvilLauncher.qml
+sudo install -D -m 644 "$anvil_root/src/ui/AnvilOverlay.qml" /usr/local/share/anvil/src/ui/AnvilOverlay.qml
+sudo install -D -m 755 "$anvil_root/src/daemon/constellation-bridge" /usr/local/share/anvil/src/daemon/constellation-bridge
+sudo install -D -m 644 "$anvil_root/src/daemon/constellation.py" /usr/local/share/anvil/src/daemon/constellation.py
+
+session_wrapper="$(mktemp)"
+cat > "$session_wrapper" <<'WRAPPER'
+#!/usr/bin/env bash
+set -euo pipefail
+
+export ANVIL_ROOT="${ANVIL_ROOT:-/usr/local/share/anvil}"
+exec "$ANVIL_ROOT/session/anvil-session.sh"
+WRAPPER
+sudo install -D -m 755 "$session_wrapper" /usr/local/bin/anvil-session
+unlink "$session_wrapper"
+
+desktop_file="$(mktemp)"
+cat > "$desktop_file" <<'DESKTOP'
+[Desktop Entry]
+Name=Anvil
+Comment=Dedicated Wayland gaming session
+Exec=anvil-session
+TryExec=anvil-session
+Type=Application
+DesktopNames=Anvil
+DESKTOP
+sudo install -D -m 644 "$desktop_file" /usr/share/wayland-sessions/anvil.desktop
+unlink "$desktop_file"
+
+echo "Anvil session installed. Log out and choose Anvil from the greeter."

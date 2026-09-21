@@ -7,6 +7,7 @@ import Quickshell.Wayland
 PanelWindow {
     id: overlayWindow
 
+    property var modelData: null
     readonly property color ink: "#f4f8ff"
     readonly property color muted: "#9aa7b7"
     readonly property color quiet: "#667487"
@@ -25,6 +26,7 @@ PanelWindow {
     }
 
     color: "transparent"
+    screen: modelData
     implicitWidth: 1920
     implicitHeight: 1080
     WlrLayershell.layer: WlrLayer.Overlay

@@ -18,14 +18,26 @@ Item {
         const items = [{
             "name": "Open Anvil",
             "icon": "material:sports_esports",
-            "comment": "Launch the standalone Anvil game client",
+            "comment": "Preview Anvil over the current desktop",
             "action": "open",
             "categories": ["Anvil"]
         }, {
             "name": "Open Anvil Library",
             "icon": "material:view_list",
-            "comment": "Launch Anvil directly into the library view",
+            "comment": "Preview Anvil directly in the library view",
             "action": "library",
+            "categories": ["Anvil"]
+        }, {
+            "name": "Install Anvil Session",
+            "icon": "material:install_desktop",
+            "comment": "Install the dedicated Anvil Wayland session",
+            "action": "install-session",
+            "categories": ["Anvil"]
+        }, {
+            "name": "Switch to Anvil Session",
+            "icon": "material:logout",
+            "comment": "Install the session and log out to the greeter",
+            "action": "switch-session",
             "categories": ["Anvil"]
         }, {
             "name": "Refresh Anvil Artwork",
@@ -49,6 +61,14 @@ Item {
 
         if (item.action === "artwork") {
             runScript(["--fetch-art"]);
+            return ;
+        }
+        if (item.action === "install-session") {
+            runScript(["--install-session"]);
+            return ;
+        }
+        if (item.action === "switch-session") {
+            runScript(["--install-session", "--logout"]);
             return ;
         }
         if (item.action === "library") {

@@ -6,6 +6,7 @@ import Quickshell.Wayland
 PanelWindow {
     id: anvil
 
+    property var modelData: null
     readonly property string localRoot: decodeURIComponent(Qt.resolvedUrl("../../").toString()).replace("file://", "").replace(/\/$/, "")
     readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || localRoot
     readonly property string bridgePath: anvilRoot + "/src/daemon/constellation-bridge"
@@ -67,7 +68,8 @@ PanelWindow {
     }
 
     color: bg
-    WlrLayershell.layer: WlrLayer.Top
+    screen: modelData
+    WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.exclusiveZone: -1
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     WlrLayershell.namespace: "anvil-launcher"

@@ -40,7 +40,12 @@ ShellRoot {
     Component {
         id: gamerComponent
 
-        AnvilLauncher {
+        Variants {
+            model: Quickshell.screens
+
+            AnvilLauncher {
+            }
+
         }
 
     }
@@ -53,7 +58,12 @@ ShellRoot {
     Component {
         id: overlayComponent
 
-        AnvilOverlay {
+        Variants {
+            model: Quickshell.screens
+
+            AnvilOverlay {
+            }
+
         }
 
     }
