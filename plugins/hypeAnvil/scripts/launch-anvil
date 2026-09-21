@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+section=""
+fetch_art=0
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --section)
+            section="${2:-}"
+            shift
+            ;;
+        --fetch-art)
+            fetch_art=1
+            ;;
+        *)
+            echo "Unknown option: $1" >&2
+            exit 64
+            ;;
+    esac
+    shift
+done
+
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+plugin_dir="$(dirname -- "$script_dir")"
+repo_root="$(cd -- "$plugin_dir/../../.." && pwd)"
+
+anvil_root="${ANVIL_ROOT:-}"
+if [ -z "$anvil_root" ]; then
+    for candidate in \
+        "$repo_root" \
+        "$HOME/Projects/Projects/Anvil" \
+        "$HOME/DevBox/Projects/Anvil" \
+        "$HOME/Projects/Anvil" \
+        "/opt/anvil" \
+        "/usr/local/share/anvil"; do
+        if [ -f "$candidate/src/ui/AnvilDaemon.qml" ]; then
+            anvil_root="$candidate"
+            break
+        fi
+    done
+fi
+
+if [ -z "$anvil_root" ] || [ ! -f "$anvil_root/src/ui/AnvilDaemon.qml" ]; then
+    echo "Anvil root not found. Set ANVIL_ROOT to a valid Anvil installation." >&2
+    exit 1
+fi
+
+if [ "$fetch_art" -eq 1 ]; then
+    exec env ANVIL_ROOT="$anvil_root" python3 "$anvil_root/src/daemon/constellation.py" --fetch-art --scan
+fi
+
+if [ -n "$section" ]; then
+    export ANVIL_SECTION="$section"
+fi
+
+exec env ANVIL_ROOT="$anvil_root" qs -p "$anvil_root/src/ui/AnvilDaemon.qml"

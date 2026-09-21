@@ -1,0 +1,15 @@
+{
+    "id": "hypeAnvil",
+    "name": "Anvil",
+    "description": "Launch the standalone Anvil game client from HypeShell.",
+    "version": "0.1.0",
+    "author": "acarlton5",
+    "icon": "sports_esports",
+    "type": "launcher",
+    "capabilities": ["launcher", "command-execution"],
+    "component": "./HypeAnvilLauncher.qml",
+    "settings": "./HypeAnvilSettings.qml",
+    "trigger": "anvil",
+    "requires": ["qs", "python3"],
+    "permissions": ["settings_read", "settings_write", "process"]
+}

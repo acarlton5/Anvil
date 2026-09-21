@@ -1,0 +1,85 @@
+import QtQuick
+import Quickshell
+import Quickshell.Io
+
+Item {
+    id: root
+
+    property var pluginService: null
+    property string trigger: "anvil"
+    property string anvilRoot: ""
+    readonly property string pluginId: "hypeAnvil"
+    readonly property string pluginRoot: pluginService ? pluginService.getPluginPath(pluginId) : ""
+    readonly property string launcherScript: pluginRoot + "/scripts/launch-anvil"
+
+    signal itemsChanged()
+
+    function getItems(query) {
+        const items = [{
+            "name": "Open Anvil",
+            "icon": "material:sports_esports",
+            "comment": "Launch the standalone Anvil game client",
+            "action": "open",
+            "categories": ["Anvil"]
+        }, {
+            "name": "Open Anvil Library",
+            "icon": "material:view_list",
+            "comment": "Launch Anvil directly into the library view",
+            "action": "library",
+            "categories": ["Anvil"]
+        }, {
+            "name": "Refresh Anvil Artwork",
+            "icon": "material:imagesmode",
+            "comment": "Fetch missing local cartridge artwork",
+            "action": "artwork",
+            "categories": ["Anvil"]
+        }];
+        if (!query || query.length === 0)
+            return items;
+
+        const lower = query.toLowerCase();
+        return items.filter((item) => {
+            return item.name.toLowerCase().includes(lower) || item.comment.toLowerCase().includes(lower);
+        });
+    }
+
+    function executeItem(item) {
+        if (!item)
+            return ;
+
+        if (item.action === "artwork") {
+            runScript(["--fetch-art"]);
+            return ;
+        }
+        if (item.action === "library") {
+            runScript(["--section", "1"]);
+            return ;
+        }
+        runScript([]);
+    }
+
+    function runScript(args) {
+        if (!launcherScript) {
+            console.warn("hypeAnvil: plugin path unavailable");
+            return ;
+        }
+        if (anvilRoot)
+            Quickshell.execDetached(["env", "ANVIL_ROOT=" + anvilRoot, "bash", launcherScript].concat(args));
+        else
+            Quickshell.execDetached(["bash", launcherScript].concat(args));
+    }
+
+    Component.onCompleted: {
+        if (pluginService)
+            trigger = pluginService.loadPluginData(pluginId, "trigger", "anvil");
+
+        if (pluginService)
+            anvilRoot = pluginService.loadPluginData(pluginId, "anvilRoot", "");
+
+    }
+    onTriggerChanged: {
+        if (pluginService)
+            pluginService.savePluginData(pluginId, "trigger", trigger);
+
+    }
+}
