@@ -144,8 +144,8 @@ register_overlay_binds() {
     toggle_cmd="ANVIL_ROOT=$(printf '%q' "$anvil_root") qs ipc --any-display -p $(printf '%q' "$anvil_root/src/ui/AnvilDaemon.qml") call anvil toggle"
     hyprctl keyword unbind "SHIFT,TAB" >/dev/null 2>&1 || true
     hyprctl keyword unbind "SUPER SHIFT,O" >/dev/null 2>&1 || true
-    hyprctl keyword bind "SHIFT,TAB,exec,$toggle_cmd" >/dev/null 2>&1 || true
-    hyprctl keyword bind "SUPER SHIFT,O,exec,$toggle_cmd" >/dev/null 2>&1 || true
+    hyprctl keyword bindl "SHIFT,TAB,exec,$toggle_cmd" >/dev/null 2>&1 || true
+    hyprctl keyword bindl "SUPER SHIFT,O,exec,$toggle_cmd" >/dev/null 2>&1 || true
     registered_overlay_binds=1
 }
 
