@@ -6,6 +6,7 @@ state_dir="$runtime_root/game-session"
 pid_file="$state_dir/pid"
 meta_file="$state_dir/current.env"
 anvil_root="${ANVIL_ROOT:-}"
+sdl_controller_db="${ANVIL_SDL_CONTROLLER_DB:-}"
 
 usage() {
     echo "usage: anvil-game-session run [--name NAME] [--input-profile PROFILE] [--controller-layout LAYOUT] -- COMMAND" >&2
@@ -50,6 +51,7 @@ write_meta() {
         printf 'ANVIL_INPUT_PROFILE=%q\n' "$input_profile"
         printf 'ANVIL_CONTROLLER_LAYOUT=%q\n' "$controller_layout"
         printf 'ANVIL_CONTROLLER_LAYOUT_FILE=%q\n' "$(controller_layout_file "$controller_layout")"
+        printf 'ANVIL_SDL_CONTROLLER_DB=%q\n' "$(sdl_controller_db_file)"
         printf 'ANVIL_STARTED_AT=%q\n' "$(date -Iseconds)"
     } > "$meta_file"
 }
@@ -67,6 +69,40 @@ controller_layout_file() {
     fi
 
     printf ''
+}
+
+sdl_controller_db_file() {
+    local candidate=""
+
+    if [ -n "$sdl_controller_db" ] && [ -f "$sdl_controller_db" ]; then
+        printf '%s' "$sdl_controller_db"
+        return
+    fi
+
+    if [ -n "$anvil_root" ]; then
+        candidate="$anvil_root/config/sdl-gamecontrollerdb.txt"
+        if [ -f "$candidate" ]; then
+            printf '%s' "$candidate"
+            return
+        fi
+    fi
+
+    printf ''
+}
+
+export_sdl_controller_mappings() {
+    local db_file
+    db_file="$(sdl_controller_db_file)"
+    if [ -z "$db_file" ]; then
+        return
+    fi
+
+    export SDL_GAMECONTROLLERCONFIG_FILE="$db_file"
+    export SDL_GAMECONTROLLERCONFIG
+    SDL_GAMECONTROLLERCONFIG="$(grep -Ev '^[[:space:]]*(#|$)' "$db_file" | paste -sd $'\n' -)"
+    export SDL_GAMEPADCONFIG_FILE="$db_file"
+    export SDL_GAMEPADCONFIG="$SDL_GAMECONTROLLERCONFIG"
+    export SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS=1
 }
 
 run_session() {
@@ -109,6 +145,9 @@ run_session() {
     export ANVIL_CONTROLLER_LAYOUT="$controller_layout"
     export ANVIL_CONTROLLER_LAYOUT_FILE
     ANVIL_CONTROLLER_LAYOUT_FILE="$(controller_layout_file "$controller_layout")"
+    export ANVIL_SDL_CONTROLLER_DB
+    ANVIL_SDL_CONTROLLER_DB="$(sdl_controller_db_file)"
+    export_sdl_controller_mappings
 
     setsid bash -lc "$*" &
     local pid=$!
