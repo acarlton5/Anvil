@@ -249,6 +249,10 @@ def scan_games(drives):
                 continue
 
             game = build_game_entry(cartridge, game_path, drive_root)
+            if not game.get("launch_command"):
+                print(f"[anvil-library] Skipping no-launch cartridge: {game['name']}",
+                      file=sys.stderr)
+                continue
             games.append(game)
 
     return games
@@ -292,24 +296,39 @@ def build_game_entry(cartridge, game_path, drive_root):
 
     # Resolve absolute exe path from drive-relative path
     abs_exe = os.path.join(drive_root, exe_path) if exe_path else ""
+    start_dir = cartridge.get("start_dir", "")
+    abs_start_dir = os.path.join(drive_root, start_dir) if start_dir else os.path.dirname(abs_exe)
 
     # Strip %command% placeholder for anvil-proton-run
     clean_options = launch_options.replace("%command%", "").strip()
 
-    # Build the launch command for anvil-proton-run
     launch_cmd = ""
     if abs_exe:
-        runner = os.environ.get("ANVIL_PROTON_RUN", "")
-        if not runner:
-            runner = str(DEFAULT_RUNNER if DEFAULT_RUNNER.is_file() else "anvil-proton-run")
-        launch_cmd = " ".join([
-            shlex.quote(runner),
-            shlex.quote(name),
-            shlex.quote(proton),
-            shlex.quote(abs_exe),
-        ])
-        if clean_options:
-            launch_cmd = f"{launch_cmd} {clean_options}"
+        native_target = (
+            str(proton).strip().lower() in {"", "null", "none", "native"}
+            or os.path.splitext(abs_exe.lower())[1] in {".sh", ".appimage"}
+        )
+        if native_target:
+            launch_cmd = " ".join([
+                "cd",
+                shlex.quote(abs_start_dir or os.path.dirname(abs_exe)),
+                "&&",
+                shlex.quote(abs_exe),
+            ])
+            if clean_options:
+                launch_cmd = f"{launch_cmd} {clean_options}"
+        else:
+            runner = os.environ.get("ANVIL_PROTON_RUN", "")
+            if not runner:
+                runner = str(DEFAULT_RUNNER if DEFAULT_RUNNER.is_file() else "anvil-proton-run")
+            launch_cmd = " ".join([
+                shlex.quote(runner),
+                shlex.quote(name),
+                shlex.quote(proton),
+                shlex.quote(abs_exe),
+            ])
+            if clean_options:
+                launch_cmd = f"{launch_cmd} {clean_options}"
 
     # Check for artwork
     artwork_dir = os.path.join(game_path, "artwork")

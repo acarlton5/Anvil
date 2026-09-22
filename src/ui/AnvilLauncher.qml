@@ -941,7 +941,7 @@ PanelWindow {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 90
-            height: 304
+            height: 360
 
             Text {
                 anchors.left: parent.left
@@ -959,16 +959,16 @@ PanelWindow {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                height: 246
+                height: 304
                 orientation: ListView.Horizontal
-                spacing: 14
+                spacing: 16
                 leftMargin: contentLeft
                 rightMargin: 72
                 model: gameModel
                 currentIndex: selectedGameIndex
                 focus: !powerMenuActive && activeSection === 0
                 preferredHighlightBegin: contentLeft
-                preferredHighlightEnd: contentLeft + 420
+                preferredHighlightEnd: contentLeft + 360
                 highlightRangeMode: ListView.StrictlyEnforceRange
                 Keys.onLeftPressed: decrementCurrentIndex()
                 Keys.onRightPressed: incrementCurrentIndex()
@@ -979,14 +979,14 @@ PanelWindow {
                 delegate: Rectangle {
                     id: card
 
-                    width: 390
-                    height: 226
+                    width: ListView.isCurrentItem ? 324 : 168
+                    height: 282
                     radius: 8
                     color: panelRaised
                     border.color: ListView.isCurrentItem ? ember : "#32404d"
                     border.width: ListView.isCurrentItem ? 3 : 1
                     clip: true
-                    scale: ListView.isCurrentItem ? 1.06 : 0.92
+                    scale: ListView.isCurrentItem ? 1.04 : 0.92
                     opacity: ListView.isCurrentItem ? 1 : 0.62
 
                     Rectangle {
@@ -998,7 +998,7 @@ PanelWindow {
                             text: initials(model.name)
                             color: "#f6d0be"
                             opacity: 0.68
-                            font.pixelSize: 82
+                            font.pixelSize: ListView.isCurrentItem ? 86 : 58
                             font.bold: true
                         }
 
@@ -1024,21 +1024,21 @@ PanelWindow {
                         }
 
                         gradient: Gradient {
-                            orientation: Gradient.Horizontal
+                            orientation: Gradient.Vertical
 
                             GradientStop {
                                 position: 0
-                                color: "#192027"
+                                color: "#27333d"
                             }
 
                             GradientStop {
-                                position: 0.55
-                                color: "#27323b"
+                                position: 0.52
+                                color: "#151d25"
                             }
 
                             GradientStop {
                                 position: 1
-                                color: "#513322"
+                                color: "#432719"
                             }
 
                         }
@@ -1047,7 +1047,7 @@ PanelWindow {
 
                     Image {
                         anchors.fill: parent
-                        source: model.dummy ? "" : (model.hero || model.grid || "")
+                        source: model.dummy ? "" : (model.grid || model.hero || "")
                         fillMode: Image.PreserveAspectCrop
                     }
 
@@ -1079,11 +1079,12 @@ PanelWindow {
                         anchors.leftMargin: 15
                         anchors.top: parent.top
                         anchors.topMargin: 14
-                        text: model.steamgriddb_id ? "GRID READY" : "LOCAL"
+                        text: (model.grid || model.hero) ? "BOX ART" : "LOCAL"
                         color: model.steamgriddb_id ? green : muted
                         font.pixelSize: 9
                         font.bold: true
                         font.letterSpacing: 0
+                        visible: ListView.isCurrentItem
                     }
 
                     Column {
@@ -1096,19 +1097,20 @@ PanelWindow {
                         Text {
                             text: model.name
                             color: fg
-                            font.pixelSize: 21
+                            font.pixelSize: ListView.isCurrentItem ? 22 : 14
                             font.bold: true
                             elide: Text.ElideRight
                             width: parent.width
                         }
 
                         Text {
-                            text: model.proton || "Proton Experimental"
+                            text: (model.proton || "Proton Experimental").toUpperCase()
                             color: "#a5aaae"
-                            font.pixelSize: 12
+                            font.pixelSize: 10
                             font.bold: true
                             elide: Text.ElideRight
                             width: parent.width
+                            visible: ListView.isCurrentItem
                         }
 
                     }
@@ -1126,6 +1128,14 @@ PanelWindow {
                     Behavior on scale {
                         NumberAnimation {
                             duration: 160
+                            easing.type: Easing.OutCubic
+                        }
+
+                    }
+
+                    Behavior on width {
+                        NumberAnimation {
+                            duration: 180
                             easing.type: Easing.OutCubic
                         }
 
