@@ -23,8 +23,8 @@ PanelWindow {
     readonly property color forgeGold: "#d9ad5f"
     readonly property color relayBlue: "#7aa8ff"
     readonly property color green: "#65d797"
-    readonly property int sidebarWidth: 112
-    readonly property int contentLeft: sidebarWidth + 44
+    readonly property int sidebarWidth: 0
+    readonly property int contentLeft: 64
     property int activeSection: Number(Quickshell.env("ANVIL_SECTION") || 0)
     property bool powerMenuActive: false
     property bool gameIsLoading: false
@@ -35,6 +35,8 @@ PanelWindow {
     property bool updateAvailable: false
     property int selectedStoreTile: 0
     property int selectedGameIndex: 0
+    property int selectedSetting: 0
+    property int selectedCommunityItem: 0
 
     function currentGame() {
         if (gameModel.count === 0)
@@ -98,11 +100,11 @@ PanelWindow {
         case 3:
             return "Friends, hubs, activity";
         case 4:
-            return "Apps, builds, publishing";
-        case 5:
             return "Queue, verify, update";
-        case 6:
+        case 5:
             return "Session and runtime";
+        case 6:
+            return "Apps, builds, publishing";
         default:
             return "Anvil";
         }
@@ -146,37 +148,32 @@ PanelWindow {
 
         ListElement {
             label: "Home"
-            icon: "◆"
+            icon: "user-home-symbolic"
         }
 
         ListElement {
             label: "Library"
-            icon: "▦"
+            icon: "view-grid-symbolic"
         }
 
         ListElement {
             label: "Store"
-            icon: "⬢"
+            icon: "system-software-install-symbolic"
         }
 
         ListElement {
             label: "Community"
-            icon: "◌"
-        }
-
-        ListElement {
-            label: "Forgeworks"
-            icon: "⚒"
+            icon: "system-users-symbolic"
         }
 
         ListElement {
             label: "Downloads"
-            icon: "↓"
+            icon: "folder-download-symbolic"
         }
 
         ListElement {
             label: "Settings"
-            icon: "⚙"
+            icon: "preferences-system-symbolic"
         }
 
     }
@@ -269,14 +266,14 @@ PanelWindow {
         ListElement {
             title: "Client update"
             body: "Signed Anvil release check with staged apply and rollback."
-            value: "Mock"
+            value: "Preview"
             progress: 42
         }
 
         ListElement {
             title: "Forgepipe install"
             body: "Depot download, verify, repair, move, uninstall, and delta updates."
-            value: "Design"
+            value: "Planned"
             progress: 24
         }
 
@@ -300,13 +297,13 @@ PanelWindow {
         ListElement {
             title: "Anvil Cloud"
             body: "Save sync, settings sync, offline queue, and conflicts."
-            value: "Mock"
+            value: "Coming soon"
         }
 
         ListElement {
             title: "Forge Guard"
             body: "Device trust, sign-in approval, family controls, and account recovery."
-            value: "Mock"
+            value: "Coming soon"
         }
 
     }
@@ -386,8 +383,47 @@ PanelWindow {
         anchors.fill: parent
         source: gameArt(currentGame())
         fillMode: Image.PreserveAspectCrop
-        opacity: source === "" ? 0 : 0.42
+        opacity: source === "" ? 0 : (activeSection === 0 ? 0.88 : 0.18)
         visible: source !== ""
+
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 320
+                easing.type: Easing.OutCubic
+            }
+
+        }
+
+    }
+
+    Rectangle {
+        anchors.fill: parent
+
+        gradient: Gradient {
+            orientation: Gradient.Horizontal
+
+            GradientStop {
+                position: 0
+                color: activeSection === 0 ? "#ed06080c" : "#f806080c"
+            }
+
+            GradientStop {
+                position: 0.34
+                color: activeSection === 0 ? "#8206080c" : "#ed06080c"
+            }
+
+            GradientStop {
+                position: 0.72
+                color: activeSection === 0 ? "#3006080c" : "#e606080c"
+            }
+
+            GradientStop {
+                position: 1
+                color: activeSection === 0 ? "#b806080c" : "#fa06080c"
+            }
+
+        }
+
     }
 
     Rectangle {
@@ -396,22 +432,22 @@ PanelWindow {
         gradient: Gradient {
             GradientStop {
                 position: 0
-                color: "#f2080b0f"
+                color: "#0006080c"
             }
 
             GradientStop {
-                position: 0.42
-                color: "#aa080b0f"
+                position: 0.54
+                color: activeSection === 0 ? "#1806080c" : "#b806080c"
             }
 
             GradientStop {
-                position: 0.72
-                color: "#ee080b0f"
+                position: 0.78
+                color: activeSection === 0 ? "#c906080c" : "#ed06080c"
             }
 
             GradientStop {
                 position: 1
-                color: "#ff080b0f"
+                color: "#fa06080c"
             }
 
         }
@@ -424,62 +460,104 @@ PanelWindow {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        height: 76
-        color: "#d8050609"
-        border.color: "#202832"
+        height: 92
+        color: "#a806080c"
         z: 20
 
         Row {
             anchors.left: parent.left
-            anchors.leftMargin: contentLeft
+            anchors.leftMargin: 48
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 14
+            spacing: 16
 
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
-                width: 3
-                height: 38
-                radius: 2
+                width: 42
+                height: 42
+                radius: 6
                 color: ember
-            }
-
-            Column {
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 3
-
-                Text {
-                    text: currentSectionLabel()
-                    color: fg
-                    font.pixelSize: 20
-                    font.bold: true
-                    font.letterSpacing: 0
-                }
-
-                Text {
-                    text: currentSectionSubtitle()
-                    color: muted
-                    font.pixelSize: 11
-                    font.bold: true
-                    font.letterSpacing: 0
-                }
-
-            }
-
-            Rectangle {
-                anchors.verticalCenter: parent.verticalCenter
-                width: 106
-                height: 28
-                radius: 8
-                color: "#17212a"
-                border.color: "#2f3a45"
 
                 Text {
                     anchors.centerIn: parent
-                    text: "SESSION"
-                    color: forgeGold
-                    font.pixelSize: 10
+                    text: "A"
+                    color: "#170b07"
+                    font.pixelSize: 24
                     font.bold: true
-                    font.letterSpacing: 0
+                }
+
+            }
+
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "ANVIL"
+                color: fg
+                font.pixelSize: 22
+                font.bold: true
+            }
+
+        }
+
+        Row {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: 8
+
+            Repeater {
+                model: navModel
+
+                Item {
+                    width: Math.max(88, navLabel.implicitWidth + 40)
+                    height: 54
+
+                    Row {
+                        anchors.centerIn: parent
+                        spacing: 9
+
+                        Image {
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 18
+                            height: 18
+                            source: Quickshell.iconPath(model.icon, true)
+                            sourceSize.width: 36
+                            sourceSize.height: 36
+                            opacity: activeSection === index ? 1 : 0.68
+                        }
+
+                        Text {
+                            id: navLabel
+
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: model.label
+                            color: activeSection === index ? fg : "#b1b7bd"
+                            font.pixelSize: 14
+                            font.bold: activeSection === index
+                        }
+
+                    }
+
+                    Rectangle {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.bottom: parent.bottom
+                        width: activeSection === index ? Math.max(24, navLabel.implicitWidth) : 0
+                        height: 3
+                        radius: 2
+                        color: ember
+
+                        Behavior on width {
+                            NumberAnimation {
+                                duration: 180
+                                easing.type: Easing.OutCubic
+                            }
+
+                        }
+
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: selectSection(index)
+                    }
+
                 }
 
             }
@@ -488,44 +566,40 @@ PanelWindow {
 
         Row {
             anchors.right: parent.right
-            anchors.rightMargin: 54
+            anchors.rightMargin: 48
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 8
+            spacing: 18
 
-            Rectangle {
-                width: 92
-                height: 36
-                radius: 8
-                color: "#131a21"
-                border.color: "#2c3743"
-
-                Text {
-                    anchors.centerIn: parent
-                    text: Qt.formatTime(new Date(), "h:mm AP")
-                    color: muted
-                    font.pixelSize: 13
-                    font.bold: true
-                }
-
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                width: 20
+                height: 20
+                source: Quickshell.iconPath("folder-download-symbolic", true)
+                sourceSize.width: 40
+                sourceSize.height: 40
+                opacity: 0.72
             }
 
-            Rectangle {
-                width: 38
-                height: 36
-                radius: 8
-                color: powerMenuActive ? "#30201a" : "#131a21"
-                border.color: powerMenuActive ? ember : "#27323d"
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: Qt.formatTime(new Date(), "h:mm AP")
+                color: fg
+                font.pixelSize: 13
+                font.bold: true
+            }
 
-                Text {
-                    anchors.centerIn: parent
-                    text: "⏻"
-                    color: powerMenuActive ? emberLight : muted
-                    font.pixelSize: 11
-                    font.bold: true
-                }
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                width: 22
+                height: 22
+                source: Quickshell.iconPath("system-shutdown-symbolic", true)
+                sourceSize.width: 44
+                sourceSize.height: 44
+                opacity: powerMenuActive ? 1 : 0.72
 
                 MouseArea {
                     anchors.fill: parent
+                    anchors.margins: -12
                     onClicked: powerMenuActive = !powerMenuActive
                 }
 
@@ -542,6 +616,7 @@ PanelWindow {
         anchors.top: parent.top
         anchors.bottom: bottomHints.top
         width: sidebarWidth
+        visible: false
         color: "#f006080c"
         border.color: "#202833"
         z: 24
@@ -669,27 +744,24 @@ PanelWindow {
 
             anchors.left: parent.left
             anchors.leftMargin: contentLeft
-            anchors.right: parent.right
-            anchors.rightMargin: 56
+            width: Math.min(820, parent.width * 0.55)
             anchors.top: parent.top
-            anchors.topMargin: 106
+            anchors.topMargin: 142
             anchors.bottom: shelf.top
-            anchors.bottomMargin: 28
-            radius: 8
-            color: "#121820"
-            border.color: "#303944"
-            clip: true
+            anchors.bottomMargin: 8
+            color: "transparent"
+            border.color: "transparent"
 
             Image {
                 anchors.fill: parent
                 source: gameArt(currentGame())
                 fillMode: Image.PreserveAspectCrop
-                visible: source !== ""
+                visible: false
             }
 
             Rectangle {
                 anchors.fill: parent
-                visible: gameArt(currentGame()) === ""
+                visible: false
 
                 Text {
                     anchors.centerIn: parent
@@ -724,6 +796,7 @@ PanelWindow {
 
             Rectangle {
                 anchors.fill: parent
+                visible: false
 
                 gradient: Gradient {
                     orientation: Gradient.Horizontal
@@ -757,6 +830,7 @@ PanelWindow {
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
                 height: Math.min(210, parent.height * 0.46)
+                visible: false
 
                 gradient: Gradient {
                     GradientStop {
@@ -775,12 +849,22 @@ PanelWindow {
 
             Column {
                 anchors.left: parent.left
-                anchors.leftMargin: 34
+                anchors.leftMargin: 0
                 anchors.right: parent.right
                 anchors.rightMargin: 34
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 30
-                spacing: 10
+                anchors.bottomMargin: 34
+                spacing: 12
+
+                Image {
+                    width: Math.min(520, parent.width)
+                    height: 156
+                    source: currentGame() ? (currentGame().logo || "") : ""
+                    fillMode: Image.PreserveAspectFit
+                    horizontalAlignment: Image.AlignLeft
+                    verticalAlignment: Image.AlignBottom
+                    visible: source !== ""
+                }
 
                 Text {
                     text: tagLine(currentGame())
@@ -804,6 +888,7 @@ PanelWindow {
                     width: Math.min(720, parent.width)
                     elide: Text.ElideRight
                     lineHeight: 0.94
+                    visible: !currentGame() || !currentGame().logo
                 }
 
                 Text {
@@ -820,8 +905,8 @@ PanelWindow {
 
                     Rectangle {
                         width: 138
-                        height: 42
-                        radius: 8
+                        height: 46
+                        radius: 6
                         color: ember
 
                         Text {
@@ -841,9 +926,9 @@ PanelWindow {
                     }
 
                     Rectangle {
-                        width: 42
-                        height: 42
-                        radius: 8
+                        width: 46
+                        height: 46
+                        radius: 6
                         color: "#dd111820"
                         border.color: "#3b4652"
 
@@ -941,6 +1026,39 @@ PanelWindow {
                 font.letterSpacing: 0
             }
 
+            Image {
+                anchors.left: parent.left
+                anchors.leftMargin: contentLeft - 40
+                anchors.bottom: gameStrip.top
+                anchors.bottomMargin: -52
+                width: 430
+                height: 190
+                source: anvilRoot + "/assets/anvil-focus-flame.png"
+                fillMode: Image.PreserveAspectFit
+                opacity: 0.48
+
+                SequentialAnimation on opacity {
+                    running: homePage.visible
+                    loops: Animation.Infinite
+
+                    NumberAnimation {
+                        from: 0.38
+                        to: 0.56
+                        duration: 1200
+                        easing.type: Easing.InOutSine
+                    }
+
+                    NumberAnimation {
+                        from: 0.56
+                        to: 0.38
+                        duration: 1450
+                        easing.type: Easing.InOutSine
+                    }
+
+                }
+
+            }
+
             ListView {
                 id: gameStrip
 
@@ -964,142 +1082,182 @@ PanelWindow {
                 Keys.onReturnPressed: launchGame()
                 Keys.onEscapePressed: powerMenuActive = false
 
-                delegate: Rectangle {
+                delegate: Item {
                     id: card
 
                     width: ListView.isCurrentItem ? 344 : 136
-                    height: ListView.isCurrentItem ? 194 : 194
-                    radius: 8
-                    color: panelRaised
-                    border.color: ListView.isCurrentItem ? ember : "#32404d"
-                    border.width: ListView.isCurrentItem ? 2 : 1
-                    clip: true
+                    height: 194
                     scale: ListView.isCurrentItem ? 1.02 : 0.94
                     opacity: ListView.isCurrentItem ? 1 : 0.7
                     anchors.verticalCenter: parent.verticalCenter
 
-                    Rectangle {
-                        anchors.fill: parent
-                        visible: (model.hero || model.grid || "") === ""
+                    Image {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.bottom: parent.top
+                        anchors.bottomMargin: -24
+                        width: Math.max(420, parent.width + 90)
+                        height: 190
+                        source: anvilRoot + "/assets/anvil-focus-flame.png"
+                        fillMode: Image.PreserveAspectFit
+                        opacity: 0.46
+                        visible: false
 
-                        Text {
-                            anchors.centerIn: parent
-                            text: initials(model.name)
-                            color: "#f6d0be"
-                            opacity: 0.68
-                            font.pixelSize: ListView.isCurrentItem ? 82 : 54
-                            font.bold: true
+                        SequentialAnimation on opacity {
+                            running: ListView.isCurrentItem
+                            loops: Animation.Infinite
+
+                            NumberAnimation {
+                                from: 0.36
+                                to: 0.56
+                                duration: 1200
+                                easing.type: Easing.InOutSine
+                            }
+
+                            NumberAnimation {
+                                from: 0.56
+                                to: 0.36
+                                duration: 1450
+                                easing.type: Easing.InOutSine
+                            }
+
                         }
 
+                    }
+
+                    Rectangle {
+                        id: cardSurface
+
+                        anchors.fill: parent
+                        radius: 7
+                        color: panelRaised
+                        border.color: ListView.isCurrentItem ? ember : "#32404d"
+                        border.width: ListView.isCurrentItem ? 2 : 1
+                        clip: true
+
                         Rectangle {
-                            anchors.left: parent.left
-                            anchors.leftMargin: 18
-                            anchors.top: parent.top
-                            anchors.topMargin: 18
-                            width: 42
-                            height: 42
-                            radius: 8
-                            color: "#181f27"
-                            border.color: ember
+                            anchors.fill: parent
+                            visible: (model.hero || model.grid || "") === ""
 
                             Text {
                                 anchors.centerIn: parent
-                                text: "◆"
-                                color: emberLight
-                                font.pixelSize: 20
+                                text: initials(model.name)
+                                color: "#f6d0be"
+                                opacity: 0.68
+                                font.pixelSize: ListView.isCurrentItem ? 82 : 54
                                 font.bold: true
                             }
 
-                        }
+                            Rectangle {
+                                anchors.left: parent.left
+                                anchors.leftMargin: 18
+                                anchors.top: parent.top
+                                anchors.topMargin: 18
+                                width: 42
+                                height: 42
+                                radius: 6
+                                color: "#181f27"
+                                border.color: ember
 
-                        gradient: Gradient {
-                            orientation: Gradient.Vertical
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "A"
+                                    color: emberLight
+                                    font.pixelSize: 18
+                                    font.bold: true
+                                }
 
-                            GradientStop {
-                                position: 0
-                                color: "#27333d"
                             }
 
-                            GradientStop {
-                                position: 0.52
-                                color: "#151d25"
-                            }
+                            gradient: Gradient {
+                                orientation: Gradient.Vertical
 
-                            GradientStop {
-                                position: 1
-                                color: "#432719"
-                            }
+                                GradientStop {
+                                    position: 0
+                                    color: "#27333d"
+                                }
 
-                        }
+                                GradientStop {
+                                    position: 0.52
+                                    color: "#151d25"
+                                }
 
-                    }
+                                GradientStop {
+                                    position: 1
+                                    color: "#432719"
+                                }
 
-                    Image {
-                        anchors.fill: parent
-                        source: model.dummy ? "" : (ListView.isCurrentItem ? (model.hero || model.grid || "") : (model.grid || model.hero || ""))
-                        fillMode: Image.PreserveAspectCrop
-                    }
-
-                    Rectangle {
-                        anchors.fill: parent
-
-                        gradient: Gradient {
-                            GradientStop {
-                                position: 0
-                                color: ListView.isCurrentItem ? "#11000000" : "#22000000"
-                            }
-
-                            GradientStop {
-                                position: ListView.isCurrentItem ? 0.48 : 0.62
-                                color: ListView.isCurrentItem ? "#33000000" : "#55000000"
-                            }
-
-                            GradientStop {
-                                position: 1
-                                color: "#ee05070a"
                             }
 
                         }
 
-                    }
+                        Image {
+                            anchors.fill: parent
+                            source: model.dummy ? "" : (ListView.isCurrentItem ? (model.hero || model.grid || "") : (model.grid || model.hero || ""))
+                            fillMode: Image.PreserveAspectCrop
+                        }
 
-                    Text {
-                        anchors.left: parent.left
-                        anchors.leftMargin: 15
-                        anchors.top: parent.top
-                        anchors.topMargin: 14
-                        text: ListView.isCurrentItem ? ((model.hero || model.grid) ? "FEATURED" : "LOCAL") : ((model.grid || model.hero) ? "BOX ART" : "LOCAL")
-                        color: model.steamgriddb_id ? green : muted
-                        font.pixelSize: 9
-                        font.bold: true
-                        font.letterSpacing: 0
-                        visible: ListView.isCurrentItem
-                    }
+                        Rectangle {
+                            anchors.fill: parent
 
-                    Column {
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.bottom: parent.bottom
-                        anchors.margins: 15
-                        spacing: 5
+                            gradient: Gradient {
+                                GradientStop {
+                                    position: 0
+                                    color: ListView.isCurrentItem ? "#11000000" : "#22000000"
+                                }
 
-                        Text {
-                            text: model.name
-                            color: fg
-                            font.pixelSize: ListView.isCurrentItem ? 20 : 13
-                            font.bold: true
-                            elide: Text.ElideRight
-                            width: parent.width
+                                GradientStop {
+                                    position: ListView.isCurrentItem ? 0.48 : 0.62
+                                    color: ListView.isCurrentItem ? "#33000000" : "#55000000"
+                                }
+
+                                GradientStop {
+                                    position: 1
+                                    color: "#ee05070a"
+                                }
+
+                            }
+
                         }
 
                         Text {
-                            text: (model.proton || "Proton Experimental").toUpperCase()
-                            color: "#a5aaae"
-                            font.pixelSize: 10
+                            anchors.left: parent.left
+                            anchors.leftMargin: 15
+                            anchors.top: parent.top
+                            anchors.topMargin: 14
+                            text: (model.hero || model.grid) ? "READY" : "LOCAL"
+                            color: model.steamgriddb_id ? green : muted
+                            font.pixelSize: 9
                             font.bold: true
-                            elide: Text.ElideRight
-                            width: parent.width
+                            font.letterSpacing: 0
                             visible: ListView.isCurrentItem
+                        }
+
+                        Column {
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.bottom: parent.bottom
+                            anchors.margins: 15
+                            spacing: 5
+
+                            Text {
+                                text: model.name
+                                color: fg
+                                font.pixelSize: ListView.isCurrentItem ? 20 : 13
+                                font.bold: true
+                                elide: Text.ElideRight
+                                width: parent.width
+                            }
+
+                            Text {
+                                text: model.proton || "Proton Experimental"
+                                color: "#a5aaae"
+                                font.pixelSize: 10
+                                font.bold: true
+                                elide: Text.ElideRight
+                                width: parent.width
+                                visible: ListView.isCurrentItem
+                            }
+
                         }
 
                     }
@@ -1146,10 +1304,296 @@ PanelWindow {
     }
 
     Item {
-        id: libraryPage
+        id: libraryConsolePage
 
         anchors.fill: parent
         visible: activeSection === 1
+
+        Text {
+            anchors.left: parent.left
+            anchors.leftMargin: contentLeft
+            anchors.top: parent.top
+            anchors.topMargin: 126
+            text: "Library"
+            color: fg
+            font.pixelSize: 38
+            font.bold: true
+        }
+
+        Row {
+            anchors.left: parent.left
+            anchors.leftMargin: contentLeft
+            anchors.top: parent.top
+            anchors.topMargin: 184
+            spacing: 26
+
+            Repeater {
+                model: ["ALL  " + gameModel.count, "INSTALLED", "CARTRIDGES"]
+
+                Text {
+                    text: modelData
+                    color: index === 0 ? fg : muted
+                    font.pixelSize: 12
+                    font.bold: true
+
+                    Rectangle {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: parent.bottom
+                        anchors.topMargin: 8
+                        height: 3
+                        radius: 2
+                        color: ember
+                        visible: index === 0
+                    }
+
+                }
+
+            }
+
+        }
+
+        GridView {
+            id: libraryGrid
+
+            x: contentLeft
+            y: 234
+            width: libraryPreview.x - contentLeft - 34
+            height: parent.height - 320
+            cellWidth: 170
+            cellHeight: 246
+            model: gameModel
+            currentIndex: selectedGameIndex
+            clip: true
+            focus: activeSection === 1 && !powerMenuActive
+            Keys.onLeftPressed: decrementCurrentIndex()
+            Keys.onRightPressed: incrementCurrentIndex()
+            Keys.onUpPressed: moveCurrentIndexUp()
+            Keys.onDownPressed: moveCurrentIndexDown()
+            Keys.onReturnPressed: launchGame()
+            onCurrentIndexChanged: selectedGameIndex = currentIndex
+
+            delegate: Item {
+                width: 154
+                height: 224
+                scale: GridView.isCurrentItem ? 1.04 : 0.94
+                opacity: GridView.isCurrentItem ? 1 : 0.74
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: 6
+                    color: panelRaised
+                    border.color: GridView.isCurrentItem ? ember : "#26313b"
+                    border.width: GridView.isCurrentItem ? 3 : 1
+                    clip: true
+
+                    Image {
+                        anchors.fill: parent
+                        source: model.grid || model.hero || ""
+                        fillMode: Image.PreserveAspectCrop
+                        visible: source !== ""
+                    }
+
+                    Rectangle {
+                        anchors.fill: parent
+                        visible: (model.grid || model.hero || "") === ""
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: initials(model.name)
+                            color: emberLight
+                            font.pixelSize: 46
+                            font.bold: true
+                        }
+
+                        gradient: Gradient {
+                            GradientStop {
+                                position: 0
+                                color: "#202a33"
+                            }
+
+                            GradientStop {
+                                position: 1
+                                color: "#12171d"
+                            }
+
+                        }
+
+                    }
+
+                    Rectangle {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        height: 76
+
+                        gradient: Gradient {
+                            GradientStop {
+                                position: 0
+                                color: "#00000000"
+                            }
+
+                            GradientStop {
+                                position: 1
+                                color: "#f2080a0d"
+                            }
+
+                        }
+
+                    }
+
+                    Text {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        anchors.margins: 12
+                        text: model.name
+                        color: fg
+                        font.pixelSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        selectedGameIndex = index;
+                        libraryGrid.currentIndex = index;
+                        libraryGrid.forceActiveFocus();
+                    }
+                    onDoubleClicked: launchGame()
+                }
+
+                Behavior on scale {
+                    NumberAnimation {
+                        duration: 150
+                        easing.type: Easing.OutCubic
+                    }
+
+                }
+
+                Behavior on opacity {
+                    NumberAnimation {
+                        duration: 150
+                    }
+
+                }
+
+            }
+
+        }
+
+        Rectangle {
+            id: libraryPreview
+
+            anchors.right: parent.right
+            anchors.rightMargin: 54
+            y: 126
+            width: Math.min(430, parent.width * 0.28)
+            height: parent.height - 212
+            radius: 7
+            color: "#d90b0e12"
+            border.color: "#27313a"
+            clip: true
+
+            Image {
+                anchors.fill: parent
+                source: gameArt(currentGame())
+                fillMode: Image.PreserveAspectCrop
+                opacity: 0.62
+            }
+
+            Rectangle {
+                anchors.fill: parent
+
+                gradient: Gradient {
+                    GradientStop {
+                        position: 0
+                        color: "#2806080c"
+                    }
+
+                    GradientStop {
+                        position: 0.52
+                        color: "#9a06080c"
+                    }
+
+                    GradientStop {
+                        position: 1
+                        color: "#f506080c"
+                    }
+
+                }
+
+            }
+
+            Column {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.margins: 26
+                spacing: 12
+
+                Image {
+                    width: parent.width
+                    height: 108
+                    source: currentGame() ? (currentGame().logo || "") : ""
+                    fillMode: Image.PreserveAspectFit
+                    horizontalAlignment: Image.AlignLeft
+                    visible: source !== ""
+                }
+
+                Text {
+                    width: parent.width
+                    text: currentGame() ? currentGame().name : "No games found"
+                    color: fg
+                    font.pixelSize: 28
+                    font.bold: true
+                    wrapMode: Text.WordWrap
+                    visible: !currentGame() || !currentGame().logo
+                }
+
+                Text {
+                    width: parent.width
+                    text: currentGame() ? (currentGame().proton || "Ready to play") : libraryScanMessage
+                    color: muted
+                    font.pixelSize: 12
+                    elide: Text.ElideRight
+                }
+
+                Rectangle {
+                    width: 136
+                    height: 44
+                    radius: 6
+                    color: ember
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "PLAY"
+                        color: "#170b07"
+                        font.pixelSize: 12
+                        font.bold: true
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: launchGame()
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    Item {
+        id: libraryPage
+
+        anchors.fill: parent
+        visible: false
 
         Row {
             anchors.left: parent.left
@@ -1551,10 +1995,213 @@ PanelWindow {
     }
 
     Item {
-        id: storePage
+        id: storeConsolePage
 
         anchors.fill: parent
         visible: activeSection === 2
+
+        Text {
+            anchors.left: parent.left
+            anchors.leftMargin: contentLeft
+            anchors.top: parent.top
+            anchors.topMargin: 126
+            text: "Store"
+            color: fg
+            font.pixelSize: 38
+            font.bold: true
+        }
+
+        Rectangle {
+            id: storeFeature
+
+            anchors.left: parent.left
+            anchors.leftMargin: contentLeft
+            anchors.right: parent.right
+            anchors.rightMargin: 54
+            anchors.top: parent.top
+            anchors.topMargin: 188
+            height: Math.min(430, parent.height * 0.44)
+            radius: 7
+            color: panel
+            clip: true
+
+            Image {
+                anchors.fill: parent
+                source: gameArt(currentGame())
+                fillMode: Image.PreserveAspectCrop
+                opacity: source === "" ? 0 : 0.8
+            }
+
+            Rectangle {
+                anchors.fill: parent
+
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+
+                    GradientStop {
+                        position: 0
+                        color: "#ef080b0f"
+                    }
+
+                    GradientStop {
+                        position: 0.46
+                        color: "#8c080b0f"
+                    }
+
+                    GradientStop {
+                        position: 1
+                        color: "#25080b0f"
+                    }
+
+                }
+
+            }
+
+            Column {
+                anchors.left: parent.left
+                anchors.leftMargin: 36
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 32
+                width: Math.min(620, parent.width * 0.5)
+                spacing: 10
+
+                Text {
+                    text: "FEATURED ON ANVIL"
+                    color: emberLight
+                    font.pixelSize: 10
+                    font.bold: true
+                }
+
+                Text {
+                    text: currentGame() ? currentGame().name : "Discover your next game"
+                    color: fg
+                    font.pixelSize: 42
+                    font.bold: true
+                    width: parent.width
+                    elide: Text.ElideRight
+                }
+
+                Text {
+                    text: "Games, demos, events, and cartridges from creators across the Forgeworks network."
+                    color: "#d7dbde"
+                    font.pixelSize: 14
+                    width: parent.width
+                    wrapMode: Text.WordWrap
+                }
+
+                Rectangle {
+                    width: 132
+                    height: 44
+                    radius: 6
+                    color: ember
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "EXPLORE"
+                        color: "#170b07"
+                        font.pixelSize: 12
+                        font.bold: true
+                    }
+
+                }
+
+            }
+
+        }
+
+        Text {
+            anchors.left: parent.left
+            anchors.leftMargin: contentLeft
+            anchors.top: storeFeature.bottom
+            anchors.topMargin: 26
+            text: "Browse Anvil"
+            color: fg
+            font.pixelSize: 18
+            font.bold: true
+        }
+
+        Row {
+            anchors.left: parent.left
+            anchors.leftMargin: contentLeft
+            anchors.right: parent.right
+            anchors.rightMargin: 54
+            anchors.top: storeFeature.bottom
+            anchors.topMargin: 64
+            anchors.bottom: bottomHints.top
+            anchors.bottomMargin: 20
+            spacing: 16
+
+            Repeater {
+                model: storeModel
+
+                Rectangle {
+                    width: Math.min(310, (parent.width - 32) / 3)
+                    height: 154
+                    radius: 7
+                    color: selectedStoreTile === index ? "#e5242d35" : "#d4161c22"
+                    border.color: selectedStoreTile === index ? ember : "#2b343d"
+                    border.width: selectedStoreTile === index ? 2 : 1
+                    scale: selectedStoreTile === index ? 1 : 0.96
+
+                    Column {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        anchors.margins: 20
+                        spacing: 7
+
+                        Text {
+                            text: model.eyebrow
+                            color: selectedStoreTile === index ? emberLight : forgeGold
+                            font.pixelSize: 9
+                            font.bold: true
+                        }
+
+                        Text {
+                            text: model.title
+                            color: fg
+                            font.pixelSize: 23
+                            font.bold: true
+                        }
+
+                        Text {
+                            width: parent.width
+                            text: model.body
+                            color: muted
+                            font.pixelSize: 11
+                            elide: Text.ElideRight
+                        }
+
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            selectedStoreTile = index;
+                        }
+                    }
+
+                    Behavior on scale {
+                        NumberAnimation {
+                            duration: 150
+                            easing.type: Easing.OutCubic
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    Item {
+        id: storePage
+
+        anchors.fill: parent
+        visible: false
 
         Row {
             anchors.left: parent.left
@@ -1750,10 +2397,208 @@ PanelWindow {
     }
 
     Item {
-        id: communityPage
+        id: communityConsolePage
 
         anchors.fill: parent
         visible: activeSection === 3
+
+        Text {
+            anchors.left: parent.left
+            anchors.leftMargin: contentLeft
+            anchors.top: parent.top
+            anchors.topMargin: 126
+            text: "Community"
+            color: fg
+            font.pixelSize: 38
+            font.bold: true
+        }
+
+        Text {
+            anchors.left: parent.left
+            anchors.leftMargin: contentLeft
+            anchors.top: parent.top
+            anchors.topMargin: 184
+            text: "ACTIVITY"
+            color: muted
+            font.pixelSize: 11
+            font.bold: true
+        }
+
+        Column {
+            id: communityFeed
+
+            anchors.left: parent.left
+            anchors.leftMargin: contentLeft
+            anchors.right: friendsPanel.left
+            anchors.rightMargin: 44
+            anchors.top: parent.top
+            anchors.topMargin: 218
+            anchors.bottom: bottomHints.top
+            anchors.bottomMargin: 24
+            spacing: 8
+
+            Repeater {
+                model: communityModel
+
+                Rectangle {
+                    width: parent.width
+                    height: 112
+                    radius: 6
+                    color: selectedCommunityItem === index ? "#24303a" : "#b811171d"
+                    border.color: selectedCommunityItem === index ? ember : "transparent"
+                    border.width: selectedCommunityItem === index ? 2 : 0
+
+                    Column {
+                        anchors.left: parent.left
+                        anchors.leftMargin: 22
+                        anchors.right: parent.right
+                        anchors.rightMargin: 22
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: 7
+
+                        Text {
+                            text: model.meta
+                            color: selectedCommunityItem === index ? emberLight : forgeGold
+                            font.pixelSize: 9
+                            font.bold: true
+                        }
+
+                        Text {
+                            width: parent.width
+                            text: model.title
+                            color: fg
+                            font.pixelSize: 19
+                            font.bold: true
+                            elide: Text.ElideRight
+                        }
+
+                        Text {
+                            width: parent.width
+                            text: model.body
+                            color: muted
+                            font.pixelSize: 11
+                            elide: Text.ElideRight
+                        }
+
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            selectedCommunityItem = index;
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+        Item {
+            id: friendsPanel
+
+            anchors.right: parent.right
+            anchors.rightMargin: 64
+            anchors.top: parent.top
+            anchors.topMargin: 184
+            anchors.bottom: bottomHints.top
+            anchors.bottomMargin: 28
+            width: Math.min(390, parent.width * 0.28)
+
+            Text {
+                anchors.left: parent.left
+                anchors.top: parent.top
+                text: "FRIENDS ONLINE"
+                color: muted
+                font.pixelSize: 11
+                font.bold: true
+            }
+
+            Column {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.topMargin: 42
+                spacing: 2
+
+                Repeater {
+                    model: ["Alex", "Mira", "Jordan", "Cafe Build Club", "Devlog Watch"]
+
+                    Item {
+                        width: parent.width
+                        height: 64
+
+                        Rectangle {
+                            anchors.left: parent.left
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 38
+                            height: 38
+                            radius: 19
+                            color: index < 3 ? "#27323b" : "#1b232a"
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: modelData.charAt(0)
+                                color: fg
+                                font.pixelSize: 14
+                                font.bold: true
+                            }
+
+                            Rectangle {
+                                anchors.right: parent.right
+                                anchors.bottom: parent.bottom
+                                width: 10
+                                height: 10
+                                radius: 5
+                                color: index < 3 ? green : forgeGold
+                                border.color: bg
+                                border.width: 2
+                            }
+
+                        }
+
+                        Column {
+                            anchors.left: parent.left
+                            anchors.leftMargin: 52
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: 3
+
+                            Text {
+                                width: parent.width
+                                text: modelData
+                                color: fg
+                                font.pixelSize: 14
+                                font.bold: true
+                                elide: Text.ElideRight
+                            }
+
+                            Text {
+                                width: parent.width
+                                text: index === 0 ? "Playing a cartridge" : index === 1 ? "Browsing Store" : index === 2 ? "In Anvil Session" : "Online"
+                                color: muted
+                                font.pixelSize: 10
+                                elide: Text.ElideRight
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    Item {
+        id: communityPage
+
+        anchors.fill: parent
+        visible: false
 
         Row {
             anchors.left: parent.left
@@ -1900,7 +2745,7 @@ PanelWindow {
         id: forgeworksPage
 
         anchors.fill: parent
-        visible: activeSection === 4
+        visible: activeSection === 6
 
         Row {
             anchors.left: parent.left
@@ -2085,7 +2930,7 @@ PanelWindow {
         id: downloadsPage
 
         anchors.fill: parent
-        visible: activeSection === 5
+        visible: activeSection === 4
 
         Column {
             anchors.left: parent.left
@@ -2186,10 +3031,189 @@ PanelWindow {
     }
 
     Item {
+        id: settingsConsolePage
+
+        anchors.fill: parent
+        visible: activeSection === 5
+
+        Text {
+            anchors.left: parent.left
+            anchors.leftMargin: contentLeft
+            anchors.top: parent.top
+            anchors.topMargin: 126
+            text: "Settings"
+            color: fg
+            font.pixelSize: 38
+            font.bold: true
+        }
+
+        Column {
+            id: settingsList
+
+            anchors.left: parent.left
+            anchors.leftMargin: contentLeft
+            anchors.top: parent.top
+            anchors.topMargin: 196
+            anchors.bottom: bottomHints.top
+            anchors.bottomMargin: 28
+            width: Math.min(470, parent.width * 0.32)
+            spacing: 6
+
+            Repeater {
+                model: settingsModel
+
+                Rectangle {
+                    width: parent.width
+                    height: 74
+                    radius: 6
+                    color: selectedSetting === index ? "#25303a" : "transparent"
+
+                    Rectangle {
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 4
+                        height: 42
+                        radius: 2
+                        color: ember
+                        visible: selectedSetting === index
+                    }
+
+                    Column {
+                        anchors.left: parent.left
+                        anchors.leftMargin: 22
+                        anchors.right: parent.right
+                        anchors.rightMargin: 16
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: 4
+
+                        Text {
+                            width: parent.width
+                            text: model.title
+                            color: selectedSetting === index ? fg : "#c6cbd0"
+                            font.pixelSize: 17
+                            font.bold: selectedSetting === index
+                            elide: Text.ElideRight
+                        }
+
+                        Text {
+                            width: parent.width
+                            text: model.value
+                            color: selectedSetting === index ? emberLight : muted
+                            font.pixelSize: 10
+                            elide: Text.ElideRight
+                        }
+
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            selectedSetting = index;
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+        Item {
+            anchors.left: settingsList.right
+            anchors.leftMargin: 72
+            anchors.right: parent.right
+            anchors.rightMargin: 72
+            anchors.top: parent.top
+            anchors.topMargin: 202
+            anchors.bottom: bottomHints.top
+            anchors.bottomMargin: 32
+
+            Column {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                spacing: 16
+
+                Text {
+                    width: parent.width
+                    text: settingsModel.get(selectedSetting).title
+                    color: fg
+                    font.pixelSize: 32
+                    font.bold: true
+                }
+
+                Text {
+                    width: parent.width
+                    text: settingsModel.get(selectedSetting).body
+                    color: muted
+                    font.pixelSize: 14
+                    wrapMode: Text.WordWrap
+                    lineHeight: 1.3
+                }
+
+                Rectangle {
+                    width: parent.width
+                    height: 1
+                    color: "#313942"
+                }
+
+                Repeater {
+                    model: selectedSetting === 0 ? ["Start Anvil on login", "Mount removable game media", "Check for client updates"] : selectedSetting === 1 ? ["Prefer native Linux builds", "Use compatibility runtime", "Enable in-game overlay"] : selectedSetting === 2 ? ["Sync save data", "Sync controller layouts", "Allow offline queue"] : ["Require sign-in approval", "Remember this device", "Family controls"]
+
+                    Rectangle {
+                        width: parent.width
+                        height: 62
+                        color: "transparent"
+
+                        Text {
+                            anchors.left: parent.left
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: modelData
+                            color: fg
+                            font.pixelSize: 15
+                        }
+
+                        Rectangle {
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 48
+                            height: 26
+                            radius: 13
+                            color: index === 1 ? "#39434c" : ember
+
+                            Rectangle {
+                                anchors.verticalCenter: parent.verticalCenter
+                                x: index === 1 ? 4 : parent.width - width - 4
+                                width: 18
+                                height: 18
+                                radius: 9
+                                color: fg
+                            }
+
+                        }
+
+                        Rectangle {
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.bottom: parent.bottom
+                            height: 1
+                            color: "#222a31"
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    Item {
         id: settingsPage
 
         anchors.fill: parent
-        visible: activeSection === 6
+        visible: false
 
         Column {
             anchors.left: parent.left

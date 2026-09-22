@@ -116,15 +116,15 @@ Item {
             return ;
         }
         if (item.action === "forgeworks") {
-            runScript(["--section", "4"]);
+            runScript(["--section", "6"]);
             return ;
         }
         if (item.action === "downloads") {
-            runScript(["--section", "5"]);
+            runScript(["--section", "4"]);
             return ;
         }
         if (item.action === "settings") {
-            runScript(["--section", "6"]);
+            runScript(["--section", "5"]);
             return ;
         }
         if (item.action === "toggle-overlay") {
