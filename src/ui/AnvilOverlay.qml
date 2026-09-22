@@ -9,17 +9,19 @@ PanelWindow {
     property var modelData: null
     property var closeHandler: null
     property var killHandler: null
-    readonly property color ink: "#f4f8ff"
-    readonly property color muted: "#aeb6bd"
-    readonly property color panel: "#111820"
-    readonly property color panelDeep: "#080c11"
-    readonly property color stroke: "#2f3a45"
-    readonly property color ember: "#ff6537"
-    readonly property color emberLight: "#ff9a73"
-    readonly property color forgeGold: "#d9ad5f"
-    property int selectedDockIndex: 9
+    readonly property color ink: "#f5f7fb"
+    readonly property color muted: "#a8b1ba"
+    readonly property color dim: "#68737d"
+    readonly property color panel: "#d911171f"
+    readonly property color panelSoft: "#aa151d26"
+    readonly property color panelDeep: "#ee070a0f"
+    readonly property color stroke: "#3a4652"
+    readonly property color strokeSoft: "#24303a"
+    readonly property color ember: "#ff6841"
+    readonly property color gold: "#dbb66d"
     readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || "/usr/local/share/anvil"
     readonly property string achievementStatusScript: anvilRoot + "/scripts/anvil-achievement-status"
+    property int selectedDockIndex: 2
     property var achievementStatus: ({
         "game_name": "Current game",
         "service_state": "offline",
@@ -29,14 +31,15 @@ PanelWindow {
         "achievements": []
     })
     property var openModules: ({
+        "Home": true,
         "Friends": true,
-        "Anvil": true,
         "Achievements": true,
+        "Controller": false,
         "Capture": false,
-        "Controller": false
+        "Settings": false
     })
 
-    function activeDock() {
+    function selectedItem() {
         return dockModel.get(Math.max(0, Math.min(selectedDockIndex, dockModel.count - 1)));
     }
 
@@ -45,27 +48,24 @@ PanelWindow {
     }
 
     function setModuleVisible(label, visible) {
-        let next = Object.assign({
-        }, openModules);
+        let next = Object.assign({}, openModules);
         next[label] = visible;
         openModules = next;
     }
 
     function toggleModule(index) {
-        let item = dockModel.get(index);
         selectedDockIndex = index;
-        setModuleVisible(item.label, !moduleVisible(item.label));
+        let label = dockModel.get(index).label;
+        setModuleVisible(label, !moduleVisible(label));
     }
 
     function runMenuAction(action) {
-        if (action === "Back to Game" || action === "Resume Game") {
+        if (action === "back") {
             if (closeHandler)
                 closeHandler();
-
-        } else if (action === "Exit Game") {
+        } else if (action === "exit") {
             if (killHandler)
                 killHandler();
-
         }
     }
 
@@ -98,226 +98,68 @@ PanelWindow {
         id: dockModel
 
         ListElement {
-            icon: "ⓘ"
-            label: "Info"
-            title: "ANVIL SESSION"
-            hint: "Session, runtime, network, and cartridge state."
-            line1: "Anvil Session / overlay test"
-            line2: "Current game: local cartridge preview"
-            line3: "Relay: Constellation path mock"
-            x0: 330
-            y0: 120
-            wide: false
+            label: "Home"
+            icon: "A"
+            title: "ANVIL"
+            eyebrow: "Session"
+            summary: "Return to library, session controls, update state, and runtime actions."
         }
 
         ListElement {
-            icon: "⚙"
-            label: "Settings"
-            title: "FORGE SETTINGS"
-            hint: "Audio, display, notifications, and overlay temper."
-            line1: "Performance mode: on"
-            line2: "Overlay heat: 82%"
-            line3: "Alerts: friends and invites"
-            x0: 1100
-            y0: 146
-            wide: false
-        }
-
-        ListElement {
-            icon: "✎"
-            label: "Notes"
-            title: "FORGE NOTES"
-            hint: "Scratchpad, guide notes, and per-cartridge reminders."
-            line1: "Pin runtime notes beside the game"
-            line2: "Add launch options and Proton notes"
-            line3: "Sync notes through Anvil Cloud later"
-            x0: 420
-            y0: 470
-            wide: false
-        }
-
-        ListElement {
-            icon: "◷"
-            label: "Timer"
-            title: "SESSION TIMER"
-            hint: "Playtime, break reminders, and family limits."
-            line1: "This session: 6 minutes"
-            line2: "Today: 42 minutes"
-            line3: "Break reminder: disabled"
-            x0: 46
-            y0: 426
-            wide: false
-        }
-
-        ListElement {
-            icon: "▤"
-            label: "News"
-            title: "ANVIL NEWS"
-            hint: "Patch notes, events, updates, and Forge posts."
-            line1: "Anvil overlay mock updated"
-            line2: "Forgeworks naming pass complete"
-            line3: "Cartridge scan detects 49 games"
-            x0: 708
-            y0: 430
-            wide: true
-        }
-
-        ListElement {
-            icon: "▣"
-            label: "Chat"
-            title: "ANVIL CHAT"
-            hint: "Messages, party voice, invites, and group chats."
-            line1: "SALVATION / group chat"
-            line2: "Mira: browsing Forge Front"
-            line3: "Jordan: in Anvil Session"
-            x0: 1220
-            y0: 366
-            wide: false
-        }
-
-        ListElement {
-            icon: "↓"
-            label: "Download"
-            title: "FORGEPIPE"
-            hint: "Installs, updates, verification, repair, and rollback."
-            line1: "Cartridge scan: live"
-            line2: "Client update: mock queue"
-            line3: "Forgepipe install: design"
-            x0: 44
-            y0: 160
-            wide: false
-        }
-
-        ListElement {
-            icon: "⌘"
-            label: "Tools"
-            title: "RUNTIME TOOLS"
-            hint: "Logs, compatibility, repair, and developer test helpers."
-            line1: "Open game logs"
-            line2: "Verify cartridge manifest"
-            line3: "Restart Anvil Runtime"
-            x0: 1130
-            y0: 520
-            wide: false
-        }
-
-        ListElement {
-            icon: "▧"
-            label: "Pictures"
-            title: "ANVIL MEDIA"
-            hint: "Screenshots, clips, capture gallery, and sharing."
-            line1: "Screenshots: 0 this session"
-            line2: "Last clip: none"
-            line3: "Storage: local preview"
-            x0: 790
-            y0: 118
-            wide: false
-        }
-
-        ListElement {
-            icon: "◉"
             label: "Friends"
-            title: "ANVIL FRIENDS"
-            hint: "Friends, chats, parties, invites, and pinned groups."
-            line1: "+Offline [5]"
-            line2: "SALVATION / group chat"
-            line3: "No active party"
-            x0: 548
-            y0: 128
-            wide: false
+            icon: "FR"
+            title: "FRIENDS"
+            eyebrow: "Social"
+            summary: "Friends, group chats, parties, invites, and presence."
         }
 
         ListElement {
-            icon: "◆"
-            label: "Anvil"
-            title: "ANVIL QUICK BAR"
-            hint: "Launcher, store, library, session, and overlay controls."
-            line1: "Return to library"
-            line2: "Open Forge Front"
-            line3: "Switch to desktop"
-            x0: 646
-            y0: 312
-            wide: true
-        }
-
-        ListElement {
-            icon: "🏆"
             label: "Achievements"
-            title: "FORGEWORKS ACHIEVEMENTS"
-            hint: "Current game claims, progress, and achievement state."
-            line1: "Reading Forgeworks"
-            line2: "Achievement progress"
-            line3: "Local claim prototype"
-            x0: 930
-            y0: 116
-            wide: true
+            icon: "AC"
+            title: "ACHIEVEMENTS"
+            eyebrow: "Forgeworks"
+            summary: "Current game progress, claims, and achievement state."
         }
 
         ListElement {
-            icon: "◇"
             label: "Controller"
-            title: "ANVIL INPUT"
-            hint: "Input profiles, glyphs, rumble, and layout switching."
-            line1: "Profile: Gamepad default"
-            line2: "Rumble: enabled"
-            line3: "Gyro: not configured"
-            x0: 1010
-            y0: 300
-            wide: false
+            icon: "IN"
+            title: "INPUT"
+            eyebrow: "Controller"
+            summary: "Controller profile, PlayStation glyphs, rumble, and remaps."
         }
 
         ListElement {
-            icon: "◎"
-            label: "Web"
-            title: "WEB"
-            hint: "Guides, store pages, patch notes, and browser tabs."
-            line1: "Guide overlay: mock"
-            line2: "Store page: available"
-            line3: "External browser: disabled"
-            x0: 410
-            y0: 250
-            wide: false
-        }
-
-        ListElement {
-            icon: "●"
             label: "Capture"
-            title: "ANVIL CAPTURE"
-            hint: "Screenshot, replay buffer, recording, and timeline markers."
-            line1: "Replay buffer: off"
-            line2: "Screenshot hotkey: ready"
-            line3: "Recording: stopped"
-            x0: 1260
-            y0: 166
-            wide: false
+            icon: "CA"
+            title: "CAPTURE"
+            eyebrow: "Media"
+            summary: "Screenshots, recordings, replay buffer, and clip sharing."
         }
 
         ListElement {
-            icon: "⚙"
-            label: "System"
-            title: "SESSION SYSTEM"
-            hint: "Power, network, display, Bluetooth, and session status."
-            line1: "Mode: Anvil Session"
-            line2: "Network: Tailscale online"
-            line3: "Power profile: performance"
-            x0: 68
-            y0: 300
-            wide: false
+            label: "Downloads"
+            icon: "DL"
+            title: "DOWNLOADS"
+            eyebrow: "Forgepipe"
+            summary: "Installs, updates, verification, and repair jobs."
         }
 
         ListElement {
-            icon: "⌄"
-            label: "More"
-            title: "MORE"
-            hint: "Additional modules and future overlay extensions."
-            line1: "Workshop"
-            line2: "Broadcast"
-            line3: "Forgeworks diagnostics"
-            x0: 780
-            y0: 548
-            wide: false
+            label: "Tools"
+            icon: "TO"
+            title: "TOOLS"
+            eyebrow: "Runtime"
+            summary: "Logs, compatibility tools, manifests, and diagnostics."
         }
 
+        ListElement {
+            label: "Settings"
+            icon: "ST"
+            title: "SETTINGS"
+            eyebrow: "System"
+            summary: "Display, audio, network, notifications, and power."
+        }
     }
 
     Process {
@@ -329,7 +171,6 @@ PanelWindow {
                     let payload = text.trim();
                     if (payload.length > 0)
                         achievementStatus = JSON.parse(payload);
-
                 } catch (e) {
                     console.log("Anvil achievement status parse error: " + e);
                 }
@@ -339,30 +180,32 @@ PanelWindow {
 
     Rectangle {
         anchors.fill: parent
-        color: "#c5050609"
+        color: "#d904070a"
     }
 
     Rectangle {
         anchors.fill: parent
-
         gradient: Gradient {
             GradientStop {
                 position: 0
-                color: "#d60b1016"
+                color: "#ef070b10"
             }
-
             GradientStop {
                 position: 0.48
-                color: "#90111720"
+                color: "#ba111922"
             }
-
             GradientStop {
                 position: 1
-                color: "#ea050609"
+                color: "#fa040506"
             }
-
         }
+    }
 
+    Rectangle {
+        anchors.fill: parent
+        color: "transparent"
+        border.color: "#291e252d"
+        border.width: 1
     }
 
     Item {
@@ -373,510 +216,445 @@ PanelWindow {
         Keys.onLeftPressed: selectedDockIndex = Math.max(0, selectedDockIndex - 1)
         Keys.onRightPressed: selectedDockIndex = Math.min(dockModel.count - 1, selectedDockIndex + 1)
         Keys.onReturnPressed: toggleModule(selectedDockIndex)
-        Keys.onEscapePressed: runMenuAction("Back to Game")
-    }
-
-    Column {
-        anchors.left: parent.left
-        anchors.leftMargin: 18
-        anchors.top: parent.top
-        anchors.topMargin: 14
-        spacing: 6
-        z: 30
-
-        Text {
-            text: Qt.formatTime(new Date(), "h:mm AP")
-            color: ink
-            font.pixelSize: 18
-            font.bold: true
-        }
-
-        Text {
-            text: Qt.formatDate(new Date(), "ddd, MMM d")
-            color: muted
-            font.pixelSize: 11
-            font.bold: true
-        }
-
-        Text {
-            text: "6 minutes - this session"
-            color: muted
-            font.pixelSize: 11
-        }
-
-        Rectangle {
-            width: 86
-            height: 26
-            radius: 2
-            color: "#17212a"
-            border.color: stroke
-
-            Text {
-                anchors.centerIn: parent
-                text: "EXIT GAME"
-                color: "#d8dee7"
-                font.pixelSize: 10
-                font.bold: true
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: runMenuAction("Exit Game")
-            }
-
-        }
-
+        Keys.onEscapePressed: runMenuAction("back")
     }
 
     Row {
+        id: topBar
+
+        anchors.left: parent.left
         anchors.right: parent.right
-        anchors.rightMargin: 14
         anchors.top: parent.top
-        anchors.topMargin: 14
-        spacing: 10
-        z: 30
+        anchors.leftMargin: 28
+        anchors.rightMargin: 28
+        anchors.topMargin: 22
+        height: 44
+        z: 20
 
         Column {
+            width: 260
             anchors.verticalCenter: parent.verticalCenter
             spacing: 2
 
             Text {
-                anchors.right: parent.right
-                text: "Back to Game"
-                color: ink
-                font.pixelSize: 14
-                font.bold: true
-            }
-
-            Text {
-                anchors.right: parent.right
-                text: "(Shift+Tab)"
-                color: muted
-                font.pixelSize: 10
-                font.bold: true
-            }
-
-        }
-
-        Rectangle {
-            width: 38
-            height: 38
-            radius: 2
-            color: "#17212a"
-            border.color: stroke
-
-            Text {
-                anchors.centerIn: parent
-                text: "X"
+                text: Qt.formatTime(new Date(), "h:mm AP")
                 color: ink
                 font.pixelSize: 18
                 font.bold: true
             }
 
-            MouseArea {
-                anchors.fill: parent
-                onClicked: runMenuAction("Back to Game")
+            Text {
+                text: Qt.formatDate(new Date(), "ddd, MMM d") + "  /  session overlay"
+                color: muted
+                font.pixelSize: 11
+                font.bold: true
             }
-
         }
 
+        Item {
+            width: parent.width - 560
+            height: parent.height
+
+            Row {
+                anchors.centerIn: parent
+                spacing: 12
+
+                Rectangle {
+                    width: 34
+                    height: 34
+                    radius: 4
+                    color: "#1a111820"
+                    border.color: ember
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "A"
+                        color: ember
+                        font.pixelSize: 17
+                        font.bold: true
+                    }
+                }
+
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "ANVIL OVERLAY"
+                    color: ink
+                    font.pixelSize: 17
+                    font.bold: true
+                }
+            }
+        }
+
+        Row {
+            width: 300
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: 10
+
+            OverlayButton {
+                label: "Back to Game"
+                width: 132
+                onClicked: runMenuAction("back")
+            }
+
+            OverlayButton {
+                label: "Exit Game"
+                accent: true
+                width: 100
+                onClicked: runMenuAction("exit")
+            }
+        }
     }
 
     Rectangle {
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
-        anchors.topMargin: 34
-        width: 148
-        height: 50
-        radius: 6
-        color: "#121820"
-        border.color: ember
-        z: 22
+        id: contentShell
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: topBar.bottom
+        anchors.bottom: dock.top
+        anchors.leftMargin: 42
+        anchors.rightMargin: 42
+        anchors.topMargin: 30
+        anchors.bottomMargin: 24
+        color: "transparent"
 
         Row {
-            anchors.centerIn: parent
-            spacing: 9
-
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                text: "◆"
-                color: emberLight
-                font.pixelSize: 24
-                font.bold: true
-            }
-
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                text: "ANVIL"
-                color: ink
-                font.pixelSize: 22
-                font.bold: true
-            }
-
-        }
-
-    }
-
-    Repeater {
-        id: moduleRepeater
-
-        model: dockModel
-
-        Rectangle {
-            id: moduleWidget
-
-            x: Math.min(model.x0, overlayWindow.width - width - 28)
-            y: Math.min(model.y0, overlayWindow.height - height - 86)
-            width: model.wide ? 430 : 306
-            height: model.wide ? 178 : 252
-            radius: 4
-            color: panel
-            border.color: selectedDockIndex === index ? ember : stroke
-            visible: moduleVisible(model.label)
-            z: selectedDockIndex === index ? 18 : 12
-            clip: true
+            anchors.fill: parent
+            spacing: 18
 
             Rectangle {
-                width: parent.width
-                height: 3
-                color: ember
-            }
+                id: sessionCard
 
-            Rectangle {
-                id: moduleHeader
-
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.topMargin: 3
-                height: 48
-                color: "#18212a"
-
-                MouseArea {
-                    anchors.fill: parent
-                    drag.target: moduleWidget
-                    onPressed: {
-                        selectedDockIndex = index;
-                        moduleWidget.z = 24;
-                        keyCatcher.forceActiveFocus();
-                    }
-                    onReleased: moduleWidget.z = selectedDockIndex === index ? 18 : 12
-                }
-
-                Row {
-                    anchors.fill: parent
-                    anchors.leftMargin: 10
-                    anchors.rightMargin: 8
-                    spacing: 8
-
-                    Rectangle {
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 30
-                        height: 30
-                        radius: 3
-                        color: "#0d131a"
-                        border.color: ember
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: model.icon
-                            color: emberLight
-                            font.pixelSize: model.icon.length > 1 ? 10 : 15
-                            font.bold: true
-                        }
-
-                    }
-
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: model.title
-                        color: ink
-                        font.pixelSize: 12
-                        font.bold: true
-                        width: parent.width - 88
-                        elide: Text.ElideRight
-                    }
-
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: "X"
-                        color: muted
-                        font.pixelSize: 13
-                        font.bold: true
-
-                        MouseArea {
-                            anchors.fill: parent
-                            anchors.margins: -8
-                            onClicked: setModuleVisible(model.label, false)
-                        }
-
-                    }
-
-                }
-
-            }
-
-            Rectangle {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: moduleHeader.bottom
-                height: 38
-                color: "#101820"
+                width: Math.max(270, Math.min(330, overlayWindow.width * 0.18))
+                height: parent.height
+                radius: 8
+                color: panel
+                border.color: strokeSoft
+                clip: true
 
                 Rectangle {
                     anchors.left: parent.left
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    width: 3
-                    color: forgeGold
-                }
-
-                Text {
-                    anchors.left: parent.left
-                    anchors.leftMargin: 10
                     anchors.right: parent.right
-                    anchors.rightMargin: 10
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: model.hint
-                    color: emberLight
-                    font.pixelSize: 10
-                    elide: Text.ElideRight
+                    anchors.top: parent.top
+                    height: 3
+                    color: ember
                 }
-
-            }
-
-            Column {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: moduleHeader.bottom
-                anchors.topMargin: 50
-                anchors.leftMargin: 12
-                anchors.rightMargin: 12
-                spacing: 10
-
-                visible: model.label !== "Achievements"
-
-                Text {
-                    text: model.line1
-                    color: "#d8dee7"
-                    font.pixelSize: 12
-                    font.bold: true
-                    width: parent.width
-                    elide: Text.ElideRight
-                }
-
-                Text {
-                    text: model.line2
-                    color: ink
-                    font.pixelSize: model.wide ? 18 : 15
-                    font.bold: true
-                    width: parent.width
-                    elide: Text.ElideRight
-                }
-
-                Text {
-                    text: model.line3
-                    color: muted
-                    font.pixelSize: 12
-                    width: parent.width
-                    wrapMode: Text.WordWrap
-                }
-
-                Rectangle {
-                    width: parent.width
-                    height: 6
-                    radius: 3
-                    color: "#27313a"
-
-                    Rectangle {
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        width: parent.width * (0.34 + ((index % 6) * 0.1))
-                        radius: 3
-                        color: index === selectedDockIndex ? ember : forgeGold
-                    }
-
-                }
-
-            }
-
-            Item {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: moduleHeader.bottom
-                anchors.topMargin: 48
-                anchors.bottom: parent.bottom
-                anchors.margins: 12
-                visible: model.label === "Achievements"
 
                 Column {
                     anchors.fill: parent
-                    spacing: 9
+                    anchors.margins: 18
+                    spacing: 16
+
+                    Column {
+                        width: parent.width
+                        spacing: 5
+
+                        Text {
+                            text: "NOW PLAYING"
+                            color: gold
+                            font.pixelSize: 11
+                            font.bold: true
+                        }
+
+                        Text {
+                            text: achievementStatus.game_name || "Current game"
+                            color: ink
+                            font.pixelSize: 25
+                            font.bold: true
+                            width: parent.width
+                            wrapMode: Text.WordWrap
+                            maximumLineCount: 2
+                            elide: Text.ElideRight
+                        }
+
+                        Text {
+                            text: achievementStatus.service_state === "online" ? "Forgeworks connected" : "Forgeworks offline"
+                            color: achievementStatus.service_state === "online" ? gold : muted
+                            font.pixelSize: 12
+                            font.bold: true
+                        }
+                    }
+
+                    Rectangle {
+                        width: parent.width
+                        height: 1
+                        color: strokeSoft
+                    }
+
+                    Column {
+                        width: parent.width
+                        spacing: 10
+
+                        StatRow {
+                            name: "Achievements"
+                            value: achievementStatus.claimed + " / " + achievementStatus.total
+                        }
+
+                        StatRow {
+                            name: "Input"
+                            value: "PlayStation profile"
+                        }
+
+                        StatRow {
+                            name: "Overlay"
+                            value: "Shift+Tab / PS"
+                        }
+                    }
+
+                    Rectangle {
+                        width: parent.width
+                        height: 84
+                        radius: 6
+                        color: "#85101822"
+                        border.color: strokeSoft
+
+                        Column {
+                            anchors.fill: parent
+                            anchors.margins: 12
+                            spacing: 6
+
+                            Text {
+                                text: selectedItem().title
+                                color: ink
+                                font.pixelSize: 15
+                                font.bold: true
+                            }
+
+                            Text {
+                                text: selectedItem().summary
+                                color: muted
+                                font.pixelSize: 11
+                                width: parent.width
+                                wrapMode: Text.WordWrap
+                                maximumLineCount: 3
+                                elide: Text.ElideRight
+                            }
+                        }
+                    }
+
+                    Item {
+                        width: parent.width
+                        height: Math.max(1, parent.height - 330)
+                    }
+
+                    OverlayButton {
+                        width: parent.width
+                        label: "Return to Library"
+                    }
+
+                    OverlayButton {
+                        width: parent.width
+                        label: "Exit Game"
+                        accent: true
+                        onClicked: runMenuAction("exit")
+                    }
+                }
+            }
+
+            Rectangle {
+                id: focusPanel
+
+                width: parent.width - sessionCard.width - detailPanel.width - 36
+                height: parent.height
+                radius: 8
+                color: panelDeep
+                border.color: stroke
+                clip: true
+
+                Rectangle {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    height: 3
+                    color: ember
+                }
+
+                Column {
+                    anchors.fill: parent
+                    anchors.margins: 22
+                    spacing: 18
+
+                    Row {
+                        width: parent.width
+                        height: 66
+                        spacing: 14
+
+                        Rectangle {
+                            width: 54
+                            height: 54
+                            radius: 6
+                            color: "#161d25"
+                            border.color: ember
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: selectedItem().icon
+                                color: ember
+                                font.pixelSize: selectedItem().icon.length > 1 ? 15 : 22
+                                font.bold: true
+                            }
+                        }
+
+                        Column {
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: parent.width - 180
+                            spacing: 4
+
+                            Text {
+                                text: selectedItem().eyebrow
+                                color: gold
+                                font.pixelSize: 11
+                                font.bold: true
+                            }
+
+                            Text {
+                                text: selectedItem().title
+                                color: ink
+                                font.pixelSize: 30
+                                font.bold: true
+                                width: parent.width
+                                elide: Text.ElideRight
+                            }
+                        }
+
+                        OverlayButton {
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 104
+                            label: moduleVisible(selectedItem().label) ? "Hide" : "Show"
+                            onClicked: toggleModule(selectedDockIndex)
+                        }
+                    }
+
+                    Rectangle {
+                        width: parent.width
+                        height: 1
+                        color: strokeSoft
+                    }
+
+                    Loader {
+                        width: parent.width
+                        height: parent.height - 98
+                        sourceComponent: selectedItem().label === "Achievements" ? achievementsComponent
+                            : selectedItem().label === "Friends" ? friendsComponent
+                            : selectedItem().label === "Controller" ? controllerComponent
+                            : selectedItem().label === "Capture" ? captureComponent
+                            : selectedItem().label === "Downloads" ? downloadsComponent
+                            : selectedItem().label === "Tools" ? toolsComponent
+                            : selectedItem().label === "Settings" ? settingsComponent
+                            : homeComponent
+                    }
+                }
+            }
+
+            Rectangle {
+                id: detailPanel
+
+                width: Math.max(292, Math.min(360, overlayWindow.width * 0.2))
+                height: parent.height
+                radius: 8
+                color: panel
+                border.color: strokeSoft
+                clip: true
+
+                Column {
+                    anchors.fill: parent
+                    anchors.margins: 18
+                    spacing: 14
 
                     Row {
                         width: parent.width
                         height: 34
-                        spacing: 10
 
-                        Rectangle {
-                            width: 62
-                            height: 30
-                            radius: 3
-                            color: "#0b1118"
-                            border.color: achievementStatus.service_state === "online" ? forgeGold : stroke
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: achievementStatus.claimed + "/" + achievementStatus.total
-                                color: achievementStatus.service_state === "online" ? forgeGold : muted
-                                font.pixelSize: 13
-                                font.bold: true
-                            }
-
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "LIVE MODULES"
+                            color: ink
+                            font.pixelSize: 14
+                            font.bold: true
+                            width: parent.width - 40
                         }
 
-                        Column {
-                            width: parent.width - 116
-                            spacing: 2
-
-                            Text {
-                                text: achievementStatus.set_name || "Achievements"
-                                color: ink
-                                font.pixelSize: 13
-                                font.bold: true
-                                width: parent.width
-                                elide: Text.ElideRight
-                            }
-
-                            Text {
-                                text: (achievementStatus.game_name || "Current game") + " / " + (achievementStatus.service_state === "online" ? "Forgeworks online" : "Forgeworks offline")
-                                color: muted
-                                font.pixelSize: 10
-                                width: parent.width
-                                elide: Text.ElideRight
-                            }
-
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "ON"
+                            color: gold
+                            font.pixelSize: 11
+                            font.bold: true
                         }
-
-                        Rectangle {
-                            width: 28
-                            height: 28
-                            radius: 2
-                            color: "#17212a"
-                            border.color: stroke
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: "↻"
-                                color: ink
-                                font.pixelSize: 14
-                                font.bold: true
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                onClicked: refreshAchievements()
-                            }
-
-                        }
-
                     }
 
                     Repeater {
-                        model: (achievementStatus.achievements || []).slice(0, 3)
+                        model: dockModel
 
                         Rectangle {
                             width: parent.width
-                            height: 35
-                            radius: 3
-                            color: modelData.claimed ? "#18261d" : "#111820"
-                            border.color: modelData.claimed ? forgeGold : stroke
+                            height: 46
+                            radius: 6
+                            color: moduleVisible(model.label) ? "#781c2730" : "#5f0d1218"
+                            border.color: selectedDockIndex === index ? ember : (moduleVisible(model.label) ? stroke : strokeSoft)
 
                             Row {
                                 anchors.fill: parent
-                                anchors.leftMargin: 8
-                                anchors.rightMargin: 8
-                                spacing: 8
+                                anchors.leftMargin: 10
+                                anchors.rightMargin: 10
+                                spacing: 10
 
-                                Text {
+                                Rectangle {
                                     anchors.verticalCenter: parent.verticalCenter
-                                    text: modelData.claimed ? "◆" : "◇"
-                                    color: modelData.claimed ? forgeGold : muted
-                                    font.pixelSize: 13
-                                    font.bold: true
+                                    width: 30
+                                    height: 30
+                                    radius: 4
+                                    color: selectedDockIndex === index ? ember : "#151d25"
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: model.icon
+                                        color: selectedDockIndex === index ? "#170805" : ink
+                                        font.pixelSize: model.icon.length > 1 ? 10 : 14
+                                        font.bold: true
+                                    }
                                 }
 
                                 Column {
                                     anchors.verticalCenter: parent.verticalCenter
-                                    width: parent.width - 70
+                                    width: parent.width - 92
                                     spacing: 1
 
                                     Text {
-                                        text: modelData.name || modelData.id
+                                        text: model.label
                                         color: ink
-                                        font.pixelSize: 11
+                                        font.pixelSize: 12
                                         font.bold: true
-                                        width: parent.width
-                                        elide: Text.ElideRight
                                     }
 
                                     Text {
-                                        text: modelData.description || ""
+                                        text: moduleVisible(model.label) ? "visible" : "hidden"
                                         color: muted
-                                        font.pixelSize: 9
-                                        width: parent.width
-                                        elide: Text.ElideRight
+                                        font.pixelSize: 10
                                     }
-
                                 }
 
-                                Text {
+                                Rectangle {
                                     anchors.verticalCenter: parent.verticalCenter
-                                    text: modelData.points ? modelData.points + "P" : ""
-                                    color: modelData.claimed ? forgeGold : muted
-                                    font.pixelSize: 10
-                                    font.bold: true
+                                    width: 9
+                                    height: 9
+                                    radius: 5
+                                    color: moduleVisible(model.label) ? gold : dim
                                 }
-
                             }
 
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    selectedDockIndex = index;
+                                    keyCatcher.forceActiveFocus();
+                                }
+                            }
                         }
-
                     }
-
-                    Text {
-                        visible: !achievementStatus.achievements || achievementStatus.achievements.length === 0
-                        text: "No achievement set for this session"
-                        color: muted
-                        font.pixelSize: 12
-                        font.bold: true
-                    }
-
                 }
-
             }
-
-            MouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.NoButton
-                onPressed: selectedDockIndex = index
-            }
-
         }
-
-    }
-
-    Text {
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: dock.top
-        anchors.bottomMargin: 10
-        text: activeDock().label + (moduleVisible(activeDock().label) ? " shown" : " hidden")
-        color: forgeGold
-        opacity: 0.86
-        font.pixelSize: 12
-        font.bold: true
-        z: 24
     }
 
     Row {
@@ -884,49 +662,475 @@ PanelWindow {
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 30
-        spacing: 6
+        anchors.bottomMargin: 28
+        spacing: 8
         z: 24
 
         Repeater {
             model: dockModel
 
             Rectangle {
-                width: model.icon.length > 1 ? 44 : 38
-                height: 38
-                radius: 2
-                color: moduleVisible(model.label) ? ember : "#17212a"
-                border.color: selectedDockIndex === index ? emberLight : stroke
+                width: selectedDockIndex === index ? 82 : 48
+                height: 46
+                radius: 6
+                color: selectedDockIndex === index ? ember : (moduleVisible(model.label) ? "#c51a2430" : "#a00d1218")
+                border.color: selectedDockIndex === index ? ember : stroke
                 border.width: selectedDockIndex === index ? 2 : 1
-                scale: selectedDockIndex === index ? 1.08 : 1
 
-                Text {
+                Row {
                     anchors.centerIn: parent
-                    text: model.icon
-                    color: moduleVisible(model.label) ? "#1b0903" : "#dccbc1"
-                    font.pixelSize: model.icon.length > 1 ? 10 : 16
-                    font.bold: true
+                    spacing: 7
+
+                    Text {
+                        text: model.icon
+                        color: selectedDockIndex === index ? "#190804" : ink
+                        font.pixelSize: model.icon.length > 1 ? 11 : 16
+                        font.bold: true
+                    }
+
+                    Text {
+                        visible: selectedDockIndex === index
+                        text: model.label
+                        color: "#190804"
+                        font.pixelSize: 11
+                        font.bold: true
+                    }
                 }
 
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        toggleModule(index);
+                        selectedDockIndex = index;
                         keyCatcher.forceActiveFocus();
                     }
+                    onDoubleClicked: toggleModule(index)
                 }
 
-                Behavior on scale {
+                Behavior on width {
                     NumberAnimation {
                         duration: 120
                     }
-
                 }
-
             }
-
         }
-
     }
 
+    Component {
+        id: homeComponent
+
+        Grid {
+            columns: 2
+            rowSpacing: 12
+            columnSpacing: 12
+
+            ModuleTile {
+                title: "Library"
+                body: "Return to Anvil library without ending the game."
+                status: "Ready"
+            }
+
+            ModuleTile {
+                title: "Forge Front"
+                body: "Store, news, updates, and game pages."
+                status: "Soon"
+            }
+
+            ModuleTile {
+                title: "Runtime"
+                body: "Supervised process, overlay hooks, and exit recovery."
+                status: "Active"
+            }
+
+            ModuleTile {
+                title: "Session"
+                body: "Controller-first Wayland mode with mounted cartridges."
+                status: "Anvil"
+            }
+        }
+    }
+
+    Component {
+        id: achievementsComponent
+
+        Column {
+            spacing: 12
+
+            Row {
+                width: parent.width
+                height: 70
+                spacing: 14
+
+                Rectangle {
+                    width: 96
+                    height: 64
+                    radius: 8
+                    color: "#141d24"
+                    border.color: achievementStatus.service_state === "online" ? gold : stroke
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: achievementStatus.claimed + "/" + achievementStatus.total
+                        color: achievementStatus.service_state === "online" ? gold : muted
+                        font.pixelSize: 24
+                        font.bold: true
+                    }
+                }
+
+                Column {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: parent.width - 226
+                    spacing: 5
+
+                    Text {
+                        text: achievementStatus.set_name || "Achievements"
+                        color: ink
+                        font.pixelSize: 20
+                        font.bold: true
+                        width: parent.width
+                        elide: Text.ElideRight
+                    }
+
+                    Text {
+                        text: (achievementStatus.game_name || "Current game") + " / " + (achievementStatus.service_state === "online" ? "Forgeworks online" : "Forgeworks offline")
+                        color: muted
+                        font.pixelSize: 12
+                        width: parent.width
+                        elide: Text.ElideRight
+                    }
+                }
+
+                OverlayButton {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 108
+                    label: "Refresh"
+                    onClicked: refreshAchievements()
+                }
+            }
+
+            Repeater {
+                model: (achievementStatus.achievements || []).slice(0, 6)
+
+                Rectangle {
+                    width: parent.width
+                    height: 58
+                    radius: 7
+                    color: modelData.claimed ? "#901a2a22" : "#7010161e"
+                    border.color: modelData.claimed ? gold : strokeSoft
+
+                    Row {
+                        anchors.fill: parent
+                        anchors.leftMargin: 14
+                        anchors.rightMargin: 14
+                        spacing: 12
+
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 34
+                            height: 34
+                            radius: 18
+                            color: modelData.claimed ? gold : "#151e26"
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: modelData.claimed ? "A" : "-"
+                                color: modelData.claimed ? "#160d04" : muted
+                                font.pixelSize: 13
+                                font.bold: true
+                            }
+                        }
+
+                        Column {
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: parent.width - 98
+                            spacing: 3
+
+                            Text {
+                                text: modelData.name || modelData.id
+                                color: ink
+                                font.pixelSize: 14
+                                font.bold: true
+                                width: parent.width
+                                elide: Text.ElideRight
+                            }
+
+                            Text {
+                                text: modelData.description || ""
+                                color: muted
+                                font.pixelSize: 11
+                                width: parent.width
+                                elide: Text.ElideRight
+                            }
+                        }
+
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: modelData.points ? modelData.points + "P" : ""
+                            color: modelData.claimed ? gold : muted
+                            font.pixelSize: 12
+                            font.bold: true
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Component {
+        id: friendsComponent
+
+        Column {
+            spacing: 12
+
+            ModuleTile {
+                title: "SALVATION"
+                body: "Group chat / no active voice party"
+                status: "Pinned"
+            }
+
+            ModuleTile {
+                title: "Friends"
+                body: "5 offline, 0 in party, invites ready"
+                status: "Quiet"
+            }
+
+            ModuleTile {
+                title: "Party"
+                body: "Voice and lobby hooks belong here once Forgeworks social is live."
+                status: "Soon"
+            }
+        }
+    }
+
+    Component {
+        id: controllerComponent
+
+        Column {
+            spacing: 12
+
+            ModuleTile {
+                title: "PlayStation Layout"
+                body: "ZEROPLUS controller mapped as PlayStation family."
+                status: "Active"
+            }
+
+            ModuleTile {
+                title: "Guide Button"
+                body: "PS button toggles the Anvil overlay during game sessions."
+                status: "Bound"
+            }
+
+            ModuleTile {
+                title: "Per-game Map"
+                body: "Game manifests can select input maps such as playstation.map."
+                status: "Ready"
+            }
+        }
+    }
+
+    Component {
+        id: captureComponent
+
+        Column {
+            spacing: 12
+
+            ModuleTile {
+                title: "Screenshot"
+                body: "Capture hooks are reserved for the Anvil runtime layer."
+                status: "Soon"
+            }
+
+            ModuleTile {
+                title: "Replay Buffer"
+                body: "Local timeline markers and clipping can slot into this panel."
+                status: "Off"
+            }
+        }
+    }
+
+    Component {
+        id: downloadsComponent
+
+        Column {
+            spacing: 12
+
+            ModuleTile {
+                title: "Cartridge Scan"
+                body: "Mounted media and local cartridge manifests feed Anvil Library."
+                status: "Live"
+            }
+
+            ModuleTile {
+                title: "Forgepipe"
+                body: "Installs, verification, repair, and rollback move here."
+                status: "Design"
+            }
+        }
+    }
+
+    Component {
+        id: toolsComponent
+
+        Column {
+            spacing: 12
+
+            ModuleTile {
+                title: "Runtime Logs"
+                body: "Game process, controller watcher, overlay watcher, and launch state."
+                status: "Local"
+            }
+
+            ModuleTile {
+                title: "Manifest"
+                body: "Inspect cartridge metadata, Proton selection, input map, and achievements."
+                status: "Ready"
+            }
+        }
+    }
+
+    Component {
+        id: settingsComponent
+
+        Column {
+            spacing: 12
+
+            ModuleTile {
+                title: "Display"
+                body: "Session compositor, scaling, refresh, HDR, and overscan."
+                status: "Soon"
+            }
+
+            ModuleTile {
+                title: "Network"
+                body: "Forgeworks endpoint, Tailscale route, and offline behavior."
+                status: achievementStatus.service_state
+            }
+
+            ModuleTile {
+                title: "Notifications"
+                body: "Achievements, friends, updates, and capture alerts."
+                status: "Quiet"
+            }
+        }
+    }
+
+    component OverlayButton: Rectangle {
+        signal clicked
+        property string label: ""
+        property bool accent: false
+
+        height: 34
+        radius: 6
+        color: accent ? ember : "#b0141c24"
+        border.color: accent ? ember : stroke
+
+        Text {
+            anchors.centerIn: parent
+            text: label
+            color: accent ? "#190804" : ink
+            font.pixelSize: 12
+            font.bold: true
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: parent.clicked()
+        }
+    }
+
+    component StatRow: Row {
+        property string name: ""
+        property string value: ""
+
+        width: parent.width
+        height: 22
+
+        Text {
+            text: name
+            color: muted
+            font.pixelSize: 12
+            width: parent.width * 0.48
+            elide: Text.ElideRight
+        }
+
+        Text {
+            text: value
+            color: ink
+            font.pixelSize: 12
+            font.bold: true
+            width: parent.width * 0.52
+            horizontalAlignment: Text.AlignRight
+            elide: Text.ElideRight
+        }
+    }
+
+    component ModuleTile: Rectangle {
+        property string title: ""
+        property string body: ""
+        property string status: ""
+
+        width: parent ? parent.width : 360
+        height: 86
+        radius: 7
+        color: panelSoft
+        border.color: strokeSoft
+
+        Row {
+            anchors.fill: parent
+            anchors.margins: 14
+            spacing: 12
+
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                width: 10
+                height: parent.height - 10
+                radius: 5
+                color: ember
+            }
+
+            Column {
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width - 114
+                spacing: 5
+
+                Text {
+                    text: title
+                    color: ink
+                    font.pixelSize: 15
+                    font.bold: true
+                    width: parent.width
+                    elide: Text.ElideRight
+                }
+
+                Text {
+                    text: body
+                    color: muted
+                    font.pixelSize: 12
+                    width: parent.width
+                    wrapMode: Text.WordWrap
+                    maximumLineCount: 2
+                    elide: Text.ElideRight
+                }
+            }
+
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                width: 72
+                height: 28
+                radius: 14
+                color: "#121a22"
+                border.color: stroke
+
+                Text {
+                    anchors.centerIn: parent
+                    text: status
+                    color: gold
+                    font.pixelSize: 10
+                    font.bold: true
+                    elide: Text.ElideRight
+                    width: parent.width - 10
+                    horizontalAlignment: Text.AlignHCenter
+                }
+            }
+        }
+    }
 }
