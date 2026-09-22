@@ -1,0 +1,31 @@
+{
+  "id": "jak-ii-ps4",
+  "name": "Jak II",
+  "source": "playstation-rerelease",
+  "platform": "ps4",
+  "schema": 1,
+  "notes": "Anvil achievement set for the OpenGOAL build, modeled after the PS4 rerelease trophy concept.",
+  "achievements": [
+    {
+      "id": "haven_hero",
+      "name": "Haven Hero",
+      "description": "Complete the story.",
+      "points": 100,
+      "hidden": false
+    },
+    {
+      "id": "orb_hunter",
+      "name": "Orb Hunter",
+      "description": "Collect Precursor Orbs.",
+      "points": 50,
+      "hidden": false
+    },
+    {
+      "id": "mission_runner",
+      "name": "Mission Runner",
+      "description": "Clear missions across Haven City.",
+      "points": 25,
+      "hidden": false
+    }
+  ]
+}

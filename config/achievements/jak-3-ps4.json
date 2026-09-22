@@ -1,0 +1,31 @@
+{
+  "id": "jak-3-ps4",
+  "name": "Jak 3",
+  "source": "playstation-rerelease",
+  "platform": "ps4",
+  "schema": 1,
+  "notes": "Anvil achievement set for the OpenGOAL build, modeled after the PS4 rerelease trophy concept.",
+  "achievements": [
+    {
+      "id": "wasteland_legend",
+      "name": "Wasteland Legend",
+      "description": "Complete the story.",
+      "points": 100,
+      "hidden": false
+    },
+    {
+      "id": "orb_reclaimer",
+      "name": "Orb Reclaimer",
+      "description": "Collect Precursor Orbs.",
+      "points": 50,
+      "hidden": false
+    },
+    {
+      "id": "desert_driver",
+      "name": "Desert Driver",
+      "description": "Complete vehicle challenges.",
+      "points": 25,
+      "hidden": false
+    }
+  ]
+}

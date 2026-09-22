@@ -1,0 +1,31 @@
+{
+  "id": "jak-and-daxter-ps4",
+  "name": "Jak and Daxter: The Precursor Legacy",
+  "source": "playstation-rerelease",
+  "platform": "ps4",
+  "schema": 1,
+  "notes": "Anvil achievement set for the OpenGOAL build, modeled after the PS4 rerelease trophy concept.",
+  "achievements": [
+    {
+      "id": "precursor_legacy",
+      "name": "The Precursor Legacy",
+      "description": "Complete the adventure.",
+      "points": 100,
+      "hidden": false
+    },
+    {
+      "id": "power_cell_collector",
+      "name": "Power Cell Collector",
+      "description": "Collect Power Cells across the world.",
+      "points": 50,
+      "hidden": false
+    },
+    {
+      "id": "scout_fly_roundup",
+      "name": "Scout Fly Roundup",
+      "description": "Rescue Scout Flies.",
+      "points": 25,
+      "hidden": false
+    }
+  ]
+}

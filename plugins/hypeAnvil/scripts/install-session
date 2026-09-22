@@ -89,6 +89,8 @@ stage_tree "$anvil_root/config/input-maps" config/input-maps
 input_maps_src="$STAGED_RESULT"
 stage_tree "$anvil_root/config/controller-layouts" config/controller-layouts
 controller_layouts_src="$STAGED_RESULT"
+stage_tree "$anvil_root/config/achievements" config/achievements
+achievements_src="$STAGED_RESULT"
 stage_file "$anvil_root/src/daemon/anvil-library-bridge" src/daemon/anvil-library-bridge
 anvil_library_bridge_src="$STAGED_RESULT"
 stage_file "$anvil_root/src/daemon/anvil_library.py" src/daemon/anvil_library.py
@@ -116,6 +118,9 @@ sudo chmod -R u=rwX,go=rX /usr/local/share/anvil/config/input-maps
 sudo install -d -m 755 /usr/local/share/anvil/config/controller-layouts
 sudo cp -R "$controller_layouts_src"/. /usr/local/share/anvil/config/controller-layouts/
 sudo chmod -R u=rwX,go=rX /usr/local/share/anvil/config/controller-layouts
+sudo install -d -m 755 /usr/local/share/anvil/config/achievements
+sudo cp -R "$achievements_src"/. /usr/local/share/anvil/config/achievements/
+sudo chmod -R u=rwX,go=rX /usr/local/share/anvil/config/achievements
 sudo install -D -m 755 "$anvil_library_bridge_src" /usr/local/share/anvil/src/daemon/anvil-library-bridge
 sudo install -D -m 644 "$anvil_library_src" /usr/local/share/anvil/src/daemon/anvil_library.py
 

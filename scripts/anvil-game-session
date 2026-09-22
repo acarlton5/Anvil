@@ -11,7 +11,7 @@ anvil_root="${ANVIL_ROOT:-}"
 sdl_controller_db="${ANVIL_SDL_CONTROLLER_DB:-}"
 
 usage() {
-    echo "usage: anvil-game-session run [--name NAME] [--input-profile PROFILE] [--input-map MAP] [--controller-layout LAYOUT] -- COMMAND" >&2
+    echo "usage: anvil-game-session run [--name NAME] [--input-profile PROFILE] [--input-map MAP] [--controller-layout LAYOUT] [--achievement-set SET] -- COMMAND" >&2
     echo "       anvil-game-session stop" >&2
     exit 64
 }
@@ -63,6 +63,7 @@ write_meta() {
     local input_profile="$2"
     local input_map="$3"
     local controller_layout="$4"
+    local achievement_set="$5"
 
     {
         printf 'ANVIL_GAME_NAME=%q\n' "$name"
@@ -72,9 +73,33 @@ write_meta() {
         printf 'ANVIL_CONTROLLER_FAMILY=%q\n' "$(active_controller_family)"
         printf 'ANVIL_CONTROLLER_LAYOUT=%q\n' "$controller_layout"
         printf 'ANVIL_CONTROLLER_LAYOUT_FILE=%q\n' "$(controller_layout_file "$controller_layout")"
+        printf 'ANVIL_ACHIEVEMENT_SET=%q\n' "$achievement_set"
+        printf 'ANVIL_ACHIEVEMENT_SET_FILE=%q\n' "$(achievement_set_file "$achievement_set")"
         printf 'ANVIL_SDL_CONTROLLER_DB=%q\n' "$(sdl_controller_db_file)"
         printf 'ANVIL_STARTED_AT=%q\n' "$(date -Iseconds)"
     } > "$meta_file"
+}
+
+achievement_set_file() {
+    local achievement_set="$1"
+    local candidate=""
+
+    [ -n "$achievement_set" ] || return 0
+
+    if [ -f "$achievement_set" ]; then
+        printf '%s' "$achievement_set"
+        return
+    fi
+
+    if [ -n "$anvil_root" ]; then
+        candidate="$anvil_root/config/achievements/$achievement_set"
+        if [ -f "$candidate" ]; then
+            printf '%s' "$candidate"
+            return
+        fi
+    fi
+
+    printf ''
 }
 
 input_map_file() {
@@ -218,6 +243,7 @@ run_session() {
     local input_profile=""
     local input_map=""
     local controller_layout=""
+    local achievement_set=""
 
     while [ "$#" -gt 0 ]; do
         case "$1" in
@@ -237,6 +263,10 @@ run_session() {
                 controller_layout="${2:-}"
                 shift 2
                 ;;
+            --achievement-set)
+                achievement_set="${2:-}"
+                shift 2
+                ;;
             --)
                 shift
                 break
@@ -251,7 +281,7 @@ run_session() {
 
     mkdir -p "$state_dir"
     stop_session
-    write_meta "$name" "$input_profile" "$input_map" "$controller_layout"
+    write_meta "$name" "$input_profile" "$input_map" "$controller_layout" "$achievement_set"
 
     export ANVIL_GAME_NAME="$name"
     export ANVIL_INPUT_PROFILE="$input_profile"
@@ -263,6 +293,9 @@ run_session() {
     export ANVIL_CONTROLLER_LAYOUT="$controller_layout"
     export ANVIL_CONTROLLER_LAYOUT_FILE
     ANVIL_CONTROLLER_LAYOUT_FILE="$(controller_layout_file "$controller_layout")"
+    export ANVIL_ACHIEVEMENT_SET="$achievement_set"
+    export ANVIL_ACHIEVEMENT_SET_FILE
+    ANVIL_ACHIEVEMENT_SET_FILE="$(achievement_set_file "$achievement_set")"
     export ANVIL_SDL_CONTROLLER_DB
     ANVIL_SDL_CONTROLLER_DB="$(sdl_controller_db_file)"
     export_sdl_controller_mappings

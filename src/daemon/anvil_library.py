@@ -284,6 +284,7 @@ def generate_cartridge_stub(folder_name, game_path, drive_root):
         "input_profile": infer_input_profile(display_name),
         "input_map": infer_input_map(display_name),
         "controller_layout": infer_controller_layout(display_name),
+        "achievement_set": infer_achievement_set(display_name),
         "tags": ["Uncategorized"],
     }
 
@@ -309,6 +310,70 @@ def infer_input_map(name):
     return "xbox.map"
 
 
+def infer_achievement_set(name):
+    clean = re.sub(r"[^a-z0-9]+", " ", name.lower()).strip()
+    if "jak" in clean and "daxter" in clean:
+        return "jak-and-daxter-ps4.json"
+    if "jak ii" in clean or "jak 2" in clean:
+        return "jak-ii-ps4.json"
+    if "jak 3" in clean or "jak iii" in clean:
+        return "jak-3-ps4.json"
+    return ""
+
+
+def achievement_set_path(achievement_set):
+    if not achievement_set:
+        return ""
+    if os.path.isabs(achievement_set) and os.path.isfile(achievement_set):
+        return achievement_set
+    root = os.environ.get("ANVIL_ROOT", "")
+    candidates = []
+    if root:
+        candidates.append(os.path.join(root, "config", "achievements", achievement_set))
+    candidates.append(os.path.join(os.path.dirname(__file__), "..", "..", "config", "achievements", achievement_set))
+    for candidate in candidates:
+        candidate = os.path.abspath(candidate)
+        if os.path.isfile(candidate):
+            return candidate
+    return ""
+
+
+def load_achievement_summary(achievement_set):
+    path = achievement_set_path(achievement_set)
+    if not path:
+        return {
+            "set": achievement_set or "",
+            "path": "",
+            "count": 0,
+            "points": 0,
+            "source": "",
+            "platform": "",
+        }
+
+    try:
+        with open(path) as f:
+            payload = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return {
+            "set": achievement_set,
+            "path": path,
+            "count": 0,
+            "points": 0,
+            "source": "",
+            "platform": "",
+        }
+
+    achievements = payload.get("achievements", [])
+    return {
+        "set": payload.get("id") or achievement_set,
+        "path": path,
+        "count": len(achievements),
+        "points": sum(int(item.get("points", 0) or 0) for item in achievements),
+        "source": payload.get("source", ""),
+        "platform": payload.get("platform", ""),
+    }
+
+
 def build_game_entry(cartridge, game_path, drive_root):
     """Build the JSON entry the QML UI expects from a cartridge.json."""
     name = cartridge.get("name", os.path.basename(game_path))
@@ -319,6 +384,8 @@ def build_game_entry(cartridge, game_path, drive_root):
     input_profile = cartridge.get("input_profile") or infer_input_profile(name)
     input_map = cartridge.get("input_map") or infer_input_map(name)
     controller_layout = cartridge.get("controller_layout") or infer_controller_layout(name)
+    achievement_set = cartridge.get("achievement_set") or infer_achievement_set(name)
+    achievements = load_achievement_summary(achievement_set)
     sgdb_id = cartridge.get("steamgriddb_id", None)
     steam_appid = cartridge.get("steam_appid", None)
 
@@ -403,6 +470,8 @@ def build_game_entry(cartridge, game_path, drive_root):
         "input_profile": input_profile,
         "input_map": input_map,
         "controller_layout": controller_layout,
+        "achievement_set": achievement_set,
+        "achievements": achievements,
         "steamgriddb_id": str(sgdb_id) if sgdb_id else "",
         "steam_appid": str(steam_appid) if steam_appid else "",
         "dummy": False,
