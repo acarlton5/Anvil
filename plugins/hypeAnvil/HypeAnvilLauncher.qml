@@ -52,6 +52,12 @@ Item {
             "action": "settings",
             "categories": ["Anvil"]
         }, {
+            "name": "Toggle Anvil Overlay",
+            "icon": "material:dashboard",
+            "comment": "Show or hide the Anvil in-game overlay",
+            "action": "toggle-overlay",
+            "categories": ["Anvil"]
+        }, {
             "name": "Test Anvil Overlay",
             "icon": "material:dashboard_customize",
             "comment": "Open the in-game overlay mock by itself",
@@ -119,6 +125,10 @@ Item {
         }
         if (item.action === "settings") {
             runScript(["--section", "6"]);
+            return ;
+        }
+        if (item.action === "toggle-overlay") {
+            runScript(["--toggle-overlay"]);
             return ;
         }
         if (item.action === "overlay-test") {

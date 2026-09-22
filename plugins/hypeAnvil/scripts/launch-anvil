@@ -6,6 +6,7 @@ fetch_art=0
 install_session=0
 logout_after_install=0
 overlay_test=0
+toggle_overlay=0
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
@@ -18,6 +19,9 @@ while [ "$#" -gt 0 ]; do
             ;;
         --overlay-test)
             overlay_test=1
+            ;;
+        --toggle-overlay)
+            toggle_overlay=1
             ;;
         --install-session)
             install_session=1
@@ -119,6 +123,13 @@ fi
 
 if [ "$fetch_art" -eq 1 ]; then
     exec env ANVIL_ROOT="$anvil_root" python3 "$anvil_root/src/daemon/anvil_library.py" --fetch-art --scan
+fi
+
+if [ "$toggle_overlay" -eq 1 ]; then
+    if qs ipc --any-display -p "$anvil_root/src/ui/AnvilDaemon.qml" call anvil toggle >/dev/null 2>&1; then
+        exit 0
+    fi
+    exec env ANVIL_ROOT="$anvil_root" ANVIL_OVERLAY_TEST=1 qs -p "$anvil_root/src/ui/AnvilDaemon.qml"
 fi
 
 if [ -n "$section" ]; then

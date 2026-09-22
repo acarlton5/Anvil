@@ -979,7 +979,7 @@ PanelWindow {
                 delegate: Rectangle {
                     id: card
 
-                    width: ListView.isCurrentItem ? 324 : 168
+                    width: ListView.isCurrentItem ? 504 : 168
                     height: 282
                     radius: 8
                     color: panelRaised
@@ -998,7 +998,7 @@ PanelWindow {
                             text: initials(model.name)
                             color: "#f6d0be"
                             opacity: 0.68
-                            font.pixelSize: ListView.isCurrentItem ? 86 : 58
+                            font.pixelSize: ListView.isCurrentItem ? 96 : 58
                             font.bold: true
                         }
 
@@ -1047,7 +1047,7 @@ PanelWindow {
 
                     Image {
                         anchors.fill: parent
-                        source: model.dummy ? "" : (model.grid || model.hero || "")
+                        source: model.dummy ? "" : (ListView.isCurrentItem ? (model.hero || model.grid || "") : (model.grid || model.hero || ""))
                         fillMode: Image.PreserveAspectCrop
                     }
 
@@ -1057,12 +1057,12 @@ PanelWindow {
                         gradient: Gradient {
                             GradientStop {
                                 position: 0
-                                color: "#22000000"
+                                color: ListView.isCurrentItem ? "#11000000" : "#22000000"
                             }
 
                             GradientStop {
-                                position: 0.62
-                                color: "#55000000"
+                                position: ListView.isCurrentItem ? 0.48 : 0.62
+                                color: ListView.isCurrentItem ? "#33000000" : "#55000000"
                             }
 
                             GradientStop {
@@ -1079,7 +1079,7 @@ PanelWindow {
                         anchors.leftMargin: 15
                         anchors.top: parent.top
                         anchors.topMargin: 14
-                        text: (model.grid || model.hero) ? "BOX ART" : "LOCAL"
+                        text: ListView.isCurrentItem ? ((model.hero || model.grid) ? "LANDSCAPE" : "LOCAL") : ((model.grid || model.hero) ? "BOX ART" : "LOCAL")
                         color: model.steamgriddb_id ? green : muted
                         font.pixelSize: 9
                         font.bold: true
