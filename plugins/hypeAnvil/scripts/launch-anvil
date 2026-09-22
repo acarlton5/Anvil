@@ -130,19 +130,29 @@ if [ "$toggle_overlay" -eq 1 ]; then
     exec "$anvil_root/scripts/anvil-overlay-toggle" "$anvil_root"
 fi
 
+lua_string() {
+    local value=${1//\\/\\\\}
+    value=${value//\"/\\\"}
+    value=${value//$'\n'/ }
+    printf '"%s"' "$value"
+}
+
 register_overlay_binds() {
     if [ "${ANVIL_REGISTER_OVERLAY_BINDS:-1}" = "0" ]; then
+        return
+    fi
+    if [ -z "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
         return
     fi
     if ! command -v hyprctl >/dev/null 2>&1; then
         return
     fi
     local toggle_cmd
+    local toggle_lua
     toggle_cmd="$(printf '%q' "$anvil_root/scripts/anvil-overlay-toggle") $(printf '%q' "$anvil_root")"
-    hyprctl keyword unbind "SHIFT,TAB" >/dev/null 2>&1 || true
-    hyprctl keyword unbind "SUPER SHIFT,O" >/dev/null 2>&1 || true
-    hyprctl keyword bindl "SHIFT,TAB,exec,$toggle_cmd" >/dev/null 2>&1 || true
-    hyprctl keyword bindl "SUPER SHIFT,O,exec,$toggle_cmd" >/dev/null 2>&1 || true
+    toggle_lua="$(lua_string "$toggle_cmd")"
+    hyprctl eval "hl.unbind(\"SHIFT + TAB\"); hl.bind(\"SHIFT + TAB\", hl.dsp.exec_cmd($toggle_lua), { locked = true, dont_inhibit = true, description = \"Anvil Overlay\" })" >/dev/null 2>&1 || true
+    hyprctl eval "hl.unbind(\"SUPER + SHIFT + O\"); hl.bind(\"SUPER + SHIFT + O\", hl.dsp.exec_cmd($toggle_lua), { locked = true, dont_inhibit = true, description = \"Anvil Overlay\" })" >/dev/null 2>&1 || true
     registered_overlay_binds=1
 }
 
@@ -150,11 +160,13 @@ cleanup_overlay_binds() {
     if [ "$registered_overlay_binds" -ne 1 ]; then
         return
     fi
+    if [ -z "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
+        return
+    fi
     if ! command -v hyprctl >/dev/null 2>&1; then
         return
     fi
-    hyprctl keyword unbind "SHIFT,TAB" >/dev/null 2>&1 || true
-    hyprctl keyword unbind "SUPER SHIFT,O" >/dev/null 2>&1 || true
+    hyprctl eval 'hl.unbind("SHIFT + TAB"); hl.unbind("SUPER + SHIFT + O")' >/dev/null 2>&1 || true
 }
 
 trap cleanup_overlay_binds EXIT

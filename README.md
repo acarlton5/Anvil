@@ -69,6 +69,12 @@ ANVIL_ROOT="$PWD" ./session/anvil-session.sh
 ## Dependencies
 
 - Quickshell
-- Hyprland
+- Hyprland for the current Anvil Session backend and in-game overlay hotkey registration
 - Python 3
 - Steam with Proton or GE-Proton installed for Windows game launches
+
+Anvil should stay installable as a standalone Linux client. The current
+controller-first session uses Hyprland because that is the first working target,
+but compositor-specific hooks such as the overlay shortcut are optional runtime
+integrations. Future KDE, GNOME, or native-session backends should plug into the
+same Anvil client instead of making HypeShell or Hyprland a product requirement.

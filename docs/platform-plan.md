@@ -82,6 +82,7 @@ remote sources.
 ### 1. Client Foundation
 
 - Finish Anvil Session lifecycle and controller-first navigation.
+- Keep Anvil client installable outside Hyprland; compositor/session hooks must remain backend-specific integrations.
 - Replace shell command launch strings with a supervised Anvil Runtime service.
 - Add a durable local database for games, installs, media, playtime, and settings.
 - Define library-provider and content-source interfaces.

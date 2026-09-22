@@ -754,9 +754,9 @@ PanelWindow {
             anchors.left: parent.left
             anchors.leftMargin: contentLeft
             anchors.top: parent.top
-            anchors.topMargin: 138
-            width: Math.min(620, parent.width * 0.44)
-            spacing: 12
+            anchors.topMargin: 126
+            width: Math.min(480, parent.width * 0.4)
+            spacing: 9
 
             Text {
                 text: tagLine(currentGame())
@@ -775,11 +775,11 @@ PanelWindow {
                     return libraryScanRunning ? "Scanning Cartridges" : "Anvil Library";
                 }
                 color: fg
-                font.pixelSize: 52
+                font.pixelSize: 34
                 font.bold: true
                 width: parent.width
                 wrapMode: Text.WordWrap
-                lineHeight: 0.92
+                lineHeight: 0.96
             }
 
             Text {
@@ -793,10 +793,11 @@ PanelWindow {
 
             Row {
                 spacing: 10
+                visible: currentGame() !== null
 
                 Rectangle {
-                    width: 142
-                    height: 44
+                    width: 124
+                    height: 40
                     radius: 8
                     color: ember
 
@@ -804,7 +805,7 @@ PanelWindow {
                         anchors.centerIn: parent
                         text: "Play"
                         color: "#160b07"
-                        font.pixelSize: 13
+                        font.pixelSize: 12
                         font.bold: true
                     }
 
@@ -816,8 +817,8 @@ PanelWindow {
                 }
 
                 Rectangle {
-                    width: 44
-                    height: 44
+                    width: 40
+                    height: 40
                     radius: 8
                     color: "#cc131a22"
                     border.color: "#38434e"
@@ -900,17 +901,18 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 90
-            height: 360
+            anchors.bottomMargin: 74
+            height: 330
 
             Text {
                 anchors.left: parent.left
                 anchors.leftMargin: contentLeft
                 anchors.top: parent.top
-                text: "Continue Playing"
+                text: "RECENT GAMES"
                 color: fg
-                font.pixelSize: 22
+                font.pixelSize: 12
                 font.bold: true
+                font.letterSpacing: 0
             }
 
             ListView {
@@ -919,16 +921,16 @@ PanelWindow {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                height: 304
+                height: 286
                 orientation: ListView.Horizontal
-                spacing: 16
+                spacing: 14
                 leftMargin: contentLeft
                 rightMargin: 72
                 model: gameModel
                 currentIndex: selectedGameIndex
                 focus: !powerMenuActive && activeSection === 0
                 preferredHighlightBegin: contentLeft
-                preferredHighlightEnd: contentLeft + 360
+                preferredHighlightEnd: contentLeft + 420
                 highlightRangeMode: ListView.StrictlyEnforceRange
                 Keys.onLeftPressed: decrementCurrentIndex()
                 Keys.onRightPressed: incrementCurrentIndex()
@@ -939,15 +941,16 @@ PanelWindow {
                 delegate: Rectangle {
                     id: card
 
-                    width: ListView.isCurrentItem ? 504 : 168
-                    height: 282
+                    width: ListView.isCurrentItem ? Math.min(590, Math.max(390, anvil.width * 0.4)) : 148
+                    height: ListView.isCurrentItem ? 248 : 222
                     radius: 8
                     color: panelRaised
                     border.color: ListView.isCurrentItem ? ember : "#32404d"
-                    border.width: ListView.isCurrentItem ? 3 : 1
+                    border.width: ListView.isCurrentItem ? 2 : 1
                     clip: true
-                    scale: ListView.isCurrentItem ? 1.04 : 0.92
-                    opacity: ListView.isCurrentItem ? 1 : 0.62
+                    scale: ListView.isCurrentItem ? 1.02 : 0.94
+                    opacity: ListView.isCurrentItem ? 1 : 0.7
+                    anchors.verticalCenter: parent.verticalCenter
 
                     Rectangle {
                         anchors.fill: parent
@@ -958,7 +961,7 @@ PanelWindow {
                             text: initials(model.name)
                             color: "#f6d0be"
                             opacity: 0.68
-                            font.pixelSize: ListView.isCurrentItem ? 96 : 58
+                            font.pixelSize: ListView.isCurrentItem ? 82 : 54
                             font.bold: true
                         }
 
@@ -1039,7 +1042,7 @@ PanelWindow {
                         anchors.leftMargin: 15
                         anchors.top: parent.top
                         anchors.topMargin: 14
-                        text: ListView.isCurrentItem ? ((model.hero || model.grid) ? "LANDSCAPE" : "LOCAL") : ((model.grid || model.hero) ? "BOX ART" : "LOCAL")
+                        text: ListView.isCurrentItem ? ((model.hero || model.grid) ? "FEATURED" : "LOCAL") : ((model.grid || model.hero) ? "BOX ART" : "LOCAL")
                         color: model.steamgriddb_id ? green : muted
                         font.pixelSize: 9
                         font.bold: true
@@ -1057,7 +1060,7 @@ PanelWindow {
                         Text {
                             text: model.name
                             color: fg
-                            font.pixelSize: ListView.isCurrentItem ? 22 : 14
+                            font.pixelSize: ListView.isCurrentItem ? 20 : 13
                             font.bold: true
                             elide: Text.ElideRight
                             width: parent.width
