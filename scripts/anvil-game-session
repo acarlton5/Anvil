@@ -110,7 +110,7 @@ run_session() {
     export ANVIL_CONTROLLER_LAYOUT_FILE
     ANVIL_CONTROLLER_LAYOUT_FILE="$(controller_layout_file "$controller_layout")"
 
-    setsid bash -lc "exec $*" &
+    setsid bash -lc "$*" &
     local pid=$!
     printf '%s\n' "$pid" > "$pid_file"
 

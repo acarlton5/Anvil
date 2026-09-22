@@ -8,6 +8,7 @@ PanelWindow {
 
     property var modelData: null
     property var launchHandler: null
+    property var cancelLaunchHandler: null
     readonly property string localRoot: decodeURIComponent(Qt.resolvedUrl("../../").toString()).replace("file://", "").replace(/\/$/, "")
     readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || localRoot
     readonly property string bridgePath: anvilRoot + "/src/daemon/anvil-library-bridge"
@@ -123,6 +124,16 @@ PanelWindow {
         }
         launcher.command = ["qs", "ipc", "-p", daemonPath, "call", "anvil", "launch", game.launch_command];
         launcher.running = true;
+    }
+
+    function cancelGameLaunch() {
+        gameIsLoading = false;
+        if (cancelLaunchHandler) {
+            cancelLaunchHandler();
+            return ;
+        }
+        cancelLauncher.command = ["qs", "ipc", "-p", daemonPath, "call", "anvil", "kill"];
+        cancelLauncher.running = true;
     }
 
     color: bg
@@ -3426,7 +3437,13 @@ PanelWindow {
         color: bg
         opacity: gameIsLoading || libraryScanRunning ? 1 : 0
         visible: opacity > 0
+        focus: visible
         z: 100
+        Keys.onEscapePressed: {
+            if (gameIsLoading)
+                cancelGameLaunch();
+
+        }
 
         Image {
             anchors.fill: parent
@@ -3469,6 +3486,33 @@ PanelWindow {
                 visible: libraryScanRunning
             }
 
+            Rectangle {
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: 170
+                height: 42
+                radius: 6
+                color: cancelMouse.containsMouse ? "#33211b" : "#1a2027"
+                border.color: cancelMouse.containsMouse ? ember : "#3a4652"
+                visible: gameIsLoading
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "Cancel Launch"
+                    color: fg
+                    font.pixelSize: 13
+                    font.bold: true
+                }
+
+                MouseArea {
+                    id: cancelMouse
+
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onClicked: cancelGameLaunch()
+                }
+
+            }
+
         }
 
         Behavior on opacity {
@@ -3482,6 +3526,10 @@ PanelWindow {
 
     Process {
         id: launcher
+    }
+
+    Process {
+        id: cancelLauncher
     }
 
 }

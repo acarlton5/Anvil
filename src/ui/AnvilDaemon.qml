@@ -20,6 +20,8 @@ ShellRoot {
     }
 
     function killGame() {
+        hideAnvilTimer.stop();
+        root.gamerActive = true;
         killProcess.command = [gameSessionScript, "stop"];
         killProcess.running = true;
         root.overlayActive = false;
@@ -49,6 +51,9 @@ ShellRoot {
             AnvilLauncher {
                 launchHandler: function(command, game) {
                     root.startGame(command, game ? game.name : "", game ? game.input_profile : "", game ? game.controller_layout : "");
+                }
+                cancelLaunchHandler: function() {
+                    root.killGame();
                 }
             }
 
@@ -92,6 +97,10 @@ ShellRoot {
 
         function launch(command: string) {
             root.startGame(command);
+        }
+
+        function kill() {
+            root.killGame();
         }
 
         target: "anvil"
