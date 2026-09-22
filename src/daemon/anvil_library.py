@@ -289,23 +289,33 @@ def generate_cartridge_stub(folder_name, game_path, drive_root):
     }
 
 
-def infer_input_profile(name):
+def prefers_playstation_controller(name):
     clean = re.sub(r"[^a-z0-9]+", " ", name.lower()).strip()
-    if any(token in clean for token in ["jak", "daxter", "ratchet", "sly cooper", "uncharted", "god of war"]):
+    return any(token in clean for token in [
+        "jak",
+        "daxter",
+        "ratchet",
+        "sly cooper",
+        "uncharted",
+        "god of war",
+        "bluey",
+    ])
+
+
+def infer_input_profile(name):
+    if prefers_playstation_controller(name):
         return "gamepad/playstation"
     return "gamepad/default"
 
 
 def infer_controller_layout(name):
-    clean = re.sub(r"[^a-z0-9]+", " ", name.lower()).strip()
-    if any(token in clean for token in ["jak", "daxter", "ratchet", "sly cooper", "uncharted", "god of war"]):
+    if prefers_playstation_controller(name):
         return "dualshock-action-adventure"
     return "standard-gamepad"
 
 
 def infer_input_map(name):
-    clean = re.sub(r"[^a-z0-9]+", " ", name.lower()).strip()
-    if any(token in clean for token in ["jak", "daxter", "ratchet", "sly cooper", "uncharted", "god of war"]):
+    if prefers_playstation_controller(name):
         return "playstation.map"
     return "xbox.map"
 
@@ -386,9 +396,19 @@ def build_game_entry(cartridge, game_path, drive_root):
     launch_options = cartridge.get("launch_options", "")
     proton = cartridge.get("proton_version", "Proton Experimental")
     tags = cartridge.get("tags", [])
-    input_profile = cartridge.get("input_profile") or infer_input_profile(name)
-    input_map = cartridge.get("input_map") or infer_input_map(name)
-    controller_layout = cartridge.get("controller_layout") or infer_controller_layout(name)
+    preferred_input_profile = infer_input_profile(name)
+    preferred_input_map = infer_input_map(name)
+    preferred_controller_layout = infer_controller_layout(name)
+    input_profile = cartridge.get("input_profile") or preferred_input_profile
+    input_map = cartridge.get("input_map") or preferred_input_map
+    controller_layout = cartridge.get("controller_layout") or preferred_controller_layout
+    if preferred_input_map == "playstation.map":
+        if input_profile == "gamepad/default":
+            input_profile = preferred_input_profile
+        if input_map == "xbox.map":
+            input_map = preferred_input_map
+        if controller_layout == "standard-gamepad":
+            controller_layout = preferred_controller_layout
     achievement_set = cartridge.get("achievement_set") or infer_achievement_set(name)
     achievements = load_achievement_summary(achievement_set)
     forgeworks_app_id = cartridge.get("forgeworks_app_id") or infer_forgeworks_app_id(name)

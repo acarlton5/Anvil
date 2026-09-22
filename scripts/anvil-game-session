@@ -16,30 +16,107 @@ usage() {
     exit 64
 }
 
+read_meta_value() {
+    local key="$1"
+
+    [ -f "$meta_file" ] || return 0
+    (
+        set +u
+        # current.env is written by this script with shell-escaped values.
+        . "$meta_file" 2>/dev/null || exit 0
+        eval "printf '%s' \"\${$key:-}\""
+    )
+}
+
+session_env_pids() {
+    local session_id="$1"
+    local proc=""
+    local pid=""
+
+    [ -n "$session_id" ] || return 0
+
+    for proc in /proc/[0-9]*; do
+        pid="${proc##*/}"
+        [ "$pid" != "$$" ] || continue
+        [ -r "$proc/environ" ] || continue
+        if cat "$proc/environ" 2>/dev/null | tr '\0' '\n' | grep -Fxq "ANVIL_GAME_SESSION_ID=$session_id"; then
+            printf '%s\n' "$pid"
+        fi
+    done
+}
+
+signal_session_processes() {
+    local signal="$1"
+    local pid="$2"
+    local session_id="$3"
+    local child_pid=""
+
+    if [ -n "$pid" ]; then
+        kill "-$signal" -- "-$pid" 2>/dev/null || true
+        kill "-$signal" "$pid" 2>/dev/null || true
+        if command -v pkill >/dev/null 2>&1; then
+            pkill "-$signal" -s "$pid" 2>/dev/null || true
+        fi
+    fi
+
+    while read -r child_pid; do
+        [ -n "$child_pid" ] || continue
+        kill "-$signal" "$child_pid" 2>/dev/null || true
+    done <<EOF
+$(session_env_pids "$session_id")
+EOF
+}
+
+session_still_running() {
+    local pid="$1"
+    local session_id="$2"
+
+    if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+        return 0
+    fi
+
+    if [ -n "$(session_env_pids "$session_id")" ]; then
+        return 0
+    fi
+
+    return 1
+}
+
 stop_session() {
     stop_overlay_watcher
 
+    local session_id
+    session_id="$(read_meta_value ANVIL_GAME_SESSION_ID)"
+
     if [ ! -s "$pid_file" ]; then
+        if [ -n "$session_id" ]; then
+            signal_session_processes TERM "" "$session_id"
+            sleep 0.3
+            signal_session_processes KILL "" "$session_id"
+        fi
         return 0
     fi
 
     local pid
     pid="$(cat "$pid_file" 2>/dev/null || true)"
-    if [ -z "$pid" ] || ! kill -0 "$pid" 2>/dev/null; then
+    if [ -z "$pid" ]; then
+        signal_session_processes TERM "" "$session_id"
+        sleep 0.3
+        signal_session_processes KILL "" "$session_id"
         rm -f "$pid_file" "$meta_file" "$sdl_runtime_db_file" "$watcher_pid_file"
         return 0
     fi
 
-    kill -TERM -- "-$pid" 2>/dev/null || kill -TERM "$pid" 2>/dev/null || true
+    signal_session_processes TERM "$pid" "$session_id"
 
     local waited=0
-    while kill -0 "$pid" 2>/dev/null && [ "$waited" -lt 30 ]; do
+    while session_still_running "$pid" "$session_id" && [ "$waited" -lt 30 ]; do
         sleep 0.1
         waited=$((waited + 1))
     done
 
-    if kill -0 "$pid" 2>/dev/null; then
-        kill -KILL -- "-$pid" 2>/dev/null || kill -KILL "$pid" 2>/dev/null || true
+    if session_still_running "$pid" "$session_id"; then
+        signal_session_processes KILL "$pid" "$session_id"
     fi
 
     rm -f "$pid_file" "$meta_file" "$sdl_runtime_db_file" "$watcher_pid_file"
@@ -61,15 +138,17 @@ stop_overlay_watcher() {
 write_meta() {
     local name="$1"
     local game_id="$2"
-    local input_profile="$3"
-    local input_map="$4"
-    local controller_layout="$5"
-    local achievement_set="$6"
-    local achievements_url="$7"
+    local session_id="$3"
+    local input_profile="$4"
+    local input_map="$5"
+    local controller_layout="$6"
+    local achievement_set="$7"
+    local achievements_url="$8"
 
     {
         printf 'ANVIL_GAME_NAME=%q\n' "$name"
         printf 'ANVIL_GAME_ID=%q\n' "$game_id"
+        printf 'ANVIL_GAME_SESSION_ID=%q\n' "$session_id"
         printf 'ANVIL_INPUT_PROFILE=%q\n' "$input_profile"
         printf 'ANVIL_INPUT_MAP=%q\n' "$input_map"
         printf 'ANVIL_INPUT_MAP_FILE=%q\n' "$(input_map_file "$input_map")"
@@ -238,7 +317,7 @@ start_overlay_watcher() {
         return 0
     fi
 
-    ANVIL_ROOT="$anvil_root" "$watcher" &
+    env -u ANVIL_GAME_SESSION_ID ANVIL_ROOT="$anvil_root" "$watcher" &
     printf '%s\n' "$!" > "$watcher_pid_file"
 }
 
@@ -293,13 +372,16 @@ run_session() {
 
     [ "$#" -gt 0 ] || usage
     local launch_command="$*"
+    local session_id
+    session_id="$(date +%s)-$$"
 
     mkdir -p "$state_dir"
     stop_session
-    write_meta "$name" "$game_id" "$input_profile" "$input_map" "$controller_layout" "$achievement_set" "$achievements_url"
+    write_meta "$name" "$game_id" "$session_id" "$input_profile" "$input_map" "$controller_layout" "$achievement_set" "$achievements_url"
 
     export ANVIL_GAME_NAME="$name"
     export ANVIL_GAME_ID="$game_id"
+    export ANVIL_GAME_SESSION_ID="$session_id"
     export ANVIL_INPUT_PROFILE="$input_profile"
     export ANVIL_INPUT_MAP="$input_map"
     export ANVIL_INPUT_MAP_FILE
@@ -324,6 +406,9 @@ run_session() {
 
     local status=0
     wait "$pid" || status=$?
+    while [ -n "$(session_env_pids "$session_id")" ]; do
+        sleep 0.5
+    done
     stop_overlay_watcher
     rm -f "$pid_file" "$meta_file" "$sdl_runtime_db_file" "$watcher_pid_file"
     return "$status"
