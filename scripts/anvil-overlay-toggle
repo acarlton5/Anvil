@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+anvil_root="${1:-${ANVIL_ROOT:-}}"
+if [ -z "$anvil_root" ]; then
+    for candidate in \
+        "$HOME/Projects/Projects/Anvil" \
+        "$HOME/DevBox/Projects/Anvil" \
+        "$HOME/Projects/Anvil" \
+        "/usr/local/share/anvil"; do
+        if [ -f "$candidate/src/ui/AnvilDaemon.qml" ]; then
+            anvil_root="$candidate"
+            break
+        fi
+    done
+fi
+
+if [ -z "$anvil_root" ] || [ ! -f "$anvil_root/src/ui/AnvilDaemon.qml" ]; then
+    echo "Anvil root not found for overlay toggle." >&2
+    exit 1
+fi
+
+daemon="$anvil_root/src/ui/AnvilDaemon.qml"
+
+if qs ipc --any-display -p "$daemon" call anvil toggle >/dev/null 2>&1; then
+    exit 0
+fi
+
+exec env ANVIL_ROOT="$anvil_root" ANVIL_OVERLAY_TEST=1 qs -p "$daemon"

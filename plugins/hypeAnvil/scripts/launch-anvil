@@ -127,10 +127,7 @@ if [ "$fetch_art" -eq 1 ]; then
 fi
 
 if [ "$toggle_overlay" -eq 1 ]; then
-    if qs ipc --any-display -p "$anvil_root/src/ui/AnvilDaemon.qml" call anvil toggle >/dev/null 2>&1; then
-        exit 0
-    fi
-    exec env ANVIL_ROOT="$anvil_root" ANVIL_OVERLAY_TEST=1 qs -p "$anvil_root/src/ui/AnvilDaemon.qml"
+    exec "$anvil_root/scripts/anvil-overlay-toggle" "$anvil_root"
 fi
 
 register_overlay_binds() {
@@ -141,7 +138,7 @@ register_overlay_binds() {
         return
     fi
     local toggle_cmd
-    toggle_cmd="ANVIL_ROOT=$(printf '%q' "$anvil_root") qs ipc --any-display -p $(printf '%q' "$anvil_root/src/ui/AnvilDaemon.qml") call anvil toggle"
+    toggle_cmd="$(printf '%q' "$anvil_root/scripts/anvil-overlay-toggle") $(printf '%q' "$anvil_root")"
     hyprctl keyword unbind "SHIFT,TAB" >/dev/null 2>&1 || true
     hyprctl keyword unbind "SUPER SHIFT,O" >/dev/null 2>&1 || true
     hyprctl keyword bindl "SHIFT,TAB,exec,$toggle_cmd" >/dev/null 2>&1 || true

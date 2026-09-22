@@ -754,14 +754,14 @@ PanelWindow {
             anchors.left: parent.left
             anchors.leftMargin: contentLeft
             anchors.top: parent.top
-            anchors.topMargin: 132
-            width: Math.min(780, parent.width * 0.5)
-            spacing: 16
+            anchors.topMargin: 138
+            width: Math.min(620, parent.width * 0.44)
+            spacing: 12
 
             Text {
-                text: gameModel.count > 0 ? "NOW READY" : "ANVIL SESSION"
-                color: "#d1d3d4"
-                font.pixelSize: 11
+                text: tagLine(currentGame())
+                color: emberLight
+                font.pixelSize: 10
                 font.bold: true
                 font.letterSpacing: 0
             }
@@ -775,7 +775,7 @@ PanelWindow {
                     return libraryScanRunning ? "Scanning Cartridges" : "Anvil Library";
                 }
                 color: fg
-                font.pixelSize: 72
+                font.pixelSize: 52
                 font.bold: true
                 width: parent.width
                 wrapMode: Text.WordWrap
@@ -783,60 +783,20 @@ PanelWindow {
             }
 
             Text {
-                text: libraryScanRunning ? "Mounting removable media and building your launch shelf." : "Your cartridge library, tuned for the couch and ready to play."
+                text: libraryScanRunning ? "Mounting removable media and checking your cartridge shelf." : ((currentGame() && currentGame().proton) ? currentGame().proton : "Ready to play")
                 color: "#c5c8c9"
-                font.pixelSize: 16
-                width: Math.min(560, parent.width)
+                font.pixelSize: 13
+                width: Math.min(420, parent.width)
                 wrapMode: Text.WordWrap
-                lineHeight: 1.35
+                lineHeight: 1.25
             }
 
             Row {
                 spacing: 10
 
-                Text {
-                    text: tagLine(currentGame())
-                    color: muted
-                    font.pixelSize: 11
-                    font.bold: true
-                }
-
-                Text {
-                    text: "/"
-                    color: "#55ffffff"
-                    font.pixelSize: 11
-                    font.bold: true
-                }
-
-                Text {
-                    text: "PROTON READY"
-                    color: green
-                    font.pixelSize: 11
-                    font.bold: true
-                }
-
-                Text {
-                    text: "/"
-                    color: "#55ffffff"
-                    font.pixelSize: 11
-                    font.bold: true
-                }
-
-                Text {
-                    text: libraryScanRunning ? "SCANNING" : gameModel.count + " GAMES"
-                    color: muted
-                    font.pixelSize: 11
-                    font.bold: true
-                }
-
-            }
-
-            Row {
-                spacing: 12
-
                 Rectangle {
-                    width: 172
-                    height: 54
+                    width: 142
+                    height: 44
                     radius: 8
                     color: ember
 
@@ -844,7 +804,7 @@ PanelWindow {
                         anchors.centerIn: parent
                         text: "Play"
                         color: "#160b07"
-                        font.pixelSize: 14
+                        font.pixelSize: 13
                         font.bold: true
                     }
 
@@ -856,17 +816,17 @@ PanelWindow {
                 }
 
                 Rectangle {
-                    width: 172
-                    height: 54
+                    width: 44
+                    height: 44
                     radius: 8
-                    color: "#cc141a20"
-                    border.color: "#44ffffff"
+                    color: "#cc131a22"
+                    border.color: "#38434e"
 
                     Text {
                         anchors.centerIn: parent
-                        text: "Details"
+                        text: "⋯"
                         color: fg
-                        font.pixelSize: 14
+                        font.pixelSize: 22
                         font.bold: true
                     }
 

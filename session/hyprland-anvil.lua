@@ -4,7 +4,7 @@ hl = require("hyprland")
 local home = os.getenv("HOME") or ""
 local anvil_root = os.getenv("ANVIL_ROOT") or (home .. "/Projects/Projects/Anvil")
 local daemon = anvil_root .. "/src/ui/AnvilDaemon.qml"
-local overlay_toggle = "ANVIL_ROOT=" .. anvil_root .. " qs ipc --any-display -p " .. daemon .. " call anvil toggle"
+local overlay_toggle = anvil_root .. "/scripts/anvil-overlay-toggle " .. anvil_root
 local overlay_bind_shift = "hyprctl keyword bindl \"SHIFT,TAB,exec," .. overlay_toggle .. "\""
 local overlay_bind_super = "hyprctl keyword bindl \"SUPER SHIFT,O,exec," .. overlay_toggle .. "\""
 
