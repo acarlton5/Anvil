@@ -9,6 +9,8 @@ PanelWindow {
     property var modelData: null
     property var launchHandler: null
     property var cancelLaunchHandler: null
+    property string controllerAction: ""
+    property int controllerActionSerial: 0
     readonly property string localRoot: decodeURIComponent(Qt.resolvedUrl("../../").toString()).replace("file://", "").replace(/\/$/, "")
     readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || localRoot
     readonly property string bridgePath: anvilRoot + "/src/daemon/anvil-library-bridge"
@@ -135,6 +137,38 @@ PanelWindow {
         cancelLauncher.command = ["qs", "ipc", "-p", daemonPath, "call", "anvil", "kill"];
         cancelLauncher.running = true;
     }
+
+    function moveGameSelection(delta) {
+        if (gameModel.count === 0)
+            return ;
+        selectedGameIndex = Math.max(0, Math.min(gameModel.count - 1, selectedGameIndex + delta));
+    }
+
+    function handleControllerAction(action) {
+        if (gameIsLoading) {
+            if (action === "east" || action === "back")
+                cancelGameLaunch();
+            return ;
+        }
+        if (action === "lb")
+            selectSection(activeSection - 1);
+        else if (action === "rb")
+            selectSection(activeSection + 1);
+        else if (action === "left")
+            activeSection === 0 || activeSection === 1 ? moveGameSelection(-1) : selectSection(activeSection - 1);
+        else if (action === "right")
+            activeSection === 0 || activeSection === 1 ? moveGameSelection(1) : selectSection(activeSection + 1);
+        else if (action === "up")
+            activeSection === 1 ? moveGameSelection(-4) : selectSection(activeSection - 1);
+        else if (action === "down")
+            activeSection === 1 ? moveGameSelection(4) : selectSection(activeSection + 1);
+        else if (action === "south" || action === "start")
+            launchGame();
+        else if (action === "east" || action === "back")
+            powerMenuActive = false;
+    }
+
+    onControllerActionSerialChanged: handleControllerAction(controllerAction)
 
     color: bg
     screen: modelData

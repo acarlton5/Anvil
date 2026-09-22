@@ -398,7 +398,6 @@ run_session() {
     export ANVIL_SDL_CONTROLLER_DB
     ANVIL_SDL_CONTROLLER_DB="$(sdl_controller_db_file)"
     export_sdl_controller_mappings
-    start_overlay_watcher
 
     setsid bash -lc "$launch_command" &
     local pid=$!

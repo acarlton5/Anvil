@@ -73,6 +73,8 @@ stage_file "$anvil_root/scripts/anvil-achievement-status" scripts/anvil-achievem
 achievement_status_src="$STAGED_RESULT"
 stage_file "$anvil_root/scripts/anvil-controller-overlay-watch" scripts/anvil-controller-overlay-watch
 controller_overlay_watch_src="$STAGED_RESULT"
+stage_file "$anvil_root/scripts/anvil-controller-nav-watch" scripts/anvil-controller-nav-watch
+controller_nav_watch_src="$STAGED_RESULT"
 stage_file "$anvil_root/scripts/anvil-overlay-toggle" scripts/anvil-overlay-toggle
 overlay_toggle_src="$STAGED_RESULT"
 stage_file "$anvil_root/session/hyprland-anvil.lua" session/hyprland-anvil.lua
@@ -106,12 +108,14 @@ sudo install -D -m 755 "$game_session_src" /usr/local/bin/anvil-game-session
 sudo install -D -m 755 "$achievement_claim_src" /usr/local/bin/anvil-achievement-claim
 sudo install -D -m 755 "$achievement_status_src" /usr/local/bin/anvil-achievement-status
 sudo install -D -m 755 "$controller_overlay_watch_src" /usr/local/bin/anvil-controller-overlay-watch
+sudo install -D -m 755 "$controller_nav_watch_src" /usr/local/bin/anvil-controller-nav-watch
 sudo install -D -m 755 "$overlay_toggle_src" /usr/local/bin/anvil-overlay-toggle
 sudo install -D -m 755 "$session_src" /usr/local/share/anvil/session/anvil-session.sh
 sudo install -D -m 755 "$game_session_src" /usr/local/share/anvil/scripts/anvil-game-session
 sudo install -D -m 755 "$achievement_claim_src" /usr/local/share/anvil/scripts/anvil-achievement-claim
 sudo install -D -m 755 "$achievement_status_src" /usr/local/share/anvil/scripts/anvil-achievement-status
 sudo install -D -m 755 "$controller_overlay_watch_src" /usr/local/share/anvil/scripts/anvil-controller-overlay-watch
+sudo install -D -m 755 "$controller_nav_watch_src" /usr/local/share/anvil/scripts/anvil-controller-nav-watch
 sudo install -D -m 755 "$overlay_toggle_src" /usr/local/share/anvil/scripts/anvil-overlay-toggle
 sudo install -D -m 644 "$hypr_src" /usr/local/share/anvil/session/hyprland-anvil.lua
 sudo install -D -m 644 "$daemon_qml_src" /usr/local/share/anvil/src/ui/AnvilDaemon.qml

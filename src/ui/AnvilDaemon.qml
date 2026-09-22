@@ -8,8 +8,11 @@ ShellRoot {
 
     property bool overlayActive: Quickshell.env("ANVIL_OVERLAY_TEST") === "1"
     property bool gamerActive: Quickshell.env("ANVIL_OVERLAY_TEST") !== "1"
+    property string controllerAction: ""
+    property int controllerActionSerial: 0
     readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || "/usr/local/share/anvil"
     readonly property string gameSessionScript: anvilRoot + "/scripts/anvil-game-session"
+    readonly property string controllerNavScript: anvilRoot + "/scripts/anvil-controller-nav-watch"
     readonly property string achievementsUrl: Quickshell.env("ANVIL_ACHIEVEMENTS_URL") || Quickshell.env("FORGEWORKS_ACHIEVEMENTS_URL") || ""
 
     function startGame(command, gameName, gameId, inputProfile, inputMap, controllerLayout, achievementSet) {
@@ -26,6 +29,15 @@ ShellRoot {
         killProcess.command = [gameSessionScript, "stop"];
         killProcess.running = true;
         root.overlayActive = false;
+    }
+
+    function navigate(action) {
+        if (action === "guide") {
+            root.overlayActive = !root.overlayActive;
+            return ;
+        }
+        root.controllerAction = action;
+        root.controllerActionSerial += 1;
     }
 
     PanelWindow {
@@ -50,6 +62,8 @@ ShellRoot {
             model: Quickshell.screens
 
             AnvilLauncher {
+                controllerAction: root.controllerAction
+                controllerActionSerial: root.controllerActionSerial
                 launchHandler: function(command, game) {
                     root.startGame(command, game ? game.name : "", game ? game.forgeworks_app_id : "", game ? game.input_profile : "", game ? game.input_map : "", game ? game.controller_layout : "", game ? game.achievement_set : "");
                 }
@@ -74,6 +88,8 @@ ShellRoot {
             model: Quickshell.screens
 
             AnvilOverlay {
+                controllerAction: root.controllerAction
+                controllerActionSerial: root.controllerActionSerial
                 closeHandler: function() {
                     root.overlayActive = false;
                 }
@@ -104,7 +120,18 @@ ShellRoot {
             root.killGame();
         }
 
+        function navigate(action: string) {
+            root.navigate(action);
+        }
+
         target: "anvil"
+    }
+
+    Process {
+        id: controllerNavProcess
+
+        command: ["env", "ANVIL_ROOT=" + anvilRoot, "python3", controllerNavScript]
+        running: true
     }
 
     Process {

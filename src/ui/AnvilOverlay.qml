@@ -9,6 +9,8 @@ PanelWindow {
     property var modelData: null
     property var closeHandler: null
     property var killHandler: null
+    property string controllerAction: ""
+    property int controllerActionSerial: 0
     readonly property color ink: "#f5f7fb"
     readonly property color muted: "#a8b1ba"
     readonly property color dim: "#68737d"
@@ -74,6 +76,24 @@ PanelWindow {
         achievementStatusProcess.running = true;
     }
 
+    function handleControllerAction(action) {
+        if (action === "left" || action === "lb")
+            selectedDockIndex = Math.max(0, selectedDockIndex - 1);
+        else if (action === "right" || action === "rb")
+            selectedDockIndex = Math.min(dockModel.count - 1, selectedDockIndex + 1);
+        else if (action === "up")
+            selectedDockIndex = Math.max(0, selectedDockIndex - 2);
+        else if (action === "down")
+            selectedDockIndex = Math.min(dockModel.count - 1, selectedDockIndex + 2);
+        else if (action === "south" || action === "start")
+            toggleModule(selectedDockIndex);
+        else if (action === "north")
+            refreshAchievements();
+        else if (action === "east" || action === "back")
+            runMenuAction("back");
+        keyCatcher.forceActiveFocus();
+    }
+
     color: "transparent"
     screen: modelData
     implicitWidth: 1920
@@ -86,6 +106,7 @@ PanelWindow {
         keyCatcher.forceActiveFocus();
         refreshAchievements();
     }
+    onControllerActionSerialChanged: handleControllerAction(controllerAction)
 
     anchors {
         top: true
