@@ -6,6 +6,7 @@ state_dir="$runtime_root/game-session"
 pid_file="$state_dir/pid"
 meta_file="$state_dir/current.env"
 sdl_runtime_db_file="$state_dir/sdl-gamecontrollerdb.txt"
+watcher_pid_file="$state_dir/controller-overlay-watch.pid"
 anvil_root="${ANVIL_ROOT:-}"
 sdl_controller_db="${ANVIL_SDL_CONTROLLER_DB:-}"
 
@@ -16,6 +17,8 @@ usage() {
 }
 
 stop_session() {
+    stop_overlay_watcher
+
     if [ ! -s "$pid_file" ]; then
         return 0
     fi
@@ -23,7 +26,7 @@ stop_session() {
     local pid
     pid="$(cat "$pid_file" 2>/dev/null || true)"
     if [ -z "$pid" ] || ! kill -0 "$pid" 2>/dev/null; then
-        rm -f "$pid_file" "$meta_file" "$sdl_runtime_db_file"
+        rm -f "$pid_file" "$meta_file" "$sdl_runtime_db_file" "$watcher_pid_file"
         return 0
     fi
 
@@ -39,7 +42,20 @@ stop_session() {
         kill -KILL -- "-$pid" 2>/dev/null || kill -KILL "$pid" 2>/dev/null || true
     fi
 
-    rm -f "$pid_file" "$meta_file" "$sdl_runtime_db_file"
+    rm -f "$pid_file" "$meta_file" "$sdl_runtime_db_file" "$watcher_pid_file"
+}
+
+stop_overlay_watcher() {
+    if [ ! -s "$watcher_pid_file" ]; then
+        return 0
+    fi
+
+    local watcher_pid
+    watcher_pid="$(cat "$watcher_pid_file" 2>/dev/null || true)"
+    if [ -n "$watcher_pid" ] && kill -0 "$watcher_pid" 2>/dev/null; then
+        kill -TERM "$watcher_pid" 2>/dev/null || true
+    fi
+    rm -f "$watcher_pid_file"
 }
 
 write_meta() {
@@ -187,6 +203,16 @@ $extra_mappings"
     export SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS=1
 }
 
+start_overlay_watcher() {
+    local watcher="$anvil_root/scripts/anvil-controller-overlay-watch"
+    if [ ! -x "$watcher" ]; then
+        return 0
+    fi
+
+    ANVIL_ROOT="$anvil_root" "$watcher" &
+    printf '%s\n' "$!" > "$watcher_pid_file"
+}
+
 run_session() {
     local name=""
     local input_profile=""
@@ -240,6 +266,7 @@ run_session() {
     export ANVIL_SDL_CONTROLLER_DB
     ANVIL_SDL_CONTROLLER_DB="$(sdl_controller_db_file)"
     export_sdl_controller_mappings
+    start_overlay_watcher
 
     setsid bash -lc "$*" &
     local pid=$!
@@ -247,7 +274,8 @@ run_session() {
 
     local status=0
     wait "$pid" || status=$?
-    rm -f "$pid_file" "$meta_file" "$sdl_runtime_db_file"
+    stop_overlay_watcher
+    rm -f "$pid_file" "$meta_file" "$sdl_runtime_db_file" "$watcher_pid_file"
     return "$status"
 }
 
