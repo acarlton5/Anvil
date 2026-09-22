@@ -1,5 +1,5 @@
 # Anvil's small runtime controller mapping set.
 # Format: SDL_GAMECONTROLLERCONFIG lines.
 
-03000000120c00001a1e000011010000,ZEROPLUS P4 Wired Gamepad,a:b1,b:b2,x:b0,y:b3,back:b8,guide:b12,start:b9,leftstick:b10,rightstick:b11,leftshoulder:b4,rightshoulder:b5,lefttrigger:a3,righttrigger:a4,leftx:a0,lefty:a1,rightx:a2,righty:a5,dpup:h0.1,dpright:h0.2,dpdown:h0.4,dpleft:h0.8,platform:Linux,
-03000000120c00001a1e000000000000,ZEROPLUS P4 Wired Gamepad,a:b1,b:b2,x:b0,y:b3,back:b8,guide:b12,start:b9,leftstick:b10,rightstick:b11,leftshoulder:b4,rightshoulder:b5,lefttrigger:a3,righttrigger:a4,leftx:a0,lefty:a1,rightx:a2,righty:a5,dpup:h0.1,dpright:h0.2,dpdown:h0.4,dpleft:h0.8,platform:Linux,
+03000000120c00001a1e000011010000,ZEROPLUS P4 Wired Gamepad,a:b0,b:b2,x:b1,y:b3,back:b8,guide:b12,start:b9,leftstick:b10,rightstick:b11,leftshoulder:b4,rightshoulder:b5,lefttrigger:a3,righttrigger:a4,leftx:a0,lefty:a1,rightx:a2,righty:a5,dpup:h0.1,dpright:h0.2,dpdown:h0.4,dpleft:h0.8,platform:Linux,
+03000000120c00001a1e000000000000,ZEROPLUS P4 Wired Gamepad,a:b0,b:b2,x:b1,y:b3,back:b8,guide:b12,start:b9,leftstick:b10,rightstick:b11,leftshoulder:b4,rightshoulder:b5,lefttrigger:a3,righttrigger:a4,leftx:a0,lefty:a1,rightx:a2,righty:a5,dpup:h0.1,dpright:h0.2,dpdown:h0.4,dpleft:h0.8,platform:Linux,
