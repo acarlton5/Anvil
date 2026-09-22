@@ -940,8 +940,8 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 90
-            height: 360
+            anchors.bottomMargin: 78
+            height: 446
 
             Text {
                 anchors.left: parent.left
@@ -953,13 +953,123 @@ PanelWindow {
                 font.bold: true
             }
 
+            Rectangle {
+                id: focusLandscape
+
+                anchors.left: parent.left
+                anchors.leftMargin: contentLeft
+                anchors.top: parent.top
+                anchors.topMargin: 42
+                width: Math.min(620, parent.width - contentLeft - 92)
+                height: 196
+                radius: 8
+                color: panelRaised
+                border.color: ember
+                clip: true
+
+                Rectangle {
+                    anchors.fill: parent
+                    visible: !currentGame() || gameArt(currentGame()) === ""
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: initials(currentGame() ? currentGame().name : "Anvil")
+                        color: "#f6d0be"
+                        opacity: 0.58
+                        font.pixelSize: 96
+                        font.bold: true
+                    }
+
+                    gradient: Gradient {
+                        orientation: Gradient.Horizontal
+
+                        GradientStop {
+                            position: 0
+                            color: "#27333d"
+                        }
+
+                        GradientStop {
+                            position: 0.58
+                            color: "#151d25"
+                        }
+
+                        GradientStop {
+                            position: 1
+                            color: "#432719"
+                        }
+
+                    }
+
+                }
+
+                Image {
+                    anchors.fill: parent
+                    source: currentGame() ? (currentGame().hero || currentGame().grid || "") : ""
+                    fillMode: Image.PreserveAspectCrop
+                    visible: source !== ""
+                }
+
+                Rectangle {
+                    anchors.fill: parent
+
+                    gradient: Gradient {
+                        GradientStop {
+                            position: 0
+                            color: "#11000000"
+                        }
+
+                        GradientStop {
+                            position: 0.58
+                            color: "#66000000"
+                        }
+
+                        GradientStop {
+                            position: 1
+                            color: "#ee05070a"
+                        }
+
+                    }
+
+                }
+
+                Column {
+                    anchors.left: parent.left
+                    anchors.leftMargin: 18
+                    anchors.right: parent.right
+                    anchors.rightMargin: 18
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 16
+                    spacing: 5
+
+                    Text {
+                        text: currentGame() ? currentGame().name : "Anvil Library"
+                        color: fg
+                        font.pixelSize: 28
+                        font.bold: true
+                        elide: Text.ElideRight
+                        width: parent.width
+                    }
+
+                    Text {
+                        text: "FOCUS ART / " + (currentGame() ? (currentGame().proton || "Native") : "Ready")
+                        color: muted
+                        font.pixelSize: 10
+                        font.bold: true
+                        width: parent.width
+                        elide: Text.ElideRight
+                    }
+
+                }
+
+            }
+
             ListView {
                 id: gameStrip
 
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                height: 304
+                height: 206
                 orientation: ListView.Horizontal
                 spacing: 16
                 leftMargin: contentLeft
@@ -968,7 +1078,7 @@ PanelWindow {
                 currentIndex: selectedGameIndex
                 focus: !powerMenuActive && activeSection === 0
                 preferredHighlightBegin: contentLeft
-                preferredHighlightEnd: contentLeft + 360
+                preferredHighlightEnd: contentLeft + 220
                 highlightRangeMode: ListView.StrictlyEnforceRange
                 Keys.onLeftPressed: decrementCurrentIndex()
                 Keys.onRightPressed: incrementCurrentIndex()
@@ -979,14 +1089,14 @@ PanelWindow {
                 delegate: Rectangle {
                     id: card
 
-                    width: ListView.isCurrentItem ? 504 : 168
-                    height: 282
+                    width: 138
+                    height: 206
                     radius: 8
                     color: panelRaised
                     border.color: ListView.isCurrentItem ? ember : "#32404d"
                     border.width: ListView.isCurrentItem ? 3 : 1
                     clip: true
-                    scale: ListView.isCurrentItem ? 1.04 : 0.92
+                    scale: ListView.isCurrentItem ? 1.07 : 0.92
                     opacity: ListView.isCurrentItem ? 1 : 0.62
 
                     Rectangle {
@@ -998,7 +1108,7 @@ PanelWindow {
                             text: initials(model.name)
                             color: "#f6d0be"
                             opacity: 0.68
-                            font.pixelSize: ListView.isCurrentItem ? 96 : 58
+                            font.pixelSize: 58
                             font.bold: true
                         }
 
@@ -1047,7 +1157,7 @@ PanelWindow {
 
                     Image {
                         anchors.fill: parent
-                        source: model.dummy ? "" : (ListView.isCurrentItem ? (model.hero || model.grid || "") : (model.grid || model.hero || ""))
+                        source: model.dummy ? "" : (model.grid || model.hero || "")
                         fillMode: Image.PreserveAspectCrop
                     }
 
@@ -1057,12 +1167,12 @@ PanelWindow {
                         gradient: Gradient {
                             GradientStop {
                                 position: 0
-                                color: ListView.isCurrentItem ? "#11000000" : "#22000000"
+                                color: "#22000000"
                             }
 
                             GradientStop {
-                                position: ListView.isCurrentItem ? 0.48 : 0.62
-                                color: ListView.isCurrentItem ? "#33000000" : "#55000000"
+                                position: 0.62
+                                color: "#55000000"
                             }
 
                             GradientStop {
@@ -1079,12 +1189,12 @@ PanelWindow {
                         anchors.leftMargin: 15
                         anchors.top: parent.top
                         anchors.topMargin: 14
-                        text: ListView.isCurrentItem ? ((model.hero || model.grid) ? "LANDSCAPE" : "LOCAL") : ((model.grid || model.hero) ? "BOX ART" : "LOCAL")
+                        text: (model.grid || model.hero) ? "COVER" : "LOCAL"
                         color: model.steamgriddb_id ? green : muted
                         font.pixelSize: 9
                         font.bold: true
                         font.letterSpacing: 0
-                        visible: ListView.isCurrentItem
+                        visible: false
                     }
 
                     Column {
@@ -1097,7 +1207,7 @@ PanelWindow {
                         Text {
                             text: model.name
                             color: fg
-                            font.pixelSize: ListView.isCurrentItem ? 22 : 14
+                            font.pixelSize: 13
                             font.bold: true
                             elide: Text.ElideRight
                             width: parent.width
@@ -1110,7 +1220,7 @@ PanelWindow {
                             font.bold: true
                             elide: Text.ElideRight
                             width: parent.width
-                            visible: ListView.isCurrentItem
+                            visible: false
                         }
 
                     }
@@ -1128,14 +1238,6 @@ PanelWindow {
                     Behavior on scale {
                         NumberAnimation {
                             duration: 160
-                            easing.type: Easing.OutCubic
-                        }
-
-                    }
-
-                    Behavior on width {
-                        NumberAnimation {
-                            duration: 180
                             easing.type: Easing.OutCubic
                         }
 
