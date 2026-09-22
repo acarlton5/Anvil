@@ -38,6 +38,7 @@ REMOVABLE_TRANSPORTS = {"usb", "mmc"}
 # SteamGridDB API
 SGDB_API_BASE = "https://www.steamgriddb.com/api/v2"
 SGDB_API_KEY = os.environ.get("STEAMGRIDDB_API_KEY", "")
+HTTP_USER_AGENT = "Anvil/0.1"
 STEAM_SEARCH_API = "https://store.steampowered.com/api/storesearch/"
 STEAM_CDN_BASE = "https://cdn.cloudflare.steamstatic.com/steam/apps"
 STEAM_SEARCH_ALIASES = {
@@ -424,7 +425,10 @@ def sgdb_request(endpoint):
     if not SGDB_API_KEY:
         return None
     url = f"{SGDB_API_BASE}{endpoint}"
-    req = urllib.request.Request(url, headers={"Authorization": f"Bearer {SGDB_API_KEY}"})
+    req = urllib.request.Request(url, headers={
+        "Authorization": f"Bearer {SGDB_API_KEY}",
+        "User-Agent": HTTP_USER_AGENT,
+    })
     try:
         with urllib.request.urlopen(req, timeout=10) as resp:
             return json.loads(resp.read().decode())
@@ -455,7 +459,10 @@ def download_image(url, dest_path):
     """Download an image to disk."""
     try:
         os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-        urllib.request.urlretrieve(url, dest_path)
+        req = urllib.request.Request(url, headers={"User-Agent": HTTP_USER_AGENT})
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            with open(dest_path, "wb") as f:
+                f.write(resp.read())
         print(f"[anvil-library] Downloaded: {dest_path}", file=sys.stderr)
         return True
     except (urllib.error.URLError, OSError) as e:
@@ -465,7 +472,7 @@ def download_image(url, dest_path):
 
 def url_exists(url):
     """Return True when a public asset URL exists."""
-    req = urllib.request.Request(url, method="HEAD")
+    req = urllib.request.Request(url, method="HEAD", headers={"User-Agent": HTTP_USER_AGENT})
     try:
         with urllib.request.urlopen(req, timeout=10) as resp:
             return 200 <= resp.status < 400
