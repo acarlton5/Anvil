@@ -11,7 +11,7 @@ anvil_root="${ANVIL_ROOT:-}"
 sdl_controller_db="${ANVIL_SDL_CONTROLLER_DB:-}"
 
 usage() {
-    echo "usage: anvil-game-session run [--name NAME] [--input-profile PROFILE] [--input-map MAP] [--controller-layout LAYOUT] [--achievement-set SET] -- COMMAND" >&2
+    echo "usage: anvil-game-session run [--name NAME] [--game-id ID] [--input-profile PROFILE] [--input-map MAP] [--controller-layout LAYOUT] [--achievement-set SET] [--achievements-url URL] -- COMMAND" >&2
     echo "       anvil-game-session stop" >&2
     exit 64
 }
@@ -60,13 +60,16 @@ stop_overlay_watcher() {
 
 write_meta() {
     local name="$1"
-    local input_profile="$2"
-    local input_map="$3"
-    local controller_layout="$4"
-    local achievement_set="$5"
+    local game_id="$2"
+    local input_profile="$3"
+    local input_map="$4"
+    local controller_layout="$5"
+    local achievement_set="$6"
+    local achievements_url="$7"
 
     {
         printf 'ANVIL_GAME_NAME=%q\n' "$name"
+        printf 'ANVIL_GAME_ID=%q\n' "$game_id"
         printf 'ANVIL_INPUT_PROFILE=%q\n' "$input_profile"
         printf 'ANVIL_INPUT_MAP=%q\n' "$input_map"
         printf 'ANVIL_INPUT_MAP_FILE=%q\n' "$(input_map_file "$input_map")"
@@ -75,6 +78,7 @@ write_meta() {
         printf 'ANVIL_CONTROLLER_LAYOUT_FILE=%q\n' "$(controller_layout_file "$controller_layout")"
         printf 'ANVIL_ACHIEVEMENT_SET=%q\n' "$achievement_set"
         printf 'ANVIL_ACHIEVEMENT_SET_FILE=%q\n' "$(achievement_set_file "$achievement_set")"
+        printf 'ANVIL_ACHIEVEMENTS_URL=%q\n' "$achievements_url"
         printf 'ANVIL_SDL_CONTROLLER_DB=%q\n' "$(sdl_controller_db_file)"
         printf 'ANVIL_STARTED_AT=%q\n' "$(date -Iseconds)"
     } > "$meta_file"
@@ -240,15 +244,21 @@ start_overlay_watcher() {
 
 run_session() {
     local name=""
+    local game_id=""
     local input_profile=""
     local input_map=""
     local controller_layout=""
     local achievement_set=""
+    local achievements_url="${ANVIL_ACHIEVEMENTS_URL:-${FORGEWORKS_ACHIEVEMENTS_URL:-}}"
 
     while [ "$#" -gt 0 ]; do
         case "$1" in
             --name)
                 name="${2:-}"
+                shift 2
+                ;;
+            --game-id)
+                game_id="${2:-}"
                 shift 2
                 ;;
             --input-profile)
@@ -267,6 +277,10 @@ run_session() {
                 achievement_set="${2:-}"
                 shift 2
                 ;;
+            --achievements-url)
+                achievements_url="${2:-}"
+                shift 2
+                ;;
             --)
                 shift
                 break
@@ -278,12 +292,14 @@ run_session() {
     done
 
     [ "$#" -gt 0 ] || usage
+    local launch_command="$*"
 
     mkdir -p "$state_dir"
     stop_session
-    write_meta "$name" "$input_profile" "$input_map" "$controller_layout" "$achievement_set"
+    write_meta "$name" "$game_id" "$input_profile" "$input_map" "$controller_layout" "$achievement_set" "$achievements_url"
 
     export ANVIL_GAME_NAME="$name"
+    export ANVIL_GAME_ID="$game_id"
     export ANVIL_INPUT_PROFILE="$input_profile"
     export ANVIL_INPUT_MAP="$input_map"
     export ANVIL_INPUT_MAP_FILE
@@ -296,12 +312,13 @@ run_session() {
     export ANVIL_ACHIEVEMENT_SET="$achievement_set"
     export ANVIL_ACHIEVEMENT_SET_FILE
     ANVIL_ACHIEVEMENT_SET_FILE="$(achievement_set_file "$achievement_set")"
+    export ANVIL_ACHIEVEMENTS_URL="$achievements_url"
     export ANVIL_SDL_CONTROLLER_DB
     ANVIL_SDL_CONTROLLER_DB="$(sdl_controller_db_file)"
     export_sdl_controller_mappings
     start_overlay_watcher
 
-    setsid bash -lc "$*" &
+    setsid bash -lc "$launch_command" &
     local pid=$!
     printf '%s\n' "$pid" > "$pid_file"
 

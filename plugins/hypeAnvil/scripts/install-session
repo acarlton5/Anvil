@@ -67,6 +67,8 @@ stage_file "$anvil_root/scripts/anvil-proton-run" scripts/anvil-proton-run
 runner_src="$STAGED_RESULT"
 stage_file "$anvil_root/scripts/anvil-game-session" scripts/anvil-game-session
 game_session_src="$STAGED_RESULT"
+stage_file "$anvil_root/scripts/anvil-achievement-claim" scripts/anvil-achievement-claim
+achievement_claim_src="$STAGED_RESULT"
 stage_file "$anvil_root/scripts/anvil-controller-overlay-watch" scripts/anvil-controller-overlay-watch
 controller_overlay_watch_src="$STAGED_RESULT"
 stage_file "$anvil_root/scripts/anvil-overlay-toggle" scripts/anvil-overlay-toggle
@@ -99,10 +101,12 @@ anvil_library_src="$STAGED_RESULT"
 sudo install -D -m 755 "$session_src" /usr/local/bin/anvil-session
 sudo install -D -m 755 "$runner_src" /usr/local/bin/anvil-proton-run
 sudo install -D -m 755 "$game_session_src" /usr/local/bin/anvil-game-session
+sudo install -D -m 755 "$achievement_claim_src" /usr/local/bin/anvil-achievement-claim
 sudo install -D -m 755 "$controller_overlay_watch_src" /usr/local/bin/anvil-controller-overlay-watch
 sudo install -D -m 755 "$overlay_toggle_src" /usr/local/bin/anvil-overlay-toggle
 sudo install -D -m 755 "$session_src" /usr/local/share/anvil/session/anvil-session.sh
 sudo install -D -m 755 "$game_session_src" /usr/local/share/anvil/scripts/anvil-game-session
+sudo install -D -m 755 "$achievement_claim_src" /usr/local/share/anvil/scripts/anvil-achievement-claim
 sudo install -D -m 755 "$controller_overlay_watch_src" /usr/local/share/anvil/scripts/anvil-controller-overlay-watch
 sudo install -D -m 755 "$overlay_toggle_src" /usr/local/share/anvil/scripts/anvil-overlay-toggle
 sudo install -D -m 644 "$hypr_src" /usr/local/share/anvil/session/hyprland-anvil.lua

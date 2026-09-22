@@ -1,0 +1,16 @@
+services:
+  forgeworks-achievements:
+    build:
+      context: .
+      dockerfile: services/forgeworks-achievements/Dockerfile
+    environment:
+      FORGEWORKS_DATA: /data
+      FORGEWORKS_ACHIEVEMENT_SETS_DIR: /app/achievement-sets
+    ports:
+      - "18080:8080"
+    volumes:
+      - forgeworks-achievements-data:/data
+    restart: unless-stopped
+
+volumes:
+  forgeworks-achievements-data:

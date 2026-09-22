@@ -1,0 +1,73 @@
+#!/usr/bin/env python3
+"""Submit a local achievement claim to Forgeworks from an Anvil game session."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import sys
+import urllib.error
+import urllib.request
+
+
+def parse_pair(value: str) -> tuple[str, str]:
+    if "=" not in value:
+        raise argparse.ArgumentTypeError("evidence entries must use key=value")
+    key, item = value.split("=", 1)
+    if not key:
+        raise argparse.ArgumentTypeError("evidence key cannot be empty")
+    return key, item
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Record an Anvil achievement claim.")
+    parser.add_argument("achievement_id")
+    parser.add_argument("--url", default=os.environ.get("ANVIL_ACHIEVEMENTS_URL") or os.environ.get("FORGEWORKS_ACHIEVEMENTS_URL") or "http://127.0.0.1:18080")
+    parser.add_argument("--player-id", default=os.environ.get("ANVIL_PLAYER_ID") or "local-dev")
+    parser.add_argument("--game-id", default=os.environ.get("ANVIL_GAME_ID") or "")
+    parser.add_argument("--achievement-set", default=os.environ.get("ANVIL_ACHIEVEMENT_SET") or "")
+    parser.add_argument("--evidence", action="append", default=[], type=parse_pair)
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = parse_args()
+    if not args.game_id:
+        print("anvil-achievement-claim: --game-id or ANVIL_GAME_ID is required", file=sys.stderr)
+        return 64
+    if not args.achievement_set:
+        print("anvil-achievement-claim: --achievement-set or ANVIL_ACHIEVEMENT_SET is required", file=sys.stderr)
+        return 64
+
+    evidence = {key: value for key, value in args.evidence}
+    payload = {
+        "player_id": args.player_id,
+        "game_id": args.game_id,
+        "achievement_set": args.achievement_set,
+        "achievement_id": args.achievement_id,
+        "evidence": evidence,
+    }
+    body = json.dumps(payload).encode("utf-8")
+    request = urllib.request.Request(
+        f"{args.url.rstrip('/')}/v1/claims",
+        data=body,
+        headers={"content-type": "application/json"},
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=5) as response:
+            print(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        print(exc.read().decode("utf-8"), file=sys.stderr)
+        return 1
+    except OSError as exc:
+        print(f"anvil-achievement-claim: {exc}", file=sys.stderr)
+        return 1
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

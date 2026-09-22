@@ -321,6 +321,11 @@ def infer_achievement_set(name):
     return ""
 
 
+def infer_forgeworks_app_id(name):
+    clean = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+    return clean or "unknown-game"
+
+
 def achievement_set_path(achievement_set):
     if not achievement_set:
         return ""
@@ -386,6 +391,7 @@ def build_game_entry(cartridge, game_path, drive_root):
     controller_layout = cartridge.get("controller_layout") or infer_controller_layout(name)
     achievement_set = cartridge.get("achievement_set") or infer_achievement_set(name)
     achievements = load_achievement_summary(achievement_set)
+    forgeworks_app_id = cartridge.get("forgeworks_app_id") or infer_forgeworks_app_id(name)
     sgdb_id = cartridge.get("steamgriddb_id", None)
     steam_appid = cartridge.get("steam_appid", None)
 
@@ -470,6 +476,7 @@ def build_game_entry(cartridge, game_path, drive_root):
         "input_profile": input_profile,
         "input_map": input_map,
         "controller_layout": controller_layout,
+        "forgeworks_app_id": forgeworks_app_id,
         "achievement_set": achievement_set,
         "achievements": achievements,
         "steamgriddb_id": str(sgdb_id) if sgdb_id else "",

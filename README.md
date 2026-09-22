@@ -11,6 +11,7 @@ Steam-style store, library, overlay, and cartridge-based distribution model.
   `Games/` drives, fetching artwork, and checking for Anvil updates.
 - Public Steam Store/CDN artwork fallback with optional SteamGridDB support.
 - Proton launch wrapper owned by Anvil: `scripts/anvil-proton-run`.
+- Local Forgeworks achievements prototype for recording development claims.
 - Hyprland session files under `session/`.
 
 ## Project Boundary
@@ -58,6 +59,12 @@ Run the launcher from a checkout:
 
 ```bash
 ANVIL_ROOT="$PWD" qs -p src/ui/AnvilDaemon.qml
+```
+
+Run the local Forgeworks achievements service on DevBox:
+
+```bash
+docker compose -f docker-compose.forgeworks.yml up --build -d
 ```
 
 Launch the dedicated session:
