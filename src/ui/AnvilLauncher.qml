@@ -665,170 +665,196 @@ PanelWindow {
         visible: activeSection === 0
 
         Rectangle {
-            id: fallbackHero
-
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.topMargin: 76
-            height: Math.max(470, parent.height * 0.62)
-            visible: heroImage.source === ""
-
-            Rectangle {
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.rightMargin: 120
-                anchors.topMargin: 70
-                width: 360
-                height: 220
-                radius: 8
-                color: "#16ffffff"
-                border.color: "#22ffffff"
-                rotation: -4
-            }
-
-            gradient: Gradient {
-                orientation: Gradient.Horizontal
-
-                GradientStop {
-                    position: 0
-                    color: "#111820"
-                }
-
-                GradientStop {
-                    position: 0.46
-                    color: "#263238"
-                }
-
-                GradientStop {
-                    position: 0.78
-                    color: "#4f3a29"
-                }
-
-                GradientStop {
-                    position: 1
-                    color: "#10151b"
-                }
-
-            }
-
-        }
-
-        Rectangle {
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.topMargin: 76
-            height: Math.max(470, parent.height * 0.62)
-
-            gradient: Gradient {
-                orientation: Gradient.Horizontal
-
-                GradientStop {
-                    position: 0
-                    color: "#fb080b0f"
-                }
-
-                GradientStop {
-                    position: 0.38
-                    color: "#dd080b0f"
-                }
-
-                GradientStop {
-                    position: 0.72
-                    color: "#44080b0f"
-                }
-
-                GradientStop {
-                    position: 1
-                    color: "#aa080b0f"
-                }
-
-            }
-
-        }
-
-        Column {
-            id: heroCopy
+            id: focusStage
 
             anchors.left: parent.left
             anchors.leftMargin: contentLeft
+            anchors.right: parent.right
+            anchors.rightMargin: 56
             anchors.top: parent.top
-            anchors.topMargin: 126
-            width: Math.min(480, parent.width * 0.4)
-            spacing: 9
+            anchors.topMargin: 106
+            anchors.bottom: shelf.top
+            anchors.bottomMargin: 28
+            radius: 8
+            color: "#121820"
+            border.color: "#303944"
+            clip: true
 
-            Text {
-                text: tagLine(currentGame())
-                color: emberLight
-                font.pixelSize: 10
-                font.bold: true
-                font.letterSpacing: 0
+            Image {
+                anchors.fill: parent
+                source: gameArt(currentGame())
+                fillMode: Image.PreserveAspectCrop
+                visible: source !== ""
             }
 
-            Text {
-                text: {
-                    let game = currentGame();
-                    if (game)
-                        return game.name;
+            Rectangle {
+                anchors.fill: parent
+                visible: gameArt(currentGame()) === ""
 
-                    return libraryScanRunning ? "Scanning Cartridges" : "Anvil Library";
+                Text {
+                    anchors.centerIn: parent
+                    text: initials(currentGame() ? currentGame().name : "Anvil")
+                    color: "#f4c4ae"
+                    opacity: 0.55
+                    font.pixelSize: 132
+                    font.bold: true
                 }
-                color: fg
-                font.pixelSize: 34
-                font.bold: true
-                width: parent.width
-                wrapMode: Text.WordWrap
-                lineHeight: 0.96
+
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+
+                    GradientStop {
+                        position: 0
+                        color: "#18222b"
+                    }
+
+                    GradientStop {
+                        position: 0.46
+                        color: "#27333a"
+                    }
+
+                    GradientStop {
+                        position: 1
+                        color: "#50351f"
+                    }
+
+                }
+
             }
 
-            Text {
-                text: libraryScanRunning ? "Mounting removable media and checking your cartridge shelf." : ((currentGame() && currentGame().proton) ? currentGame().proton : "Ready to play")
-                color: "#c5c8c9"
-                font.pixelSize: 13
-                width: Math.min(420, parent.width)
-                wrapMode: Text.WordWrap
-                lineHeight: 1.25
+            Rectangle {
+                anchors.fill: parent
+
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+
+                    GradientStop {
+                        position: 0
+                        color: "#f807090d"
+                    }
+
+                    GradientStop {
+                        position: 0.42
+                        color: "#7607090d"
+                    }
+
+                    GradientStop {
+                        position: 0.72
+                        color: "#2407090d"
+                    }
+
+                    GradientStop {
+                        position: 1
+                        color: "#9907090d"
+                    }
+
+                }
+
             }
 
-            Row {
+            Rectangle {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                height: Math.min(210, parent.height * 0.46)
+
+                gradient: Gradient {
+                    GradientStop {
+                        position: 0
+                        color: "#0007090d"
+                    }
+
+                    GradientStop {
+                        position: 1
+                        color: "#f807090d"
+                    }
+
+                }
+
+            }
+
+            Column {
+                anchors.left: parent.left
+                anchors.leftMargin: 34
+                anchors.right: parent.right
+                anchors.rightMargin: 34
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 30
                 spacing: 10
-                visible: currentGame() !== null
 
-                Rectangle {
-                    width: 124
-                    height: 40
-                    radius: 8
-                    color: ember
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: "Play"
-                        color: "#160b07"
-                        font.pixelSize: 12
-                        font.bold: true
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: launchGame()
-                    }
-
+                Text {
+                    text: tagLine(currentGame())
+                    color: emberLight
+                    font.pixelSize: 10
+                    font.bold: true
+                    font.letterSpacing: 0
                 }
 
-                Rectangle {
-                    width: 40
-                    height: 40
-                    radius: 8
-                    color: "#cc131a22"
-                    border.color: "#38434e"
+                Text {
+                    text: {
+                        let game = currentGame();
+                        if (game)
+                            return game.name;
 
-                    Text {
-                        anchors.centerIn: parent
-                        text: "⋯"
-                        color: fg
-                        font.pixelSize: 22
-                        font.bold: true
+                        return libraryScanRunning ? "Scanning Cartridges" : "Anvil Library";
+                    }
+                    color: fg
+                    font.pixelSize: 46
+                    font.bold: true
+                    width: Math.min(720, parent.width)
+                    elide: Text.ElideRight
+                    lineHeight: 0.94
+                }
+
+                Text {
+                    text: libraryScanRunning ? "Mounting removable media and checking your cartridge shelf." : ((currentGame() && currentGame().proton) ? currentGame().proton : "Ready to play")
+                    color: "#d4d8d9"
+                    font.pixelSize: 14
+                    width: Math.min(520, parent.width)
+                    elide: Text.ElideRight
+                }
+
+                Row {
+                    spacing: 10
+                    visible: currentGame() !== null
+
+                    Rectangle {
+                        width: 138
+                        height: 42
+                        radius: 8
+                        color: ember
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "PLAY"
+                            color: "#160b07"
+                            font.pixelSize: 12
+                            font.bold: true
+                            font.letterSpacing: 0
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: launchGame()
+                        }
+
+                    }
+
+                    Rectangle {
+                        width: 42
+                        height: 42
+                        radius: 8
+                        color: "#dd111820"
+                        border.color: "#3b4652"
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "⋯"
+                            color: fg
+                            font.pixelSize: 22
+                            font.bold: true
+                        }
+
                     }
 
                 }
@@ -901,8 +927,8 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 74
-            height: 330
+            anchors.bottomMargin: 58
+            height: 250
 
             Text {
                 anchors.left: parent.left
@@ -921,7 +947,7 @@ PanelWindow {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                height: 286
+                height: 214
                 orientation: ListView.Horizontal
                 spacing: 14
                 leftMargin: contentLeft
@@ -941,8 +967,8 @@ PanelWindow {
                 delegate: Rectangle {
                     id: card
 
-                    width: ListView.isCurrentItem ? Math.min(590, Math.max(390, anvil.width * 0.4)) : 148
-                    height: ListView.isCurrentItem ? 248 : 222
+                    width: ListView.isCurrentItem ? 344 : 136
+                    height: ListView.isCurrentItem ? 194 : 194
                     radius: 8
                     color: panelRaised
                     border.color: ListView.isCurrentItem ? ember : "#32404d"
