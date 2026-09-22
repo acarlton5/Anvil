@@ -1,0 +1,134 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+runtime_root="${XDG_RUNTIME_DIR:-/tmp}/anvil"
+state_dir="$runtime_root/game-session"
+pid_file="$state_dir/pid"
+meta_file="$state_dir/current.env"
+anvil_root="${ANVIL_ROOT:-}"
+
+usage() {
+    echo "usage: anvil-game-session run [--name NAME] [--input-profile PROFILE] [--controller-layout LAYOUT] -- COMMAND" >&2
+    echo "       anvil-game-session stop" >&2
+    exit 64
+}
+
+stop_session() {
+    if [ ! -s "$pid_file" ]; then
+        return 0
+    fi
+
+    local pid
+    pid="$(cat "$pid_file" 2>/dev/null || true)"
+    if [ -z "$pid" ] || ! kill -0 "$pid" 2>/dev/null; then
+        rm -f "$pid_file" "$meta_file"
+        return 0
+    fi
+
+    kill -TERM -- "-$pid" 2>/dev/null || kill -TERM "$pid" 2>/dev/null || true
+
+    local waited=0
+    while kill -0 "$pid" 2>/dev/null && [ "$waited" -lt 30 ]; do
+        sleep 0.1
+        waited=$((waited + 1))
+    done
+
+    if kill -0 "$pid" 2>/dev/null; then
+        kill -KILL -- "-$pid" 2>/dev/null || kill -KILL "$pid" 2>/dev/null || true
+    fi
+
+    rm -f "$pid_file" "$meta_file"
+}
+
+write_meta() {
+    local name="$1"
+    local input_profile="$2"
+    local controller_layout="$3"
+
+    {
+        printf 'ANVIL_GAME_NAME=%q\n' "$name"
+        printf 'ANVIL_INPUT_PROFILE=%q\n' "$input_profile"
+        printf 'ANVIL_CONTROLLER_LAYOUT=%q\n' "$controller_layout"
+        printf 'ANVIL_CONTROLLER_LAYOUT_FILE=%q\n' "$(controller_layout_file "$controller_layout")"
+        printf 'ANVIL_STARTED_AT=%q\n' "$(date -Iseconds)"
+    } > "$meta_file"
+}
+
+controller_layout_file() {
+    local layout="$1"
+    local candidate=""
+
+    if [ -n "$layout" ] && [ -n "$anvil_root" ]; then
+        candidate="$anvil_root/config/controller-layouts/$layout.json"
+        if [ -f "$candidate" ]; then
+            printf '%s' "$candidate"
+            return
+        fi
+    fi
+
+    printf ''
+}
+
+run_session() {
+    local name=""
+    local input_profile=""
+    local controller_layout=""
+
+    while [ "$#" -gt 0 ]; do
+        case "$1" in
+            --name)
+                name="${2:-}"
+                shift 2
+                ;;
+            --input-profile)
+                input_profile="${2:-}"
+                shift 2
+                ;;
+            --controller-layout)
+                controller_layout="${2:-}"
+                shift 2
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                usage
+                ;;
+        esac
+    done
+
+    [ "$#" -gt 0 ] || usage
+
+    mkdir -p "$state_dir"
+    stop_session
+    write_meta "$name" "$input_profile" "$controller_layout"
+
+    export ANVIL_GAME_NAME="$name"
+    export ANVIL_INPUT_PROFILE="$input_profile"
+    export ANVIL_CONTROLLER_LAYOUT="$controller_layout"
+    export ANVIL_CONTROLLER_LAYOUT_FILE
+    ANVIL_CONTROLLER_LAYOUT_FILE="$(controller_layout_file "$controller_layout")"
+
+    setsid bash -lc "exec $*" &
+    local pid=$!
+    printf '%s\n' "$pid" > "$pid_file"
+
+    local status=0
+    wait "$pid" || status=$?
+    rm -f "$pid_file" "$meta_file"
+    return "$status"
+}
+
+case "${1:-}" in
+    run)
+        shift
+        run_session "$@"
+        ;;
+    stop)
+        stop_session
+        ;;
+    *)
+        usage
+        ;;
+esac

@@ -281,8 +281,24 @@ def generate_cartridge_stub(folder_name, game_path, drive_root):
         "exe_path": exe_path,
         "start_dir": os.path.dirname(exe_path) if exe_path else "",
         "launch_options": 'WINEDLLOVERRIDES="steam_api64=n,b" %command%',
+        "input_profile": infer_input_profile(display_name),
+        "controller_layout": infer_controller_layout(display_name),
         "tags": ["Uncategorized"],
     }
+
+
+def infer_input_profile(name):
+    clean = re.sub(r"[^a-z0-9]+", " ", name.lower()).strip()
+    if any(token in clean for token in ["jak", "daxter", "ratchet", "sly cooper", "uncharted", "god of war"]):
+        return "gamepad/playstation"
+    return "gamepad/default"
+
+
+def infer_controller_layout(name):
+    clean = re.sub(r"[^a-z0-9]+", " ", name.lower()).strip()
+    if any(token in clean for token in ["jak", "daxter", "ratchet", "sly cooper", "uncharted", "god of war"]):
+        return "dualshock-action-adventure"
+    return "standard-gamepad"
 
 
 def build_game_entry(cartridge, game_path, drive_root):
@@ -292,6 +308,8 @@ def build_game_entry(cartridge, game_path, drive_root):
     launch_options = cartridge.get("launch_options", "")
     proton = cartridge.get("proton_version", "Proton Experimental")
     tags = cartridge.get("tags", [])
+    input_profile = cartridge.get("input_profile") or infer_input_profile(name)
+    controller_layout = cartridge.get("controller_layout") or infer_controller_layout(name)
     sgdb_id = cartridge.get("steamgriddb_id", None)
     steam_appid = cartridge.get("steam_appid", None)
 
@@ -373,6 +391,8 @@ def build_game_entry(cartridge, game_path, drive_root):
         "hero": hero or "",
         "grid": grid or "",
         "logo": logo or "",
+        "input_profile": input_profile,
+        "controller_layout": controller_layout,
         "steamgriddb_id": str(sgdb_id) if sgdb_id else "",
         "steam_appid": str(steam_appid) if steam_appid else "",
         "dummy": False,

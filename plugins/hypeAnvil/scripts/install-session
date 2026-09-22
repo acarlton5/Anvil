@@ -45,10 +45,18 @@ stage_file() {
     STAGED_RESULT="$dest"
 }
 
+stage_tree() {
+    local src="$1"
+    local rel="$2"
+    local dest="$stage_dir/$rel"
+    mkdir -p "$(dirname -- "$dest")"
+    cp -R "$src" "$dest"
+    staged_paths+=("$dest")
+    STAGED_RESULT="$dest"
+}
+
 cleanup_stage() {
-    for staged in "${staged_paths[@]}"; do
-        [ ! -e "$staged" ] || unlink "$staged"
-    done
+    find "$stage_dir" -depth -type f -exec unlink {} \; 2>/dev/null || true
     find "$stage_dir" -depth -type d -empty -exec rmdir {} \; 2>/dev/null || true
 }
 trap cleanup_stage EXIT
@@ -57,6 +65,8 @@ stage_file "$anvil_root/session/anvil-session.sh" session/anvil-session.sh
 session_src="$STAGED_RESULT"
 stage_file "$anvil_root/scripts/anvil-proton-run" scripts/anvil-proton-run
 runner_src="$STAGED_RESULT"
+stage_file "$anvil_root/scripts/anvil-game-session" scripts/anvil-game-session
+game_session_src="$STAGED_RESULT"
 stage_file "$anvil_root/scripts/anvil-overlay-toggle" scripts/anvil-overlay-toggle
 overlay_toggle_src="$STAGED_RESULT"
 stage_file "$anvil_root/session/hyprland-anvil.lua" session/hyprland-anvil.lua
@@ -69,6 +79,8 @@ stage_file "$anvil_root/src/ui/AnvilOverlay.qml" src/ui/AnvilOverlay.qml
 overlay_qml_src="$STAGED_RESULT"
 stage_file "$anvil_root/assets/anvil-focus-flame.png" assets/anvil-focus-flame.png
 focus_flame_src="$STAGED_RESULT"
+stage_tree "$anvil_root/config/controller-layouts" config/controller-layouts
+controller_layouts_src="$STAGED_RESULT"
 stage_file "$anvil_root/src/daemon/anvil-library-bridge" src/daemon/anvil-library-bridge
 anvil_library_bridge_src="$STAGED_RESULT"
 stage_file "$anvil_root/src/daemon/anvil_library.py" src/daemon/anvil_library.py
@@ -76,14 +88,19 @@ anvil_library_src="$STAGED_RESULT"
 
 sudo install -D -m 755 "$session_src" /usr/local/bin/anvil-session
 sudo install -D -m 755 "$runner_src" /usr/local/bin/anvil-proton-run
+sudo install -D -m 755 "$game_session_src" /usr/local/bin/anvil-game-session
 sudo install -D -m 755 "$overlay_toggle_src" /usr/local/bin/anvil-overlay-toggle
 sudo install -D -m 755 "$session_src" /usr/local/share/anvil/session/anvil-session.sh
+sudo install -D -m 755 "$game_session_src" /usr/local/share/anvil/scripts/anvil-game-session
 sudo install -D -m 755 "$overlay_toggle_src" /usr/local/share/anvil/scripts/anvil-overlay-toggle
 sudo install -D -m 644 "$hypr_src" /usr/local/share/anvil/session/hyprland-anvil.lua
 sudo install -D -m 644 "$daemon_qml_src" /usr/local/share/anvil/src/ui/AnvilDaemon.qml
 sudo install -D -m 644 "$launcher_qml_src" /usr/local/share/anvil/src/ui/AnvilLauncher.qml
 sudo install -D -m 644 "$overlay_qml_src" /usr/local/share/anvil/src/ui/AnvilOverlay.qml
 sudo install -D -m 644 "$focus_flame_src" /usr/local/share/anvil/assets/anvil-focus-flame.png
+sudo install -d -m 755 /usr/local/share/anvil/config/controller-layouts
+sudo cp -R "$controller_layouts_src"/. /usr/local/share/anvil/config/controller-layouts/
+sudo chmod -R u=rwX,go=rX /usr/local/share/anvil/config/controller-layouts
 sudo install -D -m 755 "$anvil_library_bridge_src" /usr/local/share/anvil/src/daemon/anvil-library-bridge
 sudo install -D -m 644 "$anvil_library_src" /usr/local/share/anvil/src/daemon/anvil_library.py
 

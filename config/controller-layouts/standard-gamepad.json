@@ -1,0 +1,22 @@
+{
+  "id": "standard-gamepad",
+  "name": "Standard Gamepad",
+  "device_family": "xinput-compatible",
+  "schema": 1,
+  "bindings": {
+    "south": "confirm",
+    "east": "back",
+    "west": "secondary",
+    "north": "menu_action",
+    "l1": "previous_tab",
+    "r1": "next_tab",
+    "l2": "left_trigger",
+    "r2": "right_trigger",
+    "select": "view",
+    "start": "menu",
+    "guide": "anvil_overlay",
+    "left_stick": "move",
+    "right_stick": "camera",
+    "dpad": "digital_move"
+  }
+}

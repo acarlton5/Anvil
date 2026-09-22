@@ -8,16 +8,19 @@ ShellRoot {
 
     property bool overlayActive: Quickshell.env("ANVIL_OVERLAY_TEST") === "1"
     property bool gamerActive: Quickshell.env("ANVIL_OVERLAY_TEST") !== "1"
+    readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || "/usr/local/share/anvil"
+    readonly property string gameSessionScript: anvilRoot + "/scripts/anvil-game-session"
 
-    function startGame(command) {
+    function startGame(command, gameName, inputProfile, controllerLayout) {
         console.log("Root starting game: " + command);
-        gameProcess.command = ["bash", "-c", command];
+        gameProcess.command = [gameSessionScript, "run", "--name", gameName || "", "--input-profile", inputProfile || "", "--controller-layout", controllerLayout || "", "--", command];
         gameProcess.running = true;
         // Hide Anvil AFTER 4 seconds to show the loading screen transition!
         hideAnvilTimer.start();
     }
 
     function killGame() {
+        killProcess.command = [gameSessionScript, "stop"];
         killProcess.running = true;
         root.overlayActive = false;
     }
@@ -44,8 +47,8 @@ ShellRoot {
             model: Quickshell.screens
 
             AnvilLauncher {
-                launchHandler: function(command) {
-                    root.startGame(command);
+                launchHandler: function(command, game) {
+                    root.startGame(command, game ? game.name : "", game ? game.input_profile : "", game ? game.controller_layout : "");
                 }
             }
 
@@ -108,8 +111,6 @@ ShellRoot {
 
     Process {
         id: killProcess
-
-        command: ["killall", "anvil-proton-run"]
     }
 
 }

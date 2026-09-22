@@ -1,0 +1,23 @@
+{
+  "id": "dualshock-action-adventure",
+  "name": "DualShock Action Adventure",
+  "device_family": "playstation",
+  "schema": 1,
+  "bindings": {
+    "cross": "confirm_or_jump",
+    "circle": "back_or_cancel",
+    "square": "attack_or_interact",
+    "triangle": "special_or_context",
+    "l1": "previous_tab_or_lock_on",
+    "r1": "next_tab_or_camera_reset",
+    "l2": "aim_or_crouch",
+    "r2": "accelerate_or_heavy_action",
+    "share": "view",
+    "options": "pause",
+    "ps": "anvil_overlay",
+    "left_stick": "move",
+    "right_stick": "camera",
+    "dpad": "digital_move"
+  },
+  "notes": "Default PlayStation-style layout for Sony-era platform adventure games such as Jak and Daxter."
+}

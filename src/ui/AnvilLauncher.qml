@@ -118,7 +118,7 @@ PanelWindow {
         gameIsLoading = true;
         console.log("Launching: " + game.name);
         if (launchHandler) {
-            launchHandler(game.launch_command);
+            launchHandler(game.launch_command, game);
             return ;
         }
         launcher.command = ["qs", "ipc", "-p", daemonPath, "call", "anvil", "launch", game.launch_command];
@@ -1036,6 +1036,7 @@ PanelWindow {
                 source: anvilRoot + "/assets/anvil-focus-flame.png"
                 fillMode: Image.PreserveAspectFit
                 opacity: 0.48
+                visible: false
 
                 SequentialAnimation on opacity {
                     running: homePage.visible
@@ -1100,7 +1101,7 @@ PanelWindow {
                         source: anvilRoot + "/assets/anvil-focus-flame.png"
                         fillMode: Image.PreserveAspectFit
                         opacity: 0.46
-                        visible: false
+                        visible: ListView.isCurrentItem
 
                         SequentialAnimation on opacity {
                             running: ListView.isCurrentItem
