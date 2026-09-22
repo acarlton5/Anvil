@@ -11,9 +11,9 @@ ShellRoot {
     readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || "/usr/local/share/anvil"
     readonly property string gameSessionScript: anvilRoot + "/scripts/anvil-game-session"
 
-    function startGame(command, gameName, inputProfile, controllerLayout) {
+    function startGame(command, gameName, inputProfile, inputMap, controllerLayout) {
         console.log("Root starting game: " + command);
-        gameProcess.command = [gameSessionScript, "run", "--name", gameName || "", "--input-profile", inputProfile || "", "--controller-layout", controllerLayout || "", "--", command];
+        gameProcess.command = [gameSessionScript, "run", "--name", gameName || "", "--input-profile", inputProfile || "", "--input-map", inputMap || "", "--controller-layout", controllerLayout || "", "--", command];
         gameProcess.running = true;
         // Hide Anvil AFTER 4 seconds to show the loading screen transition!
         hideAnvilTimer.start();
@@ -50,7 +50,7 @@ ShellRoot {
 
             AnvilLauncher {
                 launchHandler: function(command, game) {
-                    root.startGame(command, game ? game.name : "", game ? game.input_profile : "", game ? game.controller_layout : "");
+                    root.startGame(command, game ? game.name : "", game ? game.input_profile : "", game ? game.input_map : "", game ? game.controller_layout : "");
                 }
                 cancelLaunchHandler: function() {
                     root.killGame();

@@ -5,11 +5,12 @@ runtime_root="${XDG_RUNTIME_DIR:-/tmp}/anvil"
 state_dir="$runtime_root/game-session"
 pid_file="$state_dir/pid"
 meta_file="$state_dir/current.env"
+sdl_runtime_db_file="$state_dir/sdl-gamecontrollerdb.txt"
 anvil_root="${ANVIL_ROOT:-}"
 sdl_controller_db="${ANVIL_SDL_CONTROLLER_DB:-}"
 
 usage() {
-    echo "usage: anvil-game-session run [--name NAME] [--input-profile PROFILE] [--controller-layout LAYOUT] -- COMMAND" >&2
+    echo "usage: anvil-game-session run [--name NAME] [--input-profile PROFILE] [--input-map MAP] [--controller-layout LAYOUT] -- COMMAND" >&2
     echo "       anvil-game-session stop" >&2
     exit 64
 }
@@ -22,7 +23,7 @@ stop_session() {
     local pid
     pid="$(cat "$pid_file" 2>/dev/null || true)"
     if [ -z "$pid" ] || ! kill -0 "$pid" 2>/dev/null; then
-        rm -f "$pid_file" "$meta_file"
+        rm -f "$pid_file" "$meta_file" "$sdl_runtime_db_file"
         return 0
     fi
 
@@ -38,22 +39,80 @@ stop_session() {
         kill -KILL -- "-$pid" 2>/dev/null || kill -KILL "$pid" 2>/dev/null || true
     fi
 
-    rm -f "$pid_file" "$meta_file"
+    rm -f "$pid_file" "$meta_file" "$sdl_runtime_db_file"
 }
 
 write_meta() {
     local name="$1"
     local input_profile="$2"
-    local controller_layout="$3"
+    local input_map="$3"
+    local controller_layout="$4"
 
     {
         printf 'ANVIL_GAME_NAME=%q\n' "$name"
         printf 'ANVIL_INPUT_PROFILE=%q\n' "$input_profile"
+        printf 'ANVIL_INPUT_MAP=%q\n' "$input_map"
+        printf 'ANVIL_INPUT_MAP_FILE=%q\n' "$(input_map_file "$input_map")"
+        printf 'ANVIL_CONTROLLER_FAMILY=%q\n' "$(active_controller_family)"
         printf 'ANVIL_CONTROLLER_LAYOUT=%q\n' "$controller_layout"
         printf 'ANVIL_CONTROLLER_LAYOUT_FILE=%q\n' "$(controller_layout_file "$controller_layout")"
         printf 'ANVIL_SDL_CONTROLLER_DB=%q\n' "$(sdl_controller_db_file)"
         printf 'ANVIL_STARTED_AT=%q\n' "$(date -Iseconds)"
     } > "$meta_file"
+}
+
+input_map_file() {
+    local map="$1"
+    local candidate=""
+
+    [ -n "$map" ] || return 0
+
+    if [ -f "$map" ]; then
+        printf '%s' "$map"
+        return
+    fi
+
+    if [ -n "$anvil_root" ]; then
+        candidate="$anvil_root/config/input-maps/$map"
+        if [ -f "$candidate" ]; then
+            printf '%s' "$candidate"
+            return
+        fi
+    fi
+
+    printf ''
+}
+
+active_controller_family() {
+    local db_file=""
+    local line=""
+    local vendor=""
+    local product=""
+
+    if [ -n "$anvil_root" ]; then
+        db_file="$anvil_root/config/controller-devices.db"
+    fi
+    [ -f "$db_file" ] || return 0
+
+    while read -r line; do
+        case "$line" in
+            I:*)
+                vendor="$(printf '%s\n' "$line" | sed -n 's/.*Vendor=\([0-9A-Fa-f]\{4\}\).*/\L\1/p')"
+                product="$(printf '%s\n' "$line" | sed -n 's/.*Product=\([0-9A-Fa-f]\{4\}\).*/\L\1/p')"
+                if [ -n "$vendor" ] && [ -n "$product" ]; then
+                    local family
+                    family="$(awk -v id="$vendor:$product" 'BEGIN { IGNORECASE = 1 } $1 == id { print $2; exit }' "$db_file")"
+                    if [ -n "$family" ]; then
+                        printf '%s' "$family"
+                        return
+                    fi
+                fi
+                ;;
+            esac
+    done < /proc/bus/input/devices
+
+    printf ''
+    return 0
 }
 
 controller_layout_file() {
@@ -91,16 +150,39 @@ sdl_controller_db_file() {
 }
 
 export_sdl_controller_mappings() {
+    local map_file
     local db_file
+    local mappings=""
+
+    map_file="$(input_map_file "${ANVIL_INPUT_MAP:-}")"
+    if [ -n "$map_file" ]; then
+        mappings="$(sed -n 's/^sdl=//p' "$map_file")"
+    fi
+
     db_file="$(sdl_controller_db_file)"
-    if [ -z "$db_file" ]; then
+    if [ -n "$db_file" ]; then
+        if [ -n "$mappings" ]; then
+            local extra_mappings
+            extra_mappings="$(grep -Ev '^[[:space:]]*(#|$)' "$db_file" || true)"
+            if [ -n "$extra_mappings" ]; then
+                mappings="$mappings
+$extra_mappings"
+            fi
+        else
+            mappings="$(grep -Ev '^[[:space:]]*(#|$)' "$db_file" || true)"
+        fi
+    fi
+
+    if [ -z "$mappings" ]; then
         return
     fi
 
-    export SDL_GAMECONTROLLERCONFIG_FILE="$db_file"
+    printf '%s\n' "$mappings" > "$sdl_runtime_db_file"
+
+    export SDL_GAMECONTROLLERCONFIG_FILE="$sdl_runtime_db_file"
     export SDL_GAMECONTROLLERCONFIG
-    SDL_GAMECONTROLLERCONFIG="$(grep -Ev '^[[:space:]]*(#|$)' "$db_file" | paste -sd $'\n' -)"
-    export SDL_GAMEPADCONFIG_FILE="$db_file"
+    SDL_GAMECONTROLLERCONFIG="$(printf '%s\n' "$mappings")"
+    export SDL_GAMEPADCONFIG_FILE="$sdl_runtime_db_file"
     export SDL_GAMEPADCONFIG="$SDL_GAMECONTROLLERCONFIG"
     export SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS=1
 }
@@ -108,6 +190,7 @@ export_sdl_controller_mappings() {
 run_session() {
     local name=""
     local input_profile=""
+    local input_map=""
     local controller_layout=""
 
     while [ "$#" -gt 0 ]; do
@@ -118,6 +201,10 @@ run_session() {
                 ;;
             --input-profile)
                 input_profile="${2:-}"
+                shift 2
+                ;;
+            --input-map)
+                input_map="${2:-}"
                 shift 2
                 ;;
             --controller-layout)
@@ -138,10 +225,15 @@ run_session() {
 
     mkdir -p "$state_dir"
     stop_session
-    write_meta "$name" "$input_profile" "$controller_layout"
+    write_meta "$name" "$input_profile" "$input_map" "$controller_layout"
 
     export ANVIL_GAME_NAME="$name"
     export ANVIL_INPUT_PROFILE="$input_profile"
+    export ANVIL_INPUT_MAP="$input_map"
+    export ANVIL_INPUT_MAP_FILE
+    ANVIL_INPUT_MAP_FILE="$(input_map_file "$input_map")"
+    export ANVIL_CONTROLLER_FAMILY
+    ANVIL_CONTROLLER_FAMILY="$(active_controller_family)"
     export ANVIL_CONTROLLER_LAYOUT="$controller_layout"
     export ANVIL_CONTROLLER_LAYOUT_FILE
     ANVIL_CONTROLLER_LAYOUT_FILE="$(controller_layout_file "$controller_layout")"
@@ -155,7 +247,7 @@ run_session() {
 
     local status=0
     wait "$pid" || status=$?
-    rm -f "$pid_file" "$meta_file"
+    rm -f "$pid_file" "$meta_file" "$sdl_runtime_db_file"
     return "$status"
 }
 

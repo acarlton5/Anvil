@@ -81,6 +81,10 @@ stage_file "$anvil_root/assets/anvil-focus-flame.png" assets/anvil-focus-flame.p
 focus_flame_src="$STAGED_RESULT"
 stage_file "$anvil_root/config/sdl-gamecontrollerdb.txt" config/sdl-gamecontrollerdb.txt
 sdl_controller_db_src="$STAGED_RESULT"
+stage_file "$anvil_root/config/controller-devices.db" config/controller-devices.db
+controller_devices_src="$STAGED_RESULT"
+stage_tree "$anvil_root/config/input-maps" config/input-maps
+input_maps_src="$STAGED_RESULT"
 stage_tree "$anvil_root/config/controller-layouts" config/controller-layouts
 controller_layouts_src="$STAGED_RESULT"
 stage_file "$anvil_root/src/daemon/anvil-library-bridge" src/daemon/anvil-library-bridge
@@ -101,6 +105,10 @@ sudo install -D -m 644 "$launcher_qml_src" /usr/local/share/anvil/src/ui/AnvilLa
 sudo install -D -m 644 "$overlay_qml_src" /usr/local/share/anvil/src/ui/AnvilOverlay.qml
 sudo install -D -m 644 "$focus_flame_src" /usr/local/share/anvil/assets/anvil-focus-flame.png
 sudo install -D -m 644 "$sdl_controller_db_src" /usr/local/share/anvil/config/sdl-gamecontrollerdb.txt
+sudo install -D -m 644 "$controller_devices_src" /usr/local/share/anvil/config/controller-devices.db
+sudo install -d -m 755 /usr/local/share/anvil/config/input-maps
+sudo cp -R "$input_maps_src"/. /usr/local/share/anvil/config/input-maps/
+sudo chmod -R u=rwX,go=rX /usr/local/share/anvil/config/input-maps
 sudo install -d -m 755 /usr/local/share/anvil/config/controller-layouts
 sudo cp -R "$controller_layouts_src"/. /usr/local/share/anvil/config/controller-layouts/
 sudo chmod -R u=rwX,go=rX /usr/local/share/anvil/config/controller-layouts
