@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import Quickshell.Wayland
 
 PanelWindow {
@@ -17,9 +18,20 @@ PanelWindow {
     readonly property color emberLight: "#ff9a73"
     readonly property color forgeGold: "#d9ad5f"
     property int selectedDockIndex: 9
+    readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || "/usr/local/share/anvil"
+    readonly property string achievementStatusScript: anvilRoot + "/scripts/anvil-achievement-status"
+    property var achievementStatus: ({
+        "game_name": "Current game",
+        "service_state": "offline",
+        "set_name": "Achievements",
+        "claimed": 0,
+        "total": 0,
+        "achievements": []
+    })
     property var openModules: ({
         "Friends": true,
         "Anvil": true,
+        "Achievements": true,
         "Capture": false,
         "Controller": false
     })
@@ -57,6 +69,11 @@ PanelWindow {
         }
     }
 
+    function refreshAchievements() {
+        achievementStatusProcess.command = ["python3", achievementStatusScript];
+        achievementStatusProcess.running = true;
+    }
+
     color: "transparent"
     screen: modelData
     implicitWidth: 1920
@@ -65,7 +82,10 @@ PanelWindow {
     WlrLayershell.exclusiveZone: -1
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     WlrLayershell.namespace: "anvil-overlay"
-    Component.onCompleted: keyCatcher.forceActiveFocus()
+    Component.onCompleted: {
+        keyCatcher.forceActiveFocus();
+        refreshAchievements();
+    }
 
     anchors {
         top: true
@@ -221,6 +241,19 @@ PanelWindow {
         }
 
         ListElement {
+            icon: "🏆"
+            label: "Achievements"
+            title: "FORGEWORKS ACHIEVEMENTS"
+            hint: "Current game claims, progress, and achievement state."
+            line1: "Reading Forgeworks"
+            line2: "Achievement progress"
+            line3: "Local claim prototype"
+            x0: 930
+            y0: 116
+            wide: true
+        }
+
+        ListElement {
             icon: "◇"
             label: "Controller"
             title: "ANVIL INPUT"
@@ -285,6 +318,23 @@ PanelWindow {
             wide: false
         }
 
+    }
+
+    Process {
+        id: achievementStatusProcess
+
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    let payload = text.trim();
+                    if (payload.length > 0)
+                        achievementStatus = JSON.parse(payload);
+
+                } catch (e) {
+                    console.log("Anvil achievement status parse error: " + e);
+                }
+            }
+        }
     }
 
     Rectangle {
@@ -604,6 +654,8 @@ PanelWindow {
                 anchors.rightMargin: 12
                 spacing: 10
 
+                visible: model.label !== "Achievements"
+
                 Text {
                     text: model.line1
                     color: "#d8dee7"
@@ -643,6 +695,162 @@ PanelWindow {
                         width: parent.width * (0.34 + ((index % 6) * 0.1))
                         radius: 3
                         color: index === selectedDockIndex ? ember : forgeGold
+                    }
+
+                }
+
+            }
+
+            Item {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: moduleHeader.bottom
+                anchors.topMargin: 48
+                anchors.bottom: parent.bottom
+                anchors.margins: 12
+                visible: model.label === "Achievements"
+
+                Column {
+                    anchors.fill: parent
+                    spacing: 9
+
+                    Row {
+                        width: parent.width
+                        height: 34
+                        spacing: 10
+
+                        Rectangle {
+                            width: 62
+                            height: 30
+                            radius: 3
+                            color: "#0b1118"
+                            border.color: achievementStatus.service_state === "online" ? forgeGold : stroke
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: achievementStatus.claimed + "/" + achievementStatus.total
+                                color: achievementStatus.service_state === "online" ? forgeGold : muted
+                                font.pixelSize: 13
+                                font.bold: true
+                            }
+
+                        }
+
+                        Column {
+                            width: parent.width - 116
+                            spacing: 2
+
+                            Text {
+                                text: achievementStatus.set_name || "Achievements"
+                                color: ink
+                                font.pixelSize: 13
+                                font.bold: true
+                                width: parent.width
+                                elide: Text.ElideRight
+                            }
+
+                            Text {
+                                text: (achievementStatus.game_name || "Current game") + " / " + (achievementStatus.service_state === "online" ? "Forgeworks online" : "Forgeworks offline")
+                                color: muted
+                                font.pixelSize: 10
+                                width: parent.width
+                                elide: Text.ElideRight
+                            }
+
+                        }
+
+                        Rectangle {
+                            width: 28
+                            height: 28
+                            radius: 2
+                            color: "#17212a"
+                            border.color: stroke
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: "↻"
+                                color: ink
+                                font.pixelSize: 14
+                                font.bold: true
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: refreshAchievements()
+                            }
+
+                        }
+
+                    }
+
+                    Repeater {
+                        model: (achievementStatus.achievements || []).slice(0, 3)
+
+                        Rectangle {
+                            width: parent.width
+                            height: 35
+                            radius: 3
+                            color: modelData.claimed ? "#18261d" : "#111820"
+                            border.color: modelData.claimed ? forgeGold : stroke
+
+                            Row {
+                                anchors.fill: parent
+                                anchors.leftMargin: 8
+                                anchors.rightMargin: 8
+                                spacing: 8
+
+                                Text {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    text: modelData.claimed ? "◆" : "◇"
+                                    color: modelData.claimed ? forgeGold : muted
+                                    font.pixelSize: 13
+                                    font.bold: true
+                                }
+
+                                Column {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: parent.width - 70
+                                    spacing: 1
+
+                                    Text {
+                                        text: modelData.name || modelData.id
+                                        color: ink
+                                        font.pixelSize: 11
+                                        font.bold: true
+                                        width: parent.width
+                                        elide: Text.ElideRight
+                                    }
+
+                                    Text {
+                                        text: modelData.description || ""
+                                        color: muted
+                                        font.pixelSize: 9
+                                        width: parent.width
+                                        elide: Text.ElideRight
+                                    }
+
+                                }
+
+                                Text {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    text: modelData.points ? modelData.points + "P" : ""
+                                    color: modelData.claimed ? forgeGold : muted
+                                    font.pixelSize: 10
+                                    font.bold: true
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                    Text {
+                        visible: !achievementStatus.achievements || achievementStatus.achievements.length === 0
+                        text: "No achievement set for this session"
+                        color: muted
+                        font.pixelSize: 12
+                        font.bold: true
                     }
 
                 }
