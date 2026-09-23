@@ -109,6 +109,52 @@ PanelWindow {
         return action;
     }
 
+    function controllerShortName() {
+        let family = String(controllerFamily || "xbox").toLowerCase();
+        if (family === "playstation")
+            return "PS Controller";
+        if (family === "nintendo")
+            return "Switch Controller";
+        if (family === "keyboard")
+            return "Keyboard";
+        if (family === "xbox")
+            return "Xbox Controller";
+        return "Controller";
+    }
+
+    function controllerIcon() {
+        let family = String(controllerFamily || "xbox").toLowerCase();
+        if (family === "playstation")
+            return anvilRoot + "/assets/controllercons/solid/ps5.svg";
+        if (family === "nintendo")
+            return anvilRoot + "/assets/controllercons/solid/switch-pro.svg";
+        if (family === "xbox")
+            return anvilRoot + "/assets/controllercons/solid/xbox-series-x.svg";
+        return "";
+    }
+
+    function inputRuntimeLabel(mode) {
+        mode = String(mode || "");
+        if (mode === "xinput_compat")
+            return "XInput";
+        if (mode === "forgeworks_input")
+            return "Anvil Input";
+        if (mode === "native")
+            return "Native";
+        return "Default";
+    }
+
+    function inputGlyphLabel(mode) {
+        mode = String(mode || "");
+        if (mode === "game_xbox_only")
+            return "Xbox glyphs";
+        if (mode === "anvil_glyphs")
+            return "Anvil glyphs";
+        if (mode === "native")
+            return "Native glyphs";
+        return "Auto";
+    }
+
     function handleControllerAction(action) {
         if (action === "left" || action === "lb")
             selectedDockIndex = Math.max(0, selectedDockIndex - 1);
@@ -340,27 +386,39 @@ PanelWindow {
         }
 
         Row {
-            width: 390
+            width: 430
             anchors.verticalCenter: parent.verticalCenter
             spacing: 10
 
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
-                width: 136
+                width: 176
                 height: 34
                 radius: 17
                 color: "#9810161d"
                 border.color: stroke
 
-                Text {
+                Row {
                     anchors.centerIn: parent
-                    text: glyph("accept") + " Toggle  " + glyph("back") + " Back"
-                    color: muted
-                    font.pixelSize: 10
-                    font.bold: true
-                    width: parent.width - 16
-                    elide: Text.ElideRight
-                    horizontalAlignment: Text.AlignHCenter
+                    spacing: 7
+
+                    Image {
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 24
+                        height: 16
+                        source: controllerIcon()
+                        sourceSize.width: 48
+                        sourceSize.height: 32
+                        opacity: source === "" ? 0 : 0.86
+                    }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: glyph("accept") + " Toggle  " + glyph("back") + " Back"
+                        color: muted
+                        font.pixelSize: 10
+                        font.bold: true
+                    }
                 }
             }
 
@@ -466,7 +524,17 @@ PanelWindow {
 
                         StatRow {
                             name: "Input"
-                            value: controllerName
+                            value: controllerShortName()
+                        }
+
+                        StatRow {
+                            name: "Runtime"
+                            value: inputRuntimeLabel(achievementStatus.input_runtime_mode)
+                        }
+
+                        StatRow {
+                            name: "Glyphs"
+                            value: inputGlyphLabel(achievementStatus.input_glyph_mode)
                         }
 
                         StatRow {

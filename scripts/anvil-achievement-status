@@ -55,6 +55,17 @@ def fetch_json(url: str) -> dict:
         return data if isinstance(data, dict) else {}
 
 
+def summarize_input_actions(path: str) -> dict[str, object]:
+    actions = load_json(path)
+    compatibility = actions.get("compatibility", {}) if isinstance(actions.get("compatibility", {}), dict) else {}
+    return {
+        "input_actions": actions.get("id") or Path(path).stem if path else "",
+        "input_runtime_mode": actions.get("runtime_mode") or "default",
+        "input_glyph_mode": actions.get("glyph_mode") or "auto",
+        "input_can_show_correct_glyphs": bool(compatibility.get("can_show_correct_glyphs", True)),
+    }
+
+
 def main() -> int:
     runtime_root = Path(os.environ.get("XDG_RUNTIME_DIR", "/tmp")) / "anvil"
     session_env = load_env_file(runtime_root / "game-session" / "current.env")
@@ -65,6 +76,7 @@ def main() -> int:
     player_id = get("ANVIL_PLAYER_ID", "local-dev")
     set_id = get("ANVIL_ACHIEVEMENT_SET")
     set_file = get("ANVIL_ACHIEVEMENT_SET_FILE")
+    input_actions_file = get("ANVIL_INPUT_ACTIONS_FILE")
     service_url = get("ANVIL_ACHIEVEMENTS_URL") or get("FORGEWORKS_ACHIEVEMENTS_URL") or "http://127.0.0.1:18080"
 
     achievement_set = load_json(set_file)
@@ -115,6 +127,7 @@ def main() -> int:
         "total": len(achievements),
         "achievements": achievements,
     }
+    result.update(summarize_input_actions(input_actions_file))
     print(json.dumps(result))
     return 0
 

@@ -159,6 +159,52 @@ PanelWindow {
         return action;
     }
 
+    function controllerShortName() {
+        let family = String(controllerFamily || "xbox").toLowerCase();
+        if (family === "playstation")
+            return "PS Controller";
+        if (family === "nintendo")
+            return "Switch Controller";
+        if (family === "keyboard")
+            return "Keyboard";
+        if (family === "xbox")
+            return "Xbox Controller";
+        return "Controller";
+    }
+
+    function controllerIcon() {
+        let family = String(controllerFamily || "xbox").toLowerCase();
+        if (family === "playstation")
+            return anvilRoot + "/assets/controllercons/solid/ps5.svg";
+        if (family === "nintendo")
+            return anvilRoot + "/assets/controllercons/solid/switch-pro.svg";
+        if (family === "xbox")
+            return anvilRoot + "/assets/controllercons/solid/xbox-series-x.svg";
+        return "";
+    }
+
+    function inputRuntimeLabel(game) {
+        let mode = game && game.input_action_summary ? String(game.input_action_summary.runtime_mode || "") : "";
+        if (mode === "xinput_compat")
+            return "XInput";
+        if (mode === "forgeworks_input")
+            return "Anvil Input";
+        if (mode === "native")
+            return "Native";
+        return "Default";
+    }
+
+    function inputGlyphLabel(game) {
+        let mode = game && game.input_action_summary ? String(game.input_action_summary.glyph_mode || "") : "";
+        if (mode === "game_xbox_only")
+            return "Xbox glyphs";
+        if (mode === "anvil_glyphs")
+            return "Anvil glyphs";
+        if (mode === "native")
+            return "Native glyphs";
+        return "Auto";
+    }
+
     function launchGame() {
         let game = currentGame();
         if (!game || game.dummy || !game.launch_command)
@@ -208,10 +254,16 @@ PanelWindow {
             activeSection === 1 ? moveGameSelection(-4) : selectSection(activeSection - 1);
         else if (action === "down")
             activeSection === 1 ? moveGameSelection(4) : selectSection(activeSection + 1);
-        else if (action === "south" || action === "start")
+        else if (action === "south" && (activeSection === 0 || activeSection === 1))
             launchGame();
-        else if (action === "east" || action === "back")
-            powerMenuActive = false;
+        else if (action === "start")
+            powerMenuActive = !powerMenuActive;
+        else if (action === "east" || action === "back") {
+            if (powerMenuActive)
+                powerMenuActive = false;
+            else
+                selectSection(0);
+        }
     }
 
     onControllerActionSerialChanged: handleControllerAction(controllerAction)
@@ -663,21 +715,41 @@ PanelWindow {
 
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
-                width: 252
+                width: 236
                 height: 34
                 radius: 17
                 color: "#9810161d"
                 border.color: line
 
-                Text {
+                Row {
                     anchors.centerIn: parent
-                    text: controllerName + "  /  " + glyph("accept") + " Select  " + glyph("back") + " Back"
-                    color: muted
-                    font.pixelSize: 11
-                    font.bold: true
-                    width: parent.width - 20
-                    elide: Text.ElideRight
-                    horizontalAlignment: Text.AlignHCenter
+                    spacing: 8
+
+                    Image {
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 24
+                        height: 16
+                        source: controllerIcon()
+                        sourceSize.width: 48
+                        sourceSize.height: 32
+                        opacity: source === "" ? 0 : 0.86
+                    }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: controllerShortName()
+                        color: fg
+                        font.pixelSize: 11
+                        font.bold: true
+                    }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: glyph("accept") + " Select  " + glyph("back") + " Back"
+                        color: muted
+                        font.pixelSize: 10
+                        font.bold: true
+                    }
                 }
             }
 
@@ -2055,11 +2127,11 @@ PanelWindow {
                             "label": "Location",
                             "value": currentGame() ? currentGame().path.split("/").pop() : ""
                         }, {
-                            "label": "Artwork",
-                            "value": currentGame() && (currentGame().hero || currentGame().grid) ? "Available" : "Missing"
+                            "label": "Input",
+                            "value": inputRuntimeLabel(currentGame())
                         }, {
-                            "label": "Launch",
-                            "value": currentGame() && currentGame().launch_command ? "Ready" : "No command"
+                            "label": "Glyphs",
+                            "value": inputGlyphLabel(currentGame())
                         }]
 
                         Rectangle {
