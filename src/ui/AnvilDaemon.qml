@@ -17,9 +17,9 @@ ShellRoot {
     readonly property string controllerNavScript: anvilRoot + "/scripts/anvil-controller-nav-watch"
     readonly property string achievementsUrl: Quickshell.env("ANVIL_ACHIEVEMENTS_URL") || Quickshell.env("FORGEWORKS_ACHIEVEMENTS_URL") || ""
 
-    function startGame(command, gameName, gameId, inputProfile, inputMap, controllerLayout, achievementSet) {
+    function startGame(command, gameName, gameId, inputProfile, inputMap, inputActions, controllerLayout, achievementSet) {
         console.log("Root starting game: " + command);
-        gameProcess.command = [gameSessionScript, "run", "--name", gameName || "", "--game-id", gameId || "", "--input-profile", inputProfile || "", "--input-map", inputMap || "", "--controller-layout", controllerLayout || "", "--achievement-set", achievementSet || "", "--achievements-url", achievementsUrl, "--", command];
+        gameProcess.command = [gameSessionScript, "run", "--name", gameName || "", "--game-id", gameId || "", "--input-profile", inputProfile || "", "--input-map", inputMap || "", "--input-actions", inputActions || "", "--controller-layout", controllerLayout || "", "--achievement-set", achievementSet || "", "--achievements-url", achievementsUrl, "--", command];
         gameProcess.running = true;
         // Hide Anvil AFTER 4 seconds to show the loading screen transition!
         hideAnvilTimer.start();
@@ -73,7 +73,7 @@ ShellRoot {
                 controllerFamily: root.controllerFamily
                 controllerName: root.controllerName
                 launchHandler: function(command, game) {
-                    root.startGame(command, game ? game.name : "", game ? game.forgeworks_app_id : "", game ? game.input_profile : "", game ? game.input_map : "", game ? game.controller_layout : "", game ? game.achievement_set : "");
+                    root.startGame(command, game ? game.name : "", game ? game.forgeworks_app_id : "", game ? game.input_profile : "", game ? game.input_map : "", game ? game.input_actions : "", game ? game.controller_layout : "", game ? game.achievement_set : "");
                 }
                 cancelLaunchHandler: function() {
                     root.killGame();
@@ -123,7 +123,7 @@ ShellRoot {
         }
 
         function launch(command: string) {
-            root.startGame(command, "", "", "", "", "", "");
+            root.startGame(command, "", "", "", "", "", "", "");
         }
 
         function kill() {

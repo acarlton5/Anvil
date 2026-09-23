@@ -70,6 +70,7 @@ remote sources.
 | Anvil Session | Prototype exists | Clean login session, controller navigation, suspend/logout, and resource cleanup |
 | Anvil Library | Local cartridge scan exists | Stable provider interface, cache, metadata schema, and drive hotplug refresh |
 | Anvil Runtime | Prototype Proton launcher exists | Per-game runtime selection, process supervision, logs, prefixes, and exit recovery |
+| Anvil Input | Controller maps and manifests started | Action manifests, active controller family, player slots, remapping, and glyph APIs |
 | Forgepipe / Anvil Content | Not built | Signed manifests, resumable installs, verification, repair, update, rollback, and uninstall |
 | Anvil Updater | Status check only | Signed client releases with apply/restart/rollback behavior |
 | Identity | Constellation pieces exist | Anvil sign-in, device session, offline token, and account recovery contract |

@@ -71,6 +71,8 @@ stage_file "$anvil_root/scripts/anvil-achievement-claim" scripts/anvil-achieveme
 achievement_claim_src="$STAGED_RESULT"
 stage_file "$anvil_root/scripts/anvil-achievement-status" scripts/anvil-achievement-status
 achievement_status_src="$STAGED_RESULT"
+stage_file "$anvil_root/scripts/anvil-input-inspect" scripts/anvil-input-inspect
+input_inspect_src="$STAGED_RESULT"
 stage_file "$anvil_root/scripts/anvil-controller-overlay-watch" scripts/anvil-controller-overlay-watch
 controller_overlay_watch_src="$STAGED_RESULT"
 stage_file "$anvil_root/scripts/anvil-controller-nav-watch" scripts/anvil-controller-nav-watch
@@ -93,6 +95,8 @@ stage_file "$anvil_root/config/controller-devices.db" config/controller-devices.
 controller_devices_src="$STAGED_RESULT"
 stage_tree "$anvil_root/config/input-maps" config/input-maps
 input_maps_src="$STAGED_RESULT"
+stage_tree "$anvil_root/config/input-actions" config/input-actions
+input_actions_src="$STAGED_RESULT"
 stage_tree "$anvil_root/config/controller-layouts" config/controller-layouts
 controller_layouts_src="$STAGED_RESULT"
 stage_tree "$anvil_root/config/achievements" config/achievements
@@ -107,6 +111,7 @@ sudo install -D -m 755 "$runner_src" /usr/local/bin/anvil-proton-run
 sudo install -D -m 755 "$game_session_src" /usr/local/bin/anvil-game-session
 sudo install -D -m 755 "$achievement_claim_src" /usr/local/bin/anvil-achievement-claim
 sudo install -D -m 755 "$achievement_status_src" /usr/local/bin/anvil-achievement-status
+sudo install -D -m 755 "$input_inspect_src" /usr/local/bin/anvil-input-inspect
 sudo install -D -m 755 "$controller_overlay_watch_src" /usr/local/bin/anvil-controller-overlay-watch
 sudo install -D -m 755 "$controller_nav_watch_src" /usr/local/bin/anvil-controller-nav-watch
 sudo install -D -m 755 "$overlay_toggle_src" /usr/local/bin/anvil-overlay-toggle
@@ -114,6 +119,7 @@ sudo install -D -m 755 "$session_src" /usr/local/share/anvil/session/anvil-sessi
 sudo install -D -m 755 "$game_session_src" /usr/local/share/anvil/scripts/anvil-game-session
 sudo install -D -m 755 "$achievement_claim_src" /usr/local/share/anvil/scripts/anvil-achievement-claim
 sudo install -D -m 755 "$achievement_status_src" /usr/local/share/anvil/scripts/anvil-achievement-status
+sudo install -D -m 755 "$input_inspect_src" /usr/local/share/anvil/scripts/anvil-input-inspect
 sudo install -D -m 755 "$controller_overlay_watch_src" /usr/local/share/anvil/scripts/anvil-controller-overlay-watch
 sudo install -D -m 755 "$controller_nav_watch_src" /usr/local/share/anvil/scripts/anvil-controller-nav-watch
 sudo install -D -m 755 "$overlay_toggle_src" /usr/local/share/anvil/scripts/anvil-overlay-toggle
@@ -127,6 +133,9 @@ sudo install -D -m 644 "$controller_devices_src" /usr/local/share/anvil/config/c
 sudo install -d -m 755 /usr/local/share/anvil/config/input-maps
 sudo cp -R "$input_maps_src"/. /usr/local/share/anvil/config/input-maps/
 sudo chmod -R u=rwX,go=rX /usr/local/share/anvil/config/input-maps
+sudo install -d -m 755 /usr/local/share/anvil/config/input-actions
+sudo cp -R "$input_actions_src"/. /usr/local/share/anvil/config/input-actions/
+sudo chmod -R u=rwX,go=rX /usr/local/share/anvil/config/input-actions
 sudo install -d -m 755 /usr/local/share/anvil/config/controller-layouts
 sudo cp -R "$controller_layouts_src"/. /usr/local/share/anvil/config/controller-layouts/
 sudo chmod -R u=rwX,go=rX /usr/local/share/anvil/config/controller-layouts

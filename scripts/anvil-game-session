@@ -11,7 +11,7 @@ anvil_root="${ANVIL_ROOT:-}"
 sdl_controller_db="${ANVIL_SDL_CONTROLLER_DB:-}"
 
 usage() {
-    echo "usage: anvil-game-session run [--name NAME] [--game-id ID] [--input-profile PROFILE] [--input-map MAP] [--controller-layout LAYOUT] [--achievement-set SET] [--achievements-url URL] -- COMMAND" >&2
+    echo "usage: anvil-game-session run [--name NAME] [--game-id ID] [--input-profile PROFILE] [--input-map MAP] [--input-actions ACTIONS] [--controller-layout LAYOUT] [--achievement-set SET] [--achievements-url URL] -- COMMAND" >&2
     echo "       anvil-game-session stop" >&2
     exit 64
 }
@@ -141,9 +141,10 @@ write_meta() {
     local session_id="$3"
     local input_profile="$4"
     local input_map="$5"
-    local controller_layout="$6"
-    local achievement_set="$7"
-    local achievements_url="$8"
+    local input_actions="$6"
+    local controller_layout="$7"
+    local achievement_set="$8"
+    local achievements_url="$9"
 
     {
         printf 'ANVIL_GAME_NAME=%q\n' "$name"
@@ -152,6 +153,8 @@ write_meta() {
         printf 'ANVIL_INPUT_PROFILE=%q\n' "$input_profile"
         printf 'ANVIL_INPUT_MAP=%q\n' "$input_map"
         printf 'ANVIL_INPUT_MAP_FILE=%q\n' "$(input_map_file "$input_map")"
+        printf 'ANVIL_INPUT_ACTIONS=%q\n' "$input_actions"
+        printf 'ANVIL_INPUT_ACTIONS_FILE=%q\n' "$(input_actions_file "$input_actions")"
         printf 'ANVIL_CONTROLLER_FAMILY=%q\n' "$(active_controller_family)"
         printf 'ANVIL_CONTROLLER_LAYOUT=%q\n' "$controller_layout"
         printf 'ANVIL_CONTROLLER_LAYOUT_FILE=%q\n' "$(controller_layout_file "$controller_layout")"
@@ -198,6 +201,28 @@ input_map_file() {
 
     if [ -n "$anvil_root" ]; then
         candidate="$anvil_root/config/input-maps/$map"
+        if [ -f "$candidate" ]; then
+            printf '%s' "$candidate"
+            return
+        fi
+    fi
+
+    printf ''
+}
+
+input_actions_file() {
+    local actions="$1"
+    local candidate=""
+
+    [ -n "$actions" ] || return 0
+
+    if [ -f "$actions" ]; then
+        printf '%s' "$actions"
+        return
+    fi
+
+    if [ -n "$anvil_root" ]; then
+        candidate="$anvil_root/config/input-actions/$actions"
         if [ -f "$candidate" ]; then
             printf '%s' "$candidate"
             return
@@ -326,6 +351,7 @@ run_session() {
     local game_id=""
     local input_profile=""
     local input_map=""
+    local input_actions=""
     local controller_layout=""
     local achievement_set=""
     local achievements_url="${ANVIL_ACHIEVEMENTS_URL:-${FORGEWORKS_ACHIEVEMENTS_URL:-}}"
@@ -346,6 +372,10 @@ run_session() {
                 ;;
             --input-map)
                 input_map="${2:-}"
+                shift 2
+                ;;
+            --input-actions)
+                input_actions="${2:-}"
                 shift 2
                 ;;
             --controller-layout)
@@ -377,7 +407,7 @@ run_session() {
 
     mkdir -p "$state_dir"
     stop_session
-    write_meta "$name" "$game_id" "$session_id" "$input_profile" "$input_map" "$controller_layout" "$achievement_set" "$achievements_url"
+    write_meta "$name" "$game_id" "$session_id" "$input_profile" "$input_map" "$input_actions" "$controller_layout" "$achievement_set" "$achievements_url"
 
     export ANVIL_GAME_NAME="$name"
     export ANVIL_GAME_ID="$game_id"
@@ -386,6 +416,9 @@ run_session() {
     export ANVIL_INPUT_MAP="$input_map"
     export ANVIL_INPUT_MAP_FILE
     ANVIL_INPUT_MAP_FILE="$(input_map_file "$input_map")"
+    export ANVIL_INPUT_ACTIONS="$input_actions"
+    export ANVIL_INPUT_ACTIONS_FILE
+    ANVIL_INPUT_ACTIONS_FILE="$(input_actions_file "$input_actions")"
     export ANVIL_CONTROLLER_FAMILY
     ANVIL_CONTROLLER_FAMILY="$(active_controller_family)"
     export ANVIL_CONTROLLER_LAYOUT="$controller_layout"

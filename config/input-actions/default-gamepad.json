@@ -1,0 +1,57 @@
+{
+  "id": "default-gamepad",
+  "name": "Default Gamepad Actions",
+  "schema": 1,
+  "runtime_mode": "forgeworks_input",
+  "glyph_mode": "anvil_glyphs",
+  "developer_path": "native_forgeworks",
+  "summary": "Action-based input contract for games using Forgeworks Input.",
+  "action_sets": {
+    "gameplay": {
+      "move": {
+        "type": "analog_2d",
+        "default": "left_stick"
+      },
+      "camera": {
+        "type": "analog_2d",
+        "default": "right_stick"
+      },
+      "primary": {
+        "type": "digital",
+        "default": "south",
+        "label": "Primary"
+      },
+      "secondary": {
+        "type": "digital",
+        "default": "west",
+        "label": "Secondary"
+      },
+      "pause": {
+        "type": "digital",
+        "default": "start",
+        "label": "Pause"
+      }
+    },
+    "menu": {
+      "accept": {
+        "type": "digital",
+        "default": "south",
+        "label": "Accept"
+      },
+      "back": {
+        "type": "digital",
+        "default": "east",
+        "label": "Back"
+      }
+    }
+  },
+  "glyphs": {
+    "source": "anvil",
+    "families": ["xbox", "playstation", "nintendo", "keyboard"]
+  },
+  "compatibility": {
+    "can_show_correct_glyphs": true,
+    "requires_game_integration": true,
+    "notes": "Game reads actions and glyphs through Forgeworks Input."
+  }
+}

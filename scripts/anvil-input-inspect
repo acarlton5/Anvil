@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+"""Inspect Anvil Input inference for a game name or cartridge file."""
+
+from __future__ import annotations
+
+import argparse
+import importlib.util
+import json
+import os
+import sys
+from pathlib import Path
+
+
+def load_library_module(anvil_root: Path):
+    module_path = anvil_root / "src" / "daemon" / "anvil_library.py"
+    spec = importlib.util.spec_from_file_location("anvil_library", module_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load {module_path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Inspect Anvil Input metadata.")
+    parser.add_argument("target", help="game name or cartridge.json path")
+    parser.add_argument("--root", default=os.environ.get("ANVIL_ROOT") or Path(__file__).resolve().parents[1])
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = parse_args()
+    anvil_root = Path(args.root).resolve()
+    os.environ["ANVIL_ROOT"] = str(anvil_root)
+    library = load_library_module(anvil_root)
+
+    target = Path(args.target)
+    if target.is_file():
+        with target.open("r", encoding="utf-8") as handle:
+            cartridge = json.load(handle)
+        name = cartridge.get("name") or target.parent.name
+        input_actions = cartridge.get("input_actions") or library.infer_input_actions(name)
+        input_profile = cartridge.get("input_profile") or library.infer_input_profile(name)
+        input_map = cartridge.get("input_map") or library.infer_input_map(name)
+        controller_layout = cartridge.get("controller_layout") or library.infer_controller_layout(name)
+    else:
+        name = args.target
+        input_actions = library.infer_input_actions(name)
+        input_profile = library.infer_input_profile(name)
+        input_map = library.infer_input_map(name)
+        controller_layout = library.infer_controller_layout(name)
+
+    summary = library.load_input_action_summary(input_actions)
+    print(json.dumps({
+        "name": name,
+        "input_profile": input_profile,
+        "input_map": input_map,
+        "controller_layout": controller_layout,
+        "input_actions": input_actions,
+        "input_action_summary": summary,
+    }, indent=2, sort_keys=True))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

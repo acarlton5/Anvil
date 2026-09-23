@@ -1,0 +1,62 @@
+{
+  "id": "dualshock-action-adventure",
+  "name": "DualShock Action Adventure Actions",
+  "schema": 1,
+  "runtime_mode": "forgeworks_input",
+  "glyph_mode": "anvil_glyphs",
+  "developer_path": "native_forgeworks",
+  "summary": "PlayStation-style action adventure contract for Jak-like games.",
+  "action_sets": {
+    "gameplay": {
+      "move": {
+        "type": "analog_2d",
+        "default": "left_stick"
+      },
+      "camera": {
+        "type": "analog_2d",
+        "default": "right_stick"
+      },
+      "jump": {
+        "type": "digital",
+        "default": "cross",
+        "label": "Jump"
+      },
+      "attack": {
+        "type": "digital",
+        "default": "square",
+        "label": "Attack"
+      },
+      "interact": {
+        "type": "digital",
+        "default": "triangle",
+        "label": "Interact"
+      },
+      "pause": {
+        "type": "digital",
+        "default": "options",
+        "label": "Pause"
+      }
+    },
+    "menu": {
+      "accept": {
+        "type": "digital",
+        "default": "cross",
+        "label": "Accept"
+      },
+      "back": {
+        "type": "digital",
+        "default": "circle",
+        "label": "Back"
+      }
+    }
+  },
+  "glyphs": {
+    "source": "anvil",
+    "families": ["playstation", "xbox", "nintendo", "keyboard"]
+  },
+  "compatibility": {
+    "can_show_correct_glyphs": true,
+    "requires_game_integration": true,
+    "notes": "Designed for games or ports that use Forgeworks Input action and glyph APIs."
+  }
+}

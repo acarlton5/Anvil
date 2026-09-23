@@ -12,6 +12,8 @@ Steam-style store, library, overlay, and cartridge-based distribution model.
 - Public Steam Store/CDN artwork fallback with optional SteamGridDB support.
 - Proton launch wrapper owned by Anvil: `scripts/anvil-proton-run`.
 - Local Forgeworks achievements prototype for recording development claims.
+- Anvil Input action manifests for controller families, glyph truth, and
+  Forgeworks Input migration paths.
 - Hyprland session files under `session/`.
 
 ## Project Boundary
@@ -28,6 +30,9 @@ installable on any Linux distro without requiring the full HypeShell desktop.
 
 See [docs/ecosystem.md](docs/ecosystem.md) for the product boundaries and the
 implementation roadmap.
+
+See [docs/anvil-input.md](docs/anvil-input.md) for the Anvil Input and
+Forgeworks Input contract.
 
 ## Development
 

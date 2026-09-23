@@ -1,0 +1,57 @@
+{
+  "id": "bluey-compat",
+  "name": "Bluey: The Videogame Compatibility Actions",
+  "schema": 1,
+  "runtime_mode": "xinput_compat",
+  "glyph_mode": "game_xbox_only",
+  "developer_path": "compatibility",
+  "summary": "Compatibility profile for the PC build when the game exposes Xbox/XInput prompts only.",
+  "action_sets": {
+    "gameplay": {
+      "move": {
+        "type": "analog_2d",
+        "default": "left_stick"
+      },
+      "camera": {
+        "type": "analog_2d",
+        "default": "right_stick"
+      },
+      "jump": {
+        "type": "digital",
+        "default": "south",
+        "label": "Jump"
+      },
+      "interact": {
+        "type": "digital",
+        "default": "west",
+        "label": "Interact"
+      },
+      "pause": {
+        "type": "digital",
+        "default": "start",
+        "label": "Pause"
+      }
+    },
+    "menu": {
+      "accept": {
+        "type": "digital",
+        "default": "south",
+        "label": "Accept"
+      },
+      "back": {
+        "type": "digital",
+        "default": "east",
+        "label": "Back"
+      }
+    }
+  },
+  "glyphs": {
+    "source": "game",
+    "families": ["xbox"]
+  },
+  "compatibility": {
+    "can_show_correct_glyphs": false,
+    "requires_game_integration": true,
+    "notes": "Anvil can use PlayStation controller hardware and overlay glyphs, but this game profile assumes the PC build's in-game prompts are Xbox-only unless a native PlayStation, SDL, Steam Input, or Forgeworks Input path is verified."
+  }
+}

@@ -283,6 +283,7 @@ def generate_cartridge_stub(folder_name, game_path, drive_root):
         "launch_options": 'WINEDLLOVERRIDES="steam_api64=n,b" %command%',
         "input_profile": infer_input_profile(display_name),
         "input_map": infer_input_map(display_name),
+        "input_actions": infer_input_actions(display_name),
         "controller_layout": infer_controller_layout(display_name),
         "achievement_set": infer_achievement_set(display_name),
         "tags": ["Uncategorized"],
@@ -320,6 +321,15 @@ def infer_input_map(name):
     return "xbox.map"
 
 
+def infer_input_actions(name):
+    clean = re.sub(r"[^a-z0-9]+", " ", name.lower()).strip()
+    if "bluey" in clean:
+        return "bluey-compat.json"
+    if prefers_playstation_controller(name):
+        return "dualshock-action-adventure.json"
+    return "default-gamepad.json"
+
+
 def infer_achievement_set(name):
     clean = re.sub(r"[^a-z0-9]+", " ", name.lower()).strip()
     if "jak" in clean and "daxter" in clean:
@@ -351,6 +361,77 @@ def achievement_set_path(achievement_set):
         if os.path.isfile(candidate):
             return candidate
     return ""
+
+
+def input_actions_path(input_actions):
+    if not input_actions:
+        return ""
+    if os.path.isabs(input_actions) and os.path.isfile(input_actions):
+        return input_actions
+    root = os.environ.get("ANVIL_ROOT", "")
+    candidates = []
+    if root:
+        candidates.append(os.path.join(root, "config", "input-actions", input_actions))
+    candidates.append(os.path.join(os.path.dirname(__file__), "..", "..", "config", "input-actions", input_actions))
+    for candidate in candidates:
+        candidate = os.path.abspath(candidate)
+        if os.path.isfile(candidate):
+            return candidate
+    return ""
+
+
+def load_input_action_summary(input_actions):
+    path = input_actions_path(input_actions)
+    if not path:
+        return {
+            "set": input_actions or "",
+            "path": "",
+            "runtime_mode": "unknown",
+            "glyph_mode": "unknown",
+            "developer_path": "unknown",
+            "action_sets": 0,
+            "actions": 0,
+            "can_show_correct_glyphs": False,
+            "requires_game_integration": True,
+            "notes": "",
+        }
+
+    try:
+        with open(path) as f:
+            payload = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return {
+            "set": input_actions,
+            "path": path,
+            "runtime_mode": "unknown",
+            "glyph_mode": "unknown",
+            "developer_path": "unknown",
+            "action_sets": 0,
+            "actions": 0,
+            "can_show_correct_glyphs": False,
+            "requires_game_integration": True,
+            "notes": "",
+        }
+
+    action_sets = payload.get("action_sets", {})
+    action_count = 0
+    if isinstance(action_sets, dict):
+        for actions in action_sets.values():
+            if isinstance(actions, dict):
+                action_count += len(actions)
+    compatibility = payload.get("compatibility", {})
+    return {
+        "set": payload.get("id") or input_actions,
+        "path": path,
+        "runtime_mode": payload.get("runtime_mode", "unknown"),
+        "glyph_mode": payload.get("glyph_mode", "unknown"),
+        "developer_path": payload.get("developer_path", "unknown"),
+        "action_sets": len(action_sets) if isinstance(action_sets, dict) else 0,
+        "actions": action_count,
+        "can_show_correct_glyphs": bool(compatibility.get("can_show_correct_glyphs", False)),
+        "requires_game_integration": bool(compatibility.get("requires_game_integration", True)),
+        "notes": compatibility.get("notes", ""),
+    }
 
 
 def load_achievement_summary(achievement_set):
@@ -401,6 +482,7 @@ def build_game_entry(cartridge, game_path, drive_root):
     preferred_controller_layout = infer_controller_layout(name)
     input_profile = cartridge.get("input_profile") or preferred_input_profile
     input_map = cartridge.get("input_map") or preferred_input_map
+    input_actions = cartridge.get("input_actions") or infer_input_actions(name)
     controller_layout = cartridge.get("controller_layout") or preferred_controller_layout
     if preferred_input_map == "playstation.map":
         if input_profile == "gamepad/default":
@@ -409,8 +491,11 @@ def build_game_entry(cartridge, game_path, drive_root):
             input_map = preferred_input_map
         if controller_layout == "standard-gamepad":
             controller_layout = preferred_controller_layout
+        if input_actions == "default-gamepad.json":
+            input_actions = infer_input_actions(name)
     achievement_set = cartridge.get("achievement_set") or infer_achievement_set(name)
     achievements = load_achievement_summary(achievement_set)
+    input_action_summary = load_input_action_summary(input_actions)
     forgeworks_app_id = cartridge.get("forgeworks_app_id") or infer_forgeworks_app_id(name)
     sgdb_id = cartridge.get("steamgriddb_id", None)
     steam_appid = cartridge.get("steam_appid", None)
@@ -495,6 +580,8 @@ def build_game_entry(cartridge, game_path, drive_root):
         "logo": logo or "",
         "input_profile": input_profile,
         "input_map": input_map,
+        "input_actions": input_actions,
+        "input_action_summary": input_action_summary,
         "controller_layout": controller_layout,
         "forgeworks_app_id": forgeworks_app_id,
         "achievement_set": achievement_set,
