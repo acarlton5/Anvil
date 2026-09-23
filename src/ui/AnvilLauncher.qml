@@ -11,6 +11,8 @@ PanelWindow {
     property var cancelLaunchHandler: null
     property string controllerAction: ""
     property int controllerActionSerial: 0
+    property string controllerFamily: "xbox"
+    property string controllerName: "Controller"
     readonly property string localRoot: decodeURIComponent(Qt.resolvedUrl("../../").toString()).replace("file://", "").replace(/\/$/, "")
     readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || localRoot
     readonly property string bridgePath: anvilRoot + "/src/daemon/anvil-library-bridge"
@@ -111,6 +113,50 @@ PanelWindow {
         default:
             return "Anvil";
         }
+    }
+
+    function glyph(action) {
+        let family = String(controllerFamily || "xbox").toLowerCase();
+        if (family === "playstation") {
+            if (action === "accept")
+                return "Cross";
+            if (action === "back")
+                return "Circle";
+            if (action === "menu")
+                return "Options";
+            if (action === "guide")
+                return "PS";
+            if (action === "prev")
+                return "L1";
+            if (action === "next")
+                return "R1";
+        } else if (family === "nintendo") {
+            if (action === "accept")
+                return "A";
+            if (action === "back")
+                return "B";
+            if (action === "menu")
+                return "+";
+            if (action === "guide")
+                return "Home";
+            if (action === "prev")
+                return "L";
+            if (action === "next")
+                return "R";
+        }
+        if (action === "accept")
+            return "A";
+        if (action === "back")
+            return "B";
+        if (action === "menu")
+            return "Menu";
+        if (action === "guide")
+            return "Xbox";
+        if (action === "prev")
+            return "LB";
+        if (action === "next")
+            return "RB";
+        return action;
     }
 
     function launchGame() {
@@ -613,7 +659,27 @@ PanelWindow {
             anchors.right: parent.right
             anchors.rightMargin: 48
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 18
+            spacing: 14
+
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                width: 252
+                height: 34
+                radius: 17
+                color: "#9810161d"
+                border.color: line
+
+                Text {
+                    anchors.centerIn: parent
+                    text: controllerName + "  /  " + glyph("accept") + " Select  " + glyph("back") + " Back"
+                    color: muted
+                    font.pixelSize: 11
+                    font.bold: true
+                    width: parent.width - 20
+                    elide: Text.ElideRight
+                    horizontalAlignment: Text.AlignHCenter
+                }
+            }
 
             Image {
                 anchors.verticalCenter: parent.verticalCenter

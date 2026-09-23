@@ -10,6 +10,8 @@ ShellRoot {
     property bool gamerActive: Quickshell.env("ANVIL_OVERLAY_TEST") !== "1"
     property string controllerAction: ""
     property int controllerActionSerial: 0
+    property string controllerFamily: "xbox"
+    property string controllerName: "Controller"
     readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || "/usr/local/share/anvil"
     readonly property string gameSessionScript: anvilRoot + "/scripts/anvil-game-session"
     readonly property string controllerNavScript: anvilRoot + "/scripts/anvil-controller-nav-watch"
@@ -31,7 +33,11 @@ ShellRoot {
         root.overlayActive = false;
     }
 
-    function navigate(action) {
+    function navigate(action, family, name) {
+        if (family && family.length > 0)
+            root.controllerFamily = family;
+        if (name && name.length > 0)
+            root.controllerName = name;
         if (action === "guide") {
             root.overlayActive = !root.overlayActive;
             return ;
@@ -64,6 +70,8 @@ ShellRoot {
             AnvilLauncher {
                 controllerAction: root.controllerAction
                 controllerActionSerial: root.controllerActionSerial
+                controllerFamily: root.controllerFamily
+                controllerName: root.controllerName
                 launchHandler: function(command, game) {
                     root.startGame(command, game ? game.name : "", game ? game.forgeworks_app_id : "", game ? game.input_profile : "", game ? game.input_map : "", game ? game.controller_layout : "", game ? game.achievement_set : "");
                 }
@@ -90,6 +98,8 @@ ShellRoot {
             AnvilOverlay {
                 controllerAction: root.controllerAction
                 controllerActionSerial: root.controllerActionSerial
+                controllerFamily: root.controllerFamily
+                controllerName: root.controllerName
                 closeHandler: function() {
                     root.overlayActive = false;
                 }
@@ -120,8 +130,8 @@ ShellRoot {
             root.killGame();
         }
 
-        function navigate(action: string) {
-            root.navigate(action);
+        function navigate(action: string, family: string, name: string) {
+            root.navigate(action, family, name);
         }
 
         target: "anvil"

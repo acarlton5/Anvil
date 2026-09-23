@@ -11,6 +11,8 @@ PanelWindow {
     property var killHandler: null
     property string controllerAction: ""
     property int controllerActionSerial: 0
+    property string controllerFamily: "xbox"
+    property string controllerName: "Controller"
     readonly property color ink: "#f5f7fb"
     readonly property color muted: "#a8b1ba"
     readonly property color dim: "#68737d"
@@ -74,6 +76,37 @@ PanelWindow {
     function refreshAchievements() {
         achievementStatusProcess.command = ["python3", achievementStatusScript];
         achievementStatusProcess.running = true;
+    }
+
+    function glyph(action) {
+        let family = String(controllerFamily || "xbox").toLowerCase();
+        if (family === "playstation") {
+            if (action === "accept")
+                return "Cross";
+            if (action === "back")
+                return "Circle";
+            if (action === "menu")
+                return "Options";
+            if (action === "guide")
+                return "PS";
+            if (action === "prev")
+                return "L1";
+            if (action === "next")
+                return "R1";
+        }
+        if (action === "accept")
+            return "A";
+        if (action === "back")
+            return "B";
+        if (action === "menu")
+            return "Menu";
+        if (action === "guide")
+            return "Guide";
+        if (action === "prev")
+            return "LB";
+        if (action === "next")
+            return "RB";
+        return action;
     }
 
     function handleControllerAction(action) {
@@ -307,12 +340,32 @@ PanelWindow {
         }
 
         Row {
-            width: 300
+            width: 390
             anchors.verticalCenter: parent.verticalCenter
             spacing: 10
 
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                width: 136
+                height: 34
+                radius: 17
+                color: "#9810161d"
+                border.color: stroke
+
+                Text {
+                    anchors.centerIn: parent
+                    text: glyph("accept") + " Toggle  " + glyph("back") + " Back"
+                    color: muted
+                    font.pixelSize: 10
+                    font.bold: true
+                    width: parent.width - 16
+                    elide: Text.ElideRight
+                    horizontalAlignment: Text.AlignHCenter
+                }
+            }
+
             OverlayButton {
-                label: "Back to Game"
+                label: glyph("back") + " Back"
                 width: 132
                 onClicked: runMenuAction("back")
             }
@@ -413,12 +466,12 @@ PanelWindow {
 
                         StatRow {
                             name: "Input"
-                            value: "PlayStation profile"
+                            value: controllerName
                         }
 
                         StatRow {
                             name: "Overlay"
-                            value: "Shift+Tab / PS"
+                            value: "Shift+Tab / " + glyph("guide")
                         }
                     }
 
