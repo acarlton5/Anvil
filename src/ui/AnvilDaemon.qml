@@ -38,6 +38,8 @@ ShellRoot {
             root.controllerFamily = family;
         if (name && name.length > 0)
             root.controllerName = name;
+        if (!action || action.length === 0)
+            return ;
         if (action === "guide") {
             root.overlayActive = !root.overlayActive;
             return ;

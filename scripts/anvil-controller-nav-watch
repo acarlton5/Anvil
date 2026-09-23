@@ -112,6 +112,15 @@ def send_action(anvil_root, action, controller):
     )
 
 
+def announce_controllers(anvil_root, devices, announced):
+    for device in devices:
+        key = device.get("path") or device.get("id") or device.get("name")
+        if not key or key in announced:
+            continue
+        announced.add(key)
+        send_action(anvil_root, "", device)
+
+
 def axis_action(code, value, axis_state):
     action = None
     if code == ABS_HAT0X:
@@ -162,9 +171,11 @@ def main():
 
     axis_state = {}
     last_sent = {}
+    announced = set()
 
     while True:
         devices = list(controller_events(controllers))
+        announce_controllers(anvil_root, devices, announced)
         fds = []
         fd_controllers = {}
         for device in devices:
