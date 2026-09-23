@@ -155,6 +155,30 @@ PanelWindow {
         return "Auto";
     }
 
+    function inputActionLabel(action) {
+        if (action === "south")
+            return glyph("accept") + " / South";
+        if (action === "east")
+            return glyph("back") + " / East";
+        if (action === "north")
+            return "North";
+        if (action === "west")
+            return "West";
+        if (action === "lb")
+            return glyph("prev");
+        if (action === "rb")
+            return glyph("next");
+        if (action === "back")
+            return "Back";
+        if (action === "start")
+            return glyph("menu");
+        if (action === "guide")
+            return glyph("guide");
+        if (action === "left" || action === "right" || action === "up" || action === "down")
+            return action.charAt(0).toUpperCase() + action.slice(1);
+        return "Waiting";
+    }
+
     function handleControllerAction(action) {
         if (action === "left" || action === "lb")
             selectedDockIndex = Math.max(0, selectedDockIndex - 1);
@@ -1049,22 +1073,106 @@ PanelWindow {
         Column {
             spacing: 12
 
-            ModuleTile {
-                title: "PlayStation Layout"
-                body: "ZEROPLUS controller mapped as PlayStation family."
-                status: "Active"
+            Rectangle {
+                width: parent.width
+                height: 112
+                radius: 8
+                color: panelSoft
+                border.color: strokeSoft
+
+                Row {
+                    anchors.fill: parent
+                    anchors.margins: 16
+                    spacing: 16
+
+                    Rectangle {
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 84
+                        height: 68
+                        radius: 8
+                        color: "#111820"
+                        border.color: stroke
+
+                        Image {
+                            anchors.centerIn: parent
+                            width: 56
+                            height: 36
+                            source: controllerIcon()
+                            sourceSize.width: 112
+                            sourceSize.height: 72
+                            opacity: source === "" ? 0 : 0.92
+                        }
+
+                        Text {
+                            anchors.centerIn: parent
+                            visible: controllerIcon() === ""
+                            text: "PAD"
+                            color: muted
+                            font.pixelSize: 14
+                            font.bold: true
+                        }
+                    }
+
+                    Column {
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: parent.width - 112
+                        spacing: 6
+
+                        Text {
+                            text: controllerShortName()
+                            color: ink
+                            font.pixelSize: 22
+                            font.bold: true
+                            width: parent.width
+                            elide: Text.ElideRight
+                        }
+
+                        Text {
+                            text: "Last input: " + inputActionLabel(controllerAction)
+                            color: controllerAction === "" ? muted : gold
+                            font.pixelSize: 12
+                            font.bold: true
+                        }
+
+                        Text {
+                            text: inputRuntimeLabel(achievementStatus.input_runtime_mode) + " / " + inputGlyphLabel(achievementStatus.input_glyph_mode)
+                            color: muted
+                            font.pixelSize: 11
+                            width: parent.width
+                            elide: Text.ElideRight
+                        }
+                    }
+                }
             }
 
-            ModuleTile {
-                title: "Guide Button"
-                body: "PS button toggles the Anvil overlay during game sessions."
-                status: "Bound"
-            }
+            Grid {
+                width: parent.width
+                columns: 4
+                rowSpacing: 9
+                columnSpacing: 9
 
-            ModuleTile {
-                title: "Per-game Map"
-                body: "Game manifests can select input maps such as playstation.map."
-                status: "Ready"
+                Repeater {
+                    model: ["south", "east", "north", "west", "lb", "rb", "back", "start", "guide", "up", "down", "left", "right"]
+
+                    Rectangle {
+                        width: (parent.width - parent.columnSpacing * (parent.columns - 1)) / parent.columns
+                        height: 46
+                        radius: 6
+                        color: controllerAction === modelData ? ember : "#121a22"
+                        border.color: controllerAction === modelData ? gold : strokeSoft
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: inputActionLabel(modelData)
+                            color: controllerAction === modelData ? "#190804" : ink
+                            font.pixelSize: 11
+                            font.bold: true
+                            width: parent.width - 12
+                            elide: Text.ElideRight
+                            horizontalAlignment: Text.AlignHCenter
+                        }
+                    }
+                }
             }
         }
     }

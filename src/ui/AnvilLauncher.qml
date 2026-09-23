@@ -205,6 +205,48 @@ PanelWindow {
         return "Auto";
     }
 
+    function selectedSettingKey() {
+        if (settingsModel.count === 0)
+            return "";
+        return settingsModel.get(Math.max(0, Math.min(selectedSetting, settingsModel.count - 1))).key || "";
+    }
+
+    function settingsOptions(key) {
+        if (key === "session")
+            return ["Start Anvil on login", "Mount removable game media", "Check for client updates"];
+        if (key === "runtime")
+            return ["Prefer native Linux builds", "Use compatibility runtime", "Enable in-game overlay"];
+        if (key === "cloud")
+            return ["Sync save data", "Sync controller layouts", "Allow offline queue"];
+        if (key === "guard")
+            return ["Require sign-in approval", "Remember this device", "Family controls"];
+        return [];
+    }
+
+    function inputActionLabel(action) {
+        if (action === "south")
+            return glyph("accept") + " / South";
+        if (action === "east")
+            return glyph("back") + " / East";
+        if (action === "north")
+            return "North";
+        if (action === "west")
+            return "West";
+        if (action === "lb")
+            return glyph("prev");
+        if (action === "rb")
+            return glyph("next");
+        if (action === "back")
+            return "Back";
+        if (action === "start")
+            return glyph("menu");
+        if (action === "guide")
+            return glyph("guide");
+        if (action === "left" || action === "right" || action === "up" || action === "down")
+            return action.charAt(0).toUpperCase() + action.slice(1);
+        return "Waiting";
+    }
+
     function launchGame() {
         let game = currentGame();
         if (!game || game.dummy || !game.launch_command)
@@ -251,9 +293,9 @@ PanelWindow {
         else if (action === "right")
             activeSection === 0 || activeSection === 1 ? moveGameSelection(1) : selectSection(activeSection + 1);
         else if (action === "up")
-            activeSection === 1 ? moveGameSelection(-4) : selectSection(activeSection - 1);
+            activeSection === 1 ? moveGameSelection(-4) : activeSection === 5 ? selectedSetting = Math.max(0, selectedSetting - 1) : selectSection(activeSection - 1);
         else if (action === "down")
-            activeSection === 1 ? moveGameSelection(4) : selectSection(activeSection + 1);
+            activeSection === 1 ? moveGameSelection(4) : activeSection === 5 ? selectedSetting = Math.min(settingsModel.count - 1, selectedSetting + 1) : selectSection(activeSection + 1);
         else if (action === "south" && (activeSection === 0 || activeSection === 1))
             launchGame();
         else if (action === "start")
@@ -426,24 +468,35 @@ PanelWindow {
         id: settingsModel
 
         ListElement {
+            key: "session"
             title: "Anvil Session"
             body: "Dedicated Wayland session, controller navigation, focus, logout, and cleanup."
             value: "Installed by plugin"
         }
 
         ListElement {
+            key: "runtime"
             title: "Anvil Runtime"
             body: "Per-game Proton, prefixes, launch logs, overlay hooks, and exit recovery."
             value: "Prototype"
         }
 
         ListElement {
+            key: "input"
+            title: "Anvil Input"
+            body: "Controller identity, glyphs, per-game maps, and live button testing."
+            value: "Live"
+        }
+
+        ListElement {
+            key: "cloud"
             title: "Anvil Cloud"
             body: "Save sync, settings sync, offline queue, and conflicts."
             value: "Coming soon"
         }
 
         ListElement {
+            key: "guard"
             title: "Forge Guard"
             body: "Device trust, sign-in approval, family controls, and account recovery."
             value: "Coming soon"
@@ -3340,8 +3393,124 @@ PanelWindow {
                     color: "#313942"
                 }
 
+                Column {
+                    visible: selectedSettingKey() === "input"
+                    width: parent.width
+                    spacing: 14
+
+                    Rectangle {
+                        width: parent.width
+                        height: 118
+                        radius: 8
+                        color: "#121820"
+                        border.color: "#2d3944"
+
+                        Row {
+                            anchors.fill: parent
+                            anchors.margins: 18
+                            spacing: 18
+
+                            Rectangle {
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 88
+                                height: 72
+                                radius: 8
+                                color: "#191f27"
+                                border.color: line
+
+                                Image {
+                                    anchors.centerIn: parent
+                                    width: 58
+                                    height: 38
+                                    source: controllerIcon()
+                                    sourceSize.width: 116
+                                    sourceSize.height: 76
+                                    opacity: source === "" ? 0 : 0.92
+                                }
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    visible: controllerIcon() === ""
+                                    text: "PAD"
+                                    color: muted
+                                    font.pixelSize: 16
+                                    font.bold: true
+                                }
+                            }
+
+                            Column {
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: parent.width - 112
+                                spacing: 7
+
+                                Text {
+                                    text: controllerShortName()
+                                    color: fg
+                                    font.pixelSize: 26
+                                    font.bold: true
+                                }
+
+                                Text {
+                                    text: "Last input: " + inputActionLabel(controllerAction)
+                                    color: controllerAction === "" ? muted : emberLight
+                                    font.pixelSize: 13
+                                    font.bold: true
+                                }
+
+                                Text {
+                                    text: "Game: " + inputRuntimeLabel(currentGame()) + " / " + inputGlyphLabel(currentGame())
+                                    color: muted
+                                    font.pixelSize: 12
+                                    elide: Text.ElideRight
+                                    width: parent.width
+                                }
+                            }
+                        }
+                    }
+
+                    Grid {
+                        width: parent.width
+                        columns: 5
+                        rowSpacing: 10
+                        columnSpacing: 10
+
+                        Repeater {
+                            model: ["south", "east", "north", "west", "lb", "rb", "back", "start", "guide", "up", "down", "left", "right"]
+
+                            Rectangle {
+                                width: (parent.width - parent.columnSpacing * (parent.columns - 1)) / parent.columns
+                                height: 54
+                                radius: 6
+                                color: controllerAction === modelData ? ember : "#141b23"
+                                border.color: controllerAction === modelData ? emberLight : "#2b3540"
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: inputActionLabel(modelData)
+                                    color: controllerAction === modelData ? "#160b07" : fg
+                                    font.pixelSize: 12
+                                    font.bold: true
+                                    width: parent.width - 14
+                                    elide: Text.ElideRight
+                                    horizontalAlignment: Text.AlignHCenter
+                                }
+                            }
+                        }
+                    }
+
+                    Text {
+                        width: parent.width
+                        text: "This is the first Anvil Input surface: controller family, glyph translation, per-game maps, and live button events in one place."
+                        color: muted
+                        font.pixelSize: 12
+                        wrapMode: Text.WordWrap
+                        lineHeight: 1.25
+                    }
+                }
+
                 Repeater {
-                    model: selectedSetting === 0 ? ["Start Anvil on login", "Mount removable game media", "Check for client updates"] : selectedSetting === 1 ? ["Prefer native Linux builds", "Use compatibility runtime", "Enable in-game overlay"] : selectedSetting === 2 ? ["Sync save data", "Sync controller layouts", "Allow offline queue"] : ["Require sign-in approval", "Remember this device", "Family controls"]
+                    model: settingsOptions(selectedSettingKey())
+                    visible: selectedSettingKey() !== "input"
 
                     Rectangle {
                         width: parent.width
