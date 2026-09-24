@@ -643,6 +643,20 @@ def artwork_matches_role(path, role):
     return True
 
 
+def artwork_shape(path):
+    dimensions = image_dimensions(path)
+    if not dimensions:
+        return ""
+    width, height = dimensions
+    if width <= 0 or height <= 0:
+        return ""
+    if height >= width * 1.18:
+        return "portrait"
+    if width >= height * 1.18:
+        return "landscape"
+    return ""
+
+
 def find_artwork(game_path, artwork_dir, candidates, role="hero"):
     """Look for artwork in common locations with case-insensitive fallbacks."""
     search_dirs = [artwork_dir, game_path]
@@ -659,6 +673,13 @@ def find_artwork(game_path, artwork_dir, candidates, role="hero"):
             name = os.path.basename(path).lower()
             if any(hint in name for hint in hints) and artwork_matches_role(path, role):
                 return path
+
+    if role in {"hero", "grid"}:
+        wanted_shape = "landscape" if role == "hero" else "portrait"
+        for directory in search_dirs:
+            for path in _image_files(directory):
+                if artwork_shape(path) == wanted_shape:
+                    return path
 
     if role == "logo":
         for directory in search_dirs:
