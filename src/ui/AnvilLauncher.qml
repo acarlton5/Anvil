@@ -1414,8 +1414,9 @@ PanelWindow {
 
                 delegate: Item {
                     id: card
+                    property bool hasLandscapeArt: gameLandscapeArt(model) !== ""
 
-                    width: ListView.isCurrentItem ? 344 : 136
+                    width: ListView.isCurrentItem && hasLandscapeArt ? 344 : 136
                     height: 194
                     opacity: ListView.isCurrentItem ? 1 : 0.7
                     anchors.verticalCenter: parent.verticalCenter
@@ -1424,7 +1425,7 @@ PanelWindow {
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.bottom: parent.top
                         anchors.bottomMargin: -24
-                        width: Math.max(420, parent.width + 90)
+                        width: hasLandscapeArt ? Math.max(420, parent.width + 90) : 230
                         height: 190
                         source: anvilRoot + "/assets/anvil-focus-flame.png"
                         fillMode: Image.PreserveAspectFit
@@ -1465,7 +1466,7 @@ PanelWindow {
 
                         Rectangle {
                             anchors.fill: parent
-                            visible: ListView.isCurrentItem ? gameLandscapeArt(model) === "" : gameBoxArt(model) === ""
+                            visible: gameBoxArt(model) === "" && (!ListView.isCurrentItem || !hasLandscapeArt)
 
                             Text {
                                 anchors.centerIn: parent
@@ -1525,7 +1526,7 @@ PanelWindow {
                             anchors.fill: parent
                             source: gameBoxArt(model)
                             fillMode: Image.PreserveAspectFit
-                            opacity: ListView.isCurrentItem ? 0 : 1
+                            opacity: ListView.isCurrentItem && hasLandscapeArt ? 0 : 1
                             visible: source !== "" && opacity > 0
 
                             Behavior on opacity {
@@ -1541,7 +1542,7 @@ PanelWindow {
                             anchors.fill: parent
                             source: gameLandscapeArt(model)
                             fillMode: Image.PreserveAspectCrop
-                            opacity: ListView.isCurrentItem ? 1 : 0
+                            opacity: ListView.isCurrentItem && hasLandscapeArt ? 1 : 0
                             visible: source !== "" && opacity > 0
 
                             Behavior on opacity {
