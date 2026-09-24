@@ -117,44 +117,66 @@ PanelWindow {
 
     function glyph(action) {
         let family = String(controllerFamily || "xbox").toLowerCase();
+        if (action === "accept")
+            action = "south";
+        else if (action === "back")
+            action = "east";
+        else if (action === "prev")
+            action = "lb";
+        else if (action === "next")
+            action = "rb";
+        else if (action === "menu")
+            action = "start";
         if (family === "playstation") {
-            if (action === "accept")
-                return "Cross";
-            if (action === "back")
-                return "Circle";
-            if (action === "menu")
+            if (action === "south")
+                return "X";
+            if (action === "east")
+                return "○";
+            if (action === "north")
+                return "△";
+            if (action === "west")
+                return "□";
+            if (action === "start")
                 return "Options";
             if (action === "guide")
                 return "PS";
-            if (action === "prev")
+            if (action === "lb")
                 return "L1";
-            if (action === "next")
+            if (action === "rb")
                 return "R1";
         } else if (family === "nintendo") {
-            if (action === "accept")
+            if (action === "south")
                 return "A";
-            if (action === "back")
+            if (action === "east")
                 return "B";
-            if (action === "menu")
+            if (action === "north")
+                return "X";
+            if (action === "west")
+                return "Y";
+            if (action === "start")
                 return "+";
             if (action === "guide")
                 return "Home";
-            if (action === "prev")
+            if (action === "lb")
                 return "L";
-            if (action === "next")
+            if (action === "rb")
                 return "R";
         }
-        if (action === "accept")
+        if (action === "south")
             return "A";
-        if (action === "back")
+        if (action === "east")
             return "B";
-        if (action === "menu")
+        if (action === "north")
+            return "Y";
+        if (action === "west")
+            return "X";
+        if (action === "start")
             return "Menu";
         if (action === "guide")
             return "Xbox";
-        if (action === "prev")
+        if (action === "lb")
             return "LB";
-        if (action === "next")
+        if (action === "rb")
             return "RB";
         return action;
     }
@@ -225,17 +247,17 @@ PanelWindow {
 
     function inputActionLabel(action) {
         if (action === "south")
-            return glyph("accept") + " / South";
+            return glyph("south") + " / South";
         if (action === "east")
-            return glyph("back") + " / East";
+            return glyph("east") + " / East";
         if (action === "north")
-            return "North";
+            return glyph("north") + " / North";
         if (action === "west")
-            return "West";
+            return glyph("west") + " / West";
         if (action === "lb")
-            return glyph("prev");
+            return glyph("lb");
         if (action === "rb")
-            return glyph("next");
+            return glyph("rb");
         if (action === "back")
             return "Back";
         if (action === "start")
@@ -768,7 +790,7 @@ PanelWindow {
 
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
-                width: 236
+                width: 286
                 height: 34
                 radius: 17
                 color: "#9810161d"
@@ -796,9 +818,27 @@ PanelWindow {
                         font.bold: true
                     }
 
+                    ButtonGlyph {
+                        anchors.verticalCenter: parent.verticalCenter
+                        action: "accept"
+                    }
+
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: glyph("accept") + " Select  " + glyph("back") + " Back"
+                        text: "Select"
+                        color: muted
+                        font.pixelSize: 10
+                        font.bold: true
+                    }
+
+                    ButtonGlyph {
+                        anchors.verticalCenter: parent.verticalCenter
+                        action: "back"
+                    }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "Back"
                         color: muted
                         font.pixelSize: 10
                         font.bold: true
@@ -3486,13 +3526,26 @@ PanelWindow {
 
                                 Text {
                                     anchors.centerIn: parent
-                                    text: inputActionLabel(modelData)
+                                    text: modelData === "up" || modelData === "down" || modelData === "left" || modelData === "right" ? inputActionLabel(modelData) : ""
                                     color: controllerAction === modelData ? "#160b07" : fg
                                     font.pixelSize: 12
                                     font.bold: true
                                     width: parent.width - 14
                                     elide: Text.ElideRight
                                     horizontalAlignment: Text.AlignHCenter
+                                    visible: text !== ""
+                                }
+
+                                Row {
+                                    anchors.centerIn: parent
+                                    spacing: 6
+                                    visible: modelData !== "up" && modelData !== "down" && modelData !== "left" && modelData !== "right"
+
+                                    ButtonGlyph {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        action: modelData
+                                        active: controllerAction === modelData
+                                    }
                                 }
                             }
                         }
@@ -3747,24 +3800,44 @@ PanelWindow {
             spacing: 24
 
             Text {
-                text: "LB / RB  Sections"
+                text: "Sections"
                 color: muted
                 font.pixelSize: 12
                 font.bold: true
             }
 
+            ButtonGlyph {
+                anchors.verticalCenter: parent.verticalCenter
+                action: "lb"
+            }
+
+            ButtonGlyph {
+                anchors.verticalCenter: parent.verticalCenter
+                action: "rb"
+            }
+
             Text {
-                text: "A / ENTER  Select"
+                text: "Select"
                 color: muted
                 font.pixelSize: 12
                 font.bold: true
             }
 
+            ButtonGlyph {
+                anchors.verticalCenter: parent.verticalCenter
+                action: "accept"
+            }
+
             Text {
-                text: "B / ESC  Back"
+                text: "Back"
                 color: muted
                 font.pixelSize: 12
                 font.bold: true
+            }
+
+            ButtonGlyph {
+                anchors.verticalCenter: parent.verticalCenter
+                action: "back"
             }
 
         }
@@ -3871,6 +3944,27 @@ PanelWindow {
 
     Process {
         id: cancelLauncher
+    }
+
+    component ButtonGlyph: Rectangle {
+        property string action: ""
+        property bool active: false
+
+        width: Math.max(24, glyphLabel.implicitWidth + 12)
+        height: 24
+        radius: 12
+        color: active ? ember : "#151d25"
+        border.color: active ? emberLight : line
+
+        Text {
+            id: glyphLabel
+
+            anchors.centerIn: parent
+            text: glyph(action)
+            color: active ? "#160b07" : fg
+            font.pixelSize: text.length > 2 ? 9 : 13
+            font.bold: true
+        }
     }
 
 }
