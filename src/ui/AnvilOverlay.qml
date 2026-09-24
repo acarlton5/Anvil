@@ -540,7 +540,7 @@ PanelWindow {
 
             OverlayButton {
                 label: "Back"
-                width: 132
+                width: 104
                 glyphAction: "back"
                 onClicked: runMenuAction("back")
             }
@@ -548,7 +548,7 @@ PanelWindow {
             OverlayButton {
                 label: "Exit Game"
                 accent: true
-                width: 100
+                width: 126
                 onClicked: runMenuAction("exit")
             }
         }
@@ -693,7 +693,7 @@ PanelWindow {
 
                     Item {
                         width: parent.width
-                        height: Math.max(1, parent.height - 330)
+                        height: Math.max(1, parent.height - 500)
                     }
 
                     OverlayButton {
@@ -1370,6 +1370,8 @@ PanelWindow {
     }
 
     component OverlayButton: Rectangle {
+        id: buttonRoot
+
         signal clicked
         property string label: ""
         property string glyphAction: ""
@@ -1393,6 +1395,9 @@ PanelWindow {
 
             Text {
                 anchors.verticalCenter: parent.verticalCenter
+                width: glyphAction !== "" ? Math.max(1, buttonRoot.width - 56) : Math.max(1, buttonRoot.width - 18)
+                horizontalAlignment: Text.AlignHCenter
+                elide: Text.ElideRight
                 text: label
                 color: accent ? "#190804" : ink
                 font.pixelSize: 12
