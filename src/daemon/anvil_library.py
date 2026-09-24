@@ -18,6 +18,7 @@ import argparse
 import json
 import os
 import shlex
+import struct
 import subprocess
 import sys
 import re
@@ -560,12 +561,6 @@ def build_game_entry(cartridge, game_path, drive_root):
         "library_600x900.jpg",
         "library_600x900.png",
         "library_600x900.webp",
-        "capsule_616x353.jpg",
-        "capsule_616x353.png",
-        "capsule_231x87.jpg",
-        "capsule_231x87.png",
-        "header.jpg",
-        "header.png",
     ], "grid")
     logo = find_artwork(game_path, artwork_dir, ["logo.png", "logo.jpg", "logo.webp", "clearlogo.png"], "logo")
 
@@ -606,6 +601,48 @@ def _image_files(directory):
     return sorted(images)
 
 
+def image_dimensions(path):
+    try:
+        with open(path, "rb") as handle:
+            header = handle.read(32)
+            if header.startswith(b"\x89PNG\r\n\x1a\n"):
+                return struct.unpack(">II", header[16:24])
+            if header[:2] == b"\xff\xd8":
+                handle.seek(2)
+                while True:
+                    marker_start = handle.read(1)
+                    if not marker_start:
+                        return None
+                    if marker_start != b"\xff":
+                        continue
+                    marker = handle.read(1)
+                    while marker == b"\xff":
+                        marker = handle.read(1)
+                    if marker in {b"\xc0", b"\xc1", b"\xc2", b"\xc3", b"\xc5", b"\xc6", b"\xc7", b"\xc9", b"\xca", b"\xcb", b"\xcd", b"\xce", b"\xcf"}:
+                        segment = handle.read(7)
+                        height, width = struct.unpack(">HH", segment[3:7])
+                        return width, height
+                    segment_length = struct.unpack(">H", handle.read(2))[0]
+                    handle.seek(segment_length - 2, os.SEEK_CUR)
+    except (OSError, struct.error):
+        return None
+    return None
+
+
+def artwork_matches_role(path, role):
+    dimensions = image_dimensions(path)
+    if not dimensions:
+        return True
+    width, height = dimensions
+    if width <= 0 or height <= 0:
+        return True
+    if role == "grid":
+        return height >= width * 1.18
+    if role == "hero":
+        return width >= height * 1.18
+    return True
+
+
 def find_artwork(game_path, artwork_dir, candidates, role="hero"):
     """Look for artwork in common locations with case-insensitive fallbacks."""
     search_dirs = [artwork_dir, game_path]
@@ -613,20 +650,21 @@ def find_artwork(game_path, artwork_dir, candidates, role="hero"):
 
     for directory in search_dirs:
         for path in _image_files(directory):
-            if os.path.basename(path).lower() in lowered_candidates:
+            if os.path.basename(path).lower() in lowered_candidates and artwork_matches_role(path, role):
                 return path
 
     hints = ARTWORK_ROLE_HINTS.get(role, ())
     for directory in search_dirs:
         for path in _image_files(directory):
             name = os.path.basename(path).lower()
-            if any(hint in name for hint in hints):
+            if any(hint in name for hint in hints) and artwork_matches_role(path, role):
                 return path
 
-    for directory in search_dirs:
-        images = _image_files(directory)
-        if images:
-            return images[0]
+    if role == "logo":
+        for directory in search_dirs:
+            images = _image_files(directory)
+            if images:
+                return images[0]
 
     return None
 
@@ -662,7 +700,10 @@ def sgdb_search_game(name):
 
 def sgdb_fetch_image(game_id, art_type):
     """Fetch the best image URL for a given art type (grids, heroes, logos)."""
-    result = sgdb_request(f"/{art_type}/game/{game_id}")
+    endpoint = f"/{art_type}/game/{game_id}"
+    if art_type == "grids":
+        endpoint += "?dimensions=600x900"
+    result = sgdb_request(endpoint)
     if result and result.get("success") and result.get("data"):
         return result["data"][0]["url"]
     return None

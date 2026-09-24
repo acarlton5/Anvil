@@ -57,6 +57,20 @@ PanelWindow {
         return game.hero || game.grid || "";
     }
 
+    function gameBoxArt(game) {
+        if (!game || game.dummy)
+            return "";
+
+        return game.grid || "";
+    }
+
+    function gameLandscapeArt(game) {
+        if (!game || game.dummy)
+            return "";
+
+        return game.hero || game.grid || "";
+    }
+
     function tagLine(game) {
         if (!game || !game.tags)
             return "READY TO PLAY";
@@ -1403,7 +1417,6 @@ PanelWindow {
 
                     width: ListView.isCurrentItem ? 344 : 136
                     height: 194
-                    scale: ListView.isCurrentItem ? 1.02 : 0.94
                     opacity: ListView.isCurrentItem ? 1 : 0.7
                     anchors.verticalCenter: parent.verticalCenter
 
@@ -1452,7 +1465,7 @@ PanelWindow {
 
                         Rectangle {
                             anchors.fill: parent
-                            visible: (model.hero || model.grid || "") === ""
+                            visible: (ListView.isCurrentItem ? gameLandscapeArt(model) : gameBoxArt(model)) === ""
 
                             Text {
                                 anchors.centerIn: parent
@@ -1507,9 +1520,35 @@ PanelWindow {
                         }
 
                         Image {
+                            id: boxArtImage
+
                             anchors.fill: parent
-                            source: model.dummy ? "" : (ListView.isCurrentItem ? (model.hero || model.grid || "") : (model.grid || model.hero || ""))
+                            source: gameBoxArt(model)
                             fillMode: Image.PreserveAspectCrop
+                            opacity: ListView.isCurrentItem ? 0 : 1
+                            visible: source !== "" && opacity > 0
+
+                            Behavior on opacity {
+                                NumberAnimation {
+                                    duration: 120
+                                }
+                            }
+                        }
+
+                        Image {
+                            id: landscapeArtImage
+
+                            anchors.fill: parent
+                            source: gameLandscapeArt(model)
+                            fillMode: Image.PreserveAspectCrop
+                            opacity: ListView.isCurrentItem ? 1 : 0
+                            visible: source !== "" && opacity > 0
+
+                            Behavior on opacity {
+                                NumberAnimation {
+                                    duration: 120
+                                }
+                            }
                         }
 
                         Rectangle {
@@ -1580,20 +1619,17 @@ PanelWindow {
 
                     MouseArea {
                         anchors.fill: parent
+                        hoverEnabled: true
+                        onEntered: {
+                            selectedGameIndex = index;
+                            gameStrip.currentIndex = index;
+                        }
                         onClicked: {
                             selectedGameIndex = index;
                             gameStrip.currentIndex = index;
                             gameStrip.forceActiveFocus();
                         }
                         onDoubleClicked: launchGame()
-                    }
-
-                    Behavior on scale {
-                        NumberAnimation {
-                            duration: 160
-                            easing.type: Easing.OutCubic
-                        }
-
                     }
 
                     Behavior on width {
@@ -1692,7 +1728,6 @@ PanelWindow {
             delegate: Item {
                 width: 154
                 height: 224
-                scale: GridView.isCurrentItem ? 1.04 : 0.94
                 opacity: GridView.isCurrentItem ? 1 : 0.74
 
                 Rectangle {
@@ -1780,14 +1815,6 @@ PanelWindow {
                         libraryGrid.forceActiveFocus();
                     }
                     onDoubleClicked: launchGame()
-                }
-
-                Behavior on scale {
-                    NumberAnimation {
-                        duration: 150
-                        easing.type: Easing.OutCubic
-                    }
-
                 }
 
                 Behavior on opacity {
