@@ -1414,7 +1414,9 @@ PanelWindow {
 
                 delegate: Item {
                     id: card
-                    property bool hasLandscapeArt: gameLandscapeArt(model) !== ""
+                    property string boxSource: model.grid || ""
+                    property string landscapeSource: model.hero || ""
+                    property bool hasLandscapeArt: landscapeSource !== ""
 
                     width: ListView.isCurrentItem && hasLandscapeArt ? 344 : 136
                     height: 194
@@ -1466,7 +1468,7 @@ PanelWindow {
 
                         Rectangle {
                             anchors.fill: parent
-                            visible: gameBoxArt(model) === "" && (!ListView.isCurrentItem || !hasLandscapeArt)
+                            visible: boxSource === "" && (!ListView.isCurrentItem || !hasLandscapeArt)
 
                             Text {
                                 anchors.centerIn: parent
@@ -1524,7 +1526,7 @@ PanelWindow {
                             id: boxArtImage
 
                             anchors.fill: parent
-                            source: gameBoxArt(model)
+                            source: boxSource
                             fillMode: Image.PreserveAspectFit
                             opacity: ListView.isCurrentItem && hasLandscapeArt ? 0 : 1
                             visible: source !== "" && opacity > 0
@@ -1540,7 +1542,7 @@ PanelWindow {
                             id: landscapeArtImage
 
                             anchors.fill: parent
-                            source: gameLandscapeArt(model)
+                            source: landscapeSource
                             fillMode: Image.PreserveAspectCrop
                             opacity: ListView.isCurrentItem && hasLandscapeArt ? 1 : 0
                             visible: source !== "" && opacity > 0
