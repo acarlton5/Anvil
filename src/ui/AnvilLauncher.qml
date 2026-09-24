@@ -1416,6 +1416,7 @@ PanelWindow {
                     id: card
                     property string boxSource: model.grid || ""
                     property string landscapeSource: model.hero || ""
+                    property string logoSource: model.logo || ""
                     property bool hasLandscapeArt: landscapeSource !== ""
                     property bool focused: ListView.isCurrentItem || hoverArea.containsMouse
                     property bool expanded: focused && hasLandscapeArt
@@ -1597,7 +1598,18 @@ PanelWindow {
                             anchors.right: parent.right
                             anchors.bottom: parent.bottom
                             anchors.margins: 15
-                            spacing: 5
+                            spacing: 6
+
+                            Image {
+                                width: parent.width
+                                height: focused ? 52 : 30
+                                source: logoSource
+                                fillMode: Image.PreserveAspectFit
+                                horizontalAlignment: Image.AlignLeft
+                                verticalAlignment: Image.AlignBottom
+                                mipmap: true
+                                visible: source !== ""
+                            }
 
                             Text {
                                 text: model.name
@@ -1606,6 +1618,7 @@ PanelWindow {
                                 font.bold: true
                                 elide: Text.ElideRight
                                 width: parent.width
+                                visible: logoSource === ""
                             }
 
                             Text {
