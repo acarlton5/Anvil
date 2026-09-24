@@ -17,10 +17,10 @@ PanelWindow {
     readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || localRoot
     readonly property string bridgePath: anvilRoot + "/src/daemon/anvil-library-bridge"
     readonly property string daemonPath: anvilRoot + "/src/ui/AnvilDaemon.qml"
-    readonly property color bg: "#050609"
-    readonly property color panel: "#101419"
-    readonly property color panelRaised: "#171d23"
-    readonly property color line: "#2f3740"
+    readonly property color bg: "#040608"
+    readonly property color panel: "#0d1217"
+    readonly property color panelRaised: "#151b22"
+    readonly property color line: "#313b46"
     readonly property color fg: "#f5f5f2"
     readonly property color muted: "#aeb6bd"
     readonly property color ember: "#ff6537"
@@ -28,8 +28,8 @@ PanelWindow {
     readonly property color forgeGold: "#d9ad5f"
     readonly property color relayBlue: "#7aa8ff"
     readonly property color green: "#65d797"
-    readonly property int sidebarWidth: 0
-    readonly property int contentLeft: 64
+    readonly property int sidebarWidth: 112
+    readonly property int contentLeft: 154
     property int activeSection: Number(Quickshell.env("ANVIL_SECTION") || 0)
     property bool powerMenuActive: false
     property bool gameIsLoading: false
@@ -732,19 +732,19 @@ PanelWindow {
         anchors.right: parent.right
         anchors.top: parent.top
         height: 92
-        color: "#a806080c"
+        color: "#76040609"
         z: 20
 
         Row {
             anchors.left: parent.left
-            anchors.leftMargin: 48
+            anchors.leftMargin: contentLeft
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 16
+            spacing: 14
 
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
-                width: 42
-                height: 42
+                width: 38
+                height: 38
                 radius: 6
                 color: ember
 
@@ -752,18 +752,31 @@ PanelWindow {
                     anchors.centerIn: parent
                     text: "A"
                     color: "#170b07"
-                    font.pixelSize: 24
+                    font.pixelSize: 22
                     font.bold: true
                 }
 
             }
 
-            Text {
+            Column {
                 anchors.verticalCenter: parent.verticalCenter
-                text: "ANVIL"
-                color: fg
-                font.pixelSize: 22
-                font.bold: true
+                spacing: 2
+
+                Text {
+                    text: "ANVIL"
+                    color: fg
+                    font.pixelSize: 20
+                    font.bold: true
+                }
+
+                Text {
+                    text: currentSectionLabel().toUpperCase() + " / " + currentSectionSubtitle()
+                    color: muted
+                    font.pixelSize: 10
+                    font.bold: true
+                    elide: Text.ElideRight
+                    width: 360
+                }
             }
 
         }
@@ -772,6 +785,7 @@ PanelWindow {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             spacing: 8
+            visible: false
 
             Repeater {
                 model: navModel
@@ -945,16 +959,16 @@ PanelWindow {
         anchors.top: parent.top
         anchors.bottom: bottomHints.top
         width: sidebarWidth
-        visible: false
-        color: "#f006080c"
-        border.color: "#202833"
+        visible: true
+        color: "#e706090d"
+        border.color: "#24303a"
         z: 24
 
         Column {
             anchors.fill: parent
-            anchors.leftMargin: 14
-            anchors.rightMargin: 14
-            anchors.topMargin: 16
+            anchors.leftMargin: 18
+            anchors.rightMargin: 18
+            anchors.topMargin: 22
             anchors.bottomMargin: 16
             spacing: 14
 
@@ -965,10 +979,10 @@ PanelWindow {
 
                 Rectangle {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    width: 58
-                    height: 58
+                    width: 56
+                    height: 56
                     radius: 8
-                    color: "#171d23"
+                    color: "#151b22"
                     border.color: ember
 
                     Text {
@@ -996,16 +1010,17 @@ PanelWindow {
                     width: parent.width
                     height: 58
                     radius: 8
-                    color: activeSection === index ? "#1b242d" : "transparent"
-                    border.color: activeSection === index ? "#3c4855" : "transparent"
+                    color: activeSection === index ? "#f0ff6537" : (mouseNav.containsMouse ? "#29151d25" : "transparent")
+                    border.color: activeSection === index ? ember : (mouseNav.containsMouse ? "#40505f" : "transparent")
+                    scale: activeSection === index ? 1.04 : 1.0
 
                     Rectangle {
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 3
-                        height: 34
+                        width: 4
+                        height: 42
                         radius: 2
-                        color: ember
+                        color: activeSection === index ? "#170b07" : ember
                         visible: activeSection === index
                     }
 
@@ -1014,24 +1029,35 @@ PanelWindow {
                         width: 44
                         height: 44
                         radius: 8
-                        color: activeSection === index ? ember : "#121820"
-                        border.color: activeSection === index ? ember : "#2d3844"
+                        color: activeSection === index ? "#170b07" : "#121820"
+                        border.color: activeSection === index ? "#170b07" : "#2d3844"
 
-                        Text {
+                        Image {
                             anchors.centerIn: parent
-                            text: model.icon
-                            color: activeSection === index ? "#160b07" : muted
-                            font.pixelSize: 19
-                            font.bold: true
+                            width: 24
+                            height: 24
+                            source: Quickshell.iconPath(model.icon, true)
+                            sourceSize.width: 48
+                            sourceSize.height: 48
+                            opacity: activeSection === index ? 1 : 0.7
                         }
 
                     }
 
                     MouseArea {
+                        id: mouseNav
+
                         anchors.fill: parent
+                        hoverEnabled: true
                         onClicked: selectSection(index)
                     }
 
+                    Behavior on scale {
+                        NumberAnimation {
+                            duration: 140
+                            easing.type: Easing.OutCubic
+                        }
+                    }
                 }
 
             }
@@ -1073,9 +1099,9 @@ PanelWindow {
 
             anchors.left: parent.left
             anchors.leftMargin: contentLeft
-            width: Math.min(820, parent.width * 0.55)
+            width: Math.min(980, parent.width * 0.58)
             anchors.top: parent.top
-            anchors.topMargin: 142
+            anchors.topMargin: 132
             anchors.bottom: shelf.top
             anchors.bottomMargin: 8
             color: "transparent"
@@ -1182,12 +1208,12 @@ PanelWindow {
                 anchors.right: parent.right
                 anchors.rightMargin: 34
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 34
-                spacing: 12
+                anchors.bottomMargin: 28
+                spacing: 10
 
                 Image {
-                    width: Math.min(520, parent.width)
-                    height: 156
+                    width: Math.min(560, parent.width)
+                    height: 164
                     source: currentGame() ? (currentGame().logo || "") : ""
                     fillMode: Image.PreserveAspectFit
                     horizontalAlignment: Image.AlignLeft
@@ -1212,7 +1238,7 @@ PanelWindow {
                         return libraryScanRunning ? "Scanning Cartridges" : "Anvil Library";
                     }
                     color: fg
-                    font.pixelSize: 46
+                    font.pixelSize: 52
                     font.bold: true
                     width: Math.min(720, parent.width)
                     elide: Text.ElideRight
@@ -1342,7 +1368,7 @@ PanelWindow {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 58
-            height: 250
+            height: 292
 
             Text {
                 anchors.left: parent.left
@@ -1395,9 +1421,9 @@ PanelWindow {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                height: 214
+                height: 252
                 orientation: ListView.Horizontal
-                spacing: 14
+                spacing: 16
                 leftMargin: contentLeft
                 rightMargin: 72
                 model: gameModel
@@ -1421,16 +1447,16 @@ PanelWindow {
                     property bool focused: ListView.isCurrentItem || hoverArea.containsMouse
                     property bool expanded: focused && hasLandscapeArt
 
-                    width: expanded ? 344 : 136
-                    height: 194
+                    width: expanded ? 424 : 150
+                    height: 222
                     opacity: focused ? 1 : 0.7
                     anchors.verticalCenter: parent.verticalCenter
 
                     Image {
                         anchors.centerIn: cardSurface
                         anchors.verticalCenterOffset: expanded ? -8 : -4
-                        width: cardSurface.width + (expanded ? 64 : 48)
-                        height: cardSurface.height + (expanded ? 72 : 56)
+                        width: cardSurface.width + (expanded ? 78 : 54)
+                        height: cardSurface.height + (expanded ? 82 : 62)
                         source: anvilRoot + "/assets/anvil-focus-flame.png"
                         fillMode: Image.PreserveAspectFit
                         opacity: 0.46
@@ -1462,10 +1488,10 @@ PanelWindow {
                         id: cardSurface
 
                         anchors.fill: parent
-                        radius: 7
+                        radius: 8
                         color: panelRaised
                         border.color: focused ? ember : "#32404d"
-                        border.width: focused ? 2 : 1
+                        border.width: focused ? 3 : 1
                         clip: true
 
                         Rectangle {
@@ -1601,7 +1627,7 @@ PanelWindow {
 
                             Image {
                                 width: parent.width
-                                height: focused ? 52 : 30
+                                height: focused ? 64 : 34
                                 source: logoSource
                                 fillMode: Image.PreserveAspectFit
                                 horizontalAlignment: Image.AlignLeft
@@ -1613,7 +1639,7 @@ PanelWindow {
                             Text {
                                 text: model.name
                                 color: fg
-                                font.pixelSize: focused ? 20 : 13
+                                font.pixelSize: focused ? 23 : 14
                                 font.bold: true
                                 elide: Text.ElideRight
                                 width: parent.width
@@ -1731,8 +1757,8 @@ PanelWindow {
             y: 234
             width: libraryPreview.x - contentLeft - 34
             height: parent.height - 320
-            cellWidth: 170
-            cellHeight: 246
+            cellWidth: 186
+            cellHeight: 270
             model: gameModel
             currentIndex: selectedGameIndex
             clip: true
@@ -1745,13 +1771,13 @@ PanelWindow {
             onCurrentIndexChanged: selectedGameIndex = currentIndex
 
             delegate: Item {
-                width: 154
-                height: 224
+                width: 168
+                height: 246
                 opacity: GridView.isCurrentItem ? 1 : 0.74
 
                 Rectangle {
                     anchors.fill: parent
-                    radius: 6
+                    radius: 8
                     color: panelRaised
                     border.color: GridView.isCurrentItem ? ember : "#26313b"
                     border.width: GridView.isCurrentItem ? 3 : 1
@@ -1853,9 +1879,9 @@ PanelWindow {
             anchors.right: parent.right
             anchors.rightMargin: 54
             y: 126
-            width: Math.min(430, parent.width * 0.28)
+            width: Math.min(470, parent.width * 0.3)
             height: parent.height - 212
-            radius: 7
+            radius: 8
             color: "#d90b0e12"
             border.color: "#27313a"
             clip: true

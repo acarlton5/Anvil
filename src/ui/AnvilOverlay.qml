@@ -297,7 +297,7 @@ PanelWindow {
 
         ListElement {
             label: "Home"
-            icon: "A"
+            icon: "user-home-symbolic"
             title: "ANVIL"
             eyebrow: "Session"
             summary: "Return to library, session controls, update state, and runtime actions."
@@ -305,7 +305,7 @@ PanelWindow {
 
         ListElement {
             label: "Friends"
-            icon: "FR"
+            icon: "system-users-symbolic"
             title: "FRIENDS"
             eyebrow: "Social"
             summary: "Friends, group chats, parties, invites, and presence."
@@ -313,7 +313,7 @@ PanelWindow {
 
         ListElement {
             label: "Achievements"
-            icon: "AC"
+            icon: "emblem-favorite-symbolic"
             title: "ACHIEVEMENTS"
             eyebrow: "Forgeworks"
             summary: "Current game progress, claims, and achievement state."
@@ -321,7 +321,7 @@ PanelWindow {
 
         ListElement {
             label: "Controller"
-            icon: "IN"
+            icon: "input-gaming-symbolic"
             title: "INPUT"
             eyebrow: "Controller"
             summary: "Controller profile, PlayStation glyphs, rumble, and remaps."
@@ -329,7 +329,7 @@ PanelWindow {
 
         ListElement {
             label: "Capture"
-            icon: "CA"
+            icon: "camera-photo-symbolic"
             title: "CAPTURE"
             eyebrow: "Media"
             summary: "Screenshots, recordings, replay buffer, and clip sharing."
@@ -337,7 +337,7 @@ PanelWindow {
 
         ListElement {
             label: "Downloads"
-            icon: "DL"
+            icon: "folder-download-symbolic"
             title: "DOWNLOADS"
             eyebrow: "Forgepipe"
             summary: "Installs, updates, verification, and repair jobs."
@@ -345,7 +345,7 @@ PanelWindow {
 
         ListElement {
             label: "Tools"
-            icon: "TO"
+            icon: "applications-engineering-symbolic"
             title: "TOOLS"
             eyebrow: "Runtime"
             summary: "Logs, compatibility tools, manifests, and diagnostics."
@@ -353,7 +353,7 @@ PanelWindow {
 
         ListElement {
             label: "Settings"
-            icon: "ST"
+            icon: "preferences-system-symbolic"
             title: "SETTINGS"
             eyebrow: "System"
             summary: "Display, audio, network, notifications, and power."
@@ -940,11 +940,14 @@ PanelWindow {
                     anchors.centerIn: parent
                     spacing: 7
 
-                    Text {
-                        text: model.icon
-                        color: selectedDockIndex === index ? "#190804" : ink
-                        font.pixelSize: model.icon.length > 1 ? 11 : 16
-                        font.bold: true
+                    Image {
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 20
+                        height: 20
+                        source: Quickshell.iconPath(model.icon, true)
+                        sourceSize.width: 40
+                        sourceSize.height: 40
+                        opacity: selectedDockIndex === index ? 1 : 0.78
                     }
 
                     Text {
