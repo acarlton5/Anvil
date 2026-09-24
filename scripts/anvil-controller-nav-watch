@@ -19,11 +19,14 @@ KEY_ACTIONS = {
     308: "west",
     310: "lb",
     311: "rb",
+    312: "lt",
+    313: "rt",
     314: "back",
     315: "start",
     316: "guide",
     172: "guide",
 }
+TRIGGER_SHOULDER_IDS = {"0c12:1e1a"}
 
 ABS_X = 0
 ABS_Y = 1
@@ -111,6 +114,19 @@ def send_action(anvil_root, action, controller):
         stderr=subprocess.DEVNULL,
         start_new_session=True,
     )
+
+
+def key_action(code, controller):
+    if controller.get("id") in TRIGGER_SHOULDER_IDS:
+        if code == 310:
+            return "lt"
+        if code == 311:
+            return "rt"
+        if code == 312:
+            return "lb"
+        if code == 313:
+            return "rb"
+    return KEY_ACTIONS.get(code)
 
 
 def announce_controllers(anvil_root, devices, announced):
@@ -206,7 +222,7 @@ def main():
                         _, _, event_type, code, value = struct.unpack(EVENT_STRUCT, data[offset : offset + EVENT_SIZE])
                         action = None
                         if event_type == EV_KEY and value == 1:
-                            action = KEY_ACTIONS.get(code)
+                            action = key_action(code, controller)
                         elif event_type == EV_ABS:
                             action = axis_action(code, value, axis_state)
                         if not action:

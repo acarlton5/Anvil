@@ -122,14 +122,14 @@ PanelWindow {
         else if (action === "back")
             action = "east";
         else if (action === "prev")
-            action = "lb";
+            action = "lt";
         else if (action === "next")
-            action = "rb";
+            action = "rt";
         else if (action === "menu")
             action = "start";
         if (family === "playstation") {
             if (action === "south")
-                return "X";
+                return "✕";
             if (action === "east")
                 return "○";
             if (action === "north")
@@ -144,6 +144,10 @@ PanelWindow {
                 return "L1";
             if (action === "rb")
                 return "R1";
+            if (action === "lt")
+                return "L2";
+            if (action === "rt")
+                return "R2";
         } else if (family === "nintendo") {
             if (action === "south")
                 return "A";
@@ -161,6 +165,10 @@ PanelWindow {
                 return "L";
             if (action === "rb")
                 return "R";
+            if (action === "lt")
+                return "ZL";
+            if (action === "rt")
+                return "ZR";
         }
         if (action === "south")
             return "A";
@@ -178,7 +186,34 @@ PanelWindow {
             return "LB";
         if (action === "rb")
             return "RB";
+        if (action === "lt")
+            return "LT";
+        if (action === "rt")
+            return "RT";
         return action;
+    }
+
+    function glyphColor(action) {
+        let family = String(controllerFamily || "xbox").toLowerCase();
+        if (action === "accept")
+            action = "south";
+        else if (action === "back")
+            action = "east";
+        else if (action === "prev")
+            action = "lt";
+        else if (action === "next")
+            action = "rt";
+        if (family === "playstation") {
+            if (action === "south")
+                return "#74b9ff";
+            if (action === "east")
+                return "#ff6b6b";
+            if (action === "north")
+                return "#65d797";
+            if (action === "west")
+                return "#f08cff";
+        }
+        return fg;
     }
 
     function controllerShortName() {
@@ -258,6 +293,10 @@ PanelWindow {
             return glyph("lb");
         if (action === "rb")
             return glyph("rb");
+        if (action === "lt")
+            return glyph("lt");
+        if (action === "rt")
+            return glyph("rt");
         if (action === "back")
             return "Back";
         if (action === "start")
@@ -306,9 +345,9 @@ PanelWindow {
                 cancelGameLaunch();
             return ;
         }
-        if (action === "lb")
+        if (action === "lt" || action === "lb")
             selectSection(activeSection - 1);
-        else if (action === "rb")
+        else if (action === "rt" || action === "rb")
             selectSection(activeSection + 1);
         else if (action === "left")
             activeSection === 0 || activeSection === 1 ? moveGameSelection(-1) : selectSection(activeSection - 1);
@@ -3515,7 +3554,7 @@ PanelWindow {
                         columnSpacing: 10
 
                         Repeater {
-                            model: ["south", "east", "north", "west", "lb", "rb", "back", "start", "guide", "up", "down", "left", "right"]
+                            model: ["south", "east", "north", "west", "lt", "rt", "lb", "rb", "back", "start", "guide", "up", "down", "left", "right"]
 
                             Rectangle {
                                 width: (parent.width - parent.columnSpacing * (parent.columns - 1)) / parent.columns
@@ -3808,12 +3847,12 @@ PanelWindow {
 
             ButtonGlyph {
                 anchors.verticalCenter: parent.verticalCenter
-                action: "lb"
+                action: "lt"
             }
 
             ButtonGlyph {
                 anchors.verticalCenter: parent.verticalCenter
-                action: "rb"
+                action: "rt"
             }
 
             Text {
@@ -3954,15 +3993,15 @@ PanelWindow {
         height: 24
         radius: 12
         color: active ? ember : "#151d25"
-        border.color: active ? emberLight : line
+        border.color: active ? glyphColor(action) : line
 
         Text {
             id: glyphLabel
 
             anchors.centerIn: parent
             text: glyph(action)
-            color: active ? "#160b07" : fg
-            font.pixelSize: text.length > 2 ? 9 : 13
+            color: active ? "#160b07" : glyphColor(action)
+            font.pixelSize: text.length > 2 ? 9 : 14
             font.bold: true
         }
     }
