@@ -53,6 +53,10 @@ STEAM_SEARCH_ALIASES = {
     "pac man ce 2": "PAC-MAN Championship Edition 2",
     "rayman origins": "Rayman Origins",
 }
+STEAM_APPID_ALIASES = {
+    "slime rancher": "433340",
+    "slime rancher 2": "1657630",
+}
 
 # Artwork filenames we store in each game folder
 ARTWORK_MAP = {
@@ -660,12 +664,13 @@ def artwork_shape(path):
 def find_artwork(game_path, artwork_dir, candidates, role="hero"):
     """Look for artwork in common locations with case-insensitive fallbacks."""
     search_dirs = [artwork_dir, game_path]
-    lowered_candidates = {candidate.lower() for candidate in candidates}
 
-    for directory in search_dirs:
-        for path in _image_files(directory):
-            if os.path.basename(path).lower() in lowered_candidates and artwork_matches_role(path, role):
-                return path
+    for candidate in candidates:
+        candidate = candidate.lower()
+        for directory in search_dirs:
+            for path in _image_files(directory):
+                if os.path.basename(path).lower() == candidate and artwork_matches_role(path, role):
+                    return path
 
     hints = ARTWORK_ROLE_HINTS.get(role, ())
     for directory in search_dirs:
@@ -772,8 +777,17 @@ def steam_search_query(name):
     return STEAM_SEARCH_ALIASES.get(key, normalized)
 
 
+def title_key(name):
+    key = re.sub(r"[^\w\s]", "", normalize_title(name)).lower()
+    return re.sub(r"\s+", " ", key).strip()
+
+
 def steam_search_game(name):
     """Search Steam's public store API for a game and return an app id."""
+    exact_appid = STEAM_APPID_ALIASES.get(title_key(name))
+    if exact_appid:
+        return exact_appid
+
     query = urllib.parse.urlencode({
         "term": steam_search_query(name),
         "l": "english",
@@ -815,7 +829,12 @@ def fetch_steam_artwork_for_game(game_entry):
     artwork_dir = os.path.join(game_path, "artwork")
     name = game_entry["name"]
 
+    exact_appid = STEAM_APPID_ALIASES.get(title_key(name))
     steam_appid = game_entry.get("steam_appid")
+    force_refresh = bool(exact_appid and steam_appid != exact_appid)
+    if exact_appid:
+        steam_appid = exact_appid
+        write_cartridge_field(game_path, "steam_appid", steam_appid)
     if not steam_appid:
         steam_appid = steam_search_game(name)
         if steam_appid:
@@ -835,15 +854,15 @@ def fetch_steam_artwork_for_game(game_entry):
     ]
 
     for field, url, dest in assets:
-        if field == "hero" and game_entry.get("hero"):
+        if field == "hero" and game_entry.get("hero") and not force_refresh:
             continue
-        if field == "grid" and game_entry.get("grid"):
+        if field == "grid" and game_entry.get("grid") and not force_refresh:
             continue
-        if field == "logo" and game_entry.get("logo"):
+        if field == "logo" and game_entry.get("logo") and not force_refresh:
             continue
-        if field == "header" and game_entry.get("hero"):
+        if field == "header" and game_entry.get("hero") and not force_refresh:
             continue
-        if field == "capsule" and game_entry.get("hero") and game_entry.get("grid"):
+        if field == "capsule" and game_entry.get("hero") and game_entry.get("grid") and not force_refresh:
             continue
         if url_exists(url):
             download_image(url, dest)
@@ -860,7 +879,9 @@ def fetch_artwork_for_game(game_entry):
     has_grid = bool(game_entry.get("grid"))
     has_logo = bool(game_entry.get("logo"))
 
-    if has_hero and has_grid and has_logo:
+    exact_appid = STEAM_APPID_ALIASES.get(title_key(name))
+    has_expected_appid = exact_appid and str(game_entry.get("steam_appid") or "") == exact_appid
+    if has_hero and has_grid and has_logo and (not exact_appid or has_expected_appid):
         return  # All artwork present
 
     if SGDB_API_KEY:

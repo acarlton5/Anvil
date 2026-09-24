@@ -1427,11 +1427,10 @@ PanelWindow {
                     anchors.verticalCenter: parent.verticalCenter
 
                     Image {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.bottom: parent.top
-                        anchors.bottomMargin: -24
-                        width: expanded ? Math.max(420, parent.width + 90) : 230
-                        height: 190
+                        anchors.centerIn: cardSurface
+                        anchors.verticalCenterOffset: expanded ? -8 : -4
+                        width: cardSurface.width + (expanded ? 64 : 48)
+                        height: cardSurface.height + (expanded ? 72 : 56)
                         source: anvilRoot + "/assets/anvil-focus-flame.png"
                         fillMode: Image.PreserveAspectFit
                         opacity: 0.46
