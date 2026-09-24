@@ -54,7 +54,7 @@ PanelWindow {
         if (!game || game.dummy)
             return "";
 
-        return game.hero || game.grid || "";
+        return game.hero || "";
     }
 
     function gameBoxArt(game) {
@@ -68,7 +68,7 @@ PanelWindow {
         if (!game || game.dummy)
             return "";
 
-        return game.hero || game.grid || "";
+        return game.hero || "";
     }
 
     function tagLine(game) {
@@ -1465,7 +1465,7 @@ PanelWindow {
 
                         Rectangle {
                             anchors.fill: parent
-                            visible: (ListView.isCurrentItem ? gameLandscapeArt(model) : gameBoxArt(model)) === ""
+                            visible: ListView.isCurrentItem ? gameLandscapeArt(model) === "" : gameBoxArt(model) === ""
 
                             Text {
                                 anchors.centerIn: parent
@@ -1524,7 +1524,7 @@ PanelWindow {
 
                             anchors.fill: parent
                             source: gameBoxArt(model)
-                            fillMode: Image.PreserveAspectCrop
+                            fillMode: Image.PreserveAspectFit
                             opacity: ListView.isCurrentItem ? 0 : 1
                             visible: source !== "" && opacity > 0
 
@@ -1740,14 +1740,14 @@ PanelWindow {
 
                     Image {
                         anchors.fill: parent
-                        source: model.grid || model.hero || ""
-                        fillMode: Image.PreserveAspectCrop
+                        source: gameBoxArt(model)
+                        fillMode: Image.PreserveAspectFit
                         visible: source !== ""
                     }
 
                     Rectangle {
                         anchors.fill: parent
-                        visible: (model.grid || model.hero || "") === ""
+                        visible: gameBoxArt(model) === ""
 
                         Text {
                             anchors.centerIn: parent
@@ -2040,8 +2040,8 @@ PanelWindow {
                                 Image {
                                     anchors.fill: parent
                                     anchors.margins: 1
-                                    source: model.grid || model.hero || ""
-                                    fillMode: Image.PreserveAspectCrop
+                                    source: gameBoxArt(model)
+                                    fillMode: Image.PreserveAspectFit
                                     visible: source !== ""
                                 }
 
@@ -2051,7 +2051,7 @@ PanelWindow {
                                     color: emberLight
                                     font.pixelSize: 9
                                     font.bold: true
-                                    visible: (model.grid || model.hero || "") === ""
+                                    visible: gameBoxArt(model) === ""
                                 }
 
                             }
