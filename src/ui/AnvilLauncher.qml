@@ -1417,25 +1417,27 @@ PanelWindow {
                     property string boxSource: model.grid || ""
                     property string landscapeSource: model.hero || ""
                     property bool hasLandscapeArt: landscapeSource !== ""
+                    property bool focused: ListView.isCurrentItem || hoverArea.containsMouse
+                    property bool expanded: focused && hasLandscapeArt
 
-                    width: ListView.isCurrentItem && hasLandscapeArt ? 344 : 136
+                    width: expanded ? 344 : 136
                     height: 194
-                    opacity: ListView.isCurrentItem ? 1 : 0.7
+                    opacity: focused ? 1 : 0.7
                     anchors.verticalCenter: parent.verticalCenter
 
                     Image {
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.bottom: parent.top
                         anchors.bottomMargin: -24
-                        width: hasLandscapeArt ? Math.max(420, parent.width + 90) : 230
+                        width: expanded ? Math.max(420, parent.width + 90) : 230
                         height: 190
                         source: anvilRoot + "/assets/anvil-focus-flame.png"
                         fillMode: Image.PreserveAspectFit
                         opacity: 0.46
-                        visible: ListView.isCurrentItem
+                        visible: focused
 
                         SequentialAnimation on opacity {
-                            running: ListView.isCurrentItem
+                            running: focused
                             loops: Animation.Infinite
 
                             NumberAnimation {
@@ -1462,20 +1464,20 @@ PanelWindow {
                         anchors.fill: parent
                         radius: 7
                         color: panelRaised
-                        border.color: ListView.isCurrentItem ? ember : "#32404d"
-                        border.width: ListView.isCurrentItem ? 2 : 1
+                        border.color: focused ? ember : "#32404d"
+                        border.width: focused ? 2 : 1
                         clip: true
 
                         Rectangle {
                             anchors.fill: parent
-                            visible: boxSource === "" && (!ListView.isCurrentItem || !hasLandscapeArt)
+                            visible: boxSource === "" && !expanded
 
                             Text {
                                 anchors.centerIn: parent
                                 text: initials(model.name)
                                 color: "#f6d0be"
                                 opacity: 0.68
-                                font.pixelSize: ListView.isCurrentItem ? 82 : 54
+                                font.pixelSize: focused ? 82 : 54
                                 font.bold: true
                             }
 
@@ -1528,7 +1530,7 @@ PanelWindow {
                             anchors.fill: parent
                             source: boxSource
                             fillMode: Image.PreserveAspectFit
-                            opacity: ListView.isCurrentItem && hasLandscapeArt ? 0 : 1
+                            opacity: expanded ? 0 : 1
                             visible: source !== "" && opacity > 0
 
                             Behavior on opacity {
@@ -1544,7 +1546,7 @@ PanelWindow {
                             anchors.fill: parent
                             source: landscapeSource
                             fillMode: Image.PreserveAspectCrop
-                            opacity: ListView.isCurrentItem && hasLandscapeArt ? 1 : 0
+                            opacity: expanded ? 1 : 0
                             visible: source !== "" && opacity > 0
 
                             Behavior on opacity {
@@ -1560,12 +1562,12 @@ PanelWindow {
                             gradient: Gradient {
                                 GradientStop {
                                     position: 0
-                                    color: ListView.isCurrentItem ? "#11000000" : "#22000000"
+                                    color: focused ? "#11000000" : "#22000000"
                                 }
 
                                 GradientStop {
-                                    position: ListView.isCurrentItem ? 0.48 : 0.62
-                                    color: ListView.isCurrentItem ? "#33000000" : "#55000000"
+                                    position: focused ? 0.48 : 0.62
+                                    color: focused ? "#33000000" : "#55000000"
                                 }
 
                                 GradientStop {
@@ -1587,7 +1589,7 @@ PanelWindow {
                             font.pixelSize: 9
                             font.bold: true
                             font.letterSpacing: 0
-                            visible: ListView.isCurrentItem
+                            visible: focused
                         }
 
                         Column {
@@ -1600,7 +1602,7 @@ PanelWindow {
                             Text {
                                 text: model.name
                                 color: fg
-                                font.pixelSize: ListView.isCurrentItem ? 20 : 13
+                                font.pixelSize: focused ? 20 : 13
                                 font.bold: true
                                 elide: Text.ElideRight
                                 width: parent.width
@@ -1613,7 +1615,7 @@ PanelWindow {
                                 font.bold: true
                                 elide: Text.ElideRight
                                 width: parent.width
-                                visible: ListView.isCurrentItem
+                                visible: focused
                             }
 
                         }
@@ -1621,6 +1623,8 @@ PanelWindow {
                     }
 
                     MouseArea {
+                        id: hoverArea
+
                         anchors.fill: parent
                         hoverEnabled: true
                         onEntered: {
