@@ -1,3 +1,7 @@
 # Anvil's small runtime controller mapping set.
 # Format: SDL_GAMECONTROLLERCONFIG lines.
 # Device-specific mappings now live in config/input-maps/*.map.
+# Steam Deck Controller
+03000000de2800000512000001000000,Steam Deck,a:b0,b:b1,x:b2,y:b3,back:b4,start:b5,guide:b6,leftshoulder:b9,rightshoulder:b10,leftstick:b7,rightstick:b8,leftx:a0,lefty:a1,rightx:a2,righty:a3,lefttrigger:a4,righttrigger:a5,dpup:h0.1,dpright:h0.2,dpdown:h0.4,dpleft:h0.8,paddle1:b11,paddle2:b12,paddle3:b13,paddle4:b14,platform:Linux,
+03000000de2800000512000011010000,Steam Deck Controller,a:b0,b:b1,x:b2,y:b3,back:b4,start:b5,guide:b6,leftshoulder:b9,rightshoulder:b10,leftstick:b7,rightstick:b8,leftx:a0,lefty:a1,rightx:a2,righty:a3,lefttrigger:a4,righttrigger:a5,dpup:h0.1,dpright:h0.2,dpdown:h0.4,dpleft:h0.8,paddle1:b11,paddle2:b12,paddle3:b13,paddle4:b14,platform:Linux,
+03000000de280000ff11000001000000,Steam Deck,a:b0,b:b1,x:b2,y:b3,back:b4,start:b5,guide:b6,leftshoulder:b9,rightshoulder:b10,leftstick:b7,rightstick:b8,leftx:a0,lefty:a1,rightx:a2,righty:a3,lefttrigger:a4,righttrigger:a5,dpup:h0.1,dpright:h0.2,dpdown:h0.4,dpleft:h0.8,paddle1:b11,paddle2:b12,paddle3:b13,paddle4:b14,platform:Linux,

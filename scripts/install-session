@@ -79,6 +79,10 @@ stage_file "$anvil_root/scripts/anvil-controller-nav-watch" scripts/anvil-contro
 controller_nav_watch_src="$STAGED_RESULT"
 stage_file "$anvil_root/scripts/anvil-overlay-toggle" scripts/anvil-overlay-toggle
 overlay_toggle_src="$STAGED_RESULT"
+stage_file "$anvil_root/scripts/anvil-quickaccess-toggle" scripts/anvil-quickaccess-toggle
+quickaccess_toggle_src="$STAGED_RESULT"
+stage_file "$anvil_root/scripts/anvil-keyboard-toggle" scripts/anvil-keyboard-toggle
+keyboard_toggle_src="$STAGED_RESULT"
 stage_file "$anvil_root/session/hyprland-anvil.lua" session/hyprland-anvil.lua
 hypr_src="$STAGED_RESULT"
 stage_file "$anvil_root/src/ui/AnvilDaemon.qml" src/ui/AnvilDaemon.qml
@@ -87,6 +91,12 @@ stage_file "$anvil_root/src/ui/AnvilLauncher.qml" src/ui/AnvilLauncher.qml
 launcher_qml_src="$STAGED_RESULT"
 stage_file "$anvil_root/src/ui/AnvilOverlay.qml" src/ui/AnvilOverlay.qml
 overlay_qml_src="$STAGED_RESULT"
+stage_file "$anvil_root/src/ui/AnvilVolumeOSD.qml" src/ui/AnvilVolumeOSD.qml
+volume_osd_qml_src="$STAGED_RESULT"
+stage_file "$anvil_root/src/ui/AnvilQuickAccess.qml" src/ui/AnvilQuickAccess.qml
+quickaccess_qml_src="$STAGED_RESULT"
+stage_file "$anvil_root/src/ui/AnvilKeyboard.qml" src/ui/AnvilKeyboard.qml
+keyboard_qml_src="$STAGED_RESULT"
 stage_file "$anvil_root/assets/anvil-focus-flame.png" assets/anvil-focus-flame.png
 focus_flame_src="$STAGED_RESULT"
 stage_tree "$anvil_root/assets/controllercons" assets/controllercons
@@ -117,6 +127,8 @@ sudo install -D -m 755 "$input_inspect_src" /usr/local/bin/anvil-input-inspect
 sudo install -D -m 755 "$controller_overlay_watch_src" /usr/local/bin/anvil-controller-overlay-watch
 sudo install -D -m 755 "$controller_nav_watch_src" /usr/local/bin/anvil-controller-nav-watch
 sudo install -D -m 755 "$overlay_toggle_src" /usr/local/bin/anvil-overlay-toggle
+sudo install -D -m 755 "$quickaccess_toggle_src" /usr/local/bin/anvil-quickaccess-toggle
+sudo install -D -m 755 "$keyboard_toggle_src" /usr/local/bin/anvil-keyboard-toggle
 sudo install -D -m 755 "$session_src" /usr/local/share/anvil/session/anvil-session.sh
 sudo install -D -m 755 "$game_session_src" /usr/local/share/anvil/scripts/anvil-game-session
 sudo install -D -m 755 "$achievement_claim_src" /usr/local/share/anvil/scripts/anvil-achievement-claim
@@ -125,10 +137,15 @@ sudo install -D -m 755 "$input_inspect_src" /usr/local/share/anvil/scripts/anvil
 sudo install -D -m 755 "$controller_overlay_watch_src" /usr/local/share/anvil/scripts/anvil-controller-overlay-watch
 sudo install -D -m 755 "$controller_nav_watch_src" /usr/local/share/anvil/scripts/anvil-controller-nav-watch
 sudo install -D -m 755 "$overlay_toggle_src" /usr/local/share/anvil/scripts/anvil-overlay-toggle
+sudo install -D -m 755 "$quickaccess_toggle_src" /usr/local/share/anvil/scripts/anvil-quickaccess-toggle
+sudo install -D -m 755 "$keyboard_toggle_src" /usr/local/share/anvil/scripts/anvil-keyboard-toggle
 sudo install -D -m 644 "$hypr_src" /usr/local/share/anvil/session/hyprland-anvil.lua
 sudo install -D -m 644 "$daemon_qml_src" /usr/local/share/anvil/src/ui/AnvilDaemon.qml
 sudo install -D -m 644 "$launcher_qml_src" /usr/local/share/anvil/src/ui/AnvilLauncher.qml
 sudo install -D -m 644 "$overlay_qml_src" /usr/local/share/anvil/src/ui/AnvilOverlay.qml
+sudo install -D -m 644 "$volume_osd_qml_src" /usr/local/share/anvil/src/ui/AnvilVolumeOSD.qml
+sudo install -D -m 644 "$quickaccess_qml_src" /usr/local/share/anvil/src/ui/AnvilQuickAccess.qml
+sudo install -D -m 644 "$keyboard_qml_src" /usr/local/share/anvil/src/ui/AnvilKeyboard.qml
 sudo install -D -m 644 "$focus_flame_src" /usr/local/share/anvil/assets/anvil-focus-flame.png
 sudo install -d -m 755 /usr/local/share/anvil/assets/controllercons
 sudo cp -R "$controllercons_src"/. /usr/local/share/anvil/assets/controllercons/

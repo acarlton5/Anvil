@@ -119,9 +119,43 @@ ShellRoot {
         sourceComponent: overlayComponent
     }
 
+    property bool quickAccessActive: false
+    property bool keyboardActive: false
+
+    AnvilVolumeOSD {
+        id: volumeOsd
+    }
+
+    AnvilQuickAccess {
+        id: quickAccessPanel
+        isVisible: root.quickAccessActive
+        onRequestKeyboardToggle: {
+            root.keyboardActive = !root.keyboardActive;
+        }
+        onRequestClose: {
+            root.quickAccessActive = false;
+        }
+    }
+
+    AnvilKeyboard {
+        id: virtualKeyboard
+        isVisible: root.keyboardActive
+        onDismissed: {
+            root.keyboardActive = false;
+        }
+    }
+
     IpcHandler {
         function toggle() {
             root.overlayActive = !root.overlayActive;
+        }
+
+        function toggleQuickAccess() {
+            root.quickAccessActive = !root.quickAccessActive;
+        }
+
+        function toggleKeyboard() {
+            root.keyboardActive = !root.keyboardActive;
         }
 
         function launch(command: string) {

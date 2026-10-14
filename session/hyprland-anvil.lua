@@ -44,6 +44,9 @@ else
     })
 end
 
+local quickaccess_toggle = anvil_root .. "/scripts/anvil-quickaccess-toggle " .. anvil_root
+local keyboard_toggle = anvil_root .. "/scripts/anvil-keyboard-toggle " .. anvil_root
+
 -- Essential input and performance optimizations
 hl.config({
     input = {
@@ -70,9 +73,23 @@ hl.config({
         disable_splash_rendering = true,
         vrr = 1 -- Enable Variable Refresh Rate
     },
+    bindl = {
+        ", XF86AudioRaiseVolume, exec, wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+",
+        ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-",
+        ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle",
+        ", XF86MonBrightnessUp, exec, brightnessctl set 5%+",
+        ", XF86MonBrightnessDown, exec, brightnessctl set 5%-",
+    },
     bind = {
         "SHIFT, TAB, exec, " .. overlay_toggle,
         "SUPER SHIFT, O, exec, " .. overlay_toggle,
+        "SUPER, SPACE, exec, " .. quickaccess_toggle,
+        ", XF86Shop, exec, " .. quickaccess_toggle,
+        ", XF86Search, exec, " .. quickaccess_toggle,
+        "SUPER, Q, exec, " .. quickaccess_toggle,
+        "SUPER, K, exec, " .. keyboard_toggle,
+        "SUPER, X, exec, " .. keyboard_toggle,
         "SUPER SHIFT, Q, exit",
     }
 })
