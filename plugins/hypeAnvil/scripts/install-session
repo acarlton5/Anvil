@@ -183,7 +183,23 @@ Type=Application
 DesktopNames=Anvil
 DESKTOP
 sudo install -D -m 644 "$desktop_file" /usr/share/wayland-sessions/anvil.desktop
+sudo install -D -m 644 "$focus_flame_src" /usr/share/icons/hicolor/256x256/apps/anvil.png || true
 unlink "$desktop_file"
+
+app_desktop_file="$(mktemp)"
+cat > "$app_desktop_file" <<'APPDESKTOP'
+[Desktop Entry]
+Name=Anvil
+GenericName=Gaming Console
+Comment=Launch Anvil Console Gaming Client
+Exec=env ANVIL_ROOT=/usr/local/share/anvil qs -p /usr/local/share/anvil/src/ui/AnvilDaemon.qml
+Icon=/usr/local/share/anvil/assets/anvil-focus-flame.png
+Terminal=false
+Type=Application
+Categories=Game;Console;
+APPDESKTOP
+sudo install -D -m 644 "$app_desktop_file" /usr/share/applications/anvil.desktop
+unlink "$app_desktop_file"
 
 for legacy_path in \
     /usr/local/share/wayland-sessions/hypeshell-gamermode.desktop \
