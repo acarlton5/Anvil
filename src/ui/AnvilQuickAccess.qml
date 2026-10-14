@@ -96,7 +96,7 @@ PanelWindow {
 
     Process {
         id: updaterProcess
-        command: ["sh", "-c", "sudo /usr/local/bin/hype update install 2>&1 || git -C /usr/local/share/anvil pull origin main 2>&1"]
+        command: ["sh", "-c", "sudo /usr/local/bin/hype update install 2>&1; git -C ~/.config/HypeShell/plugins/hypeAnvil pull origin main 2>&1 && sudo bash ~/.config/HypeShell/plugins/hypeAnvil/scripts/install-session ~/.config/HypeShell/plugins/hypeAnvil 2>&1"]
         stdout: StdioCollector {
             onStreamFinished: {
                 isUpdating = false;
