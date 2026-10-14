@@ -1,10 +1,10 @@
 -- Minimal Anvil Wayland Session
-hl = require("hyprland")
 
 local home = os.getenv("HOME") or ""
 local anvil_root = os.getenv("ANVIL_ROOT") or (home .. "/Projects/Projects/Anvil")
 local daemon = anvil_root .. "/src/ui/AnvilDaemon.qml"
 local overlay_toggle = anvil_root .. "/scripts/anvil-overlay-toggle " .. anvil_root
+local qs_bin = os.getenv("ANVIL_QS_BIN") or "qs"
 
 -- Hardware profile detection (e.g. Steam Deck portrait display rotation)
 local deck_transform = 0
@@ -44,28 +44,41 @@ else
     })
 end
 
--- Essential input
-hl.input({
-    kb_layout = "us",
-    touchpad = {
-        natural_scroll = true,
-        tap_to_click = true,
-        clickfinger_behavior = true
+-- Essential input and performance optimizations
+hl.config({
+    input = {
+        kb_layout = "us",
+        touchpad = {
+            natural_scroll = true,
+            tap_to_click = true,
+            clickfinger_behavior = true
+        }
+    },
+    animations = {
+        enabled = false
+    },
+    decoration = {
+        drop_shadow = false,
+        blur = {
+            enabled = false
+        }
+    },
+    misc = {
+        disable_hyprland_logo = true,
+        disable_splash_rendering = true,
+        vrr = 1 -- Enable Variable Refresh Rate
     }
 })
 
--- Animations disabled for max performance
-hl.animations({ enabled = false })
-hl.decoration({ drop_shadow = false, blur = { enabled = false } })
-hl.misc({
-    disable_hyprland_logo = true,
-    disable_splash_rendering = true,
-    vrr = 1 -- Enable Variable Refresh Rate
-})
+-- Launch Anvil automatically with full D-Bus & systemd environment
+hl.on("hyprland.start", function()
+    hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XDG_SESSION_DESKTOP")
+    hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XDG_SESSION_DESKTOP")
+    hl.exec_cmd("env ANVIL_ROOT=" .. anvil_root .. " " .. qs_bin .. " -p " .. daemon)
+end)
 
--- Launch Anvil automatically
-hl.exec_once("ANVIL_ROOT=" .. anvil_root .. " qs -p " .. daemon)
-
--- Overlay Hotkey
+-- Overlay Hotkeys and Session Controls
 hl.bind("SHIFT + TAB", hl.dsp.exec_cmd(overlay_toggle), { locked = true, dont_inhibit = true })
 hl.bind("SUPER + SHIFT + O", hl.dsp.exec_cmd(overlay_toggle), { locked = true, dont_inhibit = true })
+hl.bind("SUPER + SHIFT + Q", hl.dsp.exec_cmd("hyprctl dispatch exit"))
+

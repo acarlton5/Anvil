@@ -186,13 +186,31 @@ sudo install -D -m 644 "$desktop_file" /usr/share/wayland-sessions/anvil.desktop
 sudo install -D -m 644 "$focus_flame_src" /usr/share/icons/hicolor/256x256/apps/anvil.png || true
 unlink "$desktop_file"
 
+app_launcher="$(mktemp)"
+cat > "$app_launcher" <<'LAUNCHER'
+#!/usr/bin/env bash
+set -euo pipefail
+
+export ANVIL_ROOT="${ANVIL_ROOT:-/usr/local/share/anvil}"
+if command -v qs >/dev/null 2>&1; then
+    QS_BIN="qs"
+elif command -v quickshell >/dev/null 2>&1; then
+    QS_BIN="quickshell"
+else
+    QS_BIN="qs"
+fi
+exec "$QS_BIN" -p "$ANVIL_ROOT/src/ui/AnvilDaemon.qml" "$@"
+LAUNCHER
+sudo install -D -m 755 "$app_launcher" /usr/local/bin/anvil
+unlink "$app_launcher"
+
 app_desktop_file="$(mktemp)"
 cat > "$app_desktop_file" <<'APPDESKTOP'
 [Desktop Entry]
 Name=Anvil
 GenericName=Gaming Console
 Comment=Launch Anvil Console Gaming Client
-Exec=env ANVIL_ROOT=/usr/local/share/anvil qs -p /usr/local/share/anvil/src/ui/AnvilDaemon.qml
+Exec=anvil
 Icon=/usr/local/share/anvil/assets/anvil-focus-flame.png
 Terminal=false
 Type=Application
