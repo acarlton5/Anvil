@@ -91,6 +91,42 @@ PanelWindow {
         brightnessLevel = val;
     }
 
+    property bool isUpdating: false
+    property string updateStatusText: "Check for Updates"
+
+    Process {
+        id: updaterProcess
+        command: ["sh", "-c", "sudo /usr/local/bin/hype update install 2>&1 || git -C /usr/local/share/anvil pull origin main 2>&1"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                isUpdating = false;
+                updateStatusText = "System Up to Date!";
+                console.log("[Anvil Update]: " + text);
+            }
+        }
+        stderr: StdioCollector {
+            onStreamFinished: {
+                if (text && text.trim().length > 0)
+                    console.log("[Anvil Update err]: " + text);
+            }
+        }
+        onExited: function(exitCode) {
+            isUpdating = false;
+            if (exitCode === 0) {
+                updateStatusText = "Update Complete!";
+            } else {
+                updateStatusText = "Check for Updates";
+            }
+        }
+    }
+
+    function triggerSystemUpdate() {
+        if (isUpdating) return;
+        isUpdating = true;
+        updateStatusText = "Updating System...";
+        updaterProcess.running = true;
+    }
+
     function setVolume(val) {
         if (audioSink && audioSink.audio) {
             audioSink.audio.volume = val;
@@ -212,6 +248,44 @@ PanelWindow {
                     anchors.fill: parent
                     onClicked: {
                         qamWindow.requestKeyboardToggle();
+                    }
+                }
+            }
+
+            // SteamOS-Style System Update Button
+            Rectangle {
+                width: parent.width
+                height: 44
+                radius: 6
+                color: isUpdating ? "#2e2518" : "#1a232f"
+                border.color: isUpdating ? "#ffb037" : "#2e3f52"
+
+                Row {
+                    anchors.centerIn: parent
+                    spacing: 10
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: isUpdating ? "⏳" : "⚡"
+                        color: isUpdating ? "#ffb037" : "#38bdf8"
+                        font.pixelSize: 18
+                    }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: updateStatusText
+                        color: isUpdating ? "#ffb037" : "#f5f5f2"
+                        font.pixelSize: 12
+                        font.bold: true
+                        font.letterSpacing: 0.8
+                    }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: !isUpdating
+                    onClicked: {
+                        triggerSystemUpdate();
                     }
                 }
             }
