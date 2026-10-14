@@ -8,6 +8,19 @@ meta_file="$state_dir/current.env"
 sdl_runtime_db_file="$state_dir/sdl-gamecontrollerdb.txt"
 watcher_pid_file="$state_dir/controller-overlay-watch.pid"
 anvil_root="${ANVIL_ROOT:-}"
+if [ -z "$anvil_root" ]; then
+    for candidate in \
+        "$HOME/.config/HypeShell/plugins/hypeAnvil" \
+        "$HOME/Projects/Projects/Anvil" \
+        "$HOME/DevBox/Projects/Anvil" \
+        "$HOME/Projects/Anvil" \
+        "/usr/local/share/anvil"; do
+        if [ -f "$candidate/src/ui/AnvilDaemon.qml" ]; then
+            anvil_root="$candidate"
+            break
+        fi
+    done
+fi
 sdl_controller_db="${ANVIL_SDL_CONTROLLER_DB:-}"
 
 usage() {

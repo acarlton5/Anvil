@@ -19,11 +19,11 @@ else
     export ANVIL_QS_BIN="qs"
 fi
 
-if command -v hypeshell-hyprland-session >/dev/null 2>&1; then
-    exec hypeshell-hyprland-session -- --config "$ANVIL_ROOT/session/hyprland-anvil.lua"
-elif command -v start-hyprland >/dev/null 2>&1; then
+if command -v start-hyprland >/dev/null 2>&1; then
     exec start-hyprland -- --config "$ANVIL_ROOT/session/hyprland-anvil.lua"
-else
+elif command -v Hyprland >/dev/null 2>&1; then
     exec Hyprland -c "$ANVIL_ROOT/session/hyprland-anvil.lua"
+elif command -v hypeshell-hyprland-session >/dev/null 2>&1; then
+    exec hypeshell-hyprland-session -- --config "$ANVIL_ROOT/session/hyprland-anvil.lua"
 fi
 

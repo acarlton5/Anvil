@@ -17,8 +17,9 @@ PanelWindow {
 
     anchors {
         top: true
-        horizontalCenter: true
     }
+
+    visible: isVisible
 
     implicitWidth: 320
     implicitHeight: 70
@@ -83,9 +84,9 @@ PanelWindow {
 
             Text {
                 anchors.verticalCenter: parent.verticalCenter
-                text: isMuted ? "󰝟" : (currentVolume > 0.6 ? "󰕾" : (currentVolume > 0.2 ? "󰖀" : "󰕿"))
+                text: isMuted ? "🔇" : (currentVolume > 0.5 ? "🔊" : "🔉")
                 color: isMuted ? "#ff5555" : "#ff6537"
-                font.pixelSize: 22
+                font.pixelSize: 20
             }
 
             Rectangle {

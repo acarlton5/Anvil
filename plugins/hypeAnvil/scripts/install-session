@@ -5,16 +5,21 @@ script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 plugin_dir="$(dirname -- "$script_dir")"
 repo_root="$(cd -- "$plugin_dir/../../.." && pwd)"
 
+script_repo="$(cd -- "$script_dir/.." && pwd)"
+
 anvil_root="${1:-${ANVIL_ROOT:-}}"
-if [ -z "$anvil_root" ]; then
+if [ -z "$anvil_root" ] || [ ! -f "$anvil_root/src/ui/AnvilDaemon.qml" ]; then
     for candidate in \
+        "$anvil_root" \
+        "$script_repo" \
         "$repo_root" \
+        "$HOME/.config/HypeShell/plugins/hypeAnvil" \
         "$HOME/Projects/Projects/Anvil" \
         "$HOME/DevBox/Projects/Anvil" \
         "$HOME/Projects/Anvil" \
         "/opt/anvil" \
         "/usr/local/share/anvil"; do
-        if [ -f "$candidate/src/ui/AnvilDaemon.qml" ]; then
+        if [ -n "$candidate" ] && [ -f "$candidate/src/ui/AnvilDaemon.qml" ]; then
             anvil_root="$candidate"
             break
         fi
