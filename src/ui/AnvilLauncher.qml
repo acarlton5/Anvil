@@ -42,6 +42,21 @@ PanelWindow {
     property int selectedGameIndex: 0
     property int selectedSetting: 0
     property int selectedCommunityItem: 0
+    property int selectedPowerIndex: 3
+
+    function triggerPowerAction(actionName) {
+        if (actionName === "Switch to Desktop") {
+            Quickshell.execDetached(["hyprctl", "dispatch", "exit"]);
+            Quickshell.execDetached(["systemctl", "--user", "stop", "anvil.service"]);
+            Qt.quit();
+        } else if (actionName === "Sleep") {
+            Quickshell.execDetached(["systemctl", "suspend"]);
+        } else if (actionName === "Restart") {
+            Quickshell.execDetached(["systemctl", "reboot"]);
+        } else if (actionName === "Shut Down") {
+            Quickshell.execDetached(["systemctl", "poweroff"]);
+        }
+    }
 
     function currentGame() {
         if (gameModel.count === 0)
@@ -359,6 +374,19 @@ PanelWindow {
                 cancelGameLaunch();
             return ;
         }
+        if (powerMenuActive) {
+            let options = ["Sleep", "Restart", "Shut Down", "Switch to Desktop"];
+            if (action === "up") {
+                selectedPowerIndex = Math.max(0, selectedPowerIndex - 1);
+            } else if (action === "down") {
+                selectedPowerIndex = Math.min(options.length - 1, selectedPowerIndex + 1);
+            } else if (action === "south") {
+                triggerPowerAction(options[selectedPowerIndex]);
+            } else if (action === "east" || action === "back" || action === "start") {
+                powerMenuActive = false;
+            }
+            return;
+        }
         if (action === "lt" || action === "lb")
             selectSection(activeSection - 1);
         else if (action === "rt" || action === "rb")
@@ -579,6 +607,18 @@ PanelWindow {
 
     }
 
+    Timer {
+        id: autoRescanTimer
+        interval: 3500
+        repeat: true
+        running: true
+        onTriggered: {
+            if (!pythonBridge.running) {
+                pythonBridge.running = true;
+            }
+        }
+    }
+
     Process {
         id: pythonBridge
 
@@ -589,12 +629,22 @@ PanelWindow {
             onStreamFinished: {
                 try {
                     let payload = text.trim();
-                    let status = payload.length > 0 ? JSON.parse(payload) : {
-                    };
+                    let status = payload.length > 0 ? JSON.parse(payload) : {};
                     let games = Array.isArray(status) ? status : (status.games || []);
-                    gameModel.clear();
-                    for (let i = 0; i < games.length; i++) gameModel.append(games[i])
-                    selectedGameIndex = 0;
+                    let newKeys = games.map(g => g.id || g.title).join("||");
+                    let currentKeys = [];
+                    for (let i = 0; i < gameModel.count; i++) {
+                        let item = gameModel.get(i);
+                        currentKeys.push(item.id || item.title);
+                    }
+                    if (newKeys !== currentKeys.join("||")) {
+                        gameModel.clear();
+                        for (let i = 0; i < games.length; i++) {
+                            gameModel.append(games[i]);
+                        }
+                        selectedGameIndex = Math.min(selectedGameIndex, Math.max(0, gameModel.count - 1));
+                    }
+
                     mediaStatusLabel = status.drives && status.drives.length > 0 ? status.drives.length + " media" : "No media";
                     if (status.mounted && status.mounted.length > 0)
                         mediaStatusLabel = "Mounted " + status.mounted.length;
@@ -3863,8 +3913,8 @@ PanelWindow {
                     width: parent.width
                     height: 50
                     radius: 8
-                    color: index === 3 ? "#1f2933" : "#121820"
-                    border.color: index === 3 ? ember : "#2c3743"
+                    color: selectedPowerIndex === index ? "#1f2933" : "#121820"
+                    border.color: selectedPowerIndex === index ? ember : "#2c3743"
 
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
@@ -3878,10 +3928,10 @@ PanelWindow {
 
                     MouseArea {
                         anchors.fill: parent
+                        hoverEnabled: true
+                        onEntered: selectedPowerIndex = index
                         onClicked: {
-                            if (modelData === "Switch to Desktop")
-                                Qt.quit();
-
+                            triggerPowerAction(modelData);
                         }
                     }
 

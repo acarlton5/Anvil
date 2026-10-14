@@ -58,7 +58,9 @@ hl.config({
         enabled = false
     },
     decoration = {
-        drop_shadow = false,
+        shadow = {
+            enabled = false
+        },
         blur = {
             enabled = false
         }
@@ -67,18 +69,19 @@ hl.config({
         disable_hyprland_logo = true,
         disable_splash_rendering = true,
         vrr = 1 -- Enable Variable Refresh Rate
+    },
+    bind = {
+        "SHIFT, TAB, exec, " .. overlay_toggle,
+        "SUPER SHIFT, O, exec, " .. overlay_toggle,
+        "SUPER SHIFT, Q, exit",
     }
 })
 
 -- Launch Anvil automatically with full D-Bus & systemd environment
+-- Exits Hyprland back to greeter when Anvil terminates or Switch to Desktop is pressed
 hl.on("hyprland.start", function()
     hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XDG_SESSION_DESKTOP")
     hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XDG_SESSION_DESKTOP")
-    hl.exec_cmd("env ANVIL_ROOT=" .. anvil_root .. " " .. qs_bin .. " -p " .. daemon)
+    hl.exec_cmd("env ANVIL_ROOT=" .. anvil_root .. " " .. qs_bin .. " -p " .. daemon .. "; hyprctl dispatch exit")
 end)
-
--- Overlay Hotkeys and Session Controls
-hl.bind("SHIFT + TAB", hl.dsp.exec_cmd(overlay_toggle), { locked = true, dont_inhibit = true })
-hl.bind("SUPER + SHIFT + O", hl.dsp.exec_cmd(overlay_toggle), { locked = true, dont_inhibit = true })
-hl.bind("SUPER + SHIFT + Q", hl.dsp.exec_cmd("hyprctl dispatch exit"))
 

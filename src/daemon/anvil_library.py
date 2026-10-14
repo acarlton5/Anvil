@@ -109,6 +109,10 @@ def _device_mountpoints(device):
 
 
 def _is_removable_device(device):
+    path = str(device.get("path") or "")
+    name = str(device.get("name") or "")
+    if "mmcblk" in path or "mmcblk" in name or path.startswith("/dev/sd"):
+        return True
     return (
         _truthy(device.get("rm"))
         or _truthy(device.get("hotplug"))
@@ -208,6 +212,24 @@ def find_game_drives():
             seen.add(p)
             drives.append({"games_path": p, "drive_root": root})
 
+    # 1. Parse active system mounts in /proc/mounts
+    if os.path.isfile("/proc/mounts"):
+        try:
+            with open("/proc/mounts", "r") as f:
+                for line in f:
+                    parts = line.split()
+                    if len(parts) >= 2:
+                        mountpoint = parts[1]
+                        if mountpoint.startswith(("/proc", "/sys", "/dev", "/run/user", "/run/systemd")):
+                            continue
+                        for sub in GAMES_DIR_NAMES:
+                            candidate = os.path.join(mountpoint, sub)
+                            if os.path.isdir(candidate):
+                                add_drive(candidate, mountpoint)
+        except Exception as e:
+            print(f"[anvil-library] Error reading /proc/mounts: {e}", file=sys.stderr)
+
+    # 2. Check well-known media roots
     for media_base in MEDIA_ROOTS:
         if not os.path.isdir(media_base):
             continue
@@ -993,8 +1015,16 @@ def current_release_info():
     return {"revision": "", "remote": "", "source": "unknown"}
 
 
+_last_update_check_time = 0
+_cached_update_result = None
+
 def check_for_updates():
     """Check the Anvil git remote for a newer main branch revision."""
+    global _last_update_check_time, _cached_update_result
+    now = time.time()
+    if _cached_update_result is not None and (now - _last_update_check_time) < 60:
+        return _cached_update_result
+
     info = current_release_info()
     current = info.get("revision", "")
     remote = info.get("remote", "")
@@ -1033,11 +1063,12 @@ def check_for_updates():
     if latest and latest != current:
         update["state"] = "available"
         update["available"] = True
-        update["label"] = "Update available"
     else:
         update["state"] = "current"
         update["label"] = "Up to date"
 
+    _last_update_check_time = now
+    _cached_update_result = update
     return update
 
 
