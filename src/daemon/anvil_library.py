@@ -29,8 +29,8 @@ import urllib.parse
 from pathlib import Path
 
 # Where to look for mounted game drives
-MEDIA_ROOTS = ["/run/media"]
-GAMES_DIR_NAME = "Games"
+MEDIA_ROOTS = ["/run/media", "/media", "/mnt"]
+GAMES_DIR_NAMES = ["Games", "games", "steamapps/common"]
 ANVIL_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_RUNNER = ANVIL_ROOT / "scripts" / "anvil-proton-run"
 RELEASE_FILE = ANVIL_ROOT / "release.json"
@@ -199,19 +199,45 @@ def shutil_which(command):
 
 
 def find_game_drives():
-    """Find all mounted drives that contain a Games/ directory."""
+    """Find all mounted drives that contain game directories (Games, steamapps/common, etc.)."""
     drives = []
-    for root in MEDIA_ROOTS:
-        if not os.path.isdir(root):
+    seen = set()
+
+    def add_drive(p, root):
+        if os.path.isdir(p) and p not in seen:
+            seen.add(p)
+            drives.append({"games_path": p, "drive_root": root})
+
+    for media_base in MEDIA_ROOTS:
+        if not os.path.isdir(media_base):
             continue
-        for user_dir in os.listdir(root):
-            user_path = os.path.join(root, user_dir)
-            if not os.path.isdir(user_path):
+        try:
+            entries = os.listdir(media_base)
+        except OSError:
+            continue
+        for entry in entries:
+            entry_path = os.path.join(media_base, entry)
+            if not os.path.isdir(entry_path):
                 continue
-            for drive in os.listdir(user_path):
-                games_path = os.path.join(user_path, drive, GAMES_DIR_NAME)
-                if os.path.isdir(games_path):
-                    drives.append(games_path)
+            # Check if entry_path is directly a mount point (e.g. /run/media/deck, /mnt/Star, /media/Star)
+            for sub in GAMES_DIR_NAMES:
+                candidate = os.path.join(entry_path, sub)
+                if os.path.isdir(candidate):
+                    add_drive(candidate, entry_path)
+            # Check one level deeper (e.g. /run/media/username/drive_label)
+            try:
+                sub_entries = os.listdir(entry_path)
+            except OSError:
+                continue
+            for sub_entry in sub_entries:
+                drive_path = os.path.join(entry_path, sub_entry)
+                if not os.path.isdir(drive_path):
+                    continue
+                for sub in GAMES_DIR_NAMES:
+                    candidate = os.path.join(drive_path, sub)
+                    if os.path.isdir(candidate):
+                        add_drive(candidate, drive_path)
+
     return drives
 
 
@@ -225,8 +251,17 @@ def discover_game_drives(auto_mount=False):
 def scan_games(drives):
     """Scan all game directories and return a list of game dicts."""
     games = []
-    for games_root in drives:
-        drive_root = os.path.dirname(games_root)  # e.g. /run/media/morph/44E1-4292
+    for drive_info in drives:
+        if isinstance(drive_info, dict):
+            games_root = drive_info["games_path"]
+            drive_root = drive_info["drive_root"]
+        else:
+            games_root = drive_info
+            drive_root = os.path.dirname(games_root)
+
+        if not os.path.isdir(games_root):
+            continue
+
         for game_folder in sorted(os.listdir(games_root)):
             game_path = os.path.join(games_root, game_folder)
             if not os.path.isdir(game_path):
@@ -1049,9 +1084,10 @@ def main():
         games = scan_games(drives)
 
     if args.status:
+        drive_paths = [d["games_path"] if isinstance(d, dict) else d for d in drives]
         print(json.dumps({
             "games": games,
-            "drives": drives,
+            "drives": drive_paths,
             "mounted": mounted,
             "update": check_for_updates() if args.check_updates or args.status else {},
         }))

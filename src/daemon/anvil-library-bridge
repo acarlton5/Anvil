@@ -18,9 +18,10 @@ import json
 def main():
     drives, mounted = discover_game_drives(auto_mount=True)
     games = scan_games(drives)
+    drive_paths = [d["games_path"] if isinstance(d, dict) else d for d in drives]
     print(json.dumps({
         "games": games,
-        "drives": drives,
+        "drives": drive_paths,
         "mounted": mounted,
         "update": check_for_updates(),
     }))
