@@ -432,12 +432,16 @@ run_session() {
     ANVIL_SDL_CONTROLLER_DB="$(sdl_controller_db_file)"
     export_sdl_controller_mappings
 
-    setsid bash -lc "$launch_command" &
+    local log_file="$state_dir/game.log"
+    echo "[anvil-game-session] Launching game command: $launch_command" > "$log_file"
+
+    setsid bash -lc "$launch_command" >> "$log_file" 2>&1 &
     local pid=$!
     printf '%s\n' "$pid" > "$pid_file"
 
     local status=0
     wait "$pid" || status=$?
+    echo "[anvil-game-session] Game process exited with status $status" >> "$log_file"
     while [ -n "$(session_env_pids "$session_id")" ]; do
         sleep 0.5
     done

@@ -320,54 +320,113 @@ PanelWindow {
 
             // Session / Power Management
             Text {
-                text: "SESSION"
+                text: "POWER & SESSION"
                 color: "#a0afbf"
                 font.pixelSize: 11
                 font.bold: true
                 font.letterSpacing: 1.0
             }
 
-            Rectangle {
+            Grid {
                 width: parent.width
-                height: 44
-                radius: 6
-                color: "#212d3b"
-                border.color: "#3d4e61"
+                columns: 2
+                spacing: 8
 
-                Text {
-                    anchors.centerIn: parent
-                    text: "Switch to Desktop (Exit to Login)"
-                    color: "#f5f5f2"
-                    font.pixelSize: 12
-                    font.bold: true
-                }
+                // Switch to Desktop
+                Rectangle {
+                    width: (parent.width - 8) / 2
+                    height: 42
+                    radius: 6
+                    color: "#212d3b"
+                    border.color: "#3d4e61"
 
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        Quickshell.execDetached(["hyprctl", "dispatch", "exit"]);
-                        Qt.quit();
+                    Text {
+                        anchors.centerIn: parent
+                        text: "Desktop Mode"
+                        color: "#f5f5f2"
+                        font.pixelSize: 12
+                        font.bold: true
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            Quickshell.execDetached(["hyprctl", "dispatch", "exit"]);
+                            Qt.quit();
+                        }
                     }
                 }
-            }
 
-            Rectangle {
-                width: parent.width
-                height: 44
-                radius: 6
-                color: "#161e27"
+                // Sleep
+                Rectangle {
+                    width: (parent.width - 8) / 2
+                    height: 42
+                    radius: 6
+                    color: "#161e27"
+                    border.color: "#283442"
 
-                Text {
-                    anchors.centerIn: parent
-                    text: "Sleep"
-                    color: "#a0afbf"
-                    font.pixelSize: 12
-                    font.bold: true
+                    Text {
+                        anchors.centerIn: parent
+                        text: "Sleep"
+                        color: "#a0afbf"
+                        font.pixelSize: 12
+                        font.bold: true
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            Quickshell.execDetached(["sh", "-c", "loginctl suspend 2>/dev/null || systemctl suspend"]);
+                        }
+                    }
                 }
 
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: Quickshell.execDetached(["systemctl", "suspend"])
+                // Restart System
+                Rectangle {
+                    width: (parent.width - 8) / 2
+                    height: 42
+                    radius: 6
+                    color: "#161e27"
+                    border.color: "#283442"
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "Restart System"
+                        color: "#a0afbf"
+                        font.pixelSize: 12
+                        font.bold: true
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            Quickshell.execDetached(["sh", "-c", "loginctl reboot 2>/dev/null || systemctl reboot"]);
+                        }
+                    }
+                }
+
+                // Shut Down
+                Rectangle {
+                    width: (parent.width - 8) / 2
+                    height: 42
+                    radius: 6
+                    color: "#281519"
+                    border.color: "#522228"
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "Shut Down"
+                        color: "#ff7070"
+                        font.pixelSize: 12
+                        font.bold: true
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            Quickshell.execDetached(["sh", "-c", "loginctl poweroff 2>/dev/null || systemctl poweroff"]);
+                        }
+                    }
                 }
             }
         }

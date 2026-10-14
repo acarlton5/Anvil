@@ -183,6 +183,24 @@ ShellRoot {
     Process {
         id: gameProcess
 
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text && text.trim().length > 0)
+                    console.log("[Anvil Game stdout]: " + text);
+            }
+        }
+
+        stderr: StdioCollector {
+            onStreamFinished: {
+                if (text && text.trim().length > 0)
+                    console.log("[Anvil Game stderr]: " + text);
+            }
+        }
+
+        onExited: function(exitCode) {
+            console.log("[Anvil Game Process exited with code]: " + exitCode);
+        }
+
         onRunningChanged: {
             if (!running) {
                 hideAnvilTimer.stop();

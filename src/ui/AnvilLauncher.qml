@@ -50,11 +50,11 @@ PanelWindow {
             Quickshell.execDetached(["systemctl", "--user", "stop", "anvil.service"]);
             Qt.quit();
         } else if (actionName === "Sleep") {
-            Quickshell.execDetached(["systemctl", "suspend"]);
+            Quickshell.execDetached(["sh", "-c", "loginctl suspend 2>/dev/null || systemctl suspend"]);
         } else if (actionName === "Restart") {
-            Quickshell.execDetached(["systemctl", "reboot"]);
+            Quickshell.execDetached(["sh", "-c", "loginctl reboot 2>/dev/null || systemctl reboot"]);
         } else if (actionName === "Shut Down") {
-            Quickshell.execDetached(["systemctl", "poweroff"]);
+            Quickshell.execDetached(["sh", "-c", "loginctl poweroff 2>/dev/null || systemctl poweroff"]);
         }
     }
 
