@@ -72,27 +72,27 @@ hl.config({
         disable_hyprland_logo = true,
         disable_splash_rendering = true,
         vrr = 1 -- Enable Variable Refresh Rate
-    },
-    bindl = {
-        ", XF86AudioRaiseVolume, exec, wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+",
-        ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-",
-        ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
-        ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle",
-        ", XF86MonBrightnessUp, exec, brightnessctl set 5%+",
-        ", XF86MonBrightnessDown, exec, brightnessctl set 5%-",
-    },
-    bind = {
-        "SHIFT, TAB, exec, " .. overlay_toggle,
-        "SUPER SHIFT, O, exec, " .. overlay_toggle,
-        "SUPER, SPACE, exec, " .. quickaccess_toggle,
-        ", XF86Shop, exec, " .. quickaccess_toggle,
-        ", XF86Search, exec, " .. quickaccess_toggle,
-        "SUPER, Q, exec, " .. quickaccess_toggle,
-        "SUPER, K, exec, " .. keyboard_toggle,
-        "SUPER, X, exec, " .. keyboard_toggle,
-        "SUPER SHIFT, Q, exit",
     }
 })
+
+-- Audio, Brightness, and Overlay Hotkeys
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+"), { repeating = true, locked = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"), { repeating = true, locked = true })
+hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
+hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), { locked = true })
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl set 5%+"), { repeating = true, locked = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"), { repeating = true, locked = true })
+
+-- Quick Access Menu, On-Screen Keyboard, and Overlay Toggles
+hl.bind("SHIFT + TAB", hl.dsp.exec_cmd(overlay_toggle), { locked = true, dont_inhibit = true })
+hl.bind("SUPER + SHIFT + O", hl.dsp.exec_cmd(overlay_toggle), { locked = true, dont_inhibit = true })
+hl.bind("SUPER + SPACE", hl.dsp.exec_cmd(quickaccess_toggle), { locked = true, dont_inhibit = true })
+hl.bind("XF86Shop", hl.dsp.exec_cmd(quickaccess_toggle), { locked = true, dont_inhibit = true })
+hl.bind("XF86Search", hl.dsp.exec_cmd(quickaccess_toggle), { locked = true, dont_inhibit = true })
+hl.bind("SUPER + Q", hl.dsp.exec_cmd(quickaccess_toggle), { locked = true, dont_inhibit = true })
+hl.bind("SUPER + K", hl.dsp.exec_cmd(keyboard_toggle), { locked = true, dont_inhibit = true })
+hl.bind("SUPER + X", hl.dsp.exec_cmd(keyboard_toggle), { locked = true, dont_inhibit = true })
+hl.bind("SUPER + SHIFT + Q", hl.dsp.exit())
 
 -- Launch Anvil automatically with full D-Bus & systemd environment
 -- Exits Hyprland back to greeter when Anvil terminates or Switch to Desktop is pressed

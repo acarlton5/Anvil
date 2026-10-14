@@ -5,9 +5,10 @@ script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 export ANVIL_ROOT="${ANVIL_ROOT:-$(dirname -- "$script_dir")}"
 
 # Standard Wayland session environment
-export XDG_CURRENT_DESKTOP="Hyprland:Anvil"
-export XDG_SESSION_DESKTOP="anvil"
+export XDG_CURRENT_DESKTOP="Hyprland"
+export XDG_SESSION_DESKTOP="Hyprland"
 export XDG_SESSION_TYPE="wayland"
+export HYPRLAND_CONFIG="$ANVIL_ROOT/session/hyprland-anvil.lua"
 export PATH="/usr/local/bin:/usr/bin:/bin:$PATH"
 
 if command -v qs >/dev/null 2>&1; then
