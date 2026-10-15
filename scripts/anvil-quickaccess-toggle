@@ -4,11 +4,11 @@ set -euo pipefail
 anvil_root="${1:-${ANVIL_ROOT:-}}"
 if [ -z "$anvil_root" ]; then
     for candidate in \
+        "/usr/local/share/anvil" \
         "$HOME/.config/HypeShell/plugins/hypeAnvil" \
         "$HOME/Projects/Projects/Anvil" \
         "$HOME/DevBox/Projects/Anvil" \
-        "$HOME/Projects/Anvil" \
-        "/usr/local/share/anvil"; do
+        "$HOME/Projects/Anvil"; do
         if [ -f "$candidate/src/ui/AnvilDaemon.qml" ]; then
             anvil_root="$candidate"
             break
