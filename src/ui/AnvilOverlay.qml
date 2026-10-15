@@ -331,8 +331,12 @@ PanelWindow {
 
     color: "transparent"
     screen: modelData
-    implicitWidth: 1920
-    implicitHeight: 1080
+    anchors {
+        top: true
+        bottom: true
+        left: true
+        right: true
+    }
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.exclusiveZone: -1
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand

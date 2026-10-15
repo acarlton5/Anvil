@@ -22,4 +22,16 @@ if [ -z "$anvil_root" ] || [ ! -f "$anvil_root/src/ui/AnvilDaemon.qml" ]; then
 fi
 
 daemon="$anvil_root/src/ui/AnvilDaemon.qml"
-qs ipc --any-display -p "$daemon" call anvil toggleQuickAccess >/dev/null 2>&1 || true
+if qs ipc --any-display -p "$daemon" call anvil toggleQuickAccess >/dev/null 2>&1; then
+    exit 0
+fi
+
+for lock in /run/user/1000/quickshell/by-id/*/instance.lock; do
+    if [ -f "$lock" ] && grep -q "AnvilDaemon" "$lock" 2>/dev/null; then
+        inst_dir="$(dirname "$lock")"
+        inst_id="$(basename "$inst_dir")"
+        if qs ipc --any-display -i "$inst_id" call anvil toggleQuickAccess >/dev/null 2>&1; then
+            exit 0
+        fi
+    fi
+done

@@ -45,11 +45,7 @@ ShellRoot {
         if (!action || action.length === 0)
             return ;
         if (action === "guide") {
-            if (gameProcess.running) {
-                root.overlayActive = !root.overlayActive;
-            } else {
-                root.overlayActive = false;
-            }
+            root.overlayActive = !root.overlayActive;
             return ;
         }
         if (action === "quickaccess") {
@@ -244,11 +240,7 @@ ShellRoot {
 
     IpcHandler {
         function toggle() {
-            if (gameProcess.running) {
-                root.overlayActive = !root.overlayActive;
-            } else {
-                root.overlayActive = false;
-            }
+            root.overlayActive = !root.overlayActive;
         }
 
         function toggleQuickAccess() {

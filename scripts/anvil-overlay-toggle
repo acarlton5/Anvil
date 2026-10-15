@@ -27,4 +27,15 @@ if qs ipc --any-display -p "$daemon" call anvil toggle >/dev/null 2>&1; then
     exit 0
 fi
 
+# Fallback: find active quickshell instance running AnvilDaemon
+for lock in /run/user/1000/quickshell/by-id/*/instance.lock; do
+    if [ -f "$lock" ] && grep -q "AnvilDaemon" "$lock" 2>/dev/null; then
+        inst_dir="$(dirname "$lock")"
+        inst_id="$(basename "$inst_dir")"
+        if qs ipc --any-display -i "$inst_id" call anvil toggle >/dev/null 2>&1; then
+            exit 0
+        fi
+    fi
+done
+
 exec env ANVIL_ROOT="$anvil_root" ANVIL_OVERLAY_TEST=1 qs -p "$daemon"
