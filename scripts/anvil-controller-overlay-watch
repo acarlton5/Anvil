@@ -117,37 +117,37 @@ def quickaccess_codes():
     return codes
 
 
+def run_toggle(script_name, anvil_root):
+    env = os.environ.copy()
+    if "XDG_RUNTIME_DIR" not in env:
+        env["XDG_RUNTIME_DIR"] = f"/run/user/{os.getuid()}"
+    if "WAYLAND_DISPLAY" not in env:
+        env["WAYLAND_DISPLAY"] = "wayland-1"
+    toggle = os.path.join(anvil_root, "scripts", script_name)
+    try:
+        proc = subprocess.Popen(
+            [toggle, anvil_root],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            env=env,
+            start_new_session=True,
+        )
+        proc.wait(timeout=0.2)
+    except Exception:
+        pass
+
+
 def toggle_overlay(anvil_root):
-    toggle = os.path.join(anvil_root, "scripts", "anvil-overlay-toggle")
-    subprocess.Popen(
-        [toggle, anvil_root],
-        stdin=subprocess.DEVNULL,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        start_new_session=True,
-    )
+    run_toggle("anvil-overlay-toggle", anvil_root)
 
 
 def toggle_quickaccess(anvil_root):
-    toggle = os.path.join(anvil_root, "scripts", "anvil-quickaccess-toggle")
-    subprocess.Popen(
-        [toggle, anvil_root],
-        stdin=subprocess.DEVNULL,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        start_new_session=True,
-    )
+    run_toggle("anvil-quickaccess-toggle", anvil_root)
 
 
 def toggle_keyboard(anvil_root):
-    toggle = os.path.join(anvil_root, "scripts", "anvil-keyboard-toggle")
-    subprocess.Popen(
-        [toggle, anvil_root],
-        stdin=subprocess.DEVNULL,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        start_new_session=True,
-    )
+    run_toggle("anvil-keyboard-toggle", anvil_root)
 
 
 def main():
