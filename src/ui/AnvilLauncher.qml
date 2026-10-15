@@ -30,7 +30,7 @@ PanelWindow {
     readonly property color fg: AnvilTheme.surfaceText
     readonly property color muted: AnvilTheme.surfaceVariantText
     readonly property color ember: AnvilTheme.primary
-    readonly property color emberLight: AnvilTheme.secondary"
+    readonly property color emberLight: AnvilTheme.secondary
     readonly property color forgeGold: "#d9ad5f"
     readonly property color relayBlue: "#7aa8ff"
     readonly property color green: "#65d797"
