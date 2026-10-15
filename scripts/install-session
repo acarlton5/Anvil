@@ -92,6 +92,8 @@ stage_file "$anvil_root/scripts/anvil-quickaccess-toggle" scripts/anvil-quickacc
 quickaccess_toggle_src="$STAGED_RESULT"
 stage_file "$anvil_root/scripts/anvil-keyboard-toggle" scripts/anvil-keyboard-toggle
 keyboard_toggle_src="$STAGED_RESULT"
+stage_file "$anvil_root/scripts/anvil-audio-control" scripts/anvil-audio-control
+audio_control_src="$STAGED_RESULT"
 stage_file "$anvil_root/session/hyprland-anvil.lua" session/hyprland-anvil.lua
 hypr_src="$STAGED_RESULT"
 stage_file "$anvil_root/src/ui/AnvilDaemon.qml" src/ui/AnvilDaemon.qml
@@ -141,6 +143,7 @@ sudo install -D -m 755 "$switch_desktop_src" /usr/local/bin/anvil-switch-desktop
 sudo install -D -m 755 "$switch_gaming_src" /usr/local/bin/anvil-switch-gaming
 sudo install -D -m 755 "$quickaccess_toggle_src" /usr/local/bin/anvil-quickaccess-toggle
 sudo install -D -m 755 "$keyboard_toggle_src" /usr/local/bin/anvil-keyboard-toggle
+sudo install -D -m 755 "$audio_control_src" /usr/local/bin/anvil-audio-control
 sudo install -D -m 755 "$session_src" /usr/local/share/anvil/session/anvil-session.sh
 sudo install -D -m 755 "$game_session_src" /usr/local/share/anvil/scripts/anvil-game-session
 sudo install -D -m 755 "$achievement_claim_src" /usr/local/share/anvil/scripts/anvil-achievement-claim
@@ -153,6 +156,7 @@ sudo install -D -m 755 "$switch_desktop_src" /usr/local/share/anvil/scripts/anvi
 sudo install -D -m 755 "$switch_gaming_src" /usr/local/share/anvil/scripts/anvil-switch-gaming
 sudo install -D -m 755 "$quickaccess_toggle_src" /usr/local/share/anvil/scripts/anvil-quickaccess-toggle
 sudo install -D -m 755 "$keyboard_toggle_src" /usr/local/share/anvil/scripts/anvil-keyboard-toggle
+sudo install -D -m 755 "$audio_control_src" /usr/local/share/anvil/scripts/anvil-audio-control
 sudo install -D -m 644 "$hypr_src" /usr/local/share/anvil/session/hyprland-anvil.lua
 sudo install -D -m 644 "$daemon_qml_src" /usr/local/share/anvil/src/ui/AnvilDaemon.qml
 sudo install -D -m 644 "$launcher_qml_src" /usr/local/share/anvil/src/ui/AnvilLauncher.qml
