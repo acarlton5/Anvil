@@ -84,6 +84,8 @@ stage_file "$anvil_root/scripts/anvil-controller-nav-watch" scripts/anvil-contro
 controller_nav_watch_src="$STAGED_RESULT"
 stage_file "$anvil_root/scripts/anvil-overlay-toggle" scripts/anvil-overlay-toggle
 overlay_toggle_src="$STAGED_RESULT"
+stage_file "$anvil_root/scripts/anvil-switch-desktop" scripts/anvil-switch-desktop
+switch_desktop_src="$STAGED_RESULT"
 stage_file "$anvil_root/scripts/anvil-quickaccess-toggle" scripts/anvil-quickaccess-toggle
 quickaccess_toggle_src="$STAGED_RESULT"
 stage_file "$anvil_root/scripts/anvil-keyboard-toggle" scripts/anvil-keyboard-toggle
@@ -132,6 +134,7 @@ sudo install -D -m 755 "$input_inspect_src" /usr/local/bin/anvil-input-inspect
 sudo install -D -m 755 "$controller_overlay_watch_src" /usr/local/bin/anvil-controller-overlay-watch
 sudo install -D -m 755 "$controller_nav_watch_src" /usr/local/bin/anvil-controller-nav-watch
 sudo install -D -m 755 "$overlay_toggle_src" /usr/local/bin/anvil-overlay-toggle
+sudo install -D -m 755 "$switch_desktop_src" /usr/local/bin/anvil-switch-desktop
 sudo install -D -m 755 "$quickaccess_toggle_src" /usr/local/bin/anvil-quickaccess-toggle
 sudo install -D -m 755 "$keyboard_toggle_src" /usr/local/bin/anvil-keyboard-toggle
 sudo install -D -m 755 "$session_src" /usr/local/share/anvil/session/anvil-session.sh
@@ -142,6 +145,7 @@ sudo install -D -m 755 "$input_inspect_src" /usr/local/share/anvil/scripts/anvil
 sudo install -D -m 755 "$controller_overlay_watch_src" /usr/local/share/anvil/scripts/anvil-controller-overlay-watch
 sudo install -D -m 755 "$controller_nav_watch_src" /usr/local/share/anvil/scripts/anvil-controller-nav-watch
 sudo install -D -m 755 "$overlay_toggle_src" /usr/local/share/anvil/scripts/anvil-overlay-toggle
+sudo install -D -m 755 "$switch_desktop_src" /usr/local/share/anvil/scripts/anvil-switch-desktop
 sudo install -D -m 755 "$quickaccess_toggle_src" /usr/local/share/anvil/scripts/anvil-quickaccess-toggle
 sudo install -D -m 755 "$keyboard_toggle_src" /usr/local/share/anvil/scripts/anvil-keyboard-toggle
 sudo install -D -m 644 "$hypr_src" /usr/local/share/anvil/session/hyprland-anvil.lua

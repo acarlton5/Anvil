@@ -425,7 +425,7 @@ PanelWindow {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            Quickshell.execDetached(["hyprctl", "dispatch", "exit"]);
+                            Quickshell.execDetached(["sh", "-c", "command -v anvil-switch-desktop >/dev/null 2>&1 && anvil-switch-desktop || hyprctl dispatch exit"]);
                             Qt.quit();
                         }
                     }

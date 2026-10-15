@@ -46,7 +46,7 @@ PanelWindow {
 
     function triggerPowerAction(actionName) {
         if (actionName === "Switch to Desktop") {
-            Quickshell.execDetached(["hyprctl", "dispatch", "exit"]);
+            Quickshell.execDetached(["sh", "-c", "command -v anvil-switch-desktop >/dev/null 2>&1 && anvil-switch-desktop || hyprctl dispatch exit"]);
             Quickshell.execDetached(["systemctl", "--user", "stop", "anvil.service"]);
             Qt.quit();
         } else if (actionName === "Sleep") {
