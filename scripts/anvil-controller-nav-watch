@@ -25,6 +25,10 @@ KEY_ACTIONS = {
     315: "start",
     316: "guide",
     172: "guide",
+    544: "up",
+    545: "down",
+    546: "left",
+    547: "right",
 }
 TRIGGER_SHOULDER_IDS = {"0c12:1e1a"}
 
@@ -155,16 +159,16 @@ def axis_action(code, value, axis_state):
         else:
             axis_state.pop(code, None)
     elif code == ABS_X:
-        if value < AXIS_LOW:
+        if value < -12000 or (0 < value < AXIS_LOW):
             action = "left"
-        elif value > AXIS_HIGH:
+        elif value > 12000:
             action = "right"
         else:
             axis_state.pop(code, None)
     elif code == ABS_Y:
-        if value < AXIS_LOW:
+        if value < -12000 or (0 < value < AXIS_LOW):
             action = "up"
-        elif value > AXIS_HIGH:
+        elif value > 12000:
             action = "down"
         else:
             axis_state.pop(code, None)
