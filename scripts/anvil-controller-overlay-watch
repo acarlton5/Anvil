@@ -198,10 +198,6 @@ def main():
             while True:
                 readable, _, _ = select.select(fds, [], [], 1.5)
                 if not readable:
-                    current_paths = set(joystick_events(controller_ids))
-                    current_hid = set(deck_hidraw_devices())
-                    if current_paths != set(paths) or current_hid != set(hid_paths):
-                        break
                     continue
 
                 for fd in readable:
