@@ -260,12 +260,13 @@ PanelWindow {
 
     function controllerIcon() {
         let family = String(controllerFamily || "xbox").toLowerCase();
+        let prefix = anvilRoot.startsWith("file://") ? "" : "file://";
         if (family === "playstation")
-            return anvilRoot + "/assets/controllercons/solid/ps5.svg";
+            return prefix + anvilRoot + "/assets/controllercons/solid/ps5.svg";
         if (family === "nintendo")
-            return anvilRoot + "/assets/controllercons/solid/switch-pro.svg";
+            return prefix + anvilRoot + "/assets/controllercons/solid/switch-pro.svg";
         if (family === "xbox")
-            return anvilRoot + "/assets/controllercons/solid/xbox-series-x.svg";
+            return prefix + anvilRoot + "/assets/controllercons/solid/xbox-series-x.svg";
         return "";
     }
 
@@ -1438,7 +1439,7 @@ PanelWindow {
                 anchors.bottomMargin: -52
                 width: 430
                 height: 190
-                source: anvilRoot + "/assets/anvil-focus-flame.png"
+                source: (anvilRoot.startsWith("file://") ? "" : "file://") + anvilRoot + "/assets/anvil-focus-flame.png"
                 fillMode: Image.PreserveAspectFit
                 opacity: 0.48
                 visible: false
@@ -1507,7 +1508,7 @@ PanelWindow {
                         anchors.verticalCenterOffset: expanded ? -8 : -4
                         width: cardSurface.width + (expanded ? 78 : 54)
                         height: cardSurface.height + (expanded ? 82 : 62)
-                        source: anvilRoot + "/assets/anvil-focus-flame.png"
+                        source: (anvilRoot.startsWith("file://") ? "" : "file://") + anvilRoot + "/assets/anvil-focus-flame.png"
                         fillMode: Image.PreserveAspectFit
                         opacity: 0.46
                         visible: focused

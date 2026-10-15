@@ -160,7 +160,7 @@ PanelWindow {
                     font.letterSpacing: 1.2
                 }
 
-                Item { Layout.fillWidth: true; width: parent.width - 240 }
+                Item { width: Math.max(10, parent.width - 240) }
 
                 Text {
                     anchors.verticalCenter: parent.verticalCenter

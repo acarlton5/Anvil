@@ -194,12 +194,13 @@ PanelWindow {
 
     function controllerIcon() {
         let family = String(controllerFamily || "xbox").toLowerCase();
+        let prefix = anvilRoot.startsWith("file://") ? "" : "file://";
         if (family === "playstation")
-            return anvilRoot + "/assets/controllercons/solid/ps5.svg";
+            return prefix + anvilRoot + "/assets/controllercons/solid/ps5.svg";
         if (family === "nintendo")
-            return anvilRoot + "/assets/controllercons/solid/switch-pro.svg";
+            return prefix + anvilRoot + "/assets/controllercons/solid/switch-pro.svg";
         if (family === "xbox")
-            return anvilRoot + "/assets/controllercons/solid/xbox-series-x.svg";
+            return prefix + anvilRoot + "/assets/controllercons/solid/xbox-series-x.svg";
         return "";
     }
 

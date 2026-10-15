@@ -1,7 +1,7 @@
 -- Minimal Anvil Wayland Session
 
 local home = os.getenv("HOME") or ""
-local anvil_root = os.getenv("ANVIL_ROOT") or (home .. "/Projects/Projects/Anvil")
+local anvil_root = os.getenv("ANVIL_ROOT") or "/usr/local/share/anvil"
 local daemon = anvil_root .. "/src/ui/AnvilDaemon.qml"
 local overlay_toggle = anvil_root .. "/scripts/anvil-overlay-toggle " .. anvil_root
 local qs_bin = os.getenv("ANVIL_QS_BIN") or "qs"
