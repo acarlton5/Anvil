@@ -13,8 +13,14 @@ PanelWindow {
     property int controllerActionSerial: 0
     property string controllerFamily: "xbox"
     property string controllerName: "Controller"
-    readonly property string localRoot: decodeURIComponent(Qt.resolvedUrl("../../").toString()).replace("file://", "").replace(/\/$/, "")
-    readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || localRoot
+    readonly property string localRoot: {
+        let envRoot = Quickshell.env("ANVIL_ROOT");
+        if (envRoot && envRoot.length > 0) return envRoot;
+        let resolved = decodeURIComponent(Qt.resolvedUrl("../../").toString()).replace("file://", "").replace(/\/$/, "");
+        if (resolved && !resolved.startsWith("qrc:")) return resolved;
+        return "/usr/local/share/anvil";
+    }
+    readonly property string anvilRoot: localRoot
     readonly property string bridgePath: anvilRoot + "/src/daemon/anvil-library-bridge"
     readonly property string daemonPath: anvilRoot + "/src/ui/AnvilDaemon.qml"
     readonly property color bg: "#040608"
