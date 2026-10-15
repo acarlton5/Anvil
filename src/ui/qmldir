@@ -1,1 +1,8 @@
+module Anvil
 singleton AnvilTheme 1.0 AnvilTheme.qml
+AnvilDaemon 1.0 AnvilDaemon.qml
+AnvilLauncher 1.0 AnvilLauncher.qml
+AnvilOverlay 1.0 AnvilOverlay.qml
+AnvilQuickAccess 1.0 AnvilQuickAccess.qml
+AnvilKeyboard 1.0 AnvilKeyboard.qml
+AnvilVolumeOSD 1.0 AnvilVolumeOSD.qml
