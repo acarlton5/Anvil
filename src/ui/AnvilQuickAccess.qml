@@ -208,8 +208,8 @@ PanelWindow {
     Rectangle {
         id: panel
         anchors.fill: parent
-        color: "AnvilTheme.panelBg"
-        border.color: "AnvilTheme.outline"
+        color: AnvilTheme.panelBg
+        border.color: AnvilTheme.outline
         border.width: 1
 
         Column {
@@ -226,7 +226,7 @@ PanelWindow {
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     text: "QUICK ACCESS"
-                    color: "AnvilTheme.primary"
+                    color: AnvilTheme.primary
                     font.pixelSize: 15
                     font.bold: true
                     font.letterSpacing: 1.2
@@ -237,7 +237,7 @@ PanelWindow {
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     text: currentTime
-                    color: "AnvilTheme.surfaceVariantText"
+                    color: AnvilTheme.surfaceVariantText
                     font.pixelSize: 13
                 }
 
@@ -247,12 +247,12 @@ PanelWindow {
                     height: 22
                     radius: 4
                     color: "#1c2633"
-                    border.color: isCharging ? "#4cd964" : (batteryPercent <= 20 ? "#ff3b30" : "AnvilTheme.primary")
+                    border.color: isCharging ? "#4cd964" : (batteryPercent <= 20 ? "#ff3b30" : AnvilTheme.primary)
 
                     Text {
                         anchors.centerIn: parent
                         text: batteryPercent + "%"
-                        color: "AnvilTheme.surfaceText"
+                        color: AnvilTheme.surfaceText
                         font.pixelSize: 11
                         font.bold: true
                     }
@@ -268,7 +268,7 @@ PanelWindow {
                     Text {
                         anchors.centerIn: parent
                         text: "✕"
-                        color: "AnvilTheme.surfaceVariantText"
+                        color: AnvilTheme.surfaceVariantText
                         font.pixelSize: 13
                         font.bold: true
                     }
@@ -292,7 +292,7 @@ PanelWindow {
                 height: 52
                 radius: 8
                 color: "#1c2734"
-                border.color: "AnvilTheme.primary"
+                border.color: AnvilTheme.primary
                 border.width: 1.5
 
                 Row {
@@ -302,14 +302,14 @@ PanelWindow {
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         text: "⌨"
-                        color: "AnvilTheme.primary"
+                        color: AnvilTheme.primary
                         font.pixelSize: 22
                     }
 
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         text: "TOGGLE VIRTUAL KEYBOARD"
-                        color: "AnvilTheme.surfaceText"
+                        color: AnvilTheme.surfaceText
                         font.pixelSize: 13
                         font.bold: true
                         font.letterSpacing: 1.0
@@ -330,7 +330,7 @@ PanelWindow {
                 height: 44
                 radius: 6
                 color: isUpdating ? "#2e2518" : "#1a232f"
-                border.color: isUpdating ? "AnvilTheme.secondary" : "#2e3f52"
+                border.color: isUpdating ? AnvilTheme.secondary : "#2e3f52"
 
                 Row {
                     anchors.centerIn: parent
@@ -339,14 +339,14 @@ PanelWindow {
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         text: isUpdating ? "⏳" : "⚡"
-                        color: isUpdating ? "AnvilTheme.secondary" : "#38bdf8"
+                        color: isUpdating ? AnvilTheme.secondary : "#38bdf8"
                         font.pixelSize: 18
                     }
 
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         text: updateStatusText
-                        color: isUpdating ? "AnvilTheme.secondary" : "AnvilTheme.surfaceText"
+                        color: isUpdating ? AnvilTheme.secondary : AnvilTheme.surfaceText
                         font.pixelSize: 12
                         font.bold: true
                         font.letterSpacing: 0.8
@@ -371,7 +371,7 @@ PanelWindow {
                     width: parent.width
                     Text {
                         text: "AUDIO OUTPUT"
-                        color: "AnvilTheme.surfaceVariantText"
+                        color: AnvilTheme.surfaceVariantText
                         font.pixelSize: 11
                         font.bold: true
                         font.letterSpacing: 1.0
@@ -379,7 +379,7 @@ PanelWindow {
                     Item { width: Math.max(10, parent.width - 170); height: 1 }
                     Text {
                         text: currentOutputVol + "%"
-                        color: isOutputMuted ? "#ff4d4d" : "AnvilTheme.primary"
+                        color: isOutputMuted ? "#ff4d4d" : AnvilTheme.primary
                         font.pixelSize: 12
                         font.bold: true
                     }
@@ -390,8 +390,8 @@ PanelWindow {
                     width: parent.width
                     height: 36
                     radius: 6
-                    color: "AnvilTheme.panelDeep"
-                    border.color: "AnvilTheme.outline"
+                    color: AnvilTheme.panelDeep
+                    border.color: AnvilTheme.outline
 
                     Row {
                         anchors.fill: parent
@@ -409,7 +409,7 @@ PanelWindow {
                             anchors.verticalCenter: parent.verticalCenter
                             width: parent.width - 70
                             text: currentOutputDevice
-                            color: "AnvilTheme.surfaceText"
+                            color: AnvilTheme.surfaceText
                             font.pixelSize: 11
                             font.bold: true
                             elide: Text.ElideRight
@@ -420,13 +420,13 @@ PanelWindow {
                             width: 50
                             height: 22
                             radius: 4
-                            color: "AnvilTheme.panelCard"
-                            border.color: "AnvilTheme.outline"
+                            color: AnvilTheme.panelCard
+                            border.color: AnvilTheme.outline
 
                             Text {
                                 anchors.centerIn: parent
                                 text: "Cycle"
-                                color: "AnvilTheme.secondary"
+                                color: AnvilTheme.secondary
                                 font.pixelSize: 10
                                 font.bold: true
                             }
@@ -446,7 +446,7 @@ PanelWindow {
                     width: parent.width
                     height: 32
                     radius: 6
-                    color: "AnvilTheme.panelDeep"
+                    color: AnvilTheme.panelDeep
 
                     Rectangle {
                         anchors.left: parent.left
@@ -454,7 +454,7 @@ PanelWindow {
                         anchors.bottom: parent.bottom
                         width: Math.max(0, Math.min(parent.width, parent.width * (currentOutputVol / 100.0)))
                         radius: 6
-                        color: isOutputMuted ? "#666666" : "AnvilTheme.primary"
+                        color: isOutputMuted ? "#666666" : AnvilTheme.primary
                     }
 
                     MouseArea {
@@ -476,7 +476,7 @@ PanelWindow {
                     width: parent.width
                     Text {
                         text: "MICROPHONE"
-                        color: "AnvilTheme.surfaceVariantText"
+                        color: AnvilTheme.surfaceVariantText
                         font.pixelSize: 11
                         font.bold: true
                         font.letterSpacing: 1.0
@@ -495,8 +495,8 @@ PanelWindow {
                     width: parent.width
                     height: 36
                     radius: 6
-                    color: "AnvilTheme.panelDeep"
-                    border.color: "AnvilTheme.outline"
+                    color: AnvilTheme.panelDeep
+                    border.color: AnvilTheme.outline
 
                     Row {
                         anchors.fill: parent
@@ -514,7 +514,7 @@ PanelWindow {
                             anchors.verticalCenter: parent.verticalCenter
                             width: parent.width - 70
                             text: currentInputDevice
-                            color: "AnvilTheme.surfaceText"
+                            color: AnvilTheme.surfaceText
                             font.pixelSize: 11
                             font.bold: true
                             elide: Text.ElideRight
@@ -525,8 +525,8 @@ PanelWindow {
                             width: 50
                             height: 22
                             radius: 4
-                            color: "AnvilTheme.panelCard"
-                            border.color: "AnvilTheme.outline"
+                            color: AnvilTheme.panelCard
+                            border.color: AnvilTheme.outline
 
                             Text {
                                 anchors.centerIn: parent
@@ -551,7 +551,7 @@ PanelWindow {
                     width: parent.width
                     height: 28
                     radius: 6
-                    color: "AnvilTheme.panelDeep"
+                    color: AnvilTheme.panelDeep
 
                     Rectangle {
                         anchors.left: parent.left
@@ -581,7 +581,7 @@ PanelWindow {
                     width: parent.width
                     Text {
                         text: "BRIGHTNESS"
-                        color: "AnvilTheme.surfaceVariantText"
+                        color: AnvilTheme.surfaceVariantText
                         font.pixelSize: 11
                         font.bold: true
                         font.letterSpacing: 1.0
@@ -589,7 +589,7 @@ PanelWindow {
                     Item { width: parent.width - 140; height: 1 }
                     Text {
                         text: Math.round(brightnessLevel * 100) + "%"
-                        color: "AnvilTheme.secondary"
+                        color: AnvilTheme.secondary
                         font.pixelSize: 12
                         font.bold: true
                     }
@@ -599,7 +599,7 @@ PanelWindow {
                     width: parent.width
                     height: 38
                     radius: 6
-                    color: "AnvilTheme.panelDeep"
+                    color: AnvilTheme.panelDeep
 
                     Rectangle {
                         anchors.left: parent.left
@@ -607,7 +607,7 @@ PanelWindow {
                         anchors.bottom: parent.bottom
                         width: Math.max(0, Math.min(parent.width, parent.width * brightnessLevel))
                         radius: 6
-                        color: "AnvilTheme.secondary"
+                        color: AnvilTheme.secondary
                     }
 
                     MouseArea {
@@ -629,7 +629,7 @@ PanelWindow {
             // Session / Power Management
             Text {
                 text: "POWER & SESSION"
-                color: "AnvilTheme.surfaceVariantText"
+                color: AnvilTheme.surfaceVariantText
                 font.pixelSize: 11
                 font.bold: true
                 font.letterSpacing: 1.0
@@ -645,13 +645,13 @@ PanelWindow {
                     width: (parent.width - 8) / 2
                     height: 42
                     radius: 6
-                    color: "AnvilTheme.panelCard"
-                    border.color: "AnvilTheme.outline"
+                    color: AnvilTheme.panelCard
+                    border.color: AnvilTheme.outline
 
                     Text {
                         anchors.centerIn: parent
                         text: "Desktop Mode"
-                        color: "AnvilTheme.surfaceText"
+                        color: AnvilTheme.surfaceText
                         font.pixelSize: 12
                         font.bold: true
                     }
@@ -670,13 +670,13 @@ PanelWindow {
                     width: (parent.width - 8) / 2
                     height: 42
                     radius: 6
-                    color: "AnvilTheme.panelDeep"
-                    border.color: "AnvilTheme.outline"
+                    color: AnvilTheme.panelDeep
+                    border.color: AnvilTheme.outline
 
                     Text {
                         anchors.centerIn: parent
                         text: "Sleep"
-                        color: "AnvilTheme.surfaceVariantText"
+                        color: AnvilTheme.surfaceVariantText
                         font.pixelSize: 12
                         font.bold: true
                     }
@@ -694,13 +694,13 @@ PanelWindow {
                     width: (parent.width - 8) / 2
                     height: 42
                     radius: 6
-                    color: "AnvilTheme.panelDeep"
-                    border.color: "AnvilTheme.outline"
+                    color: AnvilTheme.panelDeep
+                    border.color: AnvilTheme.outline
 
                     Text {
                         anchors.centerIn: parent
                         text: "Restart System"
-                        color: "AnvilTheme.surfaceVariantText"
+                        color: AnvilTheme.surfaceVariantText
                         font.pixelSize: 12
                         font.bold: true
                     }
