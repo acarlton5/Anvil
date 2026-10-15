@@ -454,7 +454,7 @@ run_session() {
     export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
     export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-1}"
     export DISPLAY="${DISPLAY:-:0}"
-    start_overlay_watcher
+    # start_overlay_watcher (handled by user service)
     setsid bash -lc "$launch_command" >> "$log_file" 2>&1 &
     local pid=$!
     printf '%s\n' "$pid" > "$pid_file"
