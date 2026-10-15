@@ -282,8 +282,39 @@ ShellRoot {
     Process {
         id: controllerNavProcess
 
-        command: ["env", "ANVIL_ROOT=" + anvilRoot, "python3", controllerNavScript]
+        command: ["python3", "-u", controllerNavScript]
         running: true
+
+        stdout: SplitParser {
+            onRead: function(line) {
+                let trimmed = line.trim();
+                if (!trimmed.startsWith("NAV "))
+                    return;
+                let parts = trimmed.substring(4).split(" ");
+                let action = parts[0] || "";
+                let family = parts[1] || "xbox";
+                let name = parts.slice(2).join(" ") || "Controller";
+                root.navigate(action, family, name);
+            }
+        }
+
+        onRunningChanged: {
+            if (!running) {
+                restartNavTimer.restart();
+            }
+        }
+    }
+
+    Timer {
+        id: restartNavTimer
+        interval: 1000
+        repeat: false
+        onTriggered: {
+            if (!controllerNavProcess.running) {
+                console.log("[Anvil] Restarting controllerNavProcess...");
+                controllerNavProcess.running = true;
+            }
+        }
     }
 
     Process {

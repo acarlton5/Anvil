@@ -1,21 +1,25 @@
 #!/usr/bin/env python3
 import fcntl
-
-_lock_fd = None
-def ensure_single_instance(name):
-    global _lock_fd
-    lock_file = f"/tmp/{name}.lock"
-    try:
-        _lock_fd = os.open(lock_file, os.O_CREAT | os.O_RDWR)
-        fcntl.flock(_lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except (BlockingIOError, OSError):
-        sys.exit(0)
 import os
 import select
 import struct
 import subprocess
 import sys
 import time
+
+_lock_fd = None
+
+def ensure_single_instance(name):
+    global _lock_fd
+    runtime_dir = os.environ.get("XDG_RUNTIME_DIR")
+    if not runtime_dir or not os.path.isdir(runtime_dir):
+        runtime_dir = "/tmp"
+    lock_file = os.path.join(runtime_dir, f"{name}_{os.getuid()}.lock")
+    try:
+        _lock_fd = os.open(lock_file, os.O_CREAT | os.O_RDWR, 0o600)
+        fcntl.flock(_lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except (BlockingIOError, OSError):
+        sys.exit(0)
 
 EV_KEY = 1
 EV_ABS = 3
@@ -25,7 +29,8 @@ EVENT_SIZE = struct.calcsize(EVENT_STRUCT)
 
 GUIDE_CODES = {172, 316}
 QUICKACCESS_CODES = {294, 148, 149, 217}
-X_CODES = {308}
+X_CODES = {307, 308}
+A_CODES = {304}
 
 KEY_ACTIONS = {
     304: "south",
@@ -130,58 +135,46 @@ def daemon_path(anvil_root):
     return os.path.join(anvil_root, "src", "ui", "AnvilDaemon.qml")
 
 
-def deck_hidraw_devices():
-    return []
-    hid_dir = "/sys/class/hidraw"
-    if not os.path.isdir(hid_dir):
-        return []
-    res = []
-    for entry in sorted(os.listdir(hid_dir)):
-        uevent_path = os.path.join(hid_dir, entry, "device", "uevent")
-        if not os.path.exists(uevent_path):
-            continue
-        try:
-            with open(uevent_path, "r", errors="ignore") as f:
-                u = f.read().lower()
-                if ("28de" in u and ("1205" in u or "11ff" in u) and "input2" in u):
-                    dev_path = os.path.join("/dev", entry)
-                    if os.path.exists(dev_path):
-                        res.append(dev_path)
-        except OSError:
-            pass
-    return res
-
 def send_action(anvil_root, action, controller):
-    env = os.environ.copy()
-    if "XDG_RUNTIME_DIR" not in env:
-        env["XDG_RUNTIME_DIR"] = f"/run/user/{os.getuid()}"
-    if "WAYLAND_DISPLAY" not in env:
-        env["WAYLAND_DISPLAY"] = "wayland-1"
-    proc = subprocess.Popen(
-        [
-            "qs",
-            "ipc",
-            "--any-display",
-            "-p",
-            daemon_path(anvil_root),
-            "call",
-            "anvil",
-            "navigate",
-            action,
-            controller.get("family", "xbox"),
-            controller.get("name", ""),
-        ],
-        stdin=subprocess.DEVNULL,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        env=env,
-        start_new_session=True,
-    )
-    # Collect zombies
+    family = controller.get("family", "xbox")
+    name = controller.get("name", "Controller")
+    # Instant stream to parent Quickshell daemon via stdout:
     try:
-        proc.wait(timeout=0.1)
-    except subprocess.TimeoutExpired:
+        print(f"NAV {action} {family} {name}", flush=True)
+    except OSError:
         pass
+
+    # Fallback to IPC if explicitly configured or running standalone
+    if os.environ.get("ANVIL_IPC_FALLBACK") == "1":
+        env = os.environ.copy()
+        if "XDG_RUNTIME_DIR" not in env:
+            env["XDG_RUNTIME_DIR"] = f"/run/user/{os.getuid()}"
+        if "WAYLAND_DISPLAY" not in env:
+            env["WAYLAND_DISPLAY"] = "wayland-1"
+        try:
+            proc = subprocess.Popen(
+                [
+                    "qs",
+                    "ipc",
+                    "--any-display",
+                    "-p",
+                    daemon_path(anvil_root),
+                    "call",
+                    "anvil",
+                    "navigate",
+                    action,
+                    family,
+                    name,
+                ],
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                env=env,
+                start_new_session=True,
+            )
+            proc.wait(timeout=0.1)
+        except (subprocess.TimeoutExpired, OSError):
+            pass
 
 
 def key_action(code, controller):
@@ -264,23 +257,13 @@ def main():
     while True:
         devices = list(controller_events(controllers))
         announce_controllers(anvil_root, devices, announced)
-        hid_paths = deck_hidraw_devices()
         fds = []
         fd_controllers = {}
-        fd_types = {}
         for device in devices:
             try:
                 fd = os.open(device["path"], os.O_RDONLY | os.O_NONBLOCK)
                 fds.append(fd)
                 fd_controllers[fd] = device
-                fd_types[fd] = "evdev"
-            except OSError:
-                continue
-        for hp in hid_paths:
-            try:
-                fd = os.open(hp, os.O_RDONLY | os.O_NONBLOCK)
-                fds.append(fd)
-                fd_types[fd] = "hidraw"
             except OSError:
                 continue
 
@@ -292,18 +275,6 @@ def main():
             while True:
                 readable, _, _ = select.select(fds, [], [], 1.0)
                 for fd in readable:
-                    if fd_types.get(fd) == "hidraw":
-                        try:
-                            pkt = os.read(fd, 64)
-                        except (BlockingIOError, OSError):
-                            continue
-                        if len(pkt) > 13 and (pkt[13] & 0x40):
-                            now = time.monotonic()
-                            if now - last_sent.get("quickaccess", 0) >= 0.35:
-                                last_sent["quickaccess"] = now
-                                send_action(anvil_root, "quickaccess", {"family": "steamdeck", "name": "Steam Deck"})
-                        continue
-
                     controller = fd_controllers.get(fd, {})
                     try:
                         data = os.read(fd, EVENT_SIZE * 32)
@@ -330,6 +301,12 @@ def main():
                                     action = "keyboard"
                                 else:
                                     action = key_action(code, controller)
+                            elif code in A_CODES and value == 1:
+                                if guide_down:
+                                    chord_fired = True
+                                    action = "quickaccess"
+                                else:
+                                    action = key_action(code, controller)
                             elif code in QUICKACCESS_CODES and value == 1:
                                 action = "quickaccess"
                             elif value == 1:
@@ -343,7 +320,7 @@ def main():
                             continue
                         last_sent[action] = now
                         send_action(anvil_root, action, controller)
-        except RuntimeError:
+        except (RuntimeError, OSError, ValueError):
             pass
         finally:
             for fd in fds:
