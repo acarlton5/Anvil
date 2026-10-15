@@ -133,6 +133,12 @@ PanelWindow {
         }
     }
 
+    FocusScope {
+        anchors.fill: parent
+        focus: qamWindow.isVisible
+        Keys.onEscapePressed: qamWindow.requestClose()
+    }
+
     Rectangle {
         id: panel
         anchors.fill: parent
@@ -203,7 +209,7 @@ PanelWindow {
 
                     MouseArea {
                         anchors.fill: parent
-                        onClicked: qamWindow.isVisible = false
+                        onClicked: qamWindow.requestClose()
                     }
                 }
             }

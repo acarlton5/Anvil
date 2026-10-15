@@ -8,6 +8,7 @@ ShellRoot {
 
     property bool overlayActive: Quickshell.env("ANVIL_OVERLAY_TEST") === "1"
     property bool gamerActive: Quickshell.env("ANVIL_OVERLAY_TEST") !== "1"
+    property bool waitingForGameWindow: false
     property string controllerAction: ""
     property int controllerActionSerial: 0
     property string controllerFamily: "xbox"
@@ -19,14 +20,17 @@ ShellRoot {
 
     function startGame(command, gameName, gameId, inputProfile, inputMap, inputActions, controllerLayout, achievementSet) {
         console.log("Root starting game: " + command);
+        root.waitingForGameWindow = true;
+        root.gamerActive = true;
+        gameWindowTimeoutTimer.restart();
         gameProcess.command = [gameSessionScript, "run", "--name", gameName || "", "--game-id", gameId || "", "--input-profile", inputProfile || "", "--input-map", inputMap || "", "--input-actions", inputActions || "", "--controller-layout", controllerLayout || "", "--achievement-set", achievementSet || "", "--achievements-url", achievementsUrl, "--", command];
         gameProcess.running = true;
-        // Hide Anvil AFTER 4 seconds to show the loading screen transition!
-        hideAnvilTimer.start();
     }
 
     function killGame() {
-        hideAnvilTimer.stop();
+        root.waitingForGameWindow = false;
+        gameWindowTimeoutTimer.stop();
+        hideAnvilDelayTimer.stop();
         root.gamerActive = true;
         killProcess.command = [gameSessionScript, "stop"];
         killProcess.running = true;
@@ -48,6 +52,10 @@ ShellRoot {
             root.quickAccessActive = !root.quickAccessActive;
             return ;
         }
+        if (action === "keyboard") {
+            root.keyboardActive = !root.keyboardActive;
+            return ;
+        }
         root.controllerAction = action;
         root.controllerActionSerial += 1;
     }
@@ -60,11 +68,66 @@ ShellRoot {
         WlrLayershell.namespace: "keepalive"
     }
 
-    Timer {
-        id: hideAnvilTimer
+    Process {
+        id: clientCheckProcess
+        command: ["hyprctl", "-j", "clients"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (!root.waitingForGameWindow || !text || text.trim().length === 0)
+                    return;
+                try {
+                    let clients = JSON.parse(text);
+                    if (Array.isArray(clients)) {
+                        for (let i = 0; i < clients.length; i++) {
+                            let c = clients[i];
+                            if (c && c.mapped && !c.hidden && c.visible && c.initialClass !== "keepalive") {
+                                console.log("[Anvil] Detected mapped game client window: " + (c.title || c.class));
+                                root.waitingForGameWindow = false;
+                                gameWindowTimeoutTimer.stop();
+                                hideAnvilDelayTimer.restart();
+                                return;
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.log("[Anvil] Error checking clients: " + e);
+                }
+            }
+        }
+    }
 
-        interval: 7000
-        onTriggered: root.gamerActive = false
+    Timer {
+        id: gameWindowPollTimer
+        interval: 350
+        repeat: true
+        running: root.waitingForGameWindow
+        onTriggered: {
+            if (!clientCheckProcess.running) {
+                clientCheckProcess.running = true;
+            }
+        }
+    }
+
+    Timer {
+        id: hideAnvilDelayTimer
+        interval: 600
+        repeat: false
+        onTriggered: {
+            root.gamerActive = false;
+        }
+    }
+
+    Timer {
+        id: gameWindowTimeoutTimer
+        interval: 45000
+        repeat: false
+        onTriggered: {
+            if (root.waitingForGameWindow) {
+                console.log("[Anvil] Game window detection timed out, hiding launcher");
+                root.waitingForGameWindow = false;
+                root.gamerActive = false;
+            }
+        }
     }
 
     Component {
@@ -207,7 +270,9 @@ ShellRoot {
 
         onRunningChanged: {
             if (!running) {
-                hideAnvilTimer.stop();
+                root.waitingForGameWindow = false;
+                gameWindowTimeoutTimer.stop();
+                hideAnvilDelayTimer.stop();
                 root.gamerActive = true;
                 root.overlayActive = false;
             }

@@ -12,6 +12,10 @@ EV_ABS = 3
 EVENT_STRUCT = "llHHi"
 EVENT_SIZE = struct.calcsize(EVENT_STRUCT)
 
+GUIDE_CODES = {172, 316}
+QUICKACCESS_CODES = {294}
+X_CODES = {308}
+
 KEY_ACTIONS = {
     304: "south",
     305: "east",
@@ -30,6 +34,13 @@ KEY_ACTIONS = {
     545: "down",
     546: "left",
     547: "right",
+    # Lizard Mode (Steam Deck fallback keyboard events)
+    103: "up",      # KEY_UP
+    108: "down",    # KEY_DOWN
+    105: "left",    # KEY_LEFT
+    106: "right",   # KEY_RIGHT
+    28: "south",    # KEY_ENTER (A button)
+    1: "east",      # KEY_ESC (B button)
 }
 TRIGGER_SHOULDER_IDS = {"0c12:1e1a"}
 
@@ -197,6 +208,8 @@ def main():
     axis_state = {}
     last_sent = {}
     announced = set()
+    guide_down = False
+    chord_fired = False
 
     while True:
         devices = list(controller_events(controllers))
@@ -229,8 +242,26 @@ def main():
                     for offset in range(0, len(data) - EVENT_SIZE + 1, EVENT_SIZE):
                         _, _, event_type, code, value = struct.unpack(EVENT_STRUCT, data[offset : offset + EVENT_SIZE])
                         action = None
-                        if event_type == EV_KEY and value == 1:
-                            action = key_action(code, controller)
+                        if event_type == EV_KEY:
+                            if code in GUIDE_CODES:
+                                if value == 1:
+                                    guide_down = True
+                                    chord_fired = False
+                                elif value == 0:
+                                    if guide_down:
+                                        guide_down = False
+                                        if not chord_fired:
+                                            action = "guide"
+                            elif code in X_CODES and value == 1:
+                                if guide_down:
+                                    chord_fired = True
+                                    action = "keyboard"
+                                else:
+                                    action = key_action(code, controller)
+                            elif code in QUICKACCESS_CODES and value == 1:
+                                action = "quickaccess"
+                            elif value == 1:
+                                action = key_action(code, controller)
                         elif event_type == EV_ABS:
                             action = axis_action(code, value, axis_state)
                         if not action:

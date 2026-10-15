@@ -9,6 +9,7 @@ import time
 EV_KEY = 1
 DEFAULT_GUIDE_CODES = {172, 316}
 DEFAULT_QUICKACCESS_CODES = {294}
+DEFAULT_X_CODES = {308}
 EVENT_STRUCT = "llHHi"
 EVENT_SIZE = struct.calcsize(EVENT_STRUCT)
 
@@ -101,62 +102,109 @@ def toggle_quickaccess(anvil_root):
     )
 
 
+def toggle_keyboard(anvil_root):
+    toggle = os.path.join(anvil_root, "scripts", "anvil-keyboard-toggle")
+    subprocess.Popen(
+        [toggle, anvil_root],
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True,
+    )
+
+
 def main():
     anvil_root = os.environ.get("ANVIL_ROOT", "")
     if not anvil_root:
         return 64
 
-    controller_ids = known_controller_ids(anvil_root)
-    if not controller_ids:
-        return 0
-
-    paths = list(joystick_events(controller_ids))
-    if not paths:
-        return 0
-
-    fds = []
-    for path in paths:
-        try:
-            fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK)
-            fds.append(fd)
-        except OSError:
-            continue
-
-    if not fds:
-        return 0
-
     g_codes = guide_codes()
     qa_codes = quickaccess_codes()
+    x_codes = set(DEFAULT_X_CODES)
+
     last_guide = 0.0
     last_qa = 0.0
-    try:
-        while True:
-            readable, _, _ = select.select(fds, [], [], 1.0)
-            for fd in readable:
-                try:
-                    data = os.read(fd, EVENT_SIZE * 32)
-                except BlockingIOError:
-                    continue
-                except OSError:
-                    return 0
-                for offset in range(0, len(data) - EVENT_SIZE + 1, EVENT_SIZE):
-                    _, _, event_type, code, value = struct.unpack(
-                        EVENT_STRUCT, data[offset : offset + EVENT_SIZE]
-                    )
-                    if event_type == EV_KEY and value == 1:
-                        now = time.monotonic()
-                        if code in g_codes and (now - last_guide >= 0.35):
-                            last_guide = now
-                            toggle_overlay(anvil_root)
-                        elif code in qa_codes and (now - last_qa >= 0.35):
-                            last_qa = now
-                            toggle_quickaccess(anvil_root)
-    finally:
-        for fd in fds:
+    last_kb = 0.0
+    guide_down = False
+    chord_fired = False
+
+    while True:
+        controller_ids = known_controller_ids(anvil_root)
+        if not controller_ids:
+            time.sleep(2.0)
+            continue
+
+        paths = list(joystick_events(controller_ids))
+        if not paths:
+            time.sleep(1.0)
+            continue
+
+        fds = []
+        for path in paths:
             try:
-                os.close(fd)
+                fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK)
+                fds.append(fd)
             except OSError:
-                pass
+                continue
+
+        if not fds:
+            time.sleep(1.0)
+            continue
+
+        try:
+            while True:
+                readable, _, _ = select.select(fds, [], [], 1.5)
+                if not readable:
+                    current_paths = set(joystick_events(controller_ids))
+                    if current_paths != set(paths):
+                        break
+                    continue
+
+                for fd in readable:
+                    try:
+                        data = os.read(fd, EVENT_SIZE * 32)
+                    except BlockingIOError:
+                        continue
+                    except OSError:
+                        raise RuntimeError
+
+                    for offset in range(0, len(data) - EVENT_SIZE + 1, EVENT_SIZE):
+                        _, _, event_type, code, value = struct.unpack(
+                            EVENT_STRUCT, data[offset : offset + EVENT_SIZE]
+                        )
+                        if event_type != EV_KEY:
+                            continue
+
+                        now = time.monotonic()
+                        if code in g_codes:
+                            if value == 1:
+                                guide_down = True
+                                chord_fired = False
+                            elif value == 0:
+                                if guide_down:
+                                    guide_down = False
+                                    if not chord_fired and (now - last_guide >= 0.3):
+                                        last_guide = now
+                                        toggle_overlay(anvil_root)
+                        elif code in x_codes and value == 1:
+                            if guide_down:
+                                chord_fired = True
+                                if now - last_kb >= 0.3:
+                                    last_kb = now
+                                    toggle_keyboard(anvil_root)
+                        elif code in qa_codes and value == 1:
+                            if now - last_qa >= 0.3:
+                                last_qa = now
+                                toggle_quickaccess(anvil_root)
+        except RuntimeError:
+            pass
+        finally:
+            for fd in fds:
+                try:
+                    os.close(fd)
+                except OSError:
+                    pass
+        time.sleep(0.5)
 
 
 if __name__ == "__main__":
