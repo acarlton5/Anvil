@@ -57,15 +57,19 @@ def joystick_events(controller_ids):
         if not event_name.startswith("event"):
             continue
         sys_event = os.path.join(input_root, event_name)
+        phys = read_text(os.path.join(sys_event, "device", "phys"))
         dev_name = read_text(os.path.join(sys_event, "device", "name"))
-        if "motion" in dev_name or "mouse" in dev_name:
-            continue
-        if "keyboard" in dev_name or "event-kbd" in sys_event:
-            continue
         vendor = read_text(os.path.join(sys_event, "device", "id", "vendor"))
         product = read_text(os.path.join(sys_event, "device", "id", "product"))
         if f"{vendor}:{product}" not in controller_ids:
             continue
+        if "28de" in vendor:
+            # On Steam Deck, strictly select input2 (gamepad) and ignore input0 (mouse) & input1 (keyboard)
+            if "input2" not in phys or "motion" in dev_name:
+                continue
+        else:
+            if "motion" in dev_name or "mouse" in dev_name or "keyboard" in dev_name:
+                continue
         dev_path = os.path.join("/dev/input", event_name)
         if os.path.exists(dev_path):
             yield dev_path
