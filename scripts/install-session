@@ -288,7 +288,17 @@ if [ -n "$user_home" ] && [ -d "$user_home" ]; then
     install -m 644 /usr/local/share/anvil/session/hyprland-anvil.lua "$user_home/.config/hypr/hyprland.lua"
     chown -R "$target_user:$target_user" "$user_home/.config/hypr"
 fi
-if command -v hyprctl >/dev/null 2>&1; then
-    hyprctl reload config-only >/dev/null 2>&1 || true
+# Reload active hyprland instance as user
+if [ -n "$user_home" ]; then
+    user_uid="$(id -u "$target_user" 2>/dev/null || echo 1000)"
+    user_runtime="/run/user/$user_uid"
+    if [ -d "$user_runtime/hypr" ]; then
+        for inst_sig in "$user_runtime"/hypr/*; do
+            if [ -d "$inst_sig" ]; then
+                sig="$(basename "$inst_sig")"
+                su - "$target_user" -c "HYPRLAND_INSTANCE_SIGNATURE=$sig XDG_RUNTIME_DIR=$user_runtime hyprctl reload" >/dev/null 2>&1 || true
+            fi
+        done
+    fi
 fi
 echo "Anvil session installed. Log out and choose Anvil from the greeter."
