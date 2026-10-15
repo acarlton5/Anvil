@@ -17,20 +17,30 @@ prefix_dir="${ANVIL_PREFIX_DIR:-$HOME/.local/share/anvil/prefixes/$game_name}"
 
 mkdir -p "$prefix_dir"
 
-if [[ "$proton_target" == "GE-Proton"* ]]; then
-    proton_bin="$(find "$steam_dir/compatibilitytools.d" -maxdepth 1 -type d -name 'GE-Proton*' 2>/dev/null | sort | tail -n 1)/proton"
-elif [[ "$proton_target" == *"Experimental"* ]]; then
-    proton_bin="$steam_dir/steamapps/common/Proton - Experimental/proton"
-else
-    proton_bin="$(find "$steam_dir/compatibilitytools.d" -maxdepth 1 -type d -name 'GE-Proton*' 2>/dev/null | sort | tail -n 1)/proton"
-fi
+# Search order for Proton binary:
+# 1. System GE-Proton / custom Proton installed in /opt/proton
+# 2. Steam compatibilitytools.d
+# 3. Steam official Proton
+proton_bin=""
+for candidate in \
+    $(find /opt/proton -maxdepth 2 -type f -name proton 2>/dev/null | sort -V | tail -n 1) \
+    $(find "$steam_dir/compatibilitytools.d" -maxdepth 2 -type f -name proton 2>/dev/null | sort -V | tail -n 1) \
+    "$steam_dir/steamapps/common/Proton - Experimental/proton" \
+    "$steam_dir/steamapps/common/Proton 9.0 (Beta)/proton" \
+    "$steam_dir/steamapps/common/Proton 8.0/proton" \
+    /usr/share/steam/compatibilitytools.d/*/proton; do
+    if [[ -x "$candidate" ]]; then
+        proton_bin="$candidate"
+        break
+    fi
+done
 
-if [[ ! -f "$proton_bin" ]]; then
-    echo "ERROR: Proton binary not found for '$proton_target'." >&2
+if [[ -z "$proton_bin" || ! -f "$proton_bin" ]]; then
+    echo "ERROR: Proton binary not found for . Checked /opt/proton and Steam compatibility tools." >&2
     exit 1
 fi
 
 export STEAM_COMPAT_DATA_PATH="$prefix_dir"
-export STEAM_COMPAT_CLIENT_INSTALL_PATH="$steam_dir"
+export STEAM_COMPAT_CLIENT_INSTALL_PATH="${steam_dir}"
 
 eval "$options" "\"$proton_bin\"" run "\"$exe_path\""

@@ -19,6 +19,11 @@ else
     export ANVIL_QS_BIN="qs"
 fi
 
+# Clean VT and suppress stdout/stderr to journal when systemd-cat is available
+if command -v systemd-cat >/dev/null 2>&1; then
+    exec 1> >(systemd-cat -t "anvil-session" -p info) 2>&1
+fi
+
 if command -v start-hyprland >/dev/null 2>&1; then
     exec start-hyprland -- --config "$ANVIL_ROOT/session/hyprland-anvil.lua"
 elif command -v Hyprland >/dev/null 2>&1; then
@@ -26,4 +31,3 @@ elif command -v Hyprland >/dev/null 2>&1; then
 elif command -v hypeshell-hyprland-session >/dev/null 2>&1; then
     exec hypeshell-hyprland-session -- --config "$ANVIL_ROOT/session/hyprland-anvil.lua"
 fi
-
