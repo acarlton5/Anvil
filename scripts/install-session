@@ -86,6 +86,8 @@ stage_file "$anvil_root/scripts/anvil-overlay-toggle" scripts/anvil-overlay-togg
 overlay_toggle_src="$STAGED_RESULT"
 stage_file "$anvil_root/scripts/anvil-switch-desktop" scripts/anvil-switch-desktop
 switch_desktop_src="$STAGED_RESULT"
+stage_file "$anvil_root/scripts/anvil-switch-gaming" scripts/anvil-switch-gaming
+switch_gaming_src="$STAGED_RESULT"
 stage_file "$anvil_root/scripts/anvil-quickaccess-toggle" scripts/anvil-quickaccess-toggle
 quickaccess_toggle_src="$STAGED_RESULT"
 stage_file "$anvil_root/scripts/anvil-keyboard-toggle" scripts/anvil-keyboard-toggle
@@ -135,6 +137,7 @@ sudo install -D -m 755 "$controller_overlay_watch_src" /usr/local/bin/anvil-cont
 sudo install -D -m 755 "$controller_nav_watch_src" /usr/local/bin/anvil-controller-nav-watch
 sudo install -D -m 755 "$overlay_toggle_src" /usr/local/bin/anvil-overlay-toggle
 sudo install -D -m 755 "$switch_desktop_src" /usr/local/bin/anvil-switch-desktop
+sudo install -D -m 755 "$switch_gaming_src" /usr/local/bin/anvil-switch-gaming
 sudo install -D -m 755 "$quickaccess_toggle_src" /usr/local/bin/anvil-quickaccess-toggle
 sudo install -D -m 755 "$keyboard_toggle_src" /usr/local/bin/anvil-keyboard-toggle
 sudo install -D -m 755 "$session_src" /usr/local/share/anvil/session/anvil-session.sh
@@ -146,6 +149,7 @@ sudo install -D -m 755 "$controller_overlay_watch_src" /usr/local/share/anvil/sc
 sudo install -D -m 755 "$controller_nav_watch_src" /usr/local/share/anvil/scripts/anvil-controller-nav-watch
 sudo install -D -m 755 "$overlay_toggle_src" /usr/local/share/anvil/scripts/anvil-overlay-toggle
 sudo install -D -m 755 "$switch_desktop_src" /usr/local/share/anvil/scripts/anvil-switch-desktop
+sudo install -D -m 755 "$switch_gaming_src" /usr/local/share/anvil/scripts/anvil-switch-gaming
 sudo install -D -m 755 "$quickaccess_toggle_src" /usr/local/share/anvil/scripts/anvil-quickaccess-toggle
 sudo install -D -m 755 "$keyboard_toggle_src" /usr/local/share/anvil/scripts/anvil-keyboard-toggle
 sudo install -D -m 644 "$hypr_src" /usr/local/share/anvil/session/hyprland-anvil.lua
@@ -244,6 +248,19 @@ Categories=Game;Console;
 APPDESKTOP
 sudo install -D -m 644 "$app_desktop_file" /usr/share/applications/anvil.desktop
 unlink "$app_desktop_file"
+cat << GAMINGMODE > /usr/share/applications/anvil-gaming-mode.desktop
+[Desktop Entry]
+Name=Return to Gaming Mode
+GenericName=Gaming Mode
+Comment=Switch to dedicated Anvil Gaming Session
+Exec=anvil-switch-gaming
+Icon=/usr/local/share/anvil/assets/anvil-focus-flame.png
+Terminal=false
+Type=Application
+Categories=Game;Console;
+GAMINGMODE
+sudo install -D -m 644 /usr/share/applications/anvil-gaming-mode.desktop /home/${SUDO_USER:-morphine}/Desktop/anvil-gaming-mode.desktop 2>/dev/null || true
+
 
 for legacy_path in \
     /usr/local/share/wayland-sessions/hypeshell-gamermode.desktop \
