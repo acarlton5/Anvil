@@ -23,14 +23,14 @@ PanelWindow {
     readonly property string anvilRoot: localRoot
     readonly property string bridgePath: anvilRoot + "/src/daemon/anvil-library-bridge"
     readonly property string daemonPath: anvilRoot + "/src/ui/AnvilDaemon.qml"
-    readonly property color bg: "#040608"
-    readonly property color panel: "#0d1217"
-    readonly property color panelRaised: "#151b22"
-    readonly property color line: "#313b46"
-    readonly property color fg: "#f5f5f2"
-    readonly property color muted: "#aeb6bd"
-    readonly property color ember: "#ff6537"
-    readonly property color emberLight: "#ff8a66"
+    readonly property color bg: AnvilTheme.background
+    readonly property color panel: AnvilTheme.panelBg
+    readonly property color panelRaised: AnvilTheme.panelCard
+    readonly property color line: AnvilTheme.outline
+    readonly property color fg: AnvilTheme.surfaceText
+    readonly property color muted: AnvilTheme.surfaceVariantText
+    readonly property color ember: AnvilTheme.primary
+    readonly property color emberLight: AnvilTheme.secondary"
     readonly property color forgeGold: "#d9ad5f"
     readonly property color relayBlue: "#7aa8ff"
     readonly property color green: "#65d797"

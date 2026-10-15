@@ -65,6 +65,7 @@ def deck_hidraw_devices():
         return []
     res = []
     for entry in sorted(os.listdir(hid_dir)):
+        if entry != "hidraw2": continue
         dev_path = os.path.join("/dev", entry)
         if not os.path.exists(dev_path):
             continue

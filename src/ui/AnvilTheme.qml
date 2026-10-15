@@ -21,6 +21,7 @@ Item {
     property color outline: "#8ca889"
     property color error: "#ffb4ab"
     property color warning: "#d8a657"
+    property color surfaceContainerHigh: Qt.rgba(surface.r * 0.7, surface.g * 0.7, surface.b * 0.7, 0.95)
     property color accent: primary
 
     // Dark panel tints based on surface & background
@@ -71,6 +72,7 @@ Item {
             if (palette.outline) outline = palette.outline;
             if (palette.error) error = palette.error;
             if (palette.warning) warning = palette.warning;
+            if (palette.surfaceContainerHigh) surfaceContainerHigh = palette.surfaceContainerHigh;
             accent = primary;
         } catch(e) {
             console.log("[AnvilTheme] Error parsing theme JSON: " + e);
