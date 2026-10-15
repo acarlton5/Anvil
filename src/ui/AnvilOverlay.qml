@@ -22,7 +22,7 @@ PanelWindow {
     readonly property color stroke: AnvilTheme.outline
     readonly property color strokeSoft: Qt.rgba(AnvilTheme.outline.r, AnvilTheme.outline.g, AnvilTheme.outline.b, 0.4)
     readonly property color ember: AnvilTheme.primary
-    readonly property color gold: AnvilTheme.warning"
+    readonly property color gold: AnvilTheme.warning
     readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || "/usr/local/share/anvil"
     
     property string overlayAudioSinkName: "Default Output"
