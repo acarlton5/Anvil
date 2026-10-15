@@ -280,4 +280,15 @@ for legacy_path in \
     sudo sh -c '[ ! -e "$1" ] || unlink "$1"' sh "$legacy_path"
 done
 
+# Sync user hyprland.lua if user exists
+target_user="${SUDO_USER:-morphine}"
+user_home="$(getent passwd "$target_user" | cut -d: -f6)"
+if [ -n "$user_home" ] && [ -d "$user_home" ]; then
+    mkdir -p "$user_home/.config/hypr"
+    install -m 644 /usr/local/share/anvil/session/hyprland-anvil.lua "$user_home/.config/hypr/hyprland.lua"
+    chown -R "$target_user:$target_user" "$user_home/.config/hypr"
+fi
+if command -v hyprctl >/dev/null 2>&1; then
+    hyprctl reload config-only >/dev/null 2>&1 || true
+fi
 echo "Anvil session installed. Log out and choose Anvil from the greeter."
