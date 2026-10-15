@@ -117,6 +117,9 @@ def toggle_mute():
 def toggle_mic_mute():
     run_wpctl(["set-mute", "@DEFAULT_AUDIO_SOURCE@", "toggle"])
 
+def step_volume(delta):
+    run_wpctl(["set-volume", "-l", "1.0", "@DEFAULT_AUDIO_SINK@", f"{abs(delta):.2f}" + ("+" if delta > 0 else "-")])
+
 def main():
     cmd = sys.argv[1] if len(sys.argv) > 1 else "status"
     if cmd == "status":
@@ -133,6 +136,10 @@ def main():
         set_mic_volume(sys.argv[2])
     elif cmd == "toggle-mute":
         toggle_mute()
+    elif cmd == "step-up":
+        step_volume(0.05)
+    elif cmd == "step-down":
+        step_volume(-0.05)
     elif cmd == "toggle-mic-mute":
         toggle_mic_mute()
     else:

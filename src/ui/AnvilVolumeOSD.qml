@@ -65,7 +65,7 @@ PanelWindow {
     }
 
     Timer {
-        interval: 350
+        interval: 150
         repeat: true
         running: true
         onTriggered: {
@@ -100,8 +100,10 @@ PanelWindow {
 
             Text {
                 anchors.verticalCenter: parent.verticalCenter
-                text: isMuted ? "🔇" : (currentVolume > 50 ? "🔊" : "🔉")
-                font.pixelSize: 18
+                text: isMuted ? "󰝟" : (currentVolume > 50 ? "󰕾" : (currentVolume > 0 ? "󰖀" : "󰕿"))
+                font.family: "Symbols Nerd Font, monospace"
+                font.pixelSize: 20
+                color: isMuted ? AnvilTheme.error : AnvilTheme.primary
             }
 
             Rectangle {
