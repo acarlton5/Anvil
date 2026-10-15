@@ -70,27 +70,24 @@ def joystick_events(controller_ids):
 
 
 def deck_hidraw_devices():
-    # Valve Steam Deck controller endpoints on hidraw
     hid_dir = "/sys/class/hidraw"
     if not os.path.isdir(hid_dir):
         return []
     res = []
     for entry in sorted(os.listdir(hid_dir)):
-        if entry != "hidraw2": continue
-        dev_path = os.path.join("/dev", entry)
-        if not os.path.exists(dev_path):
+        uevent_path = os.path.join(hid_dir, entry, "device", "uevent")
+        if not os.path.exists(uevent_path):
             continue
         try:
-            uevent_path = os.path.join(hid_dir, entry, "device", "uevent")
-            if os.path.exists(uevent_path):
-                with open(uevent_path, "r", errors="ignore") as f:
-                    u = f.read().lower()
-                    if ("28de" in u and ("1205" in u or "11ff" in u)) or ("hid-steam" in u):
+            with open(uevent_path, "r", errors="ignore") as f:
+                u = f.read().lower()
+                if ("28de" in u and ("1205" in u or "11ff" in u) and "input2" in u):
+                    dev_path = os.path.join("/dev", entry)
+                    if os.path.exists(dev_path):
                         res.append(dev_path)
         except OSError:
             pass
     return res
-
 
 def guide_codes():
     raw = os.environ.get("ANVIL_OVERLAY_BUTTON_CODES", "")
