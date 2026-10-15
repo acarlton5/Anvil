@@ -44,6 +44,10 @@ ShellRoot {
             root.overlayActive = !root.overlayActive;
             return ;
         }
+        if (action === "quickaccess") {
+            root.quickAccessActive = !root.quickAccessActive;
+            return ;
+        }
         root.controllerAction = action;
         root.controllerActionSerial += 1;
     }
