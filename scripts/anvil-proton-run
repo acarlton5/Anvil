@@ -42,6 +42,45 @@ fi
 # Disable Xalia accessibility helper to avoid headless crash
 export PROTON_USE_XALIA="${PROTON_USE_XALIA:-0}"
 
+# Disable raw hidraw access to prevent Steam Deck gyro/trackpad packets from corrupting gamepad state
+export PROTON_DISABLE_HIDRAW="0x28DE/0x1205,0x28DE/0x11FF"
+export WINE_DISABLE_HIDRAW="1"
+
+# Route controller through SDL2 with full Steam Deck mappings
+deck_guid="0300f617de2800000512000000036800"
+deck_guid_alt="03000000de2800000512000011010000"
+deck_guid_std="03000000de2800000512000000036800"
+deck_guid_x="0300000028de00001205000001100000"
+
+deck_map="${deck_guid},Steam Deck Controller,a:b3,b:b4,x:b5,y:b6,back:b11,start:b12,guide:b13,leftstick:b14,rightstick:b15,leftshoulder:b7,rightshoulder:b8,lefttrigger:b9,righttrigger:b10,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,leftx:a0,lefty:a1,rightx:a2,righty:a3,platform:Linux,"
+deck_map_alt="${deck_guid_alt},Steam Deck,a:b3,b:b4,back:b11,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b13,leftshoulder:b7,leftstick:b14,lefttrigger:b9,leftx:a0,lefty:a1,rightshoulder:b8,rightstick:b15,righttrigger:b10,rightx:a2,righty:a3,start:b12,x:b5,y:b6,platform:Linux,"
+deck_map_std="${deck_guid_std},Steam Deck Controller,a:b3,b:b4,x:b5,y:b6,back:b11,start:b12,guide:b13,leftstick:b14,rightstick:b15,leftshoulder:b7,rightshoulder:b8,lefttrigger:b9,righttrigger:b10,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,leftx:a0,lefty:a1,rightx:a2,righty:a3,platform:Linux,"
+deck_map_x="${deck_guid_x},Steam Deck,a:b3,b:b4,back:b11,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b13,leftshoulder:b7,leftstick:b14,lefttrigger:b9,leftx:a0,lefty:a1,rightshoulder:b8,rightstick:b15,righttrigger:b10,rightx:a2,righty:a3,start:b12,x:b5,y:b6,platform:Linux,"
+
+all_deck_maps="${deck_map}${deck_map_alt}${deck_map_std}${deck_map_x}"
+if [[ -n "${SDL_GAMECONTROLLERCONFIG:-}" ]]; then
+    export SDL_GAMECONTROLLERCONFIG="${all_deck_maps}${SDL_GAMECONTROLLERCONFIG}"
+else
+    export SDL_GAMECONTROLLERCONFIG="${all_deck_maps}"
+fi
+
+# Ensure winebus DisableHidraw registry flag in prefix
+if [[ -f "$prefix_dir/pfx/system.reg" ]]; then
+    python3 -c "
+path = '$prefix_dir/pfx/system.reg'
+try:
+    with open(path, 'r', encoding='utf-8', errors='ignore') as f:
+        text = f.read()
+    target = '[System\\\\\\\\ControlSet001\\\\\\\\Services\\\\\\\\winebus]'
+    if target in text and '\"DisableHidraw\"' not in text:
+        text = text.replace(target, target + '\n\"DisableHidraw\"=dword:00000001\n\"Enable SDL\"=dword:00000001', 1)
+        with open(path, 'w', encoding='utf-8') as f:
+            f.write(text)
+except Exception:
+    pass
+" 2>/dev/null || true
+fi
+
 # Search order for Proton binary:
 # 1. System GE-Proton / custom Proton installed in /opt/proton
 # 2. Steam compatibilitytools.d
@@ -61,7 +100,7 @@ for candidate in \
 done
 
 if [[ -z "$proton_bin" || ! -f "$proton_bin" ]]; then
-    echo "ERROR: Proton binary not found for . Checked /opt/proton and Steam compatibility tools." >&2
+    echo "ERROR: Proton binary not found. Checked /opt/proton and Steam compatibility tools." >&2
     exit 1
 fi
 
@@ -73,8 +112,6 @@ env_vars=()
 game_args=()
 
 for opt in "${raw_options[@]}"; do
-    # An argument string might contain multiple tokens, e.g. "WINEDLLOVERRIDES="steam_api64=n,b" -dx11"
-    # Parse safely using eval array expansion
     eval "tokens=($opt)" 2>/dev/null || tokens=("$opt")
     for tok in "${tokens[@]}"; do
         if [[ "$tok" =~ ^[A-Za-z_][A-Za-z0-9_]*= ]]; then
