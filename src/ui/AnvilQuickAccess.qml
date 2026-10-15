@@ -209,530 +209,515 @@ PanelWindow {
         id: panel
         anchors.fill: parent
         color: AnvilTheme.panelBg
-        border.color: AnvilTheme.outline
+        border.color: AnvilTheme.surfaceContainerHigh
         border.width: 1
 
-        Column {
+        Flickable {
             anchors.fill: parent
-            anchors.margins: 20
-            spacing: 16
+            anchors.margins: 16
+            contentHeight: contentCol.height + 24
+            clip: true
 
-            // Header: Title, Clock, Battery
-            Row {
+            Column {
+                id: contentCol
                 width: parent.width
-                height: 36
-                spacing: 10
+                spacing: 14
 
-                Text {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "QUICK ACCESS"
-                    color: AnvilTheme.primary
-                    font.pixelSize: 15
-                    font.bold: true
-                    font.letterSpacing: 1.2
-                }
-
-                Item { width: Math.max(10, parent.width - 240) }
-
-                Text {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: currentTime
-                    color: AnvilTheme.surfaceVariantText
-                    font.pixelSize: 13
-                }
-
-                Rectangle {
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 44
-                    height: 22
-                    radius: 4
-                    color: "#1c2633"
-                    border.color: isCharging ? "#4cd964" : (batteryPercent <= 20 ? "#ff3b30" : AnvilTheme.primary)
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: batteryPercent + "%"
-                        color: AnvilTheme.surfaceText
-                        font.pixelSize: 11
-                        font.bold: true
-                    }
-                }
-
-                Rectangle {
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 28
-                    height: 28
-                    radius: 14
-                    color: "#1f2a36"
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: "✕"
-                        color: AnvilTheme.surfaceVariantText
-                        font.pixelSize: 13
-                        font.bold: true
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: qamWindow.requestClose()
-                    }
-                }
-            }
-
-            Rectangle {
-                width: parent.width
-                height: 1
-                color: "#263240"
-            }
-
-            // Keyboard Toggle Action Button (Prominent)
-            Rectangle {
-                width: parent.width
-                height: 52
-                radius: 8
-                color: "#1c2734"
-                border.color: AnvilTheme.primary
-                border.width: 1.5
-
+                // Header: Title, Clock, Battery, Close
                 Row {
-                    anchors.centerIn: parent
-                    spacing: 12
+                    width: parent.width
+                    height: 36
+                    spacing: 8
 
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: "⌨"
+                        text: "QUICK ACCESS"
                         color: AnvilTheme.primary
-                        font.pixelSize: 22
+                        font.pixelSize: 15
+                        font.bold: true
+                        font.letterSpacing: 1.2
                     }
+
+                    Item { width: Math.max(8, parent.width - 250); height: 1 }
 
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: "TOGGLE VIRTUAL KEYBOARD"
-                        color: AnvilTheme.surfaceText
+                        text: currentTime
+                        color: AnvilTheme.surfaceVariantText
                         font.pixelSize: 13
-                        font.bold: true
-                        font.letterSpacing: 1.0
                     }
-                }
 
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        qamWindow.requestKeyboardToggle();
-                    }
-                }
-            }
-
-            // SteamOS-Style System Update Button
-            Rectangle {
-                width: parent.width
-                height: 44
-                radius: 6
-                color: isUpdating ? "#2e2518" : "#1a232f"
-                border.color: isUpdating ? AnvilTheme.secondary : "#2e3f52"
-
-                Row {
-                    anchors.centerIn: parent
-                    spacing: 10
-
-                    Text {
+                    Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: isUpdating ? "⏳" : "⚡"
-                        color: isUpdating ? AnvilTheme.secondary : "#38bdf8"
-                        font.pixelSize: 18
-                    }
-
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: updateStatusText
-                        color: isUpdating ? AnvilTheme.secondary : AnvilTheme.surfaceText
-                        font.pixelSize: 12
-                        font.bold: true
-                        font.letterSpacing: 0.8
-                    }
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    enabled: !isUpdating
-                    onClicked: {
-                        triggerSystemUpdate();
-                    }
-                }
-            }
-
-            // Audio Output Section (SteamOS style)
-            Column {
-                width: parent.width
-                spacing: 8
-
-                Row {
-                    width: parent.width
-                    Text {
-                        text: "AUDIO OUTPUT"
-                        color: AnvilTheme.surfaceVariantText
-                        font.pixelSize: 11
-                        font.bold: true
-                        font.letterSpacing: 1.0
-                    }
-                    Item { width: Math.max(10, parent.width - 170); height: 1 }
-                    Text {
-                        text: currentOutputVol + "%"
-                        color: isOutputMuted ? "#ff4d4d" : AnvilTheme.primary
-                        font.pixelSize: 12
-                        font.bold: true
-                    }
-                }
-
-                // Output Device Selector (Click to cycle)
-                Rectangle {
-                    width: parent.width
-                    height: 36
-                    radius: 6
-                    color: AnvilTheme.panelDeep
-                    border.color: AnvilTheme.outline
-
-                    Row {
-                        anchors.fill: parent
-                        anchors.leftMargin: 10
-                        anchors.rightMargin: 10
-                        spacing: 8
+                        width: 44
+                        height: 22
+                        radius: 6
+                        color: AnvilTheme.panelCard
+                        border.color: isCharging ? "#4cd964" : (batteryPercent <= 20 ? "#ff3b30" : AnvilTheme.primary)
 
                         Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: "🔊"
-                            font.pixelSize: 13
-                        }
-
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: parent.width - 70
-                            text: currentOutputDevice
+                            anchors.centerIn: parent
+                            text: batteryPercent + "%"
                             color: AnvilTheme.surfaceText
                             font.pixelSize: 11
                             font.bold: true
-                            elide: Text.ElideRight
-                        }
-
-                        Rectangle {
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 50
-                            height: 22
-                            radius: 4
-                            color: AnvilTheme.panelCard
-                            border.color: AnvilTheme.outline
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: "Cycle"
-                                color: AnvilTheme.secondary
-                                font.pixelSize: 10
-                                font.bold: true
-                            }
                         }
                     }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            cycleAudioOutput();
-                        }
-                    }
-                }
-
-                // Output Volume Bar
-                Rectangle {
-                    width: parent.width
-                    height: 32
-                    radius: 6
-                    color: AnvilTheme.panelDeep
 
                     Rectangle {
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        width: Math.max(0, Math.min(parent.width, parent.width * (currentOutputVol / 100.0)))
-                        radius: 6
-                        color: isOutputMuted ? "#666666" : AnvilTheme.primary
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: (mouse) => {
-                            let frac = Math.max(0.0, Math.min(1.0, mouse.x / width));
-                            setOutputVolume(frac);
-                        }
-                    }
-                }
-            }
-
-            // Audio Input Section (SteamOS style)
-            Column {
-                width: parent.width
-                spacing: 8
-
-                Row {
-                    width: parent.width
-                    Text {
-                        text: "MICROPHONE"
-                        color: AnvilTheme.surfaceVariantText
-                        font.pixelSize: 11
-                        font.bold: true
-                        font.letterSpacing: 1.0
-                    }
-                    Item { width: Math.max(10, parent.width - 170); height: 1 }
-                    Text {
-                        text: currentInputVol + "%"
-                        color: isInputMuted ? "#ff4d4d" : "#4cd964"
-                        font.pixelSize: 12
-                        font.bold: true
-                    }
-                }
-
-                // Input Device Selector (Click to cycle)
-                Rectangle {
-                    width: parent.width
-                    height: 36
-                    radius: 6
-                    color: AnvilTheme.panelDeep
-                    border.color: AnvilTheme.outline
-
-                    Row {
-                        anchors.fill: parent
-                        anchors.leftMargin: 10
-                        anchors.rightMargin: 10
-                        spacing: 8
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 28
+                        height: 28
+                        radius: 14
+                        color: closeMouse.containsMouse ? AnvilTheme.panelCard : "transparent"
 
                         Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: "🎤"
-                            font.pixelSize: 13
+                            anchors.centerIn: parent
+                            text: "✕"
+                            color: AnvilTheme.surfaceVariantText
+                            font.pixelSize: 14
                         }
 
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: parent.width - 70
-                            text: currentInputDevice
-                            color: AnvilTheme.surfaceText
-                            font.pixelSize: 11
-                            font.bold: true
-                            elide: Text.ElideRight
-                        }
-
-                        Rectangle {
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 50
-                            height: 22
-                            radius: 4
-                            color: AnvilTheme.panelCard
-                            border.color: AnvilTheme.outline
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: "Cycle"
-                                color: "#4cd964"
-                                font.pixelSize: 10
-                                font.bold: true
-                            }
-                        }
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            cycleAudioInput();
+                        MouseArea {
+                            id: closeMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onClicked: qamWindow.requestClose()
                         }
                     }
                 }
 
-                // Input Volume Bar
-                Rectangle {
-                    width: parent.width
-                    height: 28
-                    radius: 6
-                    color: AnvilTheme.panelDeep
-
-                    Rectangle {
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        width: Math.max(0, Math.min(parent.width, parent.width * (currentInputVol / 100.0)))
-                        radius: 6
-                        color: isInputMuted ? "#666666" : "#4cd964"
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: (mouse) => {
-                            let frac = Math.max(0.0, Math.min(1.0, mouse.x / width));
-                            setInputVolume(frac);
-                        }
-                    }
-                }
-            }
-
-            // Brightness Control Section
-            Column {
-                width: parent.width
-                spacing: 8
-
-                Row {
-                    width: parent.width
-                    Text {
-                        text: "BRIGHTNESS"
-                        color: AnvilTheme.surfaceVariantText
-                        font.pixelSize: 11
-                        font.bold: true
-                        font.letterSpacing: 1.0
-                    }
-                    Item { width: parent.width - 140; height: 1 }
-                    Text {
-                        text: Math.round(brightnessLevel * 100) + "%"
-                        color: AnvilTheme.secondary
-                        font.pixelSize: 12
-                        font.bold: true
-                    }
-                }
-
+                // Keyboard Toggle Button
                 Rectangle {
                     width: parent.width
                     height: 38
-                    radius: 6
-                    color: AnvilTheme.panelDeep
-
-                    Rectangle {
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        width: Math.max(0, Math.min(parent.width, parent.width * brightnessLevel))
-                        radius: 6
-                        color: AnvilTheme.secondary
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: (mouse) => {
-                            let frac = Math.max(0.05, Math.min(1.0, mouse.x / width));
-                            setBrightness(frac);
-                        }
-                    }
-                }
-            }
-
-            Rectangle {
-                width: parent.width
-                height: 1
-                color: "#263240"
-            }
-
-            // Session / Power Management
-            Text {
-                text: "POWER & SESSION"
-                color: AnvilTheme.surfaceVariantText
-                font.pixelSize: 11
-                font.bold: true
-                font.letterSpacing: 1.0
-            }
-
-            Grid {
-                width: parent.width
-                columns: 2
-                spacing: 8
-
-                // Switch to Desktop
-                Rectangle {
-                    width: (parent.width - 8) / 2
-                    height: 42
-                    radius: 6
+                    radius: 8
                     color: AnvilTheme.panelCard
                     border.color: AnvilTheme.outline
 
-                    Text {
+                    Row {
                         anchors.centerIn: parent
-                        text: "Desktop Mode"
-                        color: AnvilTheme.surfaceText
-                        font.pixelSize: 12
-                        font.bold: true
+                        spacing: 8
+
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "⌨"
+                            font.pixelSize: 14
+                            color: AnvilTheme.primary
+                        }
+
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "On-Screen Keyboard (Steam + X)"
+                            color: AnvilTheme.surfaceText
+                            font.pixelSize: 12
+                            font.bold: true
+                        }
                     }
 
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            Quickshell.execDetached(["sh", "-c", "command -v anvil-switch-desktop >/dev/null 2>&1 && anvil-switch-desktop || hyprctl dispatch exit"]);
-                            Qt.quit();
+                            qamWindow.requestKeyboardToggle();
                         }
                     }
                 }
 
-                // Sleep
+                // Audio Output Section (SteamOS style card)
                 Rectangle {
-                    width: (parent.width - 8) / 2
-                    height: 42
-                    radius: 6
-                    color: AnvilTheme.panelDeep
-                    border.color: AnvilTheme.outline
+                    width: parent.width
+                    height: 104
+                    radius: 10
+                    color: AnvilTheme.panelCard
+                    border.color: AnvilTheme.surfaceContainerHigh
 
-                    Text {
-                        anchors.centerIn: parent
-                        text: "Sleep"
-                        color: AnvilTheme.surfaceVariantText
-                        font.pixelSize: 12
-                        font.bold: true
-                    }
-
-                    MouseArea {
+                    Column {
                         anchors.fill: parent
-                        onClicked: {
-                            Quickshell.execDetached(["sh", "-c", "loginctl suspend 2>/dev/null || systemctl suspend"]);
+                        anchors.margins: 12
+                        spacing: 8
+
+                        Row {
+                            width: parent.width
+                            Text {
+                                text: "AUDIO OUTPUT"
+                                color: AnvilTheme.primary
+                                font.pixelSize: 11
+                                font.bold: true
+                                font.letterSpacing: 1.0
+                            }
+                            Item { width: Math.max(10, parent.width - 150); height: 1 }
+                            Text {
+                                text: currentOutputVol + "%"
+                                color: isOutputMuted ? AnvilTheme.error : AnvilTheme.surfaceText
+                                font.pixelSize: 12
+                                font.bold: true
+                            }
+                        }
+
+                        // Output Device Selector (Click to cycle)
+                        Rectangle {
+                            width: parent.width
+                            height: 32
+                            radius: 6
+                            color: AnvilTheme.panelDeep
+
+                            Row {
+                                anchors.fill: parent
+                                anchors.leftMargin: 10
+                                anchors.rightMargin: 10
+                                spacing: 8
+
+                                Text {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    text: "🔊"
+                                    font.pixelSize: 13
+                                }
+
+                                Text {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: parent.width - 70
+                                    text: currentOutputDevice
+                                    color: AnvilTheme.surfaceText
+                                    font.pixelSize: 11
+                                    font.bold: true
+                                    elide: Text.ElideRight
+                                }
+
+                                Rectangle {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 50
+                                    height: 20
+                                    radius: 4
+                                    color: AnvilTheme.surfaceVariant
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "Cycle"
+                                        color: AnvilTheme.primary
+                                        font.pixelSize: 10
+                                        font.bold: true
+                                    }
+                                }
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: cycleAudioOutput()
+                            }
+                        }
+
+                        // Output Volume Slider
+                        Rectangle {
+                            width: parent.width
+                            height: 24
+                            radius: 6
+                            color: AnvilTheme.panelDeep
+
+                            Rectangle {
+                                anchors.left: parent.left
+                                anchors.top: parent.top
+                                anchors.bottom: parent.bottom
+                                width: Math.max(0, Math.min(parent.width, parent.width * (currentOutputVol / 100.0)))
+                                radius: 6
+                                color: isOutputMuted ? "#666666" : AnvilTheme.primary
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: (mouse) => {
+                                    let frac = Math.max(0.0, Math.min(1.0, mouse.x / width));
+                                    setOutputVolume(frac);
+                                }
+                            }
                         }
                     }
                 }
 
-                // Restart System
+                // Microphone Section
                 Rectangle {
-                    width: (parent.width - 8) / 2
-                    height: 42
-                    radius: 6
-                    color: AnvilTheme.panelDeep
-                    border.color: AnvilTheme.outline
+                    width: parent.width
+                    height: 104
+                    radius: 10
+                    color: AnvilTheme.panelCard
+                    border.color: AnvilTheme.surfaceContainerHigh
 
-                    Text {
-                        anchors.centerIn: parent
-                        text: "Restart System"
-                        color: AnvilTheme.surfaceVariantText
-                        font.pixelSize: 12
-                        font.bold: true
-                    }
-
-                    MouseArea {
+                    Column {
                         anchors.fill: parent
-                        onClicked: {
-                            Quickshell.execDetached(["sh", "-c", "loginctl reboot 2>/dev/null || systemctl reboot"]);
+                        anchors.margins: 12
+                        spacing: 8
+
+                        Row {
+                            width: parent.width
+                            Text {
+                                text: "MICROPHONE"
+                                color: AnvilTheme.secondary
+                                font.pixelSize: 11
+                                font.bold: true
+                                font.letterSpacing: 1.0
+                            }
+                            Item { width: Math.max(10, parent.width - 150); height: 1 }
+                            Text {
+                                text: currentInputVol + "%"
+                                color: isInputMuted ? AnvilTheme.error : AnvilTheme.surfaceText
+                                font.pixelSize: 12
+                                font.bold: true
+                            }
+                        }
+
+                        // Input Device Selector (Click to cycle)
+                        Rectangle {
+                            width: parent.width
+                            height: 32
+                            radius: 6
+                            color: AnvilTheme.panelDeep
+
+                            Row {
+                                anchors.fill: parent
+                                anchors.leftMargin: 10
+                                anchors.rightMargin: 10
+                                spacing: 8
+
+                                Text {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    text: "🎤"
+                                    font.pixelSize: 13
+                                }
+
+                                Text {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: parent.width - 70
+                                    text: currentInputDevice
+                                    color: AnvilTheme.surfaceText
+                                    font.pixelSize: 11
+                                    font.bold: true
+                                    elide: Text.ElideRight
+                                }
+
+                                Rectangle {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 50
+                                    height: 20
+                                    radius: 4
+                                    color: AnvilTheme.surfaceVariant
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "Cycle"
+                                        color: AnvilTheme.secondary
+                                        font.pixelSize: 10
+                                        font.bold: true
+                                    }
+                                }
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: cycleAudioInput()
+                            }
+                        }
+
+                        // Input Volume Slider
+                        Rectangle {
+                            width: parent.width
+                            height: 24
+                            radius: 6
+                            color: AnvilTheme.panelDeep
+
+                            Rectangle {
+                                anchors.left: parent.left
+                                anchors.top: parent.top
+                                anchors.bottom: parent.bottom
+                                width: Math.max(0, Math.min(parent.width, parent.width * (currentInputVol / 100.0)))
+                                radius: 6
+                                color: isInputMuted ? "#666666" : AnvilTheme.secondary
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: (mouse) => {
+                                    let frac = Math.max(0.0, Math.min(1.0, mouse.x / width));
+                                    setInputVolume(frac);
+                                }
+                            }
                         }
                     }
                 }
 
-                // Shut Down
+                // Brightness Section
                 Rectangle {
-                    width: (parent.width - 8) / 2
-                    height: 42
-                    radius: 6
-                    color: "#281519"
-                    border.color: "#522228"
+                    width: parent.width
+                    height: 78
+                    radius: 10
+                    color: AnvilTheme.panelCard
+                    border.color: AnvilTheme.surfaceContainerHigh
 
-                    Text {
-                        anchors.centerIn: parent
-                        text: "Shut Down"
-                        color: "#ff7070"
-                        font.pixelSize: 12
-                        font.bold: true
-                    }
-
-                    MouseArea {
+                    Column {
                         anchors.fill: parent
-                        onClicked: {
-                            Quickshell.execDetached(["sh", "-c", "loginctl poweroff 2>/dev/null || systemctl poweroff"]);
+                        anchors.margins: 12
+                        spacing: 8
+
+                        Row {
+                            width: parent.width
+                            Text {
+                                text: "DISPLAY BRIGHTNESS"
+                                color: AnvilTheme.surfaceVariantText
+                                font.pixelSize: 11
+                                font.bold: true
+                                font.letterSpacing: 1.0
+                            }
+                            Item { width: Math.max(10, parent.width - 170); height: 1 }
+                            Text {
+                                text: Math.round(brightnessLevel * 100) + "%"
+                                color: AnvilTheme.surfaceText
+                                font.pixelSize: 12
+                                font.bold: true
+                            }
+                        }
+
+                        Rectangle {
+                            width: parent.width
+                            height: 24
+                            radius: 6
+                            color: AnvilTheme.panelDeep
+
+                            Rectangle {
+                                anchors.left: parent.left
+                                anchors.top: parent.top
+                                anchors.bottom: parent.bottom
+                                width: Math.max(0, Math.min(parent.width, parent.width * brightnessLevel))
+                                radius: 6
+                                color: AnvilTheme.secondary
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: (mouse) => {
+                                    let frac = Math.max(0.05, Math.min(1.0, mouse.x / width));
+                                    setBrightness(frac);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Session / Power Management Card
+                Rectangle {
+                    width: parent.width
+                    height: 140
+                    radius: 10
+                    color: AnvilTheme.panelCard
+                    border.color: AnvilTheme.surfaceContainerHigh
+
+                    Column {
+                        anchors.fill: parent
+                        anchors.margins: 12
+                        spacing: 10
+
+                        Text {
+                            text: "POWER & SESSION"
+                            color: AnvilTheme.surfaceVariantText
+                            font.pixelSize: 11
+                            font.bold: true
+                            font.letterSpacing: 1.0
+                        }
+
+                        Grid {
+                            width: parent.width
+                            columns: 2
+                            spacing: 8
+
+                            Rectangle {
+                                width: (parent.width - 8) / 2
+                                height: 38
+                                radius: 6
+                                color: AnvilTheme.panelDeep
+                                border.color: AnvilTheme.outline
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "Desktop Mode"
+                                    color: AnvilTheme.surfaceText
+                                    font.pixelSize: 11
+                                    font.bold: true
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        Quickshell.execDetached(["sh", "-c", "command -v anvil-switch-desktop >/dev/null 2>&1 && anvil-switch-desktop || hyprctl dispatch exit"]);
+                                        Qt.quit();
+                                    }
+                                }
+                            }
+
+                            Rectangle {
+                                width: (parent.width - 8) / 2
+                                height: 38
+                                radius: 6
+                                color: AnvilTheme.panelDeep
+                                border.color: AnvilTheme.outline
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "Sleep"
+                                    color: AnvilTheme.surfaceVariantText
+                                    font.pixelSize: 11
+                                    font.bold: true
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        Quickshell.execDetached(["sh", "-c", "loginctl suspend 2>/dev/null || systemctl suspend"]);
+                                    }
+                                }
+                            }
+
+                            Rectangle {
+                                width: (parent.width - 8) / 2
+                                height: 38
+                                radius: 6
+                                color: AnvilTheme.panelDeep
+                                border.color: AnvilTheme.outline
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "Restart System"
+                                    color: AnvilTheme.surfaceVariantText
+                                    font.pixelSize: 11
+                                    font.bold: true
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        Quickshell.execDetached(["sh", "-c", "loginctl reboot 2>/dev/null || systemctl reboot"]);
+                                    }
+                                }
+                            }
+
+                            Rectangle {
+                                width: (parent.width - 8) / 2
+                                height: 38
+                                radius: 6
+                                color: "#281519"
+                                border.color: "#522228"
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "Shut Down"
+                                    color: "#ff7070"
+                                    font.pixelSize: 11
+                                    font.bold: true
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        Quickshell.execDetached(["sh", "-c", "loginctl poweroff 2>/dev/null || systemctl poweroff"]);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
