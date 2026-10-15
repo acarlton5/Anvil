@@ -19,30 +19,61 @@ if product_name_file then
     end
 end
 
-if deck_transform ~= 0 then
-    hl.monitor({
-        output = "eDP-1",
-        mode = "preferred",
-        position = "0x0",
-        scale = "1",
-        transform = deck_transform,
-    })
-    hl.config({
-        input = {
-            touchdevice = {
-                transform = deck_transform,
-                output = "eDP-1"
-            }
-        }
-    })
-else
-    hl.monitor({
-        output = "",
-        mode = "preferred",
-        position = "auto",
-        scale = "auto",
-    })
+local function has_external_display()
+    local p = io.popen("for s in /sys/class/drm/card*-DP-*/status /sys/class/drm/card*-HDMI-*/status; do [ -f \"$s\" ] && grep -q '^connected' \"$s\" 2>/dev/null && echo 'yes' && exit 0; done; echo 'no'")
+    if p then
+        local res = p:read("*l") or "no"
+        p:close()
+        return res:find("yes") ~= nil
+    end
+    return false
 end
+
+local function update_displays()
+    if deck_transform ~= 0 then
+        if has_external_display() then
+            hl.monitor({
+                output = "eDP-1",
+                disabled = true,
+            })
+        else
+            hl.monitor({
+                output = "eDP-1",
+                mode = "preferred",
+                position = "0x0",
+                scale = "1",
+                transform = deck_transform,
+            })
+            hl.config({
+                input = {
+                    touchdevice = {
+                        transform = deck_transform,
+                        output = "eDP-1"
+                    }
+                }
+            })
+        end
+    else
+        hl.monitor({
+            output = "",
+            mode = "preferred",
+            position = "auto",
+            scale = "auto",
+        })
+    end
+end
+
+-- Apply initial monitor configuration based on external display
+update_displays()
+
+-- Auto-switch display when external monitor is connected or disconnected
+hl.on("monitor.added", function()
+    update_displays()
+end)
+
+hl.on("monitor.removed", function()
+    update_displays()
+end)
 
 local quickaccess_toggle = anvil_root .. "/scripts/anvil-quickaccess-toggle " .. anvil_root
 local keyboard_toggle = anvil_root .. "/scripts/anvil-keyboard-toggle " .. anvil_root
