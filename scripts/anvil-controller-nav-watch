@@ -104,6 +104,9 @@ def controller_events(controllers):
         dev_name = read_text(os.path.join(sys_event, "device", "name"))
         if "motion" in dev_name or "mouse" in dev_name:
             continue
+        # Also skip keyboard interface (event6) if joystick (event7) exists
+        if "keyboard" in dev_name or "event-kbd" in sys_event:
+            continue
         vendor = read_text(os.path.join(sys_event, "device", "id", "vendor"))
         product = read_text(os.path.join(sys_event, "device", "id", "product"))
         controller_id = f"{vendor}:{product}"
