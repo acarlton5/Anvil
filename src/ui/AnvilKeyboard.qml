@@ -25,7 +25,7 @@ PanelWindow {
         bottom: true
     }
 
-    implicitHeight: 280
+    implicitHeight: 310
 
     visible: isVisible
 
@@ -45,51 +45,104 @@ PanelWindow {
         }
     }
 
+    readonly property var row1: [
+        { "text": "q", "symbol": "1", "weight": 1.0 },
+        { "text": "w", "symbol": "2", "weight": 1.0 },
+        { "text": "e", "symbol": "3", "weight": 1.0 },
+        { "text": "r", "symbol": "4", "weight": 1.0 },
+        { "text": "t", "symbol": "5", "weight": 1.0 },
+        { "text": "y", "symbol": "6", "weight": 1.0 },
+        { "text": "u", "symbol": "7", "weight": 1.0 },
+        { "text": "i", "symbol": "8", "weight": 1.0 },
+        { "text": "o", "symbol": "9", "weight": 1.0 },
+        { "text": "p", "symbol": "0", "weight": 1.0 }
+    ]
+
+    readonly property var row2: [
+        { "text": "a", "symbol": "-", "weight": 1.0 },
+        { "text": "s", "symbol": "/", "weight": 1.0 },
+        { "text": "d", "symbol": ":", "weight": 1.0 },
+        { "text": "f", "symbol": ";", "weight": 1.0 },
+        { "text": "g", "symbol": "(", "weight": 1.0 },
+        { "text": "h", "symbol": ")", "weight": 1.0 },
+        { "text": "j", "symbol": "$", "weight": 1.0 },
+        { "text": "k", "symbol": "&", "weight": 1.0 },
+        { "text": "l", "symbol": "@", "weight": 1.0 }
+    ]
+
+    readonly property var row3: [
+        { "text": "z", "symbol": ".", "weight": 1.0 },
+        { "text": "x", "symbol": ",", "weight": 1.0 },
+        { "text": "c", "symbol": "?", "weight": 1.0 },
+        { "text": "v", "symbol": "!", "weight": 1.0 },
+        { "text": "b", "symbol": "'", "weight": 1.0 },
+        { "text": "n", "symbol": "%", "weight": 1.0 },
+        { "text": "m", "symbol": "\"", "weight": 1.0 }
+    ]
+
     Rectangle {
         id: bg
         anchors.fill: parent
-        color: "#f20d1218"
-        border.color: "#2a3644"
+        color: "#f610161f"
+        border.color: "#283444"
         border.width: 1
 
+        // Header bar with Title, Status & Close
         Rectangle {
+            id: topBar
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
             height: 38
-            color: "#18222d"
+            color: "#161e29"
+            border.color: "#222c38"
 
-            Text {
+            Row {
                 anchors.left: parent.left
-                anchors.leftMargin: 18
+                anchors.leftMargin: 20
                 anchors.verticalCenter: parent.verticalCenter
-                text: "ANVIL VIRTUAL KEYBOARD"
-                color: "#ff6537"
-                font.pixelSize: 12
-                font.bold: true
-                font.letterSpacing: 1.2
+                spacing: 10
+
+                Text {
+                    text: "ON-SCREEN KEYBOARD"
+                    color: "#ff6537"
+                    font.pixelSize: 12
+                    font.bold: true
+                    font.letterSpacing: 1.2
+                }
+
+                Text {
+                    text: oskWindow.symbols ? "• Numbers & Symbols" : (oskWindow.shift ? "• Shift Active" : "")
+                    color: "#a0afbf"
+                    font.pixelSize: 11
+                }
             }
 
             Rectangle {
                 anchors.right: parent.right
-                anchors.rightMargin: 12
+                anchors.rightMargin: 16
                 anchors.verticalCenter: parent.verticalCenter
-                width: 70
-                height: 26
-                radius: 4
-                color: "#ff3b30"
+                width: 28
+                height: 28
+                radius: 14
+                color: closeMouse.containsMouse ? "#3b1e22" : "#212b37"
 
                 Text {
                     anchors.centerIn: parent
-                    text: "CLOSE"
-                    color: "white"
-                    font.pixelSize: 11
+                    text: "✕"
+                    color: closeMouse.containsMouse ? "#ff7070" : "#a0afbf"
+                    font.pixelSize: 13
                     font.bold: true
                 }
 
                 MouseArea {
+                    id: closeMouse
                     anchors.fill: parent
-                    onClicked: oskWindow.isVisible = false
+                    hoverEnabled: true
+                    onClicked: {
+                        oskWindow.dismissed();
+                        oskWindow.isVisible = false;
+                    }
                 }
             }
         }
@@ -97,62 +150,39 @@ PanelWindow {
         Column {
             anchors.left: parent.left
             anchors.right: parent.right
+            anchors.top: topBar.bottom
             anchors.bottom: parent.bottom
-            anchors.top: parent.top
-            anchors.topMargin: 44
-            anchors.margins: 8
-            spacing: 6
+            anchors.margins: 12
+            spacing: 8
 
-            // Row 1: Numbers
+            // Row 1: 10 keys (Q-P)
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 6
-                Repeater {
-                    model: oskWindow.symbols ? ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")"] : ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
-                    delegate: Rectangle {
-                        width: (oskWindow.width - 80) / 10
-                        height: 48
-                        radius: 6
-                        color: "#1f2a36"
-                        border.color: "#384756"
-                        Text {
-                            anchors.centerIn: parent
-                            text: modelData
-                            color: "#f5f5f2"
-                            font.pixelSize: 18
-                            font.bold: true
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: oskWindow.sendKey(modelData)
-                        }
-                    }
-                }
-            }
 
-            // Row 2: QWERTY
-            Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 6
                 Repeater {
-                    model: ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"]
+                    model: oskWindow.row1
                     delegate: Rectangle {
-                        width: (oskWindow.width - 80) / 10
-                        height: 48
-                        radius: 6
-                        color: "#1f2a36"
-                        border.color: "#384756"
+                        width: Math.floor((oskWindow.width - 24 - 54) / 10)
+                        height: 52
+                        radius: 8
+                        color: keyMouse.pressed ? "#ff6537" : (keyMouse.containsMouse ? "#273344" : "#1b232f")
+                        border.color: keyMouse.pressed ? "#ff6537" : "#2e3b4d"
+
                         Text {
                             anchors.centerIn: parent
-                            text: oskWindow.shift ? modelData.toUpperCase() : modelData
-                            color: "#f5f5f2"
-                            font.pixelSize: 18
+                            text: oskWindow.symbols ? modelData.symbol : (oskWindow.shift ? modelData.text.toUpperCase() : modelData.text)
+                            color: keyMouse.pressed ? "#0b0f14" : "#f5f5f2"
+                            font.pixelSize: 19
                             font.bold: true
                         }
+
                         MouseArea {
+                            id: keyMouse
                             anchors.fill: parent
+                            hoverEnabled: true
                             onClicked: {
-                                let ch = oskWindow.shift ? modelData.toUpperCase() : modelData;
+                                let ch = oskWindow.symbols ? modelData.symbol : (oskWindow.shift ? modelData.text.toUpperCase() : modelData.text);
                                 oskWindow.sendKey(ch);
                                 if (oskWindow.shift) oskWindow.shift = false;
                             }
@@ -161,182 +191,251 @@ PanelWindow {
                 }
             }
 
-            // Row 3: ASDFGHJKL + Backspace
+            // Row 2: 9 keys (A-L)
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 6
+
                 Repeater {
-                    model: ["a", "s", "d", "f", "g", "h", "j", "k", "l"]
+                    model: oskWindow.row2
                     delegate: Rectangle {
-                        width: (oskWindow.width - 100) / 10.5
-                        height: 48
-                        radius: 6
-                        color: "#1f2a36"
-                        border.color: "#384756"
+                        width: Math.floor((oskWindow.width - 24 - 54) / 10)
+                        height: 52
+                        radius: 8
+                        color: keyMouse2.pressed ? "#ff6537" : (keyMouse2.containsMouse ? "#273344" : "#1b232f")
+                        border.color: keyMouse2.pressed ? "#ff6537" : "#2e3b4d"
+
                         Text {
                             anchors.centerIn: parent
-                            text: oskWindow.shift ? modelData.toUpperCase() : modelData
-                            color: "#f5f5f2"
-                            font.pixelSize: 18
+                            text: oskWindow.symbols ? modelData.symbol : (oskWindow.shift ? modelData.text.toUpperCase() : modelData.text)
+                            color: keyMouse2.pressed ? "#0b0f14" : "#f5f5f2"
+                            font.pixelSize: 19
                             font.bold: true
                         }
+
                         MouseArea {
+                            id: keyMouse2
                             anchors.fill: parent
+                            hoverEnabled: true
                             onClicked: {
-                                let ch = oskWindow.shift ? modelData.toUpperCase() : modelData;
+                                let ch = oskWindow.symbols ? modelData.symbol : (oskWindow.shift ? modelData.text.toUpperCase() : modelData.text);
                                 oskWindow.sendKey(ch);
                                 if (oskWindow.shift) oskWindow.shift = false;
                             }
                         }
                     }
                 }
+            }
 
+            // Row 3: Shift (1.5x), Z-M (7 keys), Backspace (1.5x)
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 6
+
+                // Shift Key
                 Rectangle {
-                    width: ((oskWindow.width - 100) / 10.5) * 1.5
-                    height: 48
-                    radius: 6
-                    color: "#2a3644"
-                    border.color: "#ff6537"
+                    width: Math.floor(((oskWindow.width - 24 - 54) / 10) * 1.48)
+                    height: 52
+                    radius: 8
+                    color: oskWindow.shift ? "#ff6537" : (shiftMouse.containsMouse ? "#273344" : "#222c3b")
+                    border.color: oskWindow.shift ? "#ff6537" : "#364559"
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "⇧"
+                        color: oskWindow.shift ? "#0b0f14" : "#f5f5f2"
+                        font.pixelSize: 22
+                        font.bold: true
+                    }
+
+                    MouseArea {
+                        id: shiftMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked: oskWindow.shift = !oskWindow.shift
+                    }
+                }
+
+                // Middle 7 keys
+                Repeater {
+                    model: oskWindow.row3
+                    delegate: Rectangle {
+                        width: Math.floor((oskWindow.width - 24 - 54) / 10)
+                        height: 52
+                        radius: 8
+                        color: keyMouse3.pressed ? "#ff6537" : (keyMouse3.containsMouse ? "#273344" : "#1b232f")
+                        border.color: keyMouse3.pressed ? "#ff6537" : "#2e3b4d"
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: oskWindow.symbols ? modelData.symbol : (oskWindow.shift ? modelData.text.toUpperCase() : modelData.text)
+                            color: keyMouse3.pressed ? "#0b0f14" : "#f5f5f2"
+                            font.pixelSize: 19
+                            font.bold: true
+                        }
+
+                        MouseArea {
+                            id: keyMouse3
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onClicked: {
+                                let ch = oskWindow.symbols ? modelData.symbol : (oskWindow.shift ? modelData.text.toUpperCase() : modelData.text);
+                                oskWindow.sendKey(ch);
+                                if (oskWindow.shift) oskWindow.shift = false;
+                            }
+                        }
+                    }
+                }
+
+                // Backspace Key
+                Rectangle {
+                    width: Math.floor(((oskWindow.width - 24 - 54) / 10) * 1.48)
+                    height: 52
+                    radius: 8
+                    color: bsMouse.pressed ? "#ff6537" : (bsMouse.containsMouse ? "#322329" : "#271e25")
+                    border.color: bsMouse.pressed ? "#ff6537" : "#4e2b34"
+
                     Text {
                         anchors.centerIn: parent
                         text: "⌫"
-                        color: "#ff6537"
+                        color: bsMouse.pressed ? "#0b0f14" : "#ff7070"
                         font.pixelSize: 20
                         font.bold: true
                     }
+
                     MouseArea {
+                        id: bsMouse
                         anchors.fill: parent
+                        hoverEnabled: true
                         onClicked: oskWindow.sendKey("Backspace")
                     }
                 }
             }
 
-            // Row 4: Shift, ZXCVBNM, Enter
+            // Row 4: Hide (1.25x), 123/ABC (1.35x), Space (4.4x), . (1x), Enter (1.5x)
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 6
 
+                // Dismiss / Hide Key
                 Rectangle {
-                    width: ((oskWindow.width - 100) / 10.5) * 1.3
-                    height: 48
-                    radius: 6
-                    color: oskWindow.shift ? "#ff6537" : "#2a3644"
-                    border.color: "#384756"
+                    width: Math.floor(((oskWindow.width - 24 - 54) / 10) * 1.25)
+                    height: 52
+                    radius: 8
+                    color: hideMouse.containsMouse ? "#2e3948" : "#222c3b"
+                    border.color: "#364559"
+
                     Text {
                         anchors.centerIn: parent
-                        text: "⇧"
-                        color: oskWindow.shift ? "black" : "#f5f5f2"
-                        font.pixelSize: 20
+                        text: "⌨ ✕"
+                        color: "#a0afbf"
+                        font.pixelSize: 14
                         font.bold: true
                     }
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: oskWindow.shift = !oskWindow.shift
-                    }
-                }
 
-                Repeater {
-                    model: ["z", "x", "c", "v", "b", "n", "m", ",", "."]
-                    delegate: Rectangle {
-                        width: (oskWindow.width - 120) / 11
-                        height: 48
-                        radius: 6
-                        color: "#1f2a36"
-                        border.color: "#384756"
-                        Text {
-                            anchors.centerIn: parent
-                            text: oskWindow.shift ? modelData.toUpperCase() : modelData
-                            color: "#f5f5f2"
-                            font.pixelSize: 18
-                            font.bold: true
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                let ch = oskWindow.shift ? modelData.toUpperCase() : modelData;
-                                oskWindow.sendKey(ch);
-                                if (oskWindow.shift) oskWindow.shift = false;
-                            }
+                    MouseArea {
+                        id: hideMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked: {
+                            oskWindow.dismissed();
+                            oskWindow.isVisible = false;
                         }
                     }
                 }
 
+                // 123 / ABC Toggle Key
                 Rectangle {
-                    width: ((oskWindow.width - 100) / 10.5) * 1.5
-                    height: 48
-                    radius: 6
-                    color: "#ff6537"
+                    width: Math.floor(((oskWindow.width - 24 - 54) / 10) * 1.35)
+                    height: 52
+                    radius: 8
+                    color: oskWindow.symbols ? "#ff6537" : (symMouse.containsMouse ? "#2e3948" : "#222c3b")
+                    border.color: oskWindow.symbols ? "#ff6537" : "#364559"
+
                     Text {
                         anchors.centerIn: parent
-                        text: "↵ ENTER"
-                        color: "#0d1218"
-                        font.pixelSize: 12
+                        text: oskWindow.symbols ? "ABC" : "123"
+                        color: oskWindow.symbols ? "#0b0f14" : "#f5f5f2"
+                        font.pixelSize: 15
                         font.bold: true
                     }
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: oskWindow.sendKey("Enter")
-                    }
-                }
-            }
 
-            // Row 5: Space and symbol toggle
-            Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 8
-
-                Rectangle {
-                    width: 100
-                    height: 44
-                    radius: 6
-                    color: oskWindow.symbols ? "#ff6537" : "#2a3644"
-                    Text {
-                        anchors.centerIn: parent
-                        text: oskWindow.symbols ? "ABC" : "123 #+="
-                        color: oskWindow.symbols ? "black" : "#f5f5f2"
-                        font.pixelSize: 13
-                        font.bold: true
-                    }
                     MouseArea {
+                        id: symMouse
                         anchors.fill: parent
+                        hoverEnabled: true
                         onClicked: oskWindow.symbols = !oskWindow.symbols
                     }
                 }
 
+                // Spacebar
                 Rectangle {
-                    width: oskWindow.width * 0.45
-                    height: 44
-                    radius: 6
-                    color: "#1f2a36"
-                    border.color: "#384756"
+                    width: Math.floor(((oskWindow.width - 24 - 54) / 10) * 4.4)
+                    height: 52
+                    radius: 8
+                    color: spaceMouse.pressed ? "#ff6537" : (spaceMouse.containsMouse ? "#273344" : "#1b232f")
+                    border.color: spaceMouse.pressed ? "#ff6537" : "#2e3b4d"
+
                     Text {
                         anchors.centerIn: parent
                         text: "SPACE"
-                        color: "#8895a5"
-                        font.pixelSize: 12
+                        color: spaceMouse.pressed ? "#0b0f14" : "#728394"
+                        font.pixelSize: 13
                         font.bold: true
+                        font.letterSpacing: 1.5
                     }
+
                     MouseArea {
+                        id: spaceMouse
                         anchors.fill: parent
+                        hoverEnabled: true
                         onClicked: oskWindow.sendKey("Space")
                     }
                 }
 
+                // Period Key
                 Rectangle {
-                    width: 100
-                    height: 44
-                    radius: 6
-                    color: "#2a3644"
+                    width: Math.floor((oskWindow.width - 24 - 54) / 10)
+                    height: 52
+                    radius: 8
+                    color: dotMouse.pressed ? "#ff6537" : (dotMouse.containsMouse ? "#273344" : "#1b232f")
+                    border.color: dotMouse.pressed ? "#ff6537" : "#2e3b4d"
+
                     Text {
                         anchors.centerIn: parent
-                        text: "ESC"
-                        color: "#f5f5f2"
+                        text: "."
+                        color: dotMouse.pressed ? "#0b0f14" : "#f5f5f2"
+                        font.pixelSize: 22
+                        font.bold: true
+                    }
+
+                    MouseArea {
+                        id: dotMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked: oskWindow.sendKey(".")
+                    }
+                }
+
+                // Enter Key
+                Rectangle {
+                    width: Math.floor(((oskWindow.width - 24 - 54) / 10) * 1.5)
+                    height: 52
+                    radius: 8
+                    color: enterMouse.pressed ? "#e05020" : "#ff6537"
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: "↵ ENTER"
+                        color: "#0b0f14"
                         font.pixelSize: 13
                         font.bold: true
                     }
+
                     MouseArea {
+                        id: enterMouse
                         anchors.fill: parent
-                        onClicked: oskWindow.sendKey("Escape")
+                        onClicked: oskWindow.sendKey("Enter")
                     }
                 }
             }

@@ -24,6 +24,63 @@ PanelWindow {
     readonly property color ember: "#ff6841"
     readonly property color gold: "#dbb66d"
     readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || "/usr/local/share/anvil"
+    
+    property string overlayAudioSinkName: "Default Output"
+    property int overlayAudioSinkVol: 70
+    property string overlayAudioSourceName: "Default Mic"
+    property int overlayAudioSourceVol: 100
+
+    Process {
+        id: overlayAudioProc
+        command: ["sh", "-c", anvilRoot + "/scripts/anvil-audio-control status"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    let d = JSON.parse(text);
+                    if (d.current_sink) {
+                        overlayAudioSinkName = d.current_sink.name || "Output";
+                        overlayAudioSinkVol = d.current_sink.volume || 0;
+                    }
+                    if (d.current_source) {
+                        overlayAudioSourceName = d.current_source.name || "Mic";
+                        overlayAudioSourceVol = d.current_source.volume || 0;
+                    }
+                } catch(e) {}
+            }
+        }
+    }
+
+    function refreshOverlayAudio() {
+        if (!overlayAudioProc.running) overlayAudioProc.running = true;
+    }
+
+    function cycleOverlaySink() {
+        Quickshell.execDetached([anvilRoot + "/scripts/anvil-audio-control", "cycle-sink"]);
+        overlayAudioTimer.start();
+    }
+
+    function cycleOverlaySource() {
+        Quickshell.execDetached([anvilRoot + "/scripts/anvil-audio-control", "cycle-source"]);
+        overlayAudioTimer.start();
+    }
+
+    function setOverlaySinkVol(frac) {
+        overlayAudioSinkVol = Math.round(frac * 100);
+        Quickshell.execDetached([anvilRoot + "/scripts/anvil-audio-control", "set-volume", overlayAudioSinkVol.toString()]);
+    }
+
+    function setOverlaySourceVol(frac) {
+        overlayAudioSourceVol = Math.round(frac * 100);
+        Quickshell.execDetached([anvilRoot + "/scripts/anvil-audio-control", "set-mic-volume", overlayAudioSourceVol.toString()]);
+    }
+
+    Timer {
+        id: overlayAudioTimer
+        interval: 350
+        repeat: false
+        onTriggered: refreshOverlayAudio()
+    }
+
     readonly property string achievementStatusScript: anvilRoot + "/scripts/anvil-achievement-status"
     property int selectedDockIndex: 2
     property var achievementStatus: ({
@@ -75,7 +132,7 @@ PanelWindow {
 
     function refreshAchievements() {
         achievementStatusProcess.command = ["python3", achievementStatusScript];
-        achievementStatusProcess.running = true;
+        achievementStatusProcess.running = true; refreshOverlayAudio();
     }
 
     function glyph(action) {
@@ -1353,6 +1410,230 @@ PanelWindow {
         Column {
             spacing: 12
 
+            // Audio Output Tile
+            Rectangle {
+                width: parent.width
+                height: 110
+                radius: 8
+                color: panelSoft
+                border.color: strokeSoft
+
+                Column {
+                    anchors.fill: parent
+                    anchors.margins: 12
+                    spacing: 8
+
+                    Row {
+                        width: parent.width
+                        Text {
+                            text: "AUDIO OUTPUT"
+                            color: ember
+                            font.pixelSize: 11
+                            font.bold: true
+                            font.letterSpacing: 1.0
+                        }
+                        Item { width: Math.max(10, parent.width - 150); height: 1 }
+                        Text {
+                            text: overlayAudioSinkVol + "%"
+                            color: ink
+                            font.pixelSize: 12
+                            font.bold: true
+                        }
+                    }
+
+                    // Device row
+                    Rectangle {
+                        width: parent.width
+                        height: 32
+                        radius: 6
+                        color: panelDeep
+                        border.color: strokeSoft
+
+                        Row {
+                            anchors.fill: parent
+                            anchors.leftMargin: 8
+                            anchors.rightMargin: 8
+                            spacing: 8
+
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "🔊"
+                                font.pixelSize: 12
+                            }
+
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: parent.width - 70
+                                text: overlayAudioSinkName
+                                color: ink
+                                font.pixelSize: 11
+                                font.bold: true
+                                elide: Text.ElideRight
+                            }
+
+                            Rectangle {
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 50
+                                height: 20
+                                radius: 4
+                                color: "#212d3b"
+                                border.color: strokeSoft
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "Cycle"
+                                    color: ember
+                                    font.pixelSize: 10
+                                    font.bold: true
+                                }
+                            }
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: cycleOverlaySink()
+                        }
+                    }
+
+                    // Volume slider
+                    Rectangle {
+                        width: parent.width
+                        height: 24
+                        radius: 6
+                        color: panelDeep
+
+                        Rectangle {
+                            anchors.left: parent.left
+                            anchors.top: parent.top
+                            anchors.bottom: parent.bottom
+                            width: Math.max(0, Math.min(parent.width, parent.width * (overlayAudioSinkVol / 100.0)))
+                            radius: 6
+                            color: ember
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: (mouse) => {
+                                let frac = Math.max(0.0, Math.min(1.0, mouse.x / width));
+                                setOverlaySinkVol(frac);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Audio Input Tile
+            Rectangle {
+                width: parent.width
+                height: 110
+                radius: 8
+                color: panelSoft
+                border.color: strokeSoft
+
+                Column {
+                    anchors.fill: parent
+                    anchors.margins: 12
+                    spacing: 8
+
+                    Row {
+                        width: parent.width
+                        Text {
+                            text: "MICROPHONE"
+                            color: gold
+                            font.pixelSize: 11
+                            font.bold: true
+                            font.letterSpacing: 1.0
+                        }
+                        Item { width: Math.max(10, parent.width - 150); height: 1 }
+                        Text {
+                            text: overlayAudioSourceVol + "%"
+                            color: ink
+                            font.pixelSize: 12
+                            font.bold: true
+                        }
+                    }
+
+                    // Device row
+                    Rectangle {
+                        width: parent.width
+                        height: 32
+                        radius: 6
+                        color: panelDeep
+                        border.color: strokeSoft
+
+                        Row {
+                            anchors.fill: parent
+                            anchors.leftMargin: 8
+                            anchors.rightMargin: 8
+                            spacing: 8
+
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "🎤"
+                                font.pixelSize: 12
+                            }
+
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: parent.width - 70
+                                text: overlayAudioSourceName
+                                color: ink
+                                font.pixelSize: 11
+                                font.bold: true
+                                elide: Text.ElideRight
+                            }
+
+                            Rectangle {
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 50
+                                height: 20
+                                radius: 4
+                                color: "#212d3b"
+                                border.color: strokeSoft
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "Cycle"
+                                    color: gold
+                                    font.pixelSize: 10
+                                    font.bold: true
+                                }
+                            }
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: cycleOverlaySource()
+                        }
+                    }
+
+                    // Volume slider
+                    Rectangle {
+                        width: parent.width
+                        height: 24
+                        radius: 6
+                        color: panelDeep
+
+                        Rectangle {
+                            anchors.left: parent.left
+                            anchors.top: parent.top
+                            anchors.bottom: parent.bottom
+                            width: Math.max(0, Math.min(parent.width, parent.width * (overlayAudioSourceVol / 100.0)))
+                            radius: 6
+                            color: gold
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: (mouse) => {
+                                let frac = Math.max(0.0, Math.min(1.0, mouse.x / width));
+                                setOverlaySourceVol(frac);
+                            }
+                        }
+                    }
+                }
+            }
+
             ModuleTile {
                 title: "Display"
                 body: "Session compositor, scaling, refresh, HDR, and overscan."
@@ -1363,12 +1644,6 @@ PanelWindow {
                 title: "Network"
                 body: "Forgeworks endpoint, Tailscale route, and offline behavior."
                 status: achievementStatus.service_state
-            }
-
-            ModuleTile {
-                title: "Notifications"
-                body: "Achievements, friends, updates, and capture alerts."
-                status: "Quiet"
             }
         }
     }

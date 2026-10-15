@@ -42,7 +42,7 @@ PanelWindow {
         repeat: true
         triggeredOnStart: true
         onTriggered: {
-            updateSystemInfo();
+            updateSystemInfo(); refreshAudioStatus();
         }
     }
 
@@ -85,6 +85,70 @@ PanelWindow {
                 }
             }
         }
+    }
+
+        readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || "/usr/local/share/anvil"
+    property string currentOutputDevice: "Default Output"
+    property int currentOutputVol: 70
+    property bool isOutputMuted: false
+
+    property string currentInputDevice: "Default Mic"
+    property int currentInputVol: 100
+    property bool isInputMuted: false
+
+    Process {
+        id: audioStatusProc
+        command: ["sh", "-c", anvilRoot + "/scripts/anvil-audio-control status"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    let d = JSON.parse(text);
+                    if (d.current_sink) {
+                        currentOutputDevice = d.current_sink.name || "Output";
+                        currentOutputVol = d.current_sink.volume || 0;
+                        isOutputMuted = !!d.current_sink.muted;
+                    }
+                    if (d.current_source) {
+                        currentInputDevice = d.current_source.name || "Input";
+                        currentInputVol = d.current_source.volume || 0;
+                        isInputMuted = !!d.current_source.muted;
+                    }
+                } catch(e) {}
+            }
+        }
+    }
+
+    function refreshAudioStatus() {
+        if (!audioStatusProc.running) {
+            audioStatusProc.running = true;
+        }
+    }
+
+    function cycleAudioOutput() {
+        Quickshell.execDetached([anvilRoot + "/scripts/anvil-audio-control", "cycle-sink"]);
+        refreshAudioTimer.start();
+    }
+
+    function cycleAudioInput() {
+        Quickshell.execDetached([anvilRoot + "/scripts/anvil-audio-control", "cycle-source"]);
+        refreshAudioTimer.start();
+    }
+
+    function setOutputVolume(frac) {
+        currentOutputVol = Math.round(frac * 100);
+        Quickshell.execDetached([anvilRoot + "/scripts/anvil-audio-control", "set-volume", currentOutputVol.toString()]);
+    }
+
+    function setInputVolume(frac) {
+        currentInputVol = Math.round(frac * 100);
+        Quickshell.execDetached([anvilRoot + "/scripts/anvil-audio-control", "set-mic-volume", currentInputVol.toString()]);
+    }
+
+    Timer {
+        id: refreshAudioTimer
+        interval: 350
+        repeat: false
+        onTriggered: refreshAudioStatus()
     }
 
     function setBrightness(val) {
@@ -298,7 +362,7 @@ PanelWindow {
                 }
             }
 
-            // Volume Control Section
+            // Audio Output Section (SteamOS style)
             Column {
                 width: parent.width
                 spacing: 8
@@ -306,24 +370,81 @@ PanelWindow {
                 Row {
                     width: parent.width
                     Text {
-                        text: "VOLUME"
+                        text: "AUDIO OUTPUT"
                         color: "#a0afbf"
                         font.pixelSize: 11
                         font.bold: true
                         font.letterSpacing: 1.0
                     }
-                    Item { width: parent.width - 120; height: 1 }
+                    Item { width: Math.max(10, parent.width - 170); height: 1 }
                     Text {
-                        text: audioSink && audioSink.audio ? Math.round(audioSink.audio.volume * 100) + "%" : "0%"
-                        color: "#ff6537"
+                        text: currentOutputVol + "%"
+                        color: isOutputMuted ? "#ff4d4d" : "#ff6537"
                         font.pixelSize: 12
                         font.bold: true
                     }
                 }
 
+                // Output Device Selector (Click to cycle)
                 Rectangle {
                     width: parent.width
-                    height: 38
+                    height: 36
+                    radius: 6
+                    color: "#161e27"
+                    border.color: "#283442"
+
+                    Row {
+                        anchors.fill: parent
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        spacing: 8
+
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "🔊"
+                            font.pixelSize: 13
+                        }
+
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: parent.width - 70
+                            text: currentOutputDevice
+                            color: "#f5f5f2"
+                            font.pixelSize: 11
+                            font.bold: true
+                            elide: Text.ElideRight
+                        }
+
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 50
+                            height: 22
+                            radius: 4
+                            color: "#212d3b"
+                            border.color: "#3d4e61"
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: "Cycle"
+                                color: "#ffb037"
+                                font.pixelSize: 10
+                                font.bold: true
+                            }
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            cycleAudioOutput();
+                        }
+                    }
+                }
+
+                // Output Volume Bar
+                Rectangle {
+                    width: parent.width
+                    height: 32
                     radius: 6
                     color: "#161e27"
 
@@ -331,16 +452,121 @@ PanelWindow {
                         anchors.left: parent.left
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
-                        width: audioSink && audioSink.audio ? Math.max(0, Math.min(parent.width, parent.width * audioSink.audio.volume)) : 0
+                        width: Math.max(0, Math.min(parent.width, parent.width * (currentOutputVol / 100.0)))
                         radius: 6
-                        color: "#ff6537"
+                        color: isOutputMuted ? "#666666" : "#ff6537"
                     }
 
                     MouseArea {
                         anchors.fill: parent
                         onClicked: (mouse) => {
                             let frac = Math.max(0.0, Math.min(1.0, mouse.x / width));
-                            setVolume(frac);
+                            setOutputVolume(frac);
+                        }
+                    }
+                }
+            }
+
+            // Audio Input Section (SteamOS style)
+            Column {
+                width: parent.width
+                spacing: 8
+
+                Row {
+                    width: parent.width
+                    Text {
+                        text: "MICROPHONE"
+                        color: "#a0afbf"
+                        font.pixelSize: 11
+                        font.bold: true
+                        font.letterSpacing: 1.0
+                    }
+                    Item { width: Math.max(10, parent.width - 170); height: 1 }
+                    Text {
+                        text: currentInputVol + "%"
+                        color: isInputMuted ? "#ff4d4d" : "#4cd964"
+                        font.pixelSize: 12
+                        font.bold: true
+                    }
+                }
+
+                // Input Device Selector (Click to cycle)
+                Rectangle {
+                    width: parent.width
+                    height: 36
+                    radius: 6
+                    color: "#161e27"
+                    border.color: "#283442"
+
+                    Row {
+                        anchors.fill: parent
+                        anchors.leftMargin: 10
+                        anchors.rightMargin: 10
+                        spacing: 8
+
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: "🎤"
+                            font.pixelSize: 13
+                        }
+
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: parent.width - 70
+                            text: currentInputDevice
+                            color: "#f5f5f2"
+                            font.pixelSize: 11
+                            font.bold: true
+                            elide: Text.ElideRight
+                        }
+
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 50
+                            height: 22
+                            radius: 4
+                            color: "#212d3b"
+                            border.color: "#3d4e61"
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: "Cycle"
+                                color: "#4cd964"
+                                font.pixelSize: 10
+                                font.bold: true
+                            }
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            cycleAudioInput();
+                        }
+                    }
+                }
+
+                // Input Volume Bar
+                Rectangle {
+                    width: parent.width
+                    height: 28
+                    radius: 6
+                    color: "#161e27"
+
+                    Rectangle {
+                        anchors.left: parent.left
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        width: Math.max(0, Math.min(parent.width, parent.width * (currentInputVol / 100.0)))
+                        radius: 6
+                        color: isInputMuted ? "#666666" : "#4cd964"
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: (mouse) => {
+                            let frac = Math.max(0.0, Math.min(1.0, mouse.x / width));
+                            setInputVolume(frac);
                         }
                     }
                 }
