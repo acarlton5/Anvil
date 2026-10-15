@@ -63,7 +63,7 @@ ShellRoot {
     Timer {
         id: hideAnvilTimer
 
-        interval: 4000
+        interval: 7000
         onTriggered: root.gamerActive = false
     }
 
