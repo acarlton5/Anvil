@@ -17,6 +17,28 @@ prefix_dir="${ANVIL_PREFIX_DIR:-$HOME/.local/share/anvil/prefixes/$game_name}"
 
 mkdir -p "$prefix_dir"
 
+# Ensure runtime environment for display
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+if [[ -z "${DISPLAY:-}" ]]; then
+    for disp in :0 :1; do
+        if [[ -e "/tmp/.X11-unix/X${disp#*:}" ]]; then
+            export DISPLAY="$disp"
+            break
+        fi
+    done
+    export DISPLAY="${DISPLAY:-:0}"
+fi
+
+if [[ -z "${WAYLAND_DISPLAY:-}" ]]; then
+    for wl in wayland-1 wayland-0; do
+        if [[ -S "$XDG_RUNTIME_DIR/$wl" ]]; then
+            export WAYLAND_DISPLAY="$wl"
+            break
+        fi
+    done
+    export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-1}"
+fi
+
 # Search order for Proton binary:
 # 1. System GE-Proton / custom Proton installed in /opt/proton
 # 2. Steam compatibilitytools.d
