@@ -626,17 +626,30 @@ PanelWindow {
         command: ["python3", bridgePath]
         running: true
 
+        stderr: StdioCollector {
+            onStreamFinished: {
+                if (text && text.trim().length > 0)
+                    console.log("[Anvil Bridge stderr]: " + text.trim());
+            }
+        }
+
         stdout: StdioCollector {
             onStreamFinished: {
                 try {
                     let payload = text.trim();
+                    let jsonStart = payload.indexOf("{");
+                    if (jsonStart === -1)
+                        jsonStart = payload.indexOf("[");
+                    if (jsonStart !== -1)
+                        payload = payload.substring(jsonStart);
+
                     let status = payload.length > 0 ? JSON.parse(payload) : {};
                     let games = Array.isArray(status) ? status : (status.games || []);
-                    let newKeys = games.map(g => g.id || g.title).join("||");
+                    let newKeys = games.map(g => g.name || g.forgeworks_app_id || g.id || g.title || "").join("||");
                     let currentKeys = [];
                     for (let i = 0; i < gameModel.count; i++) {
                         let item = gameModel.get(i);
-                        currentKeys.push(item.id || item.title);
+                        currentKeys.push(item.name || item.forgeworks_app_id || item.id || item.title || "");
                     }
                     if (newKeys !== currentKeys.join("||")) {
                         gameModel.clear();
@@ -651,7 +664,7 @@ PanelWindow {
                         mediaStatusLabel = "Mounted " + status.mounted.length;
 
                     updateStatusLabel = status.update && status.update.label ? status.update.label : "Update status unavailable";
-                    updateAvailable = status.update && status.update.available;
+                    updateAvailable = Boolean(status.update && status.update.available);
                     libraryScanMessage = games.length > 0 ? games.length + " cartridges ready" : "No cartridge library found";
                 } catch (e) {
                     console.log("Anvil bridge parse error: " + e);
