@@ -4056,10 +4056,48 @@ PanelWindow {
 
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: libraryScanRunning ? libraryScanMessage : ""
+                text: {
+                    if (libraryScanRunning)
+                        return libraryScanMessage;
+                    let game = currentGame();
+                    if (game && game.proton)
+                        return "Preparing compatibility layer (" + game.proton + ")...";
+                    return "Launching game dependencies...";
+                }
                 color: "#c5c8c9"
                 font.pixelSize: 14
-                visible: libraryScanRunning
+                visible: libraryScanRunning || gameIsLoading
+            }
+
+            Rectangle {
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: 320
+                height: 6
+                radius: 3
+                color: "#18222b"
+                visible: libraryScanRunning || gameIsLoading
+                clip: true
+
+                Rectangle {
+                    id: progressFill
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
+                    width: parent.width * 0.4
+                    radius: 3
+                    color: ember
+
+                    SequentialAnimation on anchors.leftMargin {
+                        running: libraryScanRunning || gameIsLoading
+                        loops: Animation.Infinite
+                        NumberAnimation {
+                            from: -progressFill.width
+                            to: 320
+                            duration: 1400
+                            easing.type: Easing.InOutQuad
+                        }
+                    }
+                }
             }
 
             Rectangle {

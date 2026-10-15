@@ -43,4 +43,8 @@ fi
 export STEAM_COMPAT_DATA_PATH="$prefix_dir"
 export STEAM_COMPAT_CLIENT_INSTALL_PATH="${steam_dir}"
 
-eval "$options" "\"$proton_bin\"" run "\"$exe_path\""
+if [[ -n "$options" ]]; then
+    eval "$options" "\"$proton_bin\"" run "\"$exe_path\""
+else
+    exec "$proton_bin" run "$exe_path"
+fi
