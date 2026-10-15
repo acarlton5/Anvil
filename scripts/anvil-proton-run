@@ -10,7 +10,7 @@ game_name="$1"
 proton_target="$2"
 exe_path="$3"
 shift 3
-options="$*"
+raw_options=("$@")
 
 steam_dir="${STEAM_DIR:-$HOME/.local/share/Steam}"
 prefix_dir="${ANVIL_PREFIX_DIR:-$HOME/.local/share/anvil/prefixes/$game_name}"
@@ -68,8 +68,26 @@ fi
 export STEAM_COMPAT_DATA_PATH="$prefix_dir"
 export STEAM_COMPAT_CLIENT_INSTALL_PATH="${steam_dir}"
 
-if [[ -n "$options" ]]; then
-    eval "$options" "\"$proton_bin\"" run "\"$exe_path\""
-else
-    exec "$proton_bin" run "$exe_path"
-fi
+# Separate environment variable assignments (like WINEDLLOVERRIDES=...) from exe arguments (like -dx11)
+env_vars=()
+game_args=()
+
+for opt in "${raw_options[@]}"; do
+    # An argument string might contain multiple tokens, e.g. "WINEDLLOVERRIDES="steam_api64=n,b" -dx11"
+    # Parse safely using eval array expansion
+    eval "tokens=($opt)" 2>/dev/null || tokens=("$opt")
+    for tok in "${tokens[@]}"; do
+        if [[ "$tok" =~ ^[A-Za-z_][A-Za-z0-9_]*= ]]; then
+            env_vars+=("$tok")
+        elif [[ -n "$tok" && "$tok" != "%command%" ]]; then
+            game_args+=("$tok")
+        fi
+    done
+done
+
+# Apply env overrides
+for ev in "${env_vars[@]}"; do
+    export "$ev"
+done
+
+exec "$proton_bin" run "$exe_path" "${game_args[@]}"
