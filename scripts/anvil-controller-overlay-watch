@@ -73,7 +73,7 @@ def deck_hidraw_devices():
             if os.path.exists(uevent_path):
                 with open(uevent_path, "r", errors="ignore") as f:
                     u = f.read().lower()
-                    if "28de:1205" in u or "28de:11ff" in u:
+                    if ("28de" in u and ("1205" in u or "11ff" in u)) or ("hid-steam" in u):
                         res.append(dev_path)
         except OSError:
             pass
