@@ -13,16 +13,16 @@ PanelWindow {
     property int controllerActionSerial: 0
     property string controllerFamily: "xbox"
     property string controllerName: "Controller"
-    readonly property color ink: "#f5f7fb"
-    readonly property color muted: "#a8b1ba"
-    readonly property color dim: "#68737d"
-    readonly property color panel: "#d911171f"
-    readonly property color panelSoft: "#aa151d26"
-    readonly property color panelDeep: "#ee070a0f"
-    readonly property color stroke: "#3a4652"
-    readonly property color strokeSoft: "#24303a"
-    readonly property color ember: "#ff6841"
-    readonly property color gold: "#dbb66d"
+    readonly property color ink: AnvilTheme.surfaceText
+    readonly property color muted: AnvilTheme.surfaceVariantText
+    readonly property color dim: AnvilTheme.outline
+    readonly property color panel: AnvilTheme.panelBg
+    readonly property color panelSoft: AnvilTheme.panelCard
+    readonly property color panelDeep: AnvilTheme.panelDeep
+    readonly property color stroke: AnvilTheme.outline
+    readonly property color strokeSoft: Qt.rgba(AnvilTheme.outline.r, AnvilTheme.outline.g, AnvilTheme.outline.b, 0.4)
+    readonly property color ember: AnvilTheme.primary
+    readonly property color gold: AnvilTheme.warning"
     readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || "/usr/local/share/anvil"
     
     property string overlayAudioSinkName: "Default Output"
@@ -65,12 +65,12 @@ PanelWindow {
     }
 
     function setOverlaySinkVol(frac) {
-        overlayAudioSinkVol = Math.round(frac * 100);
+        overlayAudioSinkVol = Math.max(0, Math.min(100, Math.round(frac * 100)));
         Quickshell.execDetached([anvilRoot + "/scripts/anvil-audio-control", "set-volume", overlayAudioSinkVol.toString()]);
     }
 
     function setOverlaySourceVol(frac) {
-        overlayAudioSourceVol = Math.round(frac * 100);
+        overlayAudioSourceVol = Math.max(0, Math.min(100, Math.round(frac * 100)));
         Quickshell.execDetached([anvilRoot + "/scripts/anvil-audio-control", "set-mic-volume", overlayAudioSourceVol.toString()]);
     }
 

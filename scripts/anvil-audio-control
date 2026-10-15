@@ -94,10 +94,10 @@ def cycle_source():
 def set_volume(val_str):
     try:
         val = float(val_str)
-        if val > 1.5:
+        if val > 1.0:
             val = val / 100.0
-        val = max(0.0, min(1.5, val))
-        run_wpctl(["set-volume", "-l", "1.5", "@DEFAULT_AUDIO_SINK@", f"{val:.2f}"])
+        val = max(0.0, min(1.0, val))
+        run_wpctl(["set-volume", "-l", "1.0", "@DEFAULT_AUDIO_SINK@", f"{val:.2f}"])
     except ValueError:
         pass
 

@@ -1520,7 +1520,7 @@ PanelWindow {
                     width: expanded ? 424 : 150
                     height: 222
                     opacity: focused ? 1 : 0.7
-                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenter: parent ? parent.verticalCenter : undefined
 
                     Image {
                         anchors.centerIn: cardSurface

@@ -189,8 +189,21 @@ ShellRoot {
     property bool quickAccessActive: false
     property bool keyboardActive: false
 
-    AnvilVolumeOSD {
-        id: volumeOsd
+    Component {
+        id: volumeOsdComponent
+
+        Variants {
+            model: Quickshell.screens
+
+            AnvilVolumeOSD {
+                modelData: screen
+            }
+        }
+    }
+
+    Loader {
+        active: true
+        sourceComponent: volumeOsdComponent
     }
 
     Component {

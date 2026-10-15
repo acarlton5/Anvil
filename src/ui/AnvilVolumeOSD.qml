@@ -1,13 +1,16 @@
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
-import Quickshell.Services.Pipewire
+import Quickshell.Io
 
 PanelWindow {
     id: osdWindow
 
+    property var modelData: null
+    screen: modelData
+
     property bool isVisible: false
-    property real currentVolume: 0.0
+    property int currentVolume: 70
     property bool isMuted: false
 
     color: "transparent"
@@ -19,42 +22,55 @@ PanelWindow {
         top: true
     }
 
+    margins {
+        top: 24
+    }
+
     visible: isVisible
 
     implicitWidth: 320
     implicitHeight: 70
 
-    readonly property PwNode audioSink: Pipewire.defaultAudioSink
-
-    Connections {
-        target: audioSink ? audioSink.audio : null
-
-        function onVolumeChanged() {
-            if (!audioSink || !audioSink.audio) return;
-            currentVolume = audioSink.audio.volume;
-            isMuted = audioSink.audio.muted;
-            showOSD();
-        }
-
-        function onMutedChanged() {
-            if (!audioSink || !audioSink.audio) return;
-            isMuted = audioSink.audio.muted;
-            showOSD();
-        }
-    }
+    readonly property string anvilRoot: Quickshell.env("ANVIL_ROOT") || "/usr/local/share/anvil"
 
     Timer {
         id: hideTimer
-        interval: 2200
+        interval: 1800
         repeat: false
         onTriggered: {
             osdWindow.isVisible = false;
         }
     }
 
-    function showOSD() {
-        isVisible = true;
-        hideTimer.restart();
+    Process {
+        id: audioPoller
+        command: ["sh", "-c", anvilRoot + "/scripts/anvil-audio-control status"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    let d = JSON.parse(text);
+                    if (d.current_sink) {
+                        let newVol = Math.min(100, d.current_sink.volume || 0);
+                        let newMuted = !!d.current_sink.muted;
+                        if (newVol !== currentVolume || newMuted !== isMuted) {
+                            currentVolume = newVol;
+                            isMuted = newMuted;
+                            osdWindow.isVisible = true;
+                            hideTimer.restart();
+                        }
+                    }
+                } catch(e) {}
+            }
+        }
+    }
+
+    Timer {
+        interval: 350
+        repeat: true
+        running: true
+        onTriggered: {
+            if (!audioPoller.running) audioPoller.running = true;
+        }
     }
 
     Rectangle {
@@ -62,19 +78,19 @@ PanelWindow {
         anchors.centerIn: parent
         width: 280
         height: 52
-        radius: 26
-        color: "#ee10141a"
-        border.color: isMuted ? "#ff5555" : "#ff6537"
+        radius: 12
+        color: AnvilTheme.panelBg
+        border.color: isMuted ? AnvilTheme.error : AnvilTheme.primary
         border.width: 1.5
 
         opacity: osdWindow.isVisible ? 1.0 : 0.0
-        scale: osdWindow.isVisible ? 1.0 : 0.92
+        scale: osdWindow.isVisible ? 1.0 : 0.95
 
         Behavior on opacity {
-            NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
+            NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
         }
         Behavior on scale {
-            NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
+            NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
         }
 
         Row {
@@ -84,36 +100,35 @@ PanelWindow {
 
             Text {
                 anchors.verticalCenter: parent.verticalCenter
-                text: isMuted ? "🔇" : (currentVolume > 0.5 ? "🔊" : "🔉")
-                color: isMuted ? "#ff5555" : "#ff6537"
-                font.pixelSize: 20
+                text: isMuted ? "🔇" : (currentVolume > 50 ? "🔊" : "🔉")
+                font.pixelSize: 18
             }
 
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
-                width: parent.width - 80
-                height: 8
-                radius: 4
-                color: "#2a3440"
+                width: parent.width - 92
+                height: 10
+                radius: 5
+                color: AnvilTheme.panelDeep
 
                 Rectangle {
                     anchors.left: parent.left
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
-                    width: Math.max(0, Math.min(parent.width, parent.width * osdWindow.currentVolume))
-                    radius: 4
-                    color: isMuted ? "#888888" : "#ff6537"
+                    width: Math.max(0, Math.min(parent.width, parent.width * (osdWindow.currentVolume / 100.0)))
+                    radius: 5
+                    color: isMuted ? "#888888" : AnvilTheme.primary
 
                     Behavior on width {
-                        NumberAnimation { duration: 80 }
+                        NumberAnimation { duration: 70 }
                     }
                 }
             }
 
             Text {
                 anchors.verticalCenter: parent.verticalCenter
-                text: isMuted ? "MUTE" : Math.round(osdWindow.currentVolume * 100) + "%"
-                color: "#f5f5f2"
+                text: isMuted ? "MUTE" : osdWindow.currentVolume + "%"
+                color: AnvilTheme.surfaceText
                 font.pixelSize: 13
                 font.bold: true
             }
