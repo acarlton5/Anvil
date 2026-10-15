@@ -58,6 +58,28 @@ def joystick_events(controller_ids):
             yield dev_path
 
 
+def deck_hidraw_devices():
+    # Valve Steam Deck controller endpoints on hidraw
+    hid_dir = "/sys/class/hidraw"
+    if not os.path.isdir(hid_dir):
+        return []
+    res = []
+    for entry in sorted(os.listdir(hid_dir)):
+        dev_path = os.path.join("/dev", entry)
+        if not os.path.exists(dev_path):
+            continue
+        try:
+            uevent_path = os.path.join(hid_dir, entry, "device", "uevent")
+            if os.path.exists(uevent_path):
+                with open(uevent_path, "r", errors="ignore") as f:
+                    u = f.read().lower()
+                    if "28de:1205" in u or "28de:11ff" in u:
+                        res.append(dev_path)
+        except OSError:
+            pass
+    return res
+
+
 def guide_codes():
     raw = os.environ.get("ANVIL_OVERLAY_BUTTON_CODES", "")
     codes = set(DEFAULT_GUIDE_CODES)
@@ -135,15 +157,20 @@ def main():
             continue
 
         paths = list(joystick_events(controller_ids))
-        if not paths:
+        hid_paths = deck_hidraw_devices()
+        all_targets = [("evdev", p) for p in paths] + [("hidraw", p) for p in hid_paths]
+
+        if not all_targets:
             time.sleep(1.0)
             continue
 
         fds = []
-        for path in paths:
+        fd_types = {}
+        for kind, path in all_targets:
             try:
                 fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK)
                 fds.append(fd)
+                fd_types[fd] = kind
             except OSError:
                 continue
 
@@ -156,11 +183,28 @@ def main():
                 readable, _, _ = select.select(fds, [], [], 1.5)
                 if not readable:
                     current_paths = set(joystick_events(controller_ids))
-                    if current_paths != set(paths):
+                    current_hid = set(deck_hidraw_devices())
+                    if current_paths != set(paths) or current_hid != set(hid_paths):
                         break
                     continue
 
                 for fd in readable:
+                    kind = fd_types.get(fd)
+                    if kind == "hidraw":
+                        try:
+                            pkt = os.read(fd, 64)
+                        except (BlockingIOError, OSError):
+                            continue
+                        # Deck hardware reports QuickAccess (...) button on hidraw:
+                        # byte 13 bit 0x40 is set when ... is pressed
+                        if len(pkt) > 13 and (pkt[13] & 0x40):
+                            now = time.monotonic()
+                            if now - last_qa >= 0.35:
+                                last_qa = now
+                                toggle_quickaccess(anvil_root)
+                        continue
+
+                    # evdev events
                     try:
                         data = os.read(fd, EVENT_SIZE * 32)
                     except BlockingIOError:

@@ -113,6 +113,26 @@ def daemon_path(anvil_root):
     return os.path.join(anvil_root, "src", "ui", "AnvilDaemon.qml")
 
 
+def deck_hidraw_devices():
+    hid_dir = "/sys/class/hidraw"
+    if not os.path.isdir(hid_dir):
+        return []
+    res = []
+    for entry in sorted(os.listdir(hid_dir)):
+        dev_path = os.path.join("/dev", entry)
+        if not os.path.exists(dev_path):
+            continue
+        try:
+            uevent_path = os.path.join(hid_dir, entry, "device", "uevent")
+            if os.path.exists(uevent_path):
+                with open(uevent_path, "r", errors="ignore") as f:
+                    u = f.read().lower()
+                    if "28de:1205" in u or "28de:11ff" in u:
+                        res.append(dev_path)
+        except OSError:
+            pass
+    return res
+
 def send_action(anvil_root, action, controller):
     subprocess.Popen(
         [
@@ -214,13 +234,23 @@ def main():
     while True:
         devices = list(controller_events(controllers))
         announce_controllers(anvil_root, devices, announced)
+        hid_paths = deck_hidraw_devices()
         fds = []
         fd_controllers = {}
+        fd_types = {}
         for device in devices:
             try:
                 fd = os.open(device["path"], os.O_RDONLY | os.O_NONBLOCK)
                 fds.append(fd)
                 fd_controllers[fd] = device
+                fd_types[fd] = "evdev"
+            except OSError:
+                continue
+        for hp in hid_paths:
+            try:
+                fd = os.open(hp, os.O_RDONLY | os.O_NONBLOCK)
+                fds.append(fd)
+                fd_types[fd] = "hidraw"
             except OSError:
                 continue
 
@@ -232,6 +262,18 @@ def main():
             while True:
                 readable, _, _ = select.select(fds, [], [], 1.0)
                 for fd in readable:
+                    if fd_types.get(fd) == "hidraw":
+                        try:
+                            pkt = os.read(fd, 64)
+                        except (BlockingIOError, OSError):
+                            continue
+                        if len(pkt) > 13 and (pkt[13] & 0x40):
+                            now = time.monotonic()
+                            if now - last_sent.get("quickaccess", 0) >= 0.35:
+                                last_sent["quickaccess"] = now
+                                send_action(anvil_root, "quickaccess", {"family": "steamdeck", "name": "Steam Deck"})
+                        continue
+
                     controller = fd_controllers.get(fd, {})
                     try:
                         data = os.read(fd, EVENT_SIZE * 32)
