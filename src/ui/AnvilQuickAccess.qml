@@ -208,9 +208,17 @@ PanelWindow {
     Rectangle {
         id: panel
         anchors.fill: parent
-        color: AnvilTheme.panelBg
-        border.color: AnvilTheme.surfaceContainerHigh
+        color: AnvilTheme.background
+        opacity: 0.96
+        border.color: AnvilTheme.outlineVariant
         border.width: 1
+        radius: 16
+
+        // SteamOS / PS5 dark gradient accent
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: AnvilTheme.panelBg }
+            GradientStop { position: 1.0; color: AnvilTheme.background }
+        }
 
         Flickable {
             anchors.fill: parent

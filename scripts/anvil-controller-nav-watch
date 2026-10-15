@@ -131,6 +131,7 @@ def daemon_path(anvil_root):
 
 
 def deck_hidraw_devices():
+    return []
     hid_dir = "/sys/class/hidraw"
     if not os.path.isdir(hid_dir):
         return []

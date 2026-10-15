@@ -211,7 +211,7 @@ def main():
                         # byte 13 bit 0x40 is set when ... is pressed
                         if len(pkt) > 13 and (pkt[13] & 0x40):
                             now = time.monotonic()
-                            if now - last_qa >= 0.35:
+                            if now - last_qa >= 0.8:
                                 last_qa = now
                                 toggle_quickaccess(anvil_root)
                         continue
