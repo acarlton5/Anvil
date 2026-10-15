@@ -39,6 +39,9 @@ if [[ -z "${WAYLAND_DISPLAY:-}" ]]; then
     export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-1}"
 fi
 
+# Disable Xalia accessibility helper to avoid headless crash
+export PROTON_USE_XALIA="${PROTON_USE_XALIA:-0}"
+
 # Search order for Proton binary:
 # 1. System GE-Proton / custom Proton installed in /opt/proton
 # 2. Steam compatibilitytools.d
