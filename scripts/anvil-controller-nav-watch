@@ -218,7 +218,7 @@ def axis_action(code, value, axis_state):
 
 
 def main():
-    anvil_root = os.environ.get("ANVIL_ROOT", "")
+    anvil_root = os.environ.get("ANVIL_ROOT", "/usr/local/share/anvil")
     if not anvil_root:
         return 64
 

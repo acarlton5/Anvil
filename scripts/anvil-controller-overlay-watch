@@ -137,7 +137,7 @@ def toggle_keyboard(anvil_root):
 
 
 def main():
-    anvil_root = os.environ.get("ANVIL_ROOT", "")
+    anvil_root = os.environ.get("ANVIL_ROOT", "/usr/local/share/anvil")
     if not anvil_root:
         return 64
 
