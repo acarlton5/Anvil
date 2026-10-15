@@ -197,23 +197,49 @@ ShellRoot {
         id: volumeOsd
     }
 
-    AnvilQuickAccess {
-        id: quickAccessPanel
-        isVisible: root.quickAccessActive
-        onRequestKeyboardToggle: {
-            root.keyboardActive = !root.keyboardActive;
-        }
-        onRequestClose: {
-            root.quickAccessActive = false;
+    Component {
+        id: quickAccessComponent
+
+        Variants {
+            model: Quickshell.screens
+
+            AnvilQuickAccess {
+                modelData: screen
+                isVisible: root.quickAccessActive
+                onRequestKeyboardToggle: {
+                    root.keyboardActive = !root.keyboardActive;
+                }
+                onRequestClose: {
+                    root.quickAccessActive = false;
+                }
+            }
         }
     }
 
-    AnvilKeyboard {
-        id: virtualKeyboard
-        isVisible: root.keyboardActive
-        onDismissed: {
-            root.keyboardActive = false;
+    Loader {
+        active: root.quickAccessActive
+        sourceComponent: quickAccessComponent
+    }
+
+    Component {
+        id: keyboardComponent
+
+        Variants {
+            model: Quickshell.screens
+
+            AnvilKeyboard {
+                modelData: screen
+                isVisible: root.keyboardActive
+                onDismissed: {
+                    root.keyboardActive = false;
+                }
+            }
         }
+    }
+
+    Loader {
+        active: root.keyboardActive
+        sourceComponent: keyboardComponent
     }
 
     IpcHandler {

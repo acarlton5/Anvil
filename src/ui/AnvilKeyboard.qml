@@ -5,6 +5,8 @@ import Quickshell.Wayland
 PanelWindow {
     id: oskWindow
 
+    property var modelData: null
+    screen: modelData
     property bool isVisible: false
     property bool shift: false
     property bool symbols: false

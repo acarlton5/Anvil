@@ -7,6 +7,8 @@ import Quickshell.Services.Pipewire
 PanelWindow {
     id: qamWindow
 
+    property var modelData: null
+    screen: modelData
     property bool isVisible: false
     signal requestKeyboardToggle
     signal requestClose
