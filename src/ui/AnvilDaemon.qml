@@ -74,7 +74,7 @@ ShellRoot {
 
     Process {
         id: clientCheckProcess
-        command: ["sh", "-c", "sig=$(ls -t /run/user/$(id -u)/hypr 2>/dev/null | head -n1); [ -n "$sig" ] && export HYPRLAND_INSTANCE_SIGNATURE="$sig"; hyprctl -j clients 2>/dev/null || echo '[]'"]
+        command: ["sh", "-c", "sig=$(ls -t /run/user/$(id -u)/hypr 2>/dev/null | head -n1); [ -n '$sig' ] && export HYPRLAND_INSTANCE_SIGNATURE='$sig'; hyprctl -j clients 2>/dev/null || echo '[]'"]
         stdout: StdioCollector {
             onStreamFinished: {
                 if (!root.waitingForGameWindow || !text || text.trim().length === 0)
@@ -108,7 +108,7 @@ ShellRoot {
         running: root.waitingForGameWindow
         onTriggered: {
             if (!clientCheckProcess.running) {
-                clientCheckProcess.running = true;
+        command: ["sh", "-c", "sig=$(ls -t /run/user/$(id -u)/hypr 2>/dev/null | head -n1); [ -n '$sig' ] && export HYPRLAND_INSTANCE_SIGNATURE='$sig'; hyprctl -j clients 2>/dev/null || echo '[]'"]
             }
         }
     }
