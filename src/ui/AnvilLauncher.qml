@@ -11,7 +11,7 @@ PanelWindow {
     property var cancelLaunchHandler: null
     property string controllerAction: ""
     property int controllerActionSerial: 0
-    property string controllerFamily: "xbox"
+    property string controllerFamily: "steamdeck"
     property string controllerName: "Controller"
     readonly property string localRoot: {
         let envRoot = Quickshell.env("ANVIL_ROOT");
@@ -156,7 +156,7 @@ PanelWindow {
     }
 
     function glyph(action) {
-        let family = String(controllerFamily || "xbox").toLowerCase();
+        let family = String(controllerFamily || "steamdeck").toLowerCase();
         if (action === "accept")
             action = "south";
         else if (action === "back")
@@ -167,7 +167,32 @@ PanelWindow {
             action = "rt";
         else if (action === "menu")
             action = "start";
-        if (family === "playstation") {
+        if (family === "steamdeck") {
+            if (action === "south")
+                return "A";
+            if (action === "east")
+                return "B";
+            if (action === "north")
+                return "Y";
+            if (action === "west")
+                return "X";
+            if (action === "start")
+                return "≡";
+            if (action === "back")
+                return "⧉";
+            if (action === "guide")
+                return "STEAM";
+            if (action === "quickaccess")
+                return "•••";
+            if (action === "lb")
+                return "L1";
+            if (action === "rb")
+                return "R1";
+            if (action === "lt")
+                return "L2";
+            if (action === "rt")
+                return "R2";
+        } else if (family === "playstation") {
             if (action === "south")
                 return "✕";
             if (action === "east")
@@ -221,15 +246,15 @@ PanelWindow {
         if (action === "start")
             return "Menu";
         if (action === "guide")
-            return "Xbox";
+            return "Steam";
         if (action === "lb")
-            return "LB";
+            return "L1";
         if (action === "rb")
-            return "RB";
+            return "R1";
         if (action === "lt")
-            return "LT";
+            return "L2";
         if (action === "rt")
-            return "RT";
+            return "R2";
         return action;
     }
 
@@ -257,7 +282,9 @@ PanelWindow {
     }
 
     function controllerShortName() {
-        let family = String(controllerFamily || "xbox").toLowerCase();
+        let family = String(controllerFamily || "steamdeck").toLowerCase();
+        if (family === "steamdeck")
+            return "Steam Deck";
         if (family === "playstation")
             return "PS Controller";
         if (family === "nintendo")
@@ -850,7 +877,7 @@ PanelWindow {
             width: profileRow.implicitWidth + 20
             radius: 22
             color: profileChipArea.containsMouse || profileModalActive ? "#182330" : "transparent"
-            border.color: profileModalActive ? "#22c55e" : (profileChipArea.containsMouse ? "#2f3e50" : "transparent")
+            border.color: profileModalActive ? "#ff6537" : (profileChipArea.containsMouse ? "#2f3e50" : "transparent")
             border.width: 1.5
 
             Row {
@@ -861,10 +888,13 @@ PanelWindow {
                 Rectangle {
                     width: 34
                     height: 34
-                    radius: 17
-                    color: "#107c10"
-                    border.color: "#22c55e"
-                    border.width: 2
+                    radius: 10
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: "#ff6537" }
+                        GradientStop { position: 1.0; color: "#cf3810" }
+                    }
+                    border.color: "#ff8a66"
+                    border.width: 1.5
                     anchors.verticalCenter: parent.verticalCenter
 
                     Text {
@@ -890,13 +920,14 @@ PanelWindow {
                     Row {
                         spacing: 4
                         Text {
-                            text: "★"
-                            color: "#22c55e"
-                            font.pixelSize: 10
+                            text: "LEVEL"
+                            color: "#ff6537"
+                            font.pixelSize: 9
+                            font.bold: true
                         }
                         Text {
-                            text: profileGamerscore + " G"
-                            color: "#8e9fad"
+                            text: "42"
+                            color: "#e2e8f0"
                             font.pixelSize: 10
                             font.bold: true
                         }
@@ -933,7 +964,7 @@ PanelWindow {
 
                 Text {
                     anchors.centerIn: parent
-                    text: "LB"
+                    text: "L1"
                     color: "#94a3b8"
                     font.pixelSize: 11
                     font.bold: true
@@ -953,7 +984,7 @@ PanelWindow {
                     height: 38
                     radius: 8
                     color: activeSection === index ? "#1c2634" : (navMouse.containsMouse ? "#131b24" : "transparent")
-                    border.color: activeSection === index ? "#22c55e" : "transparent"
+                    border.color: activeSection === index ? "#ff6537" : "transparent"
                     border.width: 1.5
 
                     Row {
@@ -988,7 +1019,7 @@ PanelWindow {
                         width: activeSection === index ? Math.max(26, navLabel.implicitWidth) : 0
                         height: 3
                         radius: 2
-                        color: "#22c55e"
+                        color: "#ff6537"
                         visible: activeSection === index
                     }
 
@@ -1012,7 +1043,7 @@ PanelWindow {
 
                 Text {
                     anchors.centerIn: parent
-                    text: "RB"
+                    text: "R1"
                     color: "#94a3b8"
                     font.pixelSize: 11
                     font.bold: true
@@ -1255,11 +1286,11 @@ PanelWindow {
                         height: 22
                         width: xsText.implicitWidth + 16
                         radius: 4
-                        color: "#107c10"
+                        color: "#ff6537"
                         Text {
                             id: xsText
                             anchors.centerIn: parent
-                            text: "X|S ENHANCED"
+                            text: "ANVIL OPTIMIZED"
                             color: "#ffffff"
                             font.pixelSize: 9
                             font.bold: true
@@ -3761,7 +3792,9 @@ PanelWindow {
             anchors.top: parent.top
             height: 4
             radius: 2
-            color: "#107c10"
+            gradient: Gradient {
+            GradientStop { position: 0.0; color: "#ff6537" }
+            GradientStop { position: 1.0; color: "#ff8a66" }
         }
 
         Column {
@@ -3777,9 +3810,12 @@ PanelWindow {
                 Rectangle {
                     width: 58
                     height: 58
-                    radius: 29
-                    color: "#107c10"
-                    border.color: "#22c55e"
+                    radius: 14
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: "#ff6537" }
+                        GradientStop { position: 1.0; color: "#b82b08" }
+                    }
+                    border.color: "#ff8a66"
                     border.width: 2.5
                     anchors.verticalCenter: parent.verticalCenter
 
@@ -3932,7 +3968,7 @@ PanelWindow {
                         height: 44
                         radius: 6
                         color: selectedProfileIndex === index ? "#1c2836" : (actionMouse.containsMouse ? "#141c26" : "transparent")
-                        border.color: selectedProfileIndex === index ? "#22c55e" : "transparent"
+                        border.color: selectedProfileIndex === index ? "#ff6537" : "transparent"
                         border.width: 1.5
 
                         Row {
@@ -3943,7 +3979,7 @@ PanelWindow {
 
                             Text {
                                 text: index === 0 ? "⚙" : index === 1 ? "🏆" : index === 2 ? "🛡" : "👤"
-                                color: selectedProfileIndex === index ? "#22c55e" : "#8e9fad"
+                                color: selectedProfileIndex === index ? "#ff6537" : "#8e9fad"
                                 font.pixelSize: 15
                                 anchors.verticalCenter: parent.verticalCenter
                             }
@@ -4118,7 +4154,7 @@ PanelWindow {
                 spacing: 7
                 anchors.verticalCenter: parent.verticalCenter
                 Rectangle {
-                    width: 24
+                    width: 44
                     height: 18
                     radius: 3
                     color: "#18222e"
@@ -4126,15 +4162,15 @@ PanelWindow {
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
                         anchors.centerIn: parent
-                        text: "Guide"
+                        text: "STEAM"
                         color: "#94a3b8"
-                        font.pixelSize: 7
+                        font.pixelSize: 8
                         font.bold: true
                     }
                 }
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
-                    text: "Xbox Menu"
+                    text: "Menu"
                     color: "#8e9fad"
                     font.pixelSize: 12
                     font.bold: true
@@ -4155,12 +4191,14 @@ PanelWindow {
                     width: 20
                     height: 20
                     radius: 10
-                    color: "#107c10"
+                    color: "#18222e"
+                    border.color: "#273648"
+                    border.width: 1
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
                         anchors.centerIn: parent
                         text: "A"
-                        color: "#ffffff"
+                        color: "#22c55e"
                         font.pixelSize: 11
                         font.bold: true
                     }
