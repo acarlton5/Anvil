@@ -801,12 +801,13 @@ PanelWindow {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        height: 78
-        color: "#d0080c13"
-        border.color: "#182433"
+        height: 72
+        color: "#d8080b0f"
+        border.color: "#161e28"
         border.width: 1
-        z: 20
+        z: 30
 
+        // Profile & Gamer Info (Xbox style)
         Row {
             anchors.left: parent.left
             anchors.leftMargin: contentLeft
@@ -814,44 +815,65 @@ PanelWindow {
             spacing: 12
 
             Rectangle {
-                anchors.verticalCenter: parent.verticalCenter
                 width: 36
                 height: 36
-                radius: 8
-                color: ember
+                radius: 18
+                color: "#107c10"
+                border.color: "#22c55e"
+                border.width: 2
+                anchors.verticalCenter: parent.verticalCenter
 
                 Text {
                     anchors.centerIn: parent
-                    text: "A"
-                    color: "#170b07"
-                    font.pixelSize: 20
+                    text: "M"
+                    color: "#ffffff"
+                    font.pixelSize: 16
                     font.bold: true
                 }
             }
 
-            Text {
+            Column {
                 anchors.verticalCenter: parent.verticalCenter
-                text: "ANVIL"
-                color: fg
-                font.pixelSize: 18
-                font.bold: true
-                font.letterSpacing: 1.5
+                spacing: 1
+
+                Text {
+                    text: "Morphine"
+                    color: "#ffffff"
+                    font.pixelSize: 14
+                    font.bold: true
+                }
+
+                Row {
+                    spacing: 4
+                    Text {
+                        text: "★"
+                        color: "#22c55e"
+                        font.pixelSize: 10
+                    }
+                    Text {
+                        text: "1,420 G"
+                        color: "#8e9fad"
+                        font.pixelSize: 10
+                        font.bold: true
+                    }
+                }
             }
         }
 
+        // Center Xbox Navigation Tabs
         Row {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             spacing: 6
-            visible: true
 
+            // LB Trigger badge
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 width: 32
                 height: 24
-                radius: 5
-                color: "#182230"
-                border.color: "#28394e"
+                radius: 4
+                color: "#18222e"
+                border.color: "#273648"
 
                 Text {
                     anchors.centerIn: parent
@@ -871,12 +893,12 @@ PanelWindow {
                 model: navModel
 
                 Rectangle {
-                    width: Math.max(90, navLabel.implicitWidth + 32)
+                    width: Math.max(90, navLabel.implicitWidth + 30)
                     height: 38
                     radius: 8
-                    color: activeSection === index ? "#202e40" : (navMouse.containsMouse ? "#141d28" : "transparent")
-                    border.color: activeSection === index ? ember : (navMouse.containsMouse ? "#2d3d52" : "transparent")
-                    border.width: activeSection === index ? 1.5 : 1
+                    color: activeSection === index ? "#1c2634" : (navMouse.containsMouse ? "#131b24" : "transparent")
+                    border.color: activeSection === index ? "#22c55e" : "transparent"
+                    border.width: 1.5
 
                     Row {
                         anchors.centerIn: parent
@@ -884,20 +906,20 @@ PanelWindow {
 
                         Image {
                             anchors.verticalCenter: parent.verticalCenter
-                            width: 16
-                            height: 16
+                            width: 15
+                            height: 15
                             source: Quickshell.iconPath(model.icon, true)
-                            sourceSize.width: 32
-                            sourceSize.height: 32
-                            opacity: activeSection === index ? 1 : 0.65
+                            sourceSize.width: 30
+                            sourceSize.height: 30
+                            opacity: activeSection === index ? 1 : 0.6
                         }
 
                         Text {
                             id: navLabel
                             anchors.verticalCenter: parent.verticalCenter
                             text: model.label.toUpperCase()
-                            color: activeSection === index ? "#ffffff" : "#94a3b8"
-                            font.pixelSize: 13
+                            color: activeSection === index ? "#ffffff" : "#8e9fad"
+                            font.pixelSize: 12
                             font.bold: activeSection === index
                             font.letterSpacing: 0.8
                         }
@@ -907,18 +929,11 @@ PanelWindow {
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.bottom: parent.bottom
                         anchors.bottomMargin: -1
-                        width: activeSection === index ? Math.max(28, navLabel.implicitWidth) : 0
+                        width: activeSection === index ? Math.max(26, navLabel.implicitWidth) : 0
                         height: 3
                         radius: 2
-                        color: ember
+                        color: "#22c55e"
                         visible: activeSection === index
-
-                        Behavior on width {
-                            NumberAnimation {
-                                duration: 180
-                                easing.type: Easing.OutCubic
-                            }
-                        }
                     }
 
                     MouseArea {
@@ -930,13 +945,14 @@ PanelWindow {
                 }
             }
 
+            // RB Trigger badge
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 width: 32
                 height: 24
-                radius: 5
-                color: "#182230"
-                border.color: "#28394e"
+                radius: 4
+                color: "#18222e"
+                border.color: "#273648"
 
                 Text {
                     anchors.centerIn: parent
@@ -953,107 +969,43 @@ PanelWindow {
             }
         }
 
+        // System Status (Battery, Clock, Power)
         Row {
             anchors.right: parent.right
             anchors.rightMargin: 48
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 14
-
-            Rectangle {
-                anchors.verticalCenter: parent.verticalCenter
-                width: 286
-                height: 34
-                radius: 17
-                color: "#9810161d"
-                border.color: line
-
-                Row {
-                    anchors.centerIn: parent
-                    spacing: 8
-
-                    Image {
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 24
-                        height: 16
-                        source: controllerIcon()
-                        sourceSize.width: 48
-                        sourceSize.height: 32
-                        opacity: source === "" ? 0 : 0.86
-                    }
-
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: controllerShortName()
-                        color: fg
-                        font.pixelSize: 11
-                        font.bold: true
-                    }
-
-                    ButtonGlyph {
-                        anchors.verticalCenter: parent.verticalCenter
-                        action: "accept"
-                    }
-
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: "Select"
-                        color: muted
-                        font.pixelSize: 10
-                        font.bold: true
-                    }
-
-                    ButtonGlyph {
-                        anchors.verticalCenter: parent.verticalCenter
-                        action: "back"
-                    }
-
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: "Back"
-                        color: muted
-                        font.pixelSize: 10
-                        font.bold: true
-                    }
-                }
-            }
-
-            Image {
-                anchors.verticalCenter: parent.verticalCenter
-                width: 20
-                height: 20
-                source: Quickshell.iconPath("folder-download-symbolic", true)
-                sourceSize.width: 40
-                sourceSize.height: 40
-                opacity: 0.72
-            }
+            spacing: 16
 
             Text {
                 anchors.verticalCenter: parent.verticalCenter
                 text: Qt.formatTime(new Date(), "h:mm AP")
-                color: fg
+                color: "#ffffff"
                 font.pixelSize: 13
                 font.bold: true
             }
 
-            Image {
+            Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
-                width: 22
-                height: 22
-                source: Quickshell.iconPath("system-shutdown-symbolic", true)
-                sourceSize.width: 44
-                sourceSize.height: 44
-                opacity: powerMenuActive ? 1 : 0.72
+                width: 30
+                height: 30
+                radius: 6
+                color: powerMouse.containsMouse ? "#202b38" : "transparent"
 
-                MouseArea {
-                    anchors.fill: parent
-                    anchors.margins: -12
-                    onClicked: powerMenuActive = !powerMenuActive
+                Text {
+                    anchors.centerIn: parent
+                    text: "⏻"
+                    color: powerMenuActive ? "#22c55e" : "#8e9fad"
+                    font.pixelSize: 16
                 }
 
+                MouseArea {
+                    id: powerMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onClicked: powerMenuActive = !powerMenuActive
+                }
             }
-
         }
-
     }
 
     Rectangle {
@@ -3784,39 +3736,40 @@ PanelWindow {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        height: 54
-        color: "#e0050609"
-        border.color: "#202832"
-        z: 20
+        height: 46
+        color: "#f0080b0f"
+        border.color: "#161e28"
+        border.width: 1
+        z: 30
 
         Row {
             anchors.left: parent.left
             anchors.leftMargin: contentLeft
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 20
+            spacing: 22
 
             Row {
                 spacing: 7
                 anchors.verticalCenter: parent.verticalCenter
                 Rectangle {
-                    width: 26
-                    height: 20
-                    radius: 4
-                    color: "#182230"
-                    border.color: "#28394e"
+                    width: 24
+                    height: 18
+                    radius: 3
+                    color: "#18222e"
+                    border.color: "#273648"
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
                         anchors.centerIn: parent
                         text: "•••"
                         color: "#94a3b8"
-                        font.pixelSize: 10
+                        font.pixelSize: 9
                         font.bold: true
                     }
                 }
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     text: "Quick Access"
-                    color: muted
+                    color: "#8e9fad"
                     font.pixelSize: 12
                     font.bold: true
                 }
@@ -3826,24 +3779,24 @@ PanelWindow {
                 spacing: 7
                 anchors.verticalCenter: parent.verticalCenter
                 Rectangle {
-                    width: 26
-                    height: 20
-                    radius: 4
-                    color: "#182230"
-                    border.color: "#28394e"
+                    width: 24
+                    height: 18
+                    radius: 3
+                    color: "#18222e"
+                    border.color: "#273648"
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
                         anchors.centerIn: parent
                         text: "Guide"
                         color: "#94a3b8"
-                        font.pixelSize: 8
+                        font.pixelSize: 7
                         font.bold: true
                     }
                 }
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
-                    text: "Overlay Menu"
-                    color: muted
+                    text: "Xbox Menu"
+                    color: "#8e9fad"
                     font.pixelSize: 12
                     font.bold: true
                 }
@@ -3852,53 +3805,88 @@ PanelWindow {
 
         Row {
             anchors.right: parent.right
-            anchors.rightMargin: 54
+            anchors.rightMargin: 48
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 24
+            spacing: 20
 
-            Text {
-                text: "Sections"
-                color: muted
-                font.pixelSize: 12
-                font.bold: true
-            }
-
-            ButtonGlyph {
+            Row {
+                spacing: 6
                 anchors.verticalCenter: parent.verticalCenter
-                action: "lt"
+                Rectangle {
+                    width: 20
+                    height: 20
+                    radius: 10
+                    color: "#107c10"
+                    anchors.verticalCenter: parent.verticalCenter
+                    Text {
+                        anchors.centerIn: parent
+                        text: "A"
+                        color: "#ffffff"
+                        font.pixelSize: 11
+                        font.bold: true
+                    }
+                }
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Select"
+                    color: "#ffffff"
+                    font.pixelSize: 12
+                    font.bold: true
+                }
             }
 
-            ButtonGlyph {
+            Row {
+                spacing: 6
                 anchors.verticalCenter: parent.verticalCenter
-                action: "rt"
+                Rectangle {
+                    width: 20
+                    height: 20
+                    radius: 10
+                    color: "#1e2938"
+                    anchors.verticalCenter: parent.verticalCenter
+                    Text {
+                        anchors.centerIn: parent
+                        text: "B"
+                        color: "#ef4444"
+                        font.pixelSize: 11
+                        font.bold: true
+                    }
+                }
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Back"
+                    color: "#8e9fad"
+                    font.pixelSize: 12
+                    font.bold: true
+                }
             }
 
-            Text {
-                text: "Select"
-                color: muted
-                font.pixelSize: 12
-                font.bold: true
-            }
-
-            ButtonGlyph {
+            Row {
+                spacing: 6
                 anchors.verticalCenter: parent.verticalCenter
-                action: "accept"
+                Rectangle {
+                    width: 20
+                    height: 20
+                    radius: 10
+                    color: "#1e2938"
+                    anchors.verticalCenter: parent.verticalCenter
+                    Text {
+                        anchors.centerIn: parent
+                        text: "X"
+                        color: "#38bdf8"
+                        font.pixelSize: 11
+                        font.bold: true
+                    }
+                }
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Options"
+                    color: "#8e9fad"
+                    font.pixelSize: 12
+                    font.bold: true
+                }
             }
-
-            Text {
-                text: "Back"
-                color: muted
-                font.pixelSize: 12
-                font.bold: true
-            }
-
-            ButtonGlyph {
-                anchors.verticalCenter: parent.verticalCenter
-                action: "back"
-            }
-
         }
-
     }
 
     Rectangle {
