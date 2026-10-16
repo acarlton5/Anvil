@@ -121,8 +121,10 @@ ShellRoot {
         interval: 800
         repeat: false
         onTriggered: {
-            console.log("[Anvil] Hiding launcher for game session");
-            root.gamerActive = false;
+            if (gameProcess.running) {
+                console.log("[Anvil] Hiding launcher for game session");
+                root.gamerActive = false;
+            }
         }
     }
 
@@ -131,10 +133,13 @@ ShellRoot {
         interval: 3000
         repeat: false
         onTriggered: {
-            if (root.waitingForGameWindow) {
+            if (root.waitingForGameWindow && gameProcess.running) {
                 console.log("[Anvil] Game launch fallback: ensuring launcher is hidden");
                 root.waitingForGameWindow = false;
                 root.gamerActive = false;
+            } else {
+                root.waitingForGameWindow = false;
+                root.gamerActive = true;
             }
         }
     }

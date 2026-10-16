@@ -4161,6 +4161,52 @@ PanelWindow {
                             }
                         }
 
+                        // Setup New Cartridge Drive Button
+                        Rectangle {
+                            width: parent.width
+                            height: 60
+                            radius: 10
+                            color: addCartridgeMouse.containsMouse ? "#243242" : "#17212c"
+                            border.color: ember
+                            border.width: 1.5
+
+                            Row {
+                                anchors.centerIn: parent
+                                spacing: 14
+                                Text {
+                                    text: "➕"
+                                    font.pixelSize: 18
+                                    anchors.verticalCenter: parent.verticalCenter
+                                }
+                                Column {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    spacing: 2
+                                    Text {
+                                        text: "Make a Drive / SD Card / Folder into an Anvil Cartridge"
+                                        color: "#ffffff"
+                                        font.pixelSize: 14
+                                        font.bold: true
+                                    }
+                                    Text {
+                                        text: "Auto-formats cartridge metadata and prepares hot-swap storage directory"
+                                        color: emberLight
+                                        font.pixelSize: 11
+                                    }
+                                }
+                            }
+
+                            MouseArea {
+                                id: addCartridgeMouse
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    cartridgeModalActive = true;
+                                    cartridgeStatusMsg = "";
+                                }
+                            }
+                        }
+
                         // Rule Callout Banner
                         Rectangle {
                             width: parent.width
@@ -4617,6 +4663,318 @@ PanelWindow {
                     }
                 }
             }
+        }
+    }
+
+
+    // ==========================================
+    // Interactive Cartridge Setup / Drive Modal
+    // ==========================================
+    property bool cartridgeModalActive: false
+    property string cartridgeStatusMsg: ""
+
+    Rectangle {
+        id: cartridgeModalOverlay
+        anchors.fill: parent
+        color: "#d005080d"
+        visible: cartridgeModalActive
+        z: 99
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: cartridgeModalActive = false
+        }
+
+        Rectangle {
+            anchors.centerIn: parent
+            width: Math.min(680, parent.width - 80)
+            height: 480
+            radius: 14
+            color: "#111822"
+            border.color: ember
+            border.width: 1.5
+
+            MouseArea {
+                anchors.fill: parent
+                // prevent click through
+            }
+
+            Column {
+                anchors.fill: parent
+                anchors.margins: 26
+                spacing: 18
+
+                Row {
+                    spacing: 12
+                    Text {
+                        text: "🎴"
+                        font.pixelSize: 26
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    Text {
+                        text: "Format & Register as Anvil Cartridge"
+                        color: fg
+                        font.pixelSize: 20
+                        font.bold: true
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                }
+
+                Text {
+                    width: parent.width
+                    text: "Select a mounted removable storage drive, SD card, or folder to initialize as an official Anvil Game Cartridge. Anvil will create the required cartridge structure (Games/, cartridge.meta) and preserve games directly on the media."
+                    color: "#94a3b8"
+                    font.pixelSize: 13
+                    wrapMode: Text.WordWrap
+                    lineHeight: 1.3
+                }
+
+                Rectangle {
+                    width: parent.width
+                    height: 1
+                    color: "#1e2938"
+                }
+
+                Text {
+                    text: "AVAILABLE DETECTED VOLUMES"
+                    color: ember
+                    font.pixelSize: 11
+                    font.bold: true
+                    font.letterSpacing: 1.2
+                }
+
+                Column {
+                    width: parent.width
+                    spacing: 10
+
+                    // Option 1: MicroSD Card
+                    Rectangle {
+                        width: parent.width
+                        height: 56
+                        radius: 8
+                        color: "#182230"
+                        border.color: ember
+
+                        Row {
+                            anchors.fill: parent
+                            anchors.margins: 14
+                            spacing: 14
+
+                            Text {
+                                text: "💾"
+                                font.pixelSize: 20
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+
+                            Column {
+                                anchors.verticalCenter: parent.verticalCenter
+                                spacing: 2
+                                Text {
+                                    text: "MicroSD Card (/mnt/sdcard)"
+                                    color: "#ffffff"
+                                    font.pixelSize: 14
+                                    font.bold: true
+                                }
+                                Text {
+                                    text: "Default Primary Cartridge · Active"
+                                    color: "#4ade80"
+                                    font.pixelSize: 11
+                                }
+                            }
+
+                            Item { width: 1; height: 1 }
+
+                            Rectangle {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 90
+                                height: 30
+                                radius: 6
+                                color: "#1a2e22"
+                                border.color: "#22c55e"
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "ACTIVE"
+                                    color: "#4ade80"
+                                    font.pixelSize: 10
+                                    font.bold: true
+                                }
+                            }
+                        }
+                    }
+
+                    // Option 2: External USB Drive
+                    Rectangle {
+                        width: parent.width
+                        height: 56
+                        radius: 8
+                        color: usbOptMouse.containsMouse ? "#223145" : "#182230"
+                        border.color: usbOptMouse.containsMouse ? ember : "#2c3b4f"
+
+                        Row {
+                            anchors.fill: parent
+                            anchors.margins: 14
+                            spacing: 14
+
+                            Text {
+                                text: "🔌"
+                                font.pixelSize: 20
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+
+                            Column {
+                                anchors.verticalCenter: parent.verticalCenter
+                                spacing: 2
+                                Text {
+                                    text: "External USB / Removable Media (/mnt/usb)"
+                                    color: "#ffffff"
+                                    font.pixelSize: 14
+                                    font.bold: true
+                                }
+                                Text {
+                                    text: "Initialize as secondary hot-swap cartridge"
+                                    color: "#94a3b8"
+                                    font.pixelSize: 11
+                                }
+                            }
+
+                            Item { width: 1; height: 1 }
+
+                            Rectangle {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 110
+                                height: 32
+                                radius: 6
+                                color: ember
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "INITIALIZE"
+                                    color: "#160b07"
+                                    font.pixelSize: 11
+                                    font.bold: true
+                                }
+                            }
+                        }
+
+                        MouseArea {
+                            id: usbOptMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onClicked: {
+                                initCartridgeProc.command = ["/usr/local/bin/anvil-cartridge-tool", "init", "/mnt/usb", "USB Game Cartridge"];
+                                initCartridgeProc.running = true;
+                                cartridgeStatusMsg = "Initialized /mnt/usb as Game Cartridge!";
+                            }
+                        }
+                    }
+
+                    // Option 3: Custom Path (/home/morphine/Games)
+                    Rectangle {
+                        width: parent.width
+                        height: 56
+                        radius: 8
+                        color: gamesOptMouse.containsMouse ? "#223145" : "#182230"
+                        border.color: gamesOptMouse.containsMouse ? ember : "#2c3b4f"
+
+                        Row {
+                            anchors.fill: parent
+                            anchors.margins: 14
+                            spacing: 14
+
+                            Text {
+                                text: "📁"
+                                font.pixelSize: 20
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+
+                            Column {
+                                anchors.verticalCenter: parent.verticalCenter
+                                spacing: 2
+                                Text {
+                                    text: "Local Storage (/home/morphine/Games)"
+                                    color: "#ffffff"
+                                    font.pixelSize: 14
+                                    font.bold: true
+                                }
+                                Text {
+                                    text: "Cartridge testbed folder"
+                                    color: "#94a3b8"
+                                    font.pixelSize: 11
+                                }
+                            }
+
+                            Item { width: 1; height: 1 }
+
+                            Rectangle {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 110
+                                height: 32
+                                radius: 6
+                                color: "#1e293b"
+                                border.color: ember
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "REGISTER"
+                                    color: fg
+                                    font.pixelSize: 11
+                                    font.bold: true
+                                }
+                            }
+                        }
+
+                        MouseArea {
+                            id: gamesOptMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onClicked: {
+                                initCartridgeProc.command = ["/usr/local/bin/anvil-cartridge-tool", "init", "/home/morphine/Games", "Local Cartridge"];
+                                initCartridgeProc.running = true;
+                                cartridgeStatusMsg = "Registered /home/morphine/Games!";
+                            }
+                        }
+                    }
+                }
+
+                Text {
+                    text: cartridgeStatusMsg !== "" ? cartridgeStatusMsg : "Tip: Once initialized, drag & drop game folders with cartridge.json onto the drive."
+                    color: cartridgeStatusMsg !== "" ? "#4ade80" : "#64748b"
+                    font.pixelSize: 12
+                    font.bold: cartridgeStatusMsg !== ""
+                }
+
+                Row {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    spacing: 16
+
+                    Rectangle {
+                        width: 140
+                        height: 38
+                        radius: 8
+                        color: "#1e293b"
+                        border.color: "#334155"
+                        Text {
+                            anchors.centerIn: parent
+                            text: "Close"
+                            color: fg
+                            font.pixelSize: 13
+                            font.bold: true
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: cartridgeModalActive = false
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Process {
+        id: initCartridgeProc
+        onExited: {
+            if (!pythonBridge.running) pythonBridge.running = true;
         }
     }
 
