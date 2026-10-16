@@ -34,8 +34,8 @@ PanelWindow {
     readonly property color forgeGold: "#d9ad5f"
     readonly property color relayBlue: "#7aa8ff"
     readonly property color green: "#65d797"
-    readonly property int sidebarWidth: 112
-    readonly property int contentLeft: 154
+    readonly property int sidebarWidth: 0
+    readonly property int contentLeft: 48
     property int activeSection: Number(Quickshell.env("ANVIL_SECTION") || 0)
     property bool powerMenuActive: false
     property bool gameIsLoading: false
@@ -801,122 +801,156 @@ PanelWindow {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        height: 92
-        color: "#76040609"
+        height: 78
+        color: "#d0080c13"
+        border.color: "#182433"
+        border.width: 1
         z: 20
 
         Row {
             anchors.left: parent.left
             anchors.leftMargin: contentLeft
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 14
+            spacing: 12
 
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
-                width: 38
-                height: 38
-                radius: 6
+                width: 36
+                height: 36
+                radius: 8
                 color: ember
 
                 Text {
                     anchors.centerIn: parent
                     text: "A"
                     color: "#170b07"
-                    font.pixelSize: 22
-                    font.bold: true
-                }
-
-            }
-
-            Column {
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 2
-
-                Text {
-                    text: "ANVIL"
-                    color: fg
                     font.pixelSize: 20
                     font.bold: true
                 }
-
-                Text {
-                    text: currentSectionLabel().toUpperCase() + " / " + currentSectionSubtitle()
-                    color: muted
-                    font.pixelSize: 10
-                    font.bold: true
-                    elide: Text.ElideRight
-                    width: 360
-                }
             }
 
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "ANVIL"
+                color: fg
+                font.pixelSize: 18
+                font.bold: true
+                font.letterSpacing: 1.5
+            }
         }
 
         Row {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 8
-            visible: false
+            spacing: 6
+            visible: true
+
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                width: 32
+                height: 24
+                radius: 5
+                color: "#182230"
+                border.color: "#28394e"
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "LB"
+                    color: "#94a3b8"
+                    font.pixelSize: 11
+                    font.bold: true
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: selectSection(activeSection - 1)
+                }
+            }
 
             Repeater {
                 model: navModel
 
-                Item {
-                    width: Math.max(88, navLabel.implicitWidth + 40)
-                    height: 54
+                Rectangle {
+                    width: Math.max(90, navLabel.implicitWidth + 32)
+                    height: 38
+                    radius: 8
+                    color: activeSection === index ? "#202e40" : (navMouse.containsMouse ? "#141d28" : "transparent")
+                    border.color: activeSection === index ? ember : (navMouse.containsMouse ? "#2d3d52" : "transparent")
+                    border.width: activeSection === index ? 1.5 : 1
 
                     Row {
                         anchors.centerIn: parent
-                        spacing: 9
+                        spacing: 7
 
                         Image {
                             anchors.verticalCenter: parent.verticalCenter
-                            width: 18
-                            height: 18
+                            width: 16
+                            height: 16
                             source: Quickshell.iconPath(model.icon, true)
-                            sourceSize.width: 36
-                            sourceSize.height: 36
-                            opacity: activeSection === index ? 1 : 0.68
+                            sourceSize.width: 32
+                            sourceSize.height: 32
+                            opacity: activeSection === index ? 1 : 0.65
                         }
 
                         Text {
                             id: navLabel
-
                             anchors.verticalCenter: parent.verticalCenter
-                            text: model.label
-                            color: activeSection === index ? fg : "#b1b7bd"
-                            font.pixelSize: 14
+                            text: model.label.toUpperCase()
+                            color: activeSection === index ? "#ffffff" : "#94a3b8"
+                            font.pixelSize: 13
                             font.bold: activeSection === index
+                            font.letterSpacing: 0.8
                         }
-
                     }
 
                     Rectangle {
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.bottom: parent.bottom
-                        width: activeSection === index ? Math.max(24, navLabel.implicitWidth) : 0
+                        anchors.bottomMargin: -1
+                        width: activeSection === index ? Math.max(28, navLabel.implicitWidth) : 0
                         height: 3
                         radius: 2
                         color: ember
+                        visible: activeSection === index
 
                         Behavior on width {
                             NumberAnimation {
                                 duration: 180
                                 easing.type: Easing.OutCubic
                             }
-
                         }
-
                     }
 
                     MouseArea {
+                        id: navMouse
                         anchors.fill: parent
+                        hoverEnabled: true
                         onClicked: selectSection(index)
                     }
-
                 }
-
             }
 
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                width: 32
+                height: 24
+                radius: 5
+                color: "#182230"
+                border.color: "#28394e"
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "RB"
+                    color: "#94a3b8"
+                    font.pixelSize: 11
+                    font.bold: true
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: selectSection(activeSection + 1)
+                }
+            }
         }
 
         Row {
@@ -1029,7 +1063,7 @@ PanelWindow {
         anchors.top: parent.top
         anchors.bottom: bottomHints.top
         width: sidebarWidth
-        visible: true
+        visible: false
         color: "#e706090d"
         border.color: "#24303a"
         z: 24
@@ -1325,22 +1359,32 @@ PanelWindow {
                 }
 
                 Row {
-                    spacing: 10
+                    spacing: 12
                     visible: currentGame() !== null
 
                     Rectangle {
-                        width: 138
-                        height: 46
-                        radius: 6
+                        width: 148
+                        height: 48
+                        radius: 8
                         color: ember
 
-                        Text {
+                        Row {
                             anchors.centerIn: parent
-                            text: "PLAY"
-                            color: "#160b07"
-                            font.pixelSize: 12
-                            font.bold: true
-                            font.letterSpacing: 0
+                            spacing: 8
+
+                            ButtonGlyph {
+                                anchors.verticalCenter: parent.verticalCenter
+                                action: "accept"
+                            }
+
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "PLAY"
+                                color: "#160b07"
+                                font.pixelSize: 14
+                                font.bold: true
+                                font.letterSpacing: 1.0
+                            }
                         }
 
                         MouseArea {
@@ -3969,10 +4013,71 @@ PanelWindow {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        height: 62
+        height: 54
         color: "#e0050609"
         border.color: "#202832"
         z: 20
+
+        Row {
+            anchors.left: parent.left
+            anchors.leftMargin: contentLeft
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: 20
+
+            Row {
+                spacing: 7
+                anchors.verticalCenter: parent.verticalCenter
+                Rectangle {
+                    width: 26
+                    height: 20
+                    radius: 4
+                    color: "#182230"
+                    border.color: "#28394e"
+                    anchors.verticalCenter: parent.verticalCenter
+                    Text {
+                        anchors.centerIn: parent
+                        text: "•••"
+                        color: "#94a3b8"
+                        font.pixelSize: 10
+                        font.bold: true
+                    }
+                }
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Quick Access"
+                    color: muted
+                    font.pixelSize: 12
+                    font.bold: true
+                }
+            }
+
+            Row {
+                spacing: 7
+                anchors.verticalCenter: parent.verticalCenter
+                Rectangle {
+                    width: 26
+                    height: 20
+                    radius: 4
+                    color: "#182230"
+                    border.color: "#28394e"
+                    anchors.verticalCenter: parent.verticalCenter
+                    Text {
+                        anchors.centerIn: parent
+                        text: "Guide"
+                        color: "#94a3b8"
+                        font.pixelSize: 8
+                        font.bold: true
+                    }
+                }
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Overlay Menu"
+                    color: muted
+                    font.pixelSize: 12
+                    font.bold: true
+                }
+            }
+        }
 
         Row {
             anchors.right: parent.right

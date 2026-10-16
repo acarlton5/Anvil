@@ -49,6 +49,10 @@ ShellRoot {
             return ;
         }
         if (action === "quickaccess") {
+            let now = Date.now();
+            if (now - root._lastQamTime < 240)
+                return ;
+            root._lastQamTime = now;
             root.quickAccessActive = !root.quickAccessActive;
             return ;
         }
@@ -187,6 +191,7 @@ ShellRoot {
     }
 
     property bool quickAccessActive: false
+    property real _lastQamTime: 0
     property bool keyboardActive: false
 
     Component {
@@ -226,7 +231,7 @@ ShellRoot {
     }
 
     Loader {
-        active: root.quickAccessActive
+        active: true
         sourceComponent: quickAccessComponent
     }
 
@@ -257,6 +262,10 @@ ShellRoot {
         }
 
         function toggleQuickAccess() {
+            let now = Date.now();
+            if (now - root._lastQamTime < 240)
+                return ;
+            root._lastQamTime = now;
             root.quickAccessActive = !root.quickAccessActive;
         }
 

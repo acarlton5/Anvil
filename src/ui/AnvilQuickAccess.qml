@@ -27,7 +27,11 @@ PanelWindow {
 
     implicitWidth: 360
 
-    visible: isVisible
+    opacity: isVisible ? 1.0 : 0.0
+    visible: opacity > 0
+    Behavior on opacity {
+        NumberAnimation { duration: 140; easing.type: Easing.OutCubic }
+    }
 
     readonly property PwNode audioSink: Pipewire.defaultAudioSink
 
@@ -208,11 +212,18 @@ PanelWindow {
     Rectangle {
         id: panel
         anchors.fill: parent
-        color: AnvilTheme.background
-        opacity: 0.96
-        border.color: AnvilTheme.outlineVariant
+        color: "#0e141d"
+        opacity: 0.98
+        border.color: "#243346"
         border.width: 1
         radius: 16
+
+        transform: Translate {
+            x: qamWindow.isVisible ? 0 : 380
+            Behavior on x {
+                NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
+            }
+        }
 
         // SteamOS / PS5 dark gradient accent
         gradient: Gradient {
