@@ -538,46 +538,76 @@ PanelWindow {
         id: storeModel
 
         ListElement {
-            title: "Featured"
-            eyebrow: "FORGE FRONT"
-            body: "Featured releases, demos, launches, and events."
+            title: "Elden Ring: Shadow of the Erdtree"
+            eyebrow: "FEATURED THIS WEEK"
+            price: "$39.99"
+            originalPrice: "$49.99"
+            discount: "-20%"
+            tag: "Deck Verified · Action RPG"
+            rating: "96% Positive"
+            art: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80"
         }
 
         ListElement {
-            title: "Discovery"
-            eyebrow: "DISCOVERY QUEUE"
-            body: "Curated rails shaped by tags, friends, and play."
+            title: "Hades II"
+            eyebrow: "TOP RATED"
+            price: "$29.99"
+            originalPrice: "$29.99"
+            discount: ""
+            tag: "Deck Verified · Roguelike"
+            rating: "98% Overwhelmingly Positive"
+            art: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80"
         }
 
         ListElement {
-            title: "Cartridges"
-            eyebrow: "LOCAL + ONLINE"
-            body: "Local game media now. Signed Forgepipe builds next."
+            title: "Outer Wilds: Archeologist Edition"
+            eyebrow: "STAFF PICK"
+            price: "$24.49"
+            originalPrice: "$34.99"
+            discount: "-30%"
+            tag: "Deck Verified · Exploration"
+            rating: "97% Overwhelmingly Positive"
+            art: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80"
         }
 
+        ListElement {
+            title: "Cyberpunk 2077: Ultimate"
+            eyebrow: "ANVIL SPOTLIGHT"
+            price: "$47.99"
+            originalPrice: "$79.99"
+            discount: "-40%"
+            tag: "Ray Tracing · Open World"
+            rating: "89% Very Positive"
+            art: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80"
+        }
     }
 
     ListModel {
         id: communityModel
 
         ListElement {
-            title: "Patch notes from Legend Forge"
-            body: "Anvil Session mounts removable media and refreshes the library on launch."
-            meta: "News"
+            title: "Niko unlocked Shardbearer Godrick"
+            body: "“First attempt after 3 hours of practicing dodge timings!”"
+            meta: "Achievement · 18m ago"
         }
 
         ListElement {
-            title: "Screenshots and clips"
-            body: "Capture lane for screenshots, clips, and timeline markers."
-            meta: "Activity"
+            title: "Amaya recommended Outer Wilds"
+            body: "“Go into this completely blind. One of the best games ever made on Deck.”"
+            meta: "Review · 2h ago"
         }
 
         ListElement {
-            title: "Guides, reviews, discussions"
-            body: "Game hubs for posts, reviews, guides, workshop notes, and events."
-            meta: "Hub"
+            title: "Rowan created a joinable lobby"
+            body: "Borderlands 3 — Mayhem Mode 4 farming run. 2 open slots."
+            meta: "Co-op Lobby · Joinable"
         }
 
+        ListElement {
+            title: "Anvil Community Screenshot of the Day"
+            body: "Stunning dusk vista on Mount Gagazet captured in 800p OLED HDR."
+            meta: "Screenshot · 84 Likes"
+        }
     }
 
     ListModel {
@@ -613,26 +643,25 @@ PanelWindow {
         id: downloadModel
 
         ListElement {
-            title: "Cartridge scan"
-            body: "USB and SD libraries indexed into Anvil Library."
-            value: "Live"
+            title: "Anvil OS 2.4.1 System Update"
+            body: "Proton 11 kernel patches, Deck OLED HDR color profile calibration."
+            value: "48.2 MB/s · 86%"
+            progress: 86
+        }
+
+        ListElement {
+            title: "Crash Bandicoot N. Sane Trilogy"
+            body: "Vulkan shader pre-caching and Steam Deck controller layout verification."
+            value: "Verified & Ready"
             progress: 100
         }
 
         ListElement {
-            title: "Client update"
-            body: "Signed Anvil release check with staged apply and rollback."
-            value: "Preview"
-            progress: 42
+            title: "Cyberpunk 2077: Phantom Liberty"
+            body: "Patch 2.21 compatibility files (14.2 GB)."
+            value: "Queued"
+            progress: 0
         }
-
-        ListElement {
-            title: "Forgepipe install"
-            body: "Depot download, verify, repair, move, uninstall, and delta updates."
-            value: "Planned"
-            progress: 24
-        }
-
     }
 
     ListModel {
@@ -2312,15 +2341,36 @@ PanelWindow {
         anchors.fill: parent
         visible: activeSection === 2
 
-        Text {
+        Row {
             anchors.left: parent.left
             anchors.leftMargin: contentLeft
             anchors.top: parent.top
-            anchors.topMargin: 126
-            text: "Store"
-            color: fg
-            font.pixelSize: 38
-            font.bold: true
+            anchors.topMargin: 118
+            spacing: 12
+
+            Text {
+                text: "Anvil Store"
+                color: fg
+                font.pixelSize: 32
+                font.bold: true
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
+            Rectangle {
+                height: 22
+                width: 90
+                radius: 11
+                color: "#1e2938"
+                border.color: "#334155"
+                anchors.verticalCenter: parent.verticalCenter
+                Text {
+                    anchors.centerIn: parent
+                    text: "WEEKLY DEALS"
+                    color: "#ff6537"
+                    font.pixelSize: 9
+                    font.bold: true
+                }
+            }
         }
 
         Rectangle {
