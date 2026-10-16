@@ -68,21 +68,22 @@ fi
 export SDL_GAMEPADCONFIG="$SDL_GAMECONTROLLERCONFIG"
 export SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS=1
 
-# Ensure winebus registry flags in prefix: Enable SDL=1 and enable udev/hidraw
+# Ensure winebus registry flags in prefix: Enable SDL=1 and remove DisableHidraw
 if [[ -f "$prefix_dir/pfx/system.reg" ]]; then
     python3 -c "
+import re
 path = '$prefix_dir/pfx/system.reg'
 try:
     with open(path, 'r', encoding='utf-8', errors='ignore') as f:
         text = f.read()
-    target = '[System\\\\ControlSet001\\\\Services\\\\winebus]'
-    if target in text:
-        if '"Enable SDL"' not in text:
-            text = text.replace(target, target + '\n"Enable SDL"=dword:00000001', 1)
-        else:
-            text = text.replace('"Enable SDL"=dword:00000000', '"Enable SDL"=dword:00000001')
-        if '"DisableHidraw"=dword:00000001' in text:
-            text = text.replace('"DisableHidraw"=dword:00000001\n', '')
+    orig = text
+    text = re.sub(r'"DisableHidraw"=dword:00000001\r?\n?', '', text)
+    text = re.sub(r'"Enable SDL"=dword:00000000', '"Enable SDL"=dword:00000001', text)
+    if '"Enable SDL"=dword:00000001' not in text:
+        pattern = re.compile(r'(\[System.*Services.*winebus\])')
+        if pattern.search(text):
+            text = pattern.sub(r'\1\n"Enable SDL"=dword:00000001', text, count=1)
+    if text != orig:
         with open(path, 'w', encoding='utf-8') as f:
             f.write(text)
 except Exception:
