@@ -673,40 +673,46 @@ PanelWindow {
         id: settingsModel
 
         ListElement {
+            key: "storage"
+            title: "Storage & Cartridge Drives"
+            body: "Configure SD cards, internal folders, or external drives as cartridge libraries for game installs."
+            value: "2 Active Drives"
+        }
+
+        ListElement {
             key: "session"
             title: "Anvil Session"
             body: "Dedicated Wayland session, controller navigation, focus, logout, and cleanup."
-            value: "Installed by plugin"
+            value: "Active · Wayland"
         }
 
         ListElement {
             key: "runtime"
-            title: "Anvil Runtime"
+            title: "Proton & Compatibility"
             body: "Per-game Proton, prefixes, launch logs, overlay hooks, and exit recovery."
-            value: "Prototype"
+            value: "GE-Proton11-9"
         }
 
         ListElement {
             key: "input"
-            title: "Anvil Input"
-            body: "Controller identity, glyphs, per-game maps, and live button testing."
-            value: "Live"
+            title: "Steam Deck Input & Haptics"
+            body: "Controller identity, glyphs, per-game maps, rumble, and live button testing."
+            value: "Connected"
+        }
+
+        ListElement {
+            key: "display"
+            title: "Display & Performance"
+            body: "Resolution (1280x800), refresh rate, HDR color space, and power profiles."
+            value: "60 Hz · Native"
         }
 
         ListElement {
             key: "cloud"
-            title: "Anvil Cloud"
-            body: "Save sync, settings sync, offline queue, and conflicts."
-            value: "Coming soon"
+            title: "Cloud Saves & Sync"
+            body: "Save sync, settings sync, offline queue, and cloud conflict resolution."
+            value: "Online"
         }
-
-        ListElement {
-            key: "guard"
-            title: "Forge Guard"
-            body: "Device trust, sign-in approval, family controls, and account recovery."
-            value: "Coming soon"
-        }
-
     }
 
     Timer {
@@ -1334,6 +1340,23 @@ PanelWindow {
 
                     Rectangle {
                         height: 22
+                        width: cartridgePill.implicitWidth + 16
+                        radius: 4
+                        color: "#1f1d2b"
+                        border.color: "#ff6537"
+                        Text {
+                            id: cartridgePill
+                            anchors.centerIn: parent
+                            text: "CARTRIDGE · " + (currentGame() && currentGame().runner ? currentGame().runner.toUpperCase() : "PROTON")
+                            color: "#ff8a66"
+                            font.pixelSize: 9
+                            font.bold: true
+                            font.letterSpacing: 0.8
+                        }
+                    }
+
+                    Rectangle {
+                        height: 22
                         width: protonText.implicitWidth + 16
                         radius: 4
                         color: "#16202c"
@@ -1341,7 +1364,7 @@ PanelWindow {
                         Text {
                             id: protonText
                             anchors.centerIn: parent
-                            text: (currentGame() && currentGame().proton) ? currentGame().proton.toUpperCase() : "READY TO PLAY"
+                            text: (currentGame() && currentGame().drive) ? currentGame().drive.toUpperCase() : "MOUNTED MEDIA"
                             color: "#94a3b8"
                             font.pixelSize: 9
                             font.bold: true
@@ -1511,7 +1534,7 @@ PanelWindow {
                 anchors.left: parent.left
                 anchors.leftMargin: contentLeft
                 anchors.top: parent.top
-                text: "RECENT GAMES"
+                text: "CARTRIDGES & INSTALLED GAMES"
                 color: "#8fa0b5"
                 font.pixelSize: 11
                 font.bold: true
@@ -3858,6 +3881,212 @@ PanelWindow {
                     width: parent.width
                     height: 1
                     color: "#313942"
+                }
+
+                // Storage & Cartridge Management Pane
+                Column {
+                    visible: selectedSettingKey() === "storage"
+                    width: parent.width
+                    spacing: 14
+
+                    Text {
+                        text: "CARTRIDGE STORAGE LOCATIONS"
+                        color: "#94a3b8"
+                        font.pixelSize: 11
+                        font.bold: true
+                        font.letterSpacing: 1.2
+                    }
+
+                    // Drive 1: MicroSD Card
+                    Rectangle {
+                        width: parent.width
+                        height: 84
+                        radius: 8
+                        color: "#161f2b"
+                        border.color: "#273648"
+
+                        Row {
+                            anchors.fill: parent
+                            anchors.margins: 16
+                            spacing: 14
+
+                            Rectangle {
+                                width: 50
+                                height: 50
+                                radius: 8
+                                color: "#1e2b3c"
+                                border.color: "#38bdf8"
+                                anchors.verticalCenter: parent.verticalCenter
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "💾"
+                                    font.pixelSize: 24
+                                }
+                            }
+
+                            Column {
+                                anchors.verticalCenter: parent.verticalCenter
+                                spacing: 3
+                                Text {
+                                    text: "MicroSD Card (/mnt/sdcard)"
+                                    color: "#ffffff"
+                                    font.pixelSize: 15
+                                    font.bold: true
+                                }
+                                Text {
+                                    text: "Default Cartridge Install Location · 33 GB Free of 234 GB"
+                                    color: "#94a3b8"
+                                    font.pixelSize: 11
+                                }
+                                Rectangle {
+                                    width: 220
+                                    height: 5
+                                    radius: 2.5
+                                    color: "#0c1117"
+                                    Rectangle {
+                                        width: parent.width * 0.86
+                                        height: parent.height
+                                        radius: 2.5
+                                        color: "#ff6537"
+                                    }
+                                }
+                            }
+
+                            Item { width: 1; height: 1 }
+
+                            Rectangle {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 110
+                                height: 32
+                                radius: 6
+                                color: "#1e2938"
+                                border.color: "#334155"
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "ACTIVE"
+                                    color: "#22c55e"
+                                    font.pixelSize: 10
+                                    font.bold: true
+                                }
+                            }
+                        }
+                    }
+
+                    // Drive 2: Internal SSD Games Folder
+                    Rectangle {
+                        width: parent.width
+                        height: 84
+                        radius: 8
+                        color: "#161f2b"
+                        border.color: "#273648"
+
+                        Row {
+                            anchors.fill: parent
+                            anchors.margins: 16
+                            spacing: 14
+
+                            Rectangle {
+                                width: 50
+                                height: 50
+                                radius: 8
+                                color: "#1e2b3c"
+                                border.color: "#64748b"
+                                anchors.verticalCenter: parent.verticalCenter
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "📁"
+                                    font.pixelSize: 24
+                                }
+                            }
+
+                            Column {
+                                anchors.verticalCenter: parent.verticalCenter
+                                spacing: 3
+                                Text {
+                                    text: "Internal Games Folder (/home/morphine/Games)"
+                                    color: "#ffffff"
+                                    font.pixelSize: 15
+                                    font.bold: true
+                                }
+                                Text {
+                                    text: "Cartridge Storage · 229 GB Free of 238 GB"
+                                    color: "#94a3b8"
+                                    font.pixelSize: 11
+                                }
+                                Rectangle {
+                                    width: 220
+                                    height: 5
+                                    radius: 2.5
+                                    color: "#0c1117"
+                                    Rectangle {
+                                        width: parent.width * 0.04
+                                        height: parent.height
+                                        radius: 2.5
+                                        color: "#22c55e"
+                                    }
+                                }
+                            }
+
+                            Item { width: 1; height: 1 }
+
+                            Rectangle {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 110
+                                height: 32
+                                radius: 6
+                                color: "#1e2938"
+                                border.color: "#334155"
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "READY"
+                                    color: "#94a3b8"
+                                    font.pixelSize: 10
+                                    font.bold: true
+                                }
+                            }
+                        }
+                    }
+
+                    // Add Storage Location Button
+                    Rectangle {
+                        width: parent.width
+                        height: 52
+                        radius: 8
+                        color: addStorageMouse.containsMouse ? "#223142" : "#19222d"
+                        border.color: addStorageMouse.containsMouse ? "#ff6537" : "#2f3f52"
+                        border.width: 1.5
+
+                        Row {
+                            anchors.centerIn: parent
+                            spacing: 10
+                            Text {
+                                text: "+"
+                                color: "#ff6537"
+                                font.pixelSize: 20
+                                font.bold: true
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+                            Text {
+                                text: "Add New Drive or Folder as Cartridge Location"
+                                color: "#ffffff"
+                                font.pixelSize: 13
+                                font.bold: true
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+                        }
+
+                        MouseArea {
+                            id: addStorageMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                pythonBridge.running = true;
+                            }
+                        }
+                    }
                 }
 
                 Column {

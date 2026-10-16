@@ -202,6 +202,18 @@ def shutil_which(command):
     return None
 
 
+# Load custom cartridge drives from user configuration
+def load_custom_cartridge_drives():
+    config_path = os.path.expanduser("~/.config/anvil/storage.json")
+    if os.path.isfile(config_path):
+        try:
+            with open(config_path, "r") as f:
+                data = json.load(f)
+                return data.get("custom_drives", [])
+        except Exception as e:
+            print(f"[anvil-library] Error reading storage.json: {e}", file=sys.stderr)
+    return []
+
 def find_game_drives():
     """Find all mounted drives that contain game directories (Games, steamapps/common, etc.)."""
     drives = []
@@ -211,6 +223,16 @@ def find_game_drives():
         if os.path.isdir(p) and p not in seen:
             seen.add(p)
             drives.append({"games_path": p, "drive_root": root})
+
+    # 0. User configured custom cartridge drives
+    for custom in load_custom_cartridge_drives():
+        c_path = custom.get("path") if isinstance(custom, dict) else custom
+        if c_path and os.path.isdir(c_path):
+            add_drive(c_path, c_path)
+            for sub in GAMES_DIR_NAMES:
+                candidate = os.path.join(c_path, sub)
+                if os.path.isdir(candidate):
+                    add_drive(candidate, c_path)
 
     # 1. Parse active system mounts in /proc/mounts
     if os.path.isfile("/proc/mounts"):
