@@ -90,9 +90,10 @@ def main():
     while running:
         dev_path = find_steam_deck_event()
         if not dev_path:
-            time.sleep(1.0)
+            time.sleep(0.5)
             continue
 
+        dev = None
         try:
             dev = evdev.InputDevice(dev_path)
             print(f"[Anvil Xbox Bridge] Attached to hardware: {dev.name} ({dev_path})")
@@ -141,7 +142,13 @@ def main():
                         ui.write(ecodes.EV_ABS, ecodes.ABS_HAT0Y, event.value)
                         ui.syn()
         except (OSError, RuntimeError) as e:
-            time.sleep(1.0)
+            print(f"[Anvil Xbox Bridge] Device disconnected or read error: {e}. Reconnecting...")
+            if dev:
+                try:
+                    dev.close()
+                except Exception:
+                    pass
+            time.sleep(0.5)
 
     ui.close()
     print("[Anvil Xbox Bridge] Stopped.")
