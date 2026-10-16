@@ -27,11 +27,7 @@ PanelWindow {
 
     implicitWidth: 360
 
-    opacity: isVisible ? 1.0 : 0.0
-    visible: opacity > 0
-    Behavior on opacity {
-        NumberAnimation { duration: 140; easing.type: Easing.OutCubic }
-    }
+    visible: isVisible
 
     readonly property PwNode audioSink: Pipewire.defaultAudioSink
 
