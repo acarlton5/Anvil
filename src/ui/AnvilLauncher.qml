@@ -1316,8 +1316,8 @@ PanelWindow {
                 spacing: 10
 
                 Image {
-                    width: Math.min(560, parent.width)
-                    height: 164
+                    width: Math.min(480, parent.width)
+                    height: 120
                     source: currentGame() ? (currentGame().logo || "") : ""
                     fillMode: Image.PreserveAspectFit
                     horizontalAlignment: Image.AlignLeft
@@ -1326,36 +1326,53 @@ PanelWindow {
                 }
 
                 Text {
-                    text: tagLine(currentGame())
-                    color: emberLight
-                    font.pixelSize: 10
+                    text: currentGame() ? currentGame().name : (libraryScanRunning ? "Scanning Cartridges" : "Anvil Library")
+                    color: "#ffffff"
+                    font.pixelSize: 42
                     font.bold: true
-                    font.letterSpacing: 0
-                }
-
-                Text {
-                    text: {
-                        let game = currentGame();
-                        if (game)
-                            return game.name;
-
-                        return libraryScanRunning ? "Scanning Cartridges" : "Anvil Library";
-                    }
-                    color: fg
-                    font.pixelSize: 52
-                    font.bold: true
-                    width: Math.min(720, parent.width)
+                    font.letterSpacing: -0.5
+                    width: Math.min(680, parent.width)
                     elide: Text.ElideRight
-                    lineHeight: 0.94
                     visible: !currentGame() || !currentGame().logo
                 }
 
-                Text {
-                    text: libraryScanRunning ? "Mounting removable media and checking your cartridge shelf." : ((currentGame() && currentGame().proton) ? currentGame().proton : "Ready to play")
-                    color: "#d4d8d9"
-                    font.pixelSize: 14
-                    width: Math.min(520, parent.width)
-                    elide: Text.ElideRight
+                Row {
+                    spacing: 8
+                    visible: currentGame() !== null
+
+                    Rectangle {
+                        height: 22
+                        width: tagPill.implicitWidth + 16
+                        radius: 4
+                        color: "#1a2434"
+                        border.color: "#2d405a"
+                        Text {
+                            id: tagPill
+                            anchors.centerIn: parent
+                            text: (currentGame() && currentGame().proton) ? currentGame().proton.toUpperCase() : "READY TO PLAY"
+                            color: "#38bdf8"
+                            font.pixelSize: 9
+                            font.bold: true
+                            font.letterSpacing: 0.8
+                        }
+                    }
+
+                    Rectangle {
+                        height: 22
+                        width: verifiedPill.implicitWidth + 16
+                        radius: 4
+                        color: "#13281c"
+                        border.color: "#1e4e33"
+                        Text {
+                            id: verifiedPill
+                            anchors.centerIn: parent
+                            text: "DECK COMPATIBLE"
+                            color: "#4ade80"
+                            font.pixelSize: 9
+                            font.bold: true
+                            font.letterSpacing: 0.8
+                        }
+                    }
                 }
 
                 Row {
@@ -1363,27 +1380,41 @@ PanelWindow {
                     visible: currentGame() !== null
 
                     Rectangle {
-                        width: 148
+                        width: 154
                         height: 48
-                        radius: 8
-                        color: ember
+                        radius: 24
+                        gradient: Gradient {
+                            orientation: Gradient.Horizontal
+                            GradientStop { position: 0.0; color: "#ff5722" }
+                            GradientStop { position: 1.0; color: "#ff7043" }
+                        }
 
                         Row {
                             anchors.centerIn: parent
-                            spacing: 8
+                            spacing: 9
 
-                            ButtonGlyph {
+                            Rectangle {
+                                width: 22
+                                height: 22
+                                radius: 11
+                                color: "#ffffff"
                                 anchors.verticalCenter: parent.verticalCenter
-                                action: "accept"
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "A"
+                                    color: "#ff5722"
+                                    font.pixelSize: 13
+                                    font.bold: true
+                                }
                             }
 
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: "PLAY"
-                                color: "#160b07"
-                                font.pixelSize: 14
+                                color: "#ffffff"
+                                font.pixelSize: 15
                                 font.bold: true
-                                font.letterSpacing: 1.0
+                                font.letterSpacing: 1.2
                             }
                         }
 
@@ -1391,23 +1422,27 @@ PanelWindow {
                             anchors.fill: parent
                             onClicked: launchGame()
                         }
-
                     }
 
                     Rectangle {
-                        width: 46
-                        height: 46
-                        radius: 6
-                        color: "#dd111820"
-                        border.color: "#3b4652"
+                        width: 48
+                        height: 48
+                        radius: 24
+                        color: "#1a2432"
+                        border.color: "#2a394a"
 
                         Text {
                             anchors.centerIn: parent
-                            text: "⋯"
-                            color: fg
-                            font.pixelSize: 22
-                            font.bold: true
+                            text: "⚙"
+                            color: "#94a3b8"
+                            font.pixelSize: 18
                         }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: selectSection(5)
+                        }
+                    }                }
 
                     }
 
@@ -1481,52 +1516,18 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 58
-            height: 292
+            anchors.bottomMargin: 52
+            height: 270
 
             Text {
                 anchors.left: parent.left
                 anchors.leftMargin: contentLeft
                 anchors.top: parent.top
                 text: "RECENT GAMES"
-                color: fg
-                font.pixelSize: 12
+                color: "#8fa0b5"
+                font.pixelSize: 11
                 font.bold: true
-                font.letterSpacing: 0
-            }
-
-            Image {
-                anchors.left: parent.left
-                anchors.leftMargin: contentLeft - 40
-                anchors.bottom: gameStrip.top
-                anchors.bottomMargin: -52
-                width: 430
-                height: 190
-                source: (anvilRoot.startsWith("file://") ? "" : "file://") + anvilRoot + "/assets/anvil-focus-flame.png"
-                fillMode: Image.PreserveAspectFit
-                opacity: 0.48
-                visible: false
-
-                SequentialAnimation on opacity {
-                    running: homePage.visible
-                    loops: Animation.Infinite
-
-                    NumberAnimation {
-                        from: 0.38
-                        to: 0.56
-                        duration: 1200
-                        easing.type: Easing.InOutSine
-                    }
-
-                    NumberAnimation {
-                        from: 0.56
-                        to: 0.38
-                        duration: 1450
-                        easing.type: Easing.InOutSine
-                    }
-
-                }
-
+                font.letterSpacing: 1.5
             }
 
             ListView {
@@ -1535,7 +1536,7 @@ PanelWindow {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                height: 252
+                height: 240
                 orientation: ListView.Horizontal
                 spacing: 16
                 leftMargin: contentLeft
@@ -1544,7 +1545,7 @@ PanelWindow {
                 currentIndex: selectedGameIndex
                 focus: !powerMenuActive && activeSection === 0
                 preferredHighlightBegin: contentLeft
-                preferredHighlightEnd: contentLeft + 420
+                preferredHighlightEnd: contentLeft + 340
                 highlightRangeMode: ListView.StrictlyEnforceRange
                 Keys.onLeftPressed: decrementCurrentIndex()
                 Keys.onRightPressed: incrementCurrentIndex()
@@ -1557,226 +1558,100 @@ PanelWindow {
                     property string boxSource: model.grid || ""
                     property string landscapeSource: model.hero || ""
                     property string logoSource: model.logo || ""
-                    property bool hasLandscapeArt: landscapeSource !== ""
                     property bool focused: ListView.isCurrentItem || hoverArea.containsMouse
-                    property bool expanded: focused && hasLandscapeArt
 
-                    width: expanded ? 424 : 150
-                    height: 222
-                    opacity: focused ? 1 : 0.7
+                    width: 154
+                    height: 226
+                    scale: focused ? 1.05 : 1.0
+                    opacity: focused ? 1.0 : 0.65
+                    z: focused ? 10 : 1
                     anchors.verticalCenter: parent ? parent.verticalCenter : undefined
 
-                    Image {
-                        anchors.centerIn: cardSurface
-                        anchors.verticalCenterOffset: expanded ? -8 : -4
-                        width: cardSurface.width + (expanded ? 78 : 54)
-                        height: cardSurface.height + (expanded ? 82 : 62)
-                        source: (anvilRoot.startsWith("file://") ? "" : "file://") + anvilRoot + "/assets/anvil-focus-flame.png"
-                        fillMode: Image.PreserveAspectFit
-                        opacity: 0.46
-                        visible: focused
-
-                        SequentialAnimation on opacity {
-                            running: focused
-                            loops: Animation.Infinite
-
-                            NumberAnimation {
-                                from: 0.36
-                                to: 0.56
-                                duration: 1200
-                                easing.type: Easing.InOutSine
-                            }
-
-                            NumberAnimation {
-                                from: 0.56
-                                to: 0.36
-                                duration: 1450
-                                easing.type: Easing.InOutSine
-                            }
-
+                    Behavior on scale {
+                        NumberAnimation {
+                            duration: 150
+                            easing.type: Easing.OutCubic
                         }
+                    }
 
+                    Behavior on opacity {
+                        NumberAnimation {
+                            duration: 150
+                            easing.type: Easing.OutCubic
+                        }
                     }
 
                     Rectangle {
                         id: cardSurface
 
                         anchors.fill: parent
-                        radius: 8
-                        color: panelRaised
-                        border.color: focused ? ember : "#32404d"
+                        radius: 12
+                        color: "#131c28"
+                        border.color: focused ? "#38bdf8" : "#1e2a3c"
                         border.width: focused ? 3 : 1
                         clip: true
 
                         Rectangle {
                             anchors.fill: parent
-                            visible: boxSource === "" && !expanded
+                            visible: boxSource === ""
 
                             Text {
                                 anchors.centerIn: parent
                                 text: initials(model.name)
-                                color: "#f6d0be"
-                                opacity: 0.68
-                                font.pixelSize: focused ? 82 : 54
+                                color: "#94a3b8"
+                                opacity: 0.5
+                                font.pixelSize: 56
                                 font.bold: true
-                            }
-
-                            Rectangle {
-                                anchors.left: parent.left
-                                anchors.leftMargin: 18
-                                anchors.top: parent.top
-                                anchors.topMargin: 18
-                                width: 42
-                                height: 42
-                                radius: 6
-                                color: "#181f27"
-                                border.color: ember
-
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "A"
-                                    color: emberLight
-                                    font.pixelSize: 18
-                                    font.bold: true
-                                }
-
                             }
 
                             gradient: Gradient {
                                 orientation: Gradient.Vertical
-
-                                GradientStop {
-                                    position: 0
-                                    color: "#27333d"
-                                }
-
-                                GradientStop {
-                                    position: 0.52
-                                    color: "#151d25"
-                                }
-
-                                GradientStop {
-                                    position: 1
-                                    color: "#432719"
-                                }
-
+                                GradientStop { position: 0; color: "#1e293b" }
+                                GradientStop { position: 1; color: "#0f172a" }
                             }
-
                         }
 
                         Image {
                             id: boxArtImage
-
                             anchors.fill: parent
                             source: boxSource
-                            fillMode: Image.PreserveAspectFit
-                            opacity: expanded ? 0 : 1
-                            visible: source !== "" && opacity > 0
-
-                            Behavior on opacity {
-                                NumberAnimation {
-                                    duration: 120
-                                }
-                            }
-                        }
-
-                        Image {
-                            id: landscapeArtImage
-
-                            anchors.fill: parent
-                            source: landscapeSource
                             fillMode: Image.PreserveAspectCrop
-                            opacity: expanded ? 1 : 0
-                            visible: source !== "" && opacity > 0
-
-                            Behavior on opacity {
-                                NumberAnimation {
-                                    duration: 120
-                                }
-                            }
+                            visible: source !== ""
                         }
 
+                        // Gradient protection at bottom of card
                         Rectangle {
-                            anchors.fill: parent
-
-                            gradient: Gradient {
-                                GradientStop {
-                                    position: 0
-                                    color: focused ? "#11000000" : "#22000000"
-                                }
-
-                                GradientStop {
-                                    position: focused ? 0.48 : 0.62
-                                    color: focused ? "#33000000" : "#55000000"
-                                }
-
-                                GradientStop {
-                                    position: 1
-                                    color: "#ee05070a"
-                                }
-
-                            }
-
-                        }
-
-                        Text {
                             anchors.left: parent.left
-                            anchors.leftMargin: 15
-                            anchors.top: parent.top
-                            anchors.topMargin: 14
-                            text: (model.hero || model.grid) ? "READY" : "LOCAL"
-                            color: model.steamgriddb_id ? green : muted
-                            font.pixelSize: 9
-                            font.bold: true
-                            font.letterSpacing: 0
-                            visible: focused
+                            anchors.right: parent.right
+                            anchors.bottom: parent.bottom
+                            height: 60
+                            gradient: Gradient {
+                                GradientStop { position: 0; color: "transparent" }
+                                GradientStop { position: 1; color: "#d0090d14" }
+                            }
                         }
 
                         Column {
                             anchors.left: parent.left
                             anchors.right: parent.right
                             anchors.bottom: parent.bottom
-                            anchors.margins: 15
-                            spacing: 6
-
-                            Image {
-                                width: parent.width
-                                height: focused ? 64 : 34
-                                source: logoSource
-                                fillMode: Image.PreserveAspectFit
-                                horizontalAlignment: Image.AlignLeft
-                                verticalAlignment: Image.AlignBottom
-                                mipmap: true
-                                visible: source !== ""
-                            }
+                            anchors.margins: 10
+                            spacing: 3
 
                             Text {
                                 text: model.name
-                                color: fg
-                                font.pixelSize: focused ? 23 : 14
+                                color: "#ffffff"
+                                font.pixelSize: 12
                                 font.bold: true
                                 elide: Text.ElideRight
                                 width: parent.width
-                                visible: logoSource === ""
+                                visible: boxSource === "" || focused
                             }
-
-                            Text {
-                                text: model.proton || "Proton Experimental"
-                                color: "#a5aaae"
-                                font.pixelSize: 10
-                                font.bold: true
-                                elide: Text.ElideRight
-                                width: parent.width
-                                visible: focused
-                            }
-
                         }
-
                     }
 
                     MouseArea {
                         id: hoverArea
-
                         anchors.fill: parent
                         hoverEnabled: true
                         onEntered: {
@@ -1790,28 +1665,9 @@ PanelWindow {
                         }
                         onDoubleClicked: launchGame()
                     }
-
-                    Behavior on width {
-                        NumberAnimation {
-                            duration: 180
-                            easing.type: Easing.OutCubic
-                        }
-
-                    }
-
-                    Behavior on opacity {
-                        NumberAnimation {
-                            duration: 160
-                        }
-
-                    }
-
                 }
-
             }
-
         }
-
     }
 
     Item {

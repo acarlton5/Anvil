@@ -21,7 +21,7 @@ ShellRoot {
     function startGame(command, gameName, gameId, inputProfile, inputMap, inputActions, controllerLayout, achievementSet) {
         console.log("Root starting game: " + command);
         root.waitingForGameWindow = true;
-        root.gamerActive = true;
+        hideAnvilDelayTimer.restart();
         gameWindowTimeoutTimer.restart();
         gameProcess.command = [gameSessionScript, "run", "--name", gameName || "", "--game-id", gameId || "", "--input-profile", inputProfile || "", "--input-map", inputMap || "", "--input-actions", inputActions || "", "--controller-layout", controllerLayout || "", "--achievement-set", achievementSet || "", "--achievements-url", achievementsUrl, "--", command];
         gameProcess.running = true;
@@ -74,21 +74,22 @@ ShellRoot {
 
     Process {
         id: clientCheckProcess
-        command: ["hyprctl", "-j", "clients"]
+        command: ["sh", "-c", "sig=$(ls -t /run/user/$(id -u)/hypr 2>/dev/null | head -n1); [ -n "$sig" ] && export HYPRLAND_INSTANCE_SIGNATURE="$sig"; hyprctl -j clients 2>/dev/null || echo '[]'"]
         stdout: StdioCollector {
             onStreamFinished: {
                 if (!root.waitingForGameWindow || !text || text.trim().length === 0)
                     return;
                 try {
                     let clients = JSON.parse(text);
-                    if (Array.isArray(clients)) {
+                    if (Array.isArray(clients) && clients.length > 0) {
                         for (let i = 0; i < clients.length; i++) {
                             let c = clients[i];
-                            if (c && c.mapped && !c.hidden && c.visible && c.initialClass !== "keepalive") {
+                            if (c && c.mapped && !c.hidden && c.initialClass !== "keepalive") {
                                 console.log("[Anvil] Detected mapped game client window: " + (c.title || c.class));
                                 root.waitingForGameWindow = false;
+                                root.gamerActive = false;
                                 gameWindowTimeoutTimer.stop();
-                                hideAnvilDelayTimer.restart();
+                                hideAnvilDelayTimer.stop();
                                 return;
                             }
                         }
@@ -114,20 +115,21 @@ ShellRoot {
 
     Timer {
         id: hideAnvilDelayTimer
-        interval: 600
+        interval: 800
         repeat: false
         onTriggered: {
+            console.log("[Anvil] Hiding launcher for game session");
             root.gamerActive = false;
         }
     }
 
     Timer {
         id: gameWindowTimeoutTimer
-        interval: 45000
+        interval: 3000
         repeat: false
         onTriggered: {
             if (root.waitingForGameWindow) {
-                console.log("[Anvil] Game window detection timed out, hiding launcher");
+                console.log("[Anvil] Game launch fallback: ensuring launcher is hidden");
                 root.waitingForGameWindow = false;
                 root.gamerActive = false;
             }
