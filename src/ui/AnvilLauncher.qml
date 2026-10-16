@@ -3401,7 +3401,7 @@ PanelWindow {
                                     font.pixelSize: 12
                                     font.bold: true
                                 }
-                                Item { width: 1; height: 1; Layout.fillWidth: true }
+                                Item { width: 1; height: 1 }
                                 Text {
                                     text: "2,840 / 3,000 XP"
                                     color: "#8e9fad"
