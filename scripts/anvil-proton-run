@@ -42,13 +42,12 @@ fi
 # Disable Xalia accessibility helper to avoid headless crash
 export PROTON_USE_XALIA="${PROTON_USE_XALIA:-0}"
 
-# Disable raw hidraw access and route controller through SDL2 backend
-export PROTON_DISABLE_HIDRAW="1"
-export WINE_DISABLE_HIDRAW="1"
+# Allow Wine/Proton to access gamepads via SDL and udev/hidraw
 export PROTON_NO_STEAMINPUT="1"
+unset PROTON_DISABLE_HIDRAW || true
+unset WINE_DISABLE_HIDRAW || true
 unset SDL_GAMECONTROLLER_IGNORE_DEVICES || true
 unset SDL_GAMECONTROLLER_IGNORE_DEVICES_EXCEPT || true
-
 # Route controller through SDL2 with accurate Steam Deck mappings
 deck_guid="0300f617de2800000512000000036800"
 deck_guid_alt="03000000de2800000512000011010000"
@@ -69,28 +68,27 @@ fi
 export SDL_GAMEPADCONFIG="$SDL_GAMECONTROLLERCONFIG"
 export SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS=1
 
-# Ensure winebus registry flags in prefix: Enable SDL=0 (enables SDL in winebus) and DisableHidraw=1
+# Ensure winebus registry flags in prefix: Enable SDL=1 and enable udev/hidraw
 if [[ -f "$prefix_dir/pfx/system.reg" ]]; then
     python3 -c "
 path = '$prefix_dir/pfx/system.reg'
 try:
     with open(path, 'r', encoding='utf-8', errors='ignore') as f:
         text = f.read()
-    target = '[System\\\\\\\\ControlSet001\\\\\\\\Services\\\\\\\\winebus]'
+    target = '[System\\\\ControlSet001\\\\Services\\\\winebus]'
     if target in text:
-        if '\"DisableHidraw\"' not in text:
-            text = text.replace(target, target + '\n\"DisableHidraw\"=dword:00000001', 1)
-        if '\"Enable SDL\"' not in text:
-            text = text.replace(target, target + '\n\"Enable SDL\"=dword:00000000', 1)
-        elif '\"Enable SDL\"=dword:00000001' in text:
-            text = text.replace('\"Enable SDL\"=dword:00000001', '\"Enable SDL\"=dword:00000000')
+        if '"Enable SDL"' not in text:
+            text = text.replace(target, target + '\n"Enable SDL"=dword:00000001', 1)
+        else:
+            text = text.replace('"Enable SDL"=dword:00000000', '"Enable SDL"=dword:00000001')
+        if '"DisableHidraw"=dword:00000001' in text:
+            text = text.replace('"DisableHidraw"=dword:00000001\n', '')
         with open(path, 'w', encoding='utf-8') as f:
             f.write(text)
 except Exception:
     pass
 " 2>/dev/null || true
 fi
-
 # Search order for Proton binary:
 # 1. System GE-Proton / custom Proton installed in /opt/proton
 # 2. Steam compatibilitytools.d
