@@ -1,10 +1,8 @@
--- Minimal Anvil Wayland Session
+-- Minimal Anvil Wayland Session (Tauri / WebKit2GTK Hardware-Accelerated Shell)
 
 local home = os.getenv("HOME") or ""
 local anvil_root = os.getenv("ANVIL_ROOT") or "/usr/local/share/anvil"
-local daemon = anvil_root .. "/src/ui/AnvilDaemon.qml"
-local overlay_toggle = anvil_root .. "/scripts/anvil-overlay-toggle " .. anvil_root
-local qs_bin = os.getenv("ANVIL_QS_BIN") or "qs"
+local webui_daemon = anvil_root .. "/scripts/anvil-webui-daemon"
 
 -- Hardware profile detection (e.g. Steam Deck portrait display rotation)
 local deck_transform = 0
@@ -63,10 +61,8 @@ local function update_displays()
     end
 end
 
--- Apply initial monitor configuration based on external display
 update_displays()
 
--- Auto-switch display when external monitor is connected or disconnected
 hl.on("monitor.added", function()
     update_displays()
 end)
@@ -75,11 +71,13 @@ hl.on("monitor.removed", function()
     update_displays()
 end)
 
-local quickaccess_toggle = anvil_root .. "/scripts/anvil-quickaccess-toggle " .. anvil_root
-local keyboard_toggle = anvil_root .. "/scripts/anvil-keyboard-toggle " .. anvil_root
-
--- Essential input and performance optimizations
+-- Essential input and borderless console layout
 hl.config({
+    general = {
+        gaps_in = 0,
+        gaps_out = 0,
+        border_size = 0
+    },
     input = {
         kb_layout = "us",
         touchpad = {
@@ -92,6 +90,7 @@ hl.config({
         enabled = false
     },
     decoration = {
+        rounding = 0,
         shadow = {
             enabled = false
         },
@@ -102,34 +101,22 @@ hl.config({
     misc = {
         disable_hyprland_logo = true,
         disable_splash_rendering = true,
-        vrr = 1 -- Enable Variable Refresh Rate
+        vrr = 1
     }
 })
 
--- Audio, Brightness, and Overlay Hotkeys
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("/usr/local/share/anvil/scripts/anvil-audio-control step-up"), { repeating = true, locked = true })
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("/usr/local/share/anvil/scripts/anvil-audio-control step-down"), { repeating = true, locked = true })
+-- Audio & Brightness Hardware Keys
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+"), { repeating = true, locked = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"), { repeating = true, locked = true })
 hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
 hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), { locked = true })
 hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl set 5%+"), { repeating = true, locked = true })
 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"), { repeating = true, locked = true })
-
--- Quick Access Menu, On-Screen Keyboard, and Overlay Toggles
-hl.bind("SHIFT + TAB", hl.dsp.exec_cmd(overlay_toggle), { locked = true, dont_inhibit = true })
-hl.bind("SUPER + SHIFT + O", hl.dsp.exec_cmd(overlay_toggle), { locked = true, dont_inhibit = true })
-hl.bind("SUPER + SPACE", hl.dsp.exec_cmd(quickaccess_toggle), { locked = true, dont_inhibit = true })
-hl.bind("XF86Shop", hl.dsp.exec_cmd(quickaccess_toggle), { locked = true, dont_inhibit = true })
-hl.bind("XF86Search", hl.dsp.exec_cmd(quickaccess_toggle), { locked = true, dont_inhibit = true })
-hl.bind("SUPER + Q", hl.dsp.exec_cmd(quickaccess_toggle), { locked = true, dont_inhibit = true })
-hl.bind("SUPER + K", hl.dsp.exec_cmd(keyboard_toggle), { locked = true, dont_inhibit = true })
-hl.bind("SUPER + X", hl.dsp.exec_cmd(keyboard_toggle), { locked = true, dont_inhibit = true })
 hl.bind("SUPER + SHIFT + Q", hl.dsp.exit())
 
--- Launch Anvil automatically with full D-Bus & systemd environment
--- Exits Hyprland back to greeter when Anvil terminates or Switch to Desktop is pressed
+-- Launch Anvil WebKit2/Tauri Console UI automatically
 hl.on("hyprland.start", function()
     hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XDG_SESSION_DESKTOP")
     hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XDG_SESSION_DESKTOP")
-    hl.exec_cmd("env ANVIL_ROOT=" .. anvil_root .. " " .. qs_bin .. " -p " .. daemon .. "; hyprctl dispatch exit")
+    hl.exec_cmd("env ANVIL_ROOT=" .. anvil_root .. " " .. webui_daemon .. "; hyprctl dispatch exit")
 end)
-

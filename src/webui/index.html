@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280, initial-scale=1.0" />
+  <title>Anvil Console OS</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <!-- 1. AMBIENT HERO BACKDROP -->
+  <div id="backdrop-container">
+    <img id="backdrop-img" src="" alt="" />
+    <div id="backdrop-vignette"></div>
+  </div>
+
+  <!-- 2. TOP NAVIGATION BAR -->
+  <header id="top-bar">
+    <div class="profile-pill" onclick="switchTab(4)">
+      <div class="avatar-circle">
+        M
+        <span class="online-dot"></span>
+      </div>
+      <div class="profile-meta">
+        <span class="profile-name">Morphine</span>
+        <span class="profile-level">LEVEL 42 · FOUNDER</span>
+      </div>
+    </div>
+
+    <nav class="nav-cluster">
+      <span class="bumper-badge" onclick="switchTab(state.tab - 1)">L1</span>
+      <div class="nav-tab active" data-tab="0" onclick="switchTab(0)">Home</div>
+      <div class="nav-tab" data-tab="1" onclick="switchTab(1)">Library</div>
+      <div class="nav-tab" data-tab="2" onclick="switchTab(2)">Store</div>
+      <div class="nav-tab" data-tab="3" onclick="switchTab(3)">Community</div>
+      <div class="nav-tab" data-tab="4" onclick="switchTab(4)">Profile</div>
+      <div class="nav-tab" data-tab="5" onclick="switchTab(5)">Downloads</div>
+      <div class="nav-tab" data-tab="6" onclick="switchTab(6)">Settings</div>
+      <span class="bumper-badge" onclick="switchTab(state.tab + 1)">R1</span>
+    </nav>
+
+    <div class="status-cluster">
+      <div class="status-pill">
+        <svg class="status-icon" viewBox="0 0 24 24"><path d="M12 21l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.18L12 21z"/></svg>
+        <span id="cartridge-pill-count">48 Cartridges</span>
+      </div>
+      <div class="status-pill" id="clock-label">12:00 PM</div>
+      <div class="power-btn" onclick="togglePowerModal()" title="Power Menu">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.77.04"/></svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3. MAIN VIEWPORT -->
+  <main id="viewport">
+    <!-- TAB 0: HOME -->
+    <section id="page-home" class="page active">
+      <div class="hero-stage">
+        <img id="home-logo" class="hero-logo" src="" alt="" style="display:none;" />
+        <h1 id="home-title" class="hero-title">Loading Cartridges...</h1>
+        <div class="hero-badges">
+          <span class="badge badge-ember">ANVIL VERIFIED</span>
+          <span class="badge badge-glass" id="home-proton-badge">CARTRIDGE · PROTON</span>
+          <span class="badge badge-verified" id="home-drive-badge">MICROSD CARTRIDGE</span>
+        </div>
+        <div class="hero-actions">
+          <button class="btn-primary" onclick="launchSelectedGame()">
+            <span class="glyph-circle">A</span>
+            <span>PLAY CARTRIDGE</span>
+          </button>
+          <button class="btn-secondary" onclick="switchTab(1)">
+            <span class="glyph-circle dark">X</span>
+            <span>VIEW IN LIBRARY</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="shelf-section">
+        <div class="shelf-header">
+          <span class="shelf-title" id="home-shelf-label">MOUNTED CARTRIDGE LIBRARY</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:600;" id="home-index-counter">1 / 48</span>
+        </div>
+        <div id="home-carousel" class="carousel-track"></div>
+      </div>
+    </section>
+
+    <!-- TAB 1: LIBRARY -->
+    <section id="page-library" class="page">
+      <div class="library-left">
+        <div class="section-header-row">
+          <h1 class="section-title">Cartridge Library</h1>
+          <div class="filter-pills">
+            <span class="filter-pill active" id="lib-total-pill">ALL (48)</span>
+            <span class="filter-pill">MICROSD SLOT</span>
+            <span class="filter-pill">STEAM DECK VERIFIED</span>
+          </div>
+        </div>
+        <div id="library-grid" class="library-grid"></div>
+      </div>
+
+      <aside class="library-preview">
+        <img id="lib-preview-art" class="preview-art" src="" alt="" />
+        <div class="preview-gradient"></div>
+        <div class="preview-content">
+          <img id="lib-preview-logo" class="hero-logo" style="max-width:260px; max-height:84px; display:none;" src="" alt="" />
+          <h2 id="lib-preview-title" style="font-size:24px; font-weight:800;">Select a Game</h2>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <span class="badge badge-ember" id="lib-preview-runner">Proton Experimental</span>
+            <span class="badge badge-glass">Zero-Install Media</span>
+          </div>
+          <p id="lib-preview-path" style="font-size:11px; color:var(--text-secondary); word-break:break-all;"></p>
+          <button class="btn-primary" style="width:100%; justify-content:center; margin-top:6px;" onclick="launchSelectedGame()">
+            <span class="glyph-circle">A</span>
+            <span>LAUNCH GAME</span>
+          </button>
+        </div>
+      </aside>
+    </section>
+
+    <!-- TAB 2: STORE -->
+    <section id="page-store" class="page" style="flex-direction:column; gap:18px;">
+      <div class="section-header-row">
+        <h1 class="section-title">Anvil Store & Forgeworks</h1>
+        <span class="badge badge-ember">FEATURED RELEASES</span>
+      </div>
+      <div class="glass-panel" style="height:310px; position:relative; overflow:hidden; display:flex; align-items:flex-end; padding:32px;">
+        <img id="store-hero-img" src="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0.6;" />
+        <div style="position:absolute; inset:0; background:linear-gradient(90deg, rgba(8,12,20,0.96) 0%, rgba(8,12,20,0.65) 55%, rgba(8,12,20,0.2) 100%);"></div>
+        <div style="position:relative; z-index:2; max-width:560px; display:flex; flex-direction:column; gap:10px;">
+          <span style="font-size:11px; font-weight:800; color:var(--ember-light); letter-spacing:0.1em;">SPOTLIGHT CARTRIDGE EDITION</span>
+          <h2 id="store-hero-title" style="font-size:36px; font-weight:800;">ASTROBOTANICA</h2>
+          <p style="font-size:14px; color:#cbd5e1; line-height:1.4;">Discover plug-and-play game cartridges, indie showcases, and verified Steam Deck builds across the Forgeworks network.</p>
+          <div style="margin-top:6px;">
+            <button class="btn-primary" onclick="launchSelectedGame()">
+              <span class="glyph-circle">A</span>
+              <span>PLAY FEATURED</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:14px; flex:1;">
+        <div class="glass-panel" style="display:flex; flex-direction:column; justify-content:flex-end; gap:6px; border-color:var(--ember);">
+          <span style="font-size:10px; font-weight:800; color:var(--ember-light);">TOP PLAYED ON DECK</span>
+          <h3 style="font-size:18px; font-weight:800;">Crash Bandicoot 4</h3>
+          <p style="font-size:12px; color:var(--text-secondary);">60fps Verified · Cartridge Ready</p>
+        </div>
+        <div class="glass-panel" style="display:flex; flex-direction:column; justify-content:flex-end; gap:6px;">
+          <span style="font-size:10px; font-weight:800; color:var(--gold);">COZY SIMULATOR</span>
+          <h3 style="font-size:18px; font-weight:800;">Aquapark Tycoon</h3>
+          <p style="font-size:12px; color:var(--text-secondary);">Full Controller Support</p>
+        </div>
+        <div class="glass-panel" style="display:flex; flex-direction:column; justify-content:flex-end; gap:6px;">
+          <span style="font-size:10px; font-weight:800; color:var(--cyan);">NATIVE OPENGOAL</span>
+          <h3 style="font-size:18px; font-weight:800;">Jak & Daxter Trilogy</h3>
+          <p style="font-size:12px; color:var(--text-secondary);">Native Linux 60Hz Port</p>
+        </div>
+        <div class="glass-panel" style="display:flex; flex-direction:column; justify-content:flex-end; gap:6px;">
+          <span style="font-size:10px; font-weight:800; color:#4ade80;">PARTY COLLECTION</span>
+          <h3 style="font-size:18px; font-weight:800;">Jackbox Party Packs 1–10</h3>
+          <p style="font-size:12px; color:var(--text-secondary);">All 10 Packs Installed on SD</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: COMMUNITY -->
+    <section id="page-community" class="page" style="gap:24px;">
+      <div style="flex:1; display:flex; flex-direction:column; gap:14px;">
+        <h1 class="section-title">Community & Activity</h1>
+        <div class="glass-panel" style="display:flex; flex-direction:column; gap:6px; border-color:var(--ember);">
+          <span style="font-size:11px; font-weight:700; color:var(--ember-light);">ACHIEVEMENT UNLOCKED · 18M AGO</span>
+          <h3 style="font-size:20px; font-weight:800;">Niko unlocked "Relic Master" in Jak and Daxter</h3>
+          <p style="font-size:13px; color:var(--text-secondary);">"Running straight off the MicroSD cartridge at locked 60fps with zero stutter!"</p>
+        </div>
+        <div class="glass-panel" style="display:flex; flex-direction:column; gap:6px;">
+          <span style="font-size:11px; font-weight:700; color:var(--gold);">CARTRIDGE REVIEW · 2H AGO</span>
+          <h3 style="font-size:20px; font-weight:800;">Amaya recommended Slime Rancher 2</h3>
+          <p style="font-size:13px; color:var(--text-secondary);">"Zero stick drift and instant controller detection with the new Xbox bridge."</p>
+        </div>
+        <div class="glass-panel" style="display:flex; flex-direction:column; gap:6px;">
+          <span style="font-size:11px; font-weight:700; color:var(--cyan);">CO-OP SESSION · LIVE</span>
+          <h3 style="font-size:20px; font-weight:800;">Rowan hosted a lobby in Overcooked! All You Can Eat</h3>
+          <p style="font-size:13px; color:var(--text-secondary);">4-Player Local & Wireless Cartridge Co-Op · 2 Slots Open</p>
+        </div>
+      </div>
+      <div class="glass-panel" style="width:340px; display:flex; flex-direction:column; gap:16px;">
+        <span style="font-size:12px; font-weight:800; letter-spacing:0.1em; color:var(--text-secondary);">FRIENDS ONLINE (4)</span>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="avatar-circle" style="background:#1e293b; box-shadow:none; border:1px solid var(--ember);">NK</div>
+          <div><div style="font-weight:700; font-size:14px;">Niko</div><div style="font-size:12px; color:var(--ember-light);">Playing Jak II</div></div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="avatar-circle" style="background:#1e293b; box-shadow:none; border:1px solid var(--cyan);">AM</div>
+          <div><div style="font-weight:700; font-size:14px;">Amaya</div><div style="font-size:12px; color:#38bdf8;">Playing Slime Rancher 2</div></div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="avatar-circle" style="background:#1e293b; box-shadow:none; border:1px solid #4ade80;">RO</div>
+          <div><div style="font-weight:700; font-size:14px;">Rowan</div><div style="font-size:12px; color:#4ade80;">Playing Overcooked AYCE</div></div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="avatar-circle" style="background:#1e293b; box-shadow:none;">JD</div>
+          <div><div style="font-weight:700; font-size:14px;">Jordan</div><div style="font-size:12px; color:var(--text-secondary);">In Anvil Home</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: PROFILE -->
+    <section id="page-profile" class="page" style="gap:24px;">
+      <div class="glass-panel" style="width:360px; display:flex; flex-direction:column; gap:18px;">
+        <div style="display:flex; align-items:center; gap:16px;">
+          <div class="avatar-circle" style="width:68px; height:68px; font-size:28px;">M</div>
+          <div>
+            <h2 style="font-size:24px; font-weight:800;">Morphine</h2>
+            <div style="font-size:12px; color:#4ade80; font-weight:700;">● Steam Deck · Online</div>
+            <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">Anvil Console OS Founder</div>
+          </div>
+        </div>
+        <div style="background:rgba(0,0,0,0.3); padding:14px; border-radius:12px; border:1px solid var(--border-subtle);">
+          <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:800; margin-bottom:8px;">
+            <span style="color:var(--ember);">LEVEL 42</span>
+            <span style="color:var(--text-secondary);">2,840 / 3,000 XP</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:94%;"></div></div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div style="background:rgba(255,255,255,0.04); padding:14px; border-radius:12px; border:1px solid var(--border-subtle);">
+            <div style="font-size:10px; font-weight:800; color:var(--text-secondary);">CARTRIDGES</div>
+            <div style="font-size:24px; font-weight:800; margin-top:4px;" id="prof-cart-count">48</div>
+            <div style="font-size:11px; color:var(--ember-light);">Mounted Ready</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04); padding:14px; border-radius:12px; border:1px solid var(--border-subtle);">
+            <div style="font-size:10px; font-weight:800; color:var(--text-secondary);">GAMERSCORE</div>
+            <div style="font-size:24px; font-weight:800; margin-top:4px;">1,420 G</div>
+            <div style="font-size:11px; color:var(--ember-light);">18 Trophies</div>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1; display:flex; flex-direction:column; gap:18px;">
+        <h2 style="font-size:22px; font-weight:800;">Recent Trophies & Milestones</h2>
+        <div class="grid-cards-3">
+          <div class="glass-panel">
+            <span class="badge badge-ember">GOLD · +150 XP</span>
+            <h3 style="font-size:17px; font-weight:800; margin-top:10px;">Relic Master</h3>
+            <p style="font-size:12px; color:var(--text-secondary); margin-top:4px;">Jak and Daxter · Unlocked Today</p>
+          </div>
+          <div class="glass-panel">
+            <span class="badge badge-glass">RARE · +100 XP</span>
+            <h3 style="font-size:17px; font-weight:800; margin-top:10px;">Wumpa King</h3>
+            <p style="font-size:12px; color:var(--text-secondary); margin-top:4px;">Crash Bandicoot 4 · Yesterday</p>
+          </div>
+          <div class="glass-panel">
+            <span class="badge badge-verified">EPIC · +250 XP</span>
+            <h3 style="font-size:17px; font-weight:800; margin-top:10px;">Park Tycoon</h3>
+            <p style="font-size:12px; color:var(--text-secondary); margin-top:4px;">Aquapark Tycoon · 3 Days Ago</p>
+          </div>
+        </div>
+        <div class="glass-panel" style="display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <div style="font-size:11px; font-weight:800; color:var(--ember);">ACTIVE CARTRIDGE ARCHITECTURE</div>
+            <div style="font-size:17px; font-weight:800; margin-top:4px;">MicroSD Card (/mnt/sdcard) · 48 Verified Games</div>
+            <div style="font-size:12px; color:var(--text-secondary); margin-top:2px;">Zero files written to internal storage · 100% Portable Cartridge Media</div>
+          </div>
+          <button class="btn-secondary" onclick="switchTab(6)">MANAGE DRIVES</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: DOWNLOADS -->
+    <section id="page-downloads" class="page" style="flex-direction:column; gap:16px;">
+      <div class="section-header-row">
+        <h1 class="section-title">Downloads & Cartridge Verification</h1>
+        <span class="badge badge-verified">ALL 48 CARTRIDGES VERIFIED</span>
+      </div>
+      <div class="glass-panel" style="display:flex; flex-direction:column; gap:10px; border-color:var(--ember);">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="font-size:19px; font-weight:800;">MicroSD Cartridge Artwork & Manifest Sync</h3>
+          <span style="font-size:13px; font-weight:800; color:#4ade80;">100% Complete</span>
+        </div>
+        <p style="font-size:13px; color:var(--text-secondary);">48 of 48 games verified with official 600x900 vertical box art, hero banners, and logos.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:100%;"></div></div>
+      </div>
+      <div class="glass-panel" style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="font-size:19px; font-weight:800;">Steam Deck Controller Bridge (Zero-Drift Filter)</h3>
+          <span style="font-size:13px; font-weight:800; color:var(--ember-light);">Active Service</span>
+        </div>
+        <p style="font-size:13px; color:var(--text-secondary);">Deadzone threshold 4000 active · Gyro IMU decoupled from analog sticks.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:100%;"></div></div>
+      </div>
+    </section>
+
+    <!-- TAB 6: SETTINGS (Flagship Blade Layout) -->
+    <section id="page-settings" class="page">
+      <aside class="settings-sidebar" id="settings-cat-list">
+        <div class="settings-cat active" data-cat="0" onclick="selectSettingCat(0)">
+          <div class="cat-icon-box">SD</div>
+          <div class="cat-text">
+            <span class="cat-title">Storage & Cartridges</span>
+            <span class="cat-sub">Format & register drives</span>
+          </div>
+        </div>
+        <div class="settings-cat" data-cat="1" onclick="selectSettingCat(1)">
+          <div class="cat-icon-box">PAD</div>
+          <div class="cat-text">
+            <span class="cat-title">Controller & Input</span>
+            <span class="cat-sub">Zero-Drift calibrated</span>
+          </div>
+        </div>
+        <div class="settings-cat" data-cat="2" onclick="selectSettingCat(2)">
+          <div class="cat-icon-box">60</div>
+          <div class="cat-text">
+            <span class="cat-title">Display & Graphics</span>
+            <span class="cat-sub">1280x800 · 60Hz Native</span>
+          </div>
+        </div>
+        <div class="settings-cat" data-cat="3" onclick="selectSettingCat(3)">
+          <div class="cat-icon-box">RUN</div>
+          <div class="cat-text">
+            <span class="cat-title">Proton & Runtime</span>
+            <span class="cat-sub">GE-Proton11-9</span>
+          </div>
+        </div>
+        <div class="settings-cat" data-cat="4" onclick="selectSettingCat(4)">
+          <div class="cat-icon-box">SYS</div>
+          <div class="cat-text">
+            <span class="cat-title">System & Hardware</span>
+            <span class="cat-sub">Anvil WebKit2 Engine</span>
+          </div>
+        </div>
+      </aside>
+
+      <div class="settings-panel" id="settings-detail-pane"></div>
+    </section>
+  </main>
+
+  <!-- 4. BOTTOM CONTROLLER HINTS BAR -->
+  <footer id="bottom-bar">
+    <div class="hint-group">
+      <div class="hint-item"><span class="pill-key">STEAM</span><span>In-Game Overlay (Locked on Home)</span></div>
+      <div class="hint-item"><span class="pill-key">L1 / R1</span><span>Switch Section</span></div>
+    </div>
+    <div class="hint-group">
+      <div class="hint-item"><span class="glyph-circle" style="width:18px;height:18px;font-size:10px;">A</span><span>Select / Launch</span></div>
+      <div class="hint-item"><span class="glyph-circle dark" style="width:18px;height:18px;font-size:10px;">B</span><span>Back to Home</span></div>
+      <div class="hint-item"><span class="glyph-circle dark" style="width:18px;height:18px;font-size:10px;">X</span><span>Configure Cartridge</span></div>
+    </div>
+  </footer>
+
+  <!-- 5. CARTRIDGE INITIALIZATION MODAL -->
+  <div id="cartridge-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="font-size:22px; font-weight:800;">Make a Drive / SD Card / Folder into an Anvil Cartridge</h2>
+        <button class="btn-secondary" style="height:34px; padding:0 14px; font-size:11px;" onclick="closeCartridgeModal()">B · CLOSE</button>
+      </div>
+      <p style="font-size:13px; color:var(--text-secondary); line-height:1.4;">
+        Select any storage volume or directory below to format its Anvil Cartridge manifest (<code>Games/</code> + <code>cartridge.meta</code>) and register it in <code>~/.config/anvil/storage.json</code>. Games run directly off the media without touching internal storage.
+      </p>
+      <div id="modal-drive-options" style="display:flex; flex-direction:column; gap:10px;"></div>
+      <div id="modal-status-banner" style="padding:12px 16px; border-radius:10px; background:rgba(255,255,255,0.05); font-size:12px; color:var(--ember-light); font-weight:700;">
+        Use D-Pad Up/Down and press A (or tap) to initialize the selected target as an Anvil Cartridge.
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. POWER MODAL -->
+  <div id="power-modal" class="modal-backdrop">
+    <div class="modal-card" style="width:460px;">
+      <h2 style="font-size:22px; font-weight:800;">Power & Session</h2>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="modal-opt selected" onclick="triggerPower('sleep')"><span>Sleep Console</span><span class="badge badge-glass">SUSPEND</span></div>
+        <div class="modal-opt" onclick="triggerPower('desktop')"><span>Switch to Desktop Mode</span><span class="badge badge-ember">EXIT TO GREETER</span></div>
+        <div class="modal-opt" onclick="triggerPower('restart')"><span>Restart Steam Deck</span><span class="badge badge-glass">REBOOT</span></div>
+        <div class="modal-opt" onclick="triggerPower('shutdown')"><span>Shut Down Steam Deck</span><span class="badge badge-glass">POWER OFF</span></div>
+        <div class="modal-opt" onclick="togglePowerModal()"><span>Cancel</span><span class="badge badge-glass">B</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. IN-GAME OVERLAY MODAL (Only accessible when a game is running) -->
+  <div id="ingame-overlay-modal" class="modal-backdrop">
+    <div class="modal-card" style="width:480px; border-color:var(--ember);">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="badge badge-ember">ANVIL IN-GAME OVERLAY</span>
+        <span style="font-size:12px; color:var(--text-secondary); font-weight:700;">STEAM / GUIDE</span>
+      </div>
+      <h2 id="ingame-title" style="font-size:26px; font-weight:800;">Now Playing</h2>
+      <div style="display:flex; flex-direction:column; gap:10px; margin-top:6px;">
+        <div class="modal-opt selected" data-ig="0" onclick="resumeGameSession()">
+          <span>Resume Game</span>
+          <span class="badge badge-glass">A / GUIDE</span>
+        </div>
+        <div class="modal-opt" data-ig="1" onclick="quitGameSession()">
+          <span style="color:#f87171;">Quit Game to Anvil Home</span>
+          <span class="badge badge-ember">FORCE STOP</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
