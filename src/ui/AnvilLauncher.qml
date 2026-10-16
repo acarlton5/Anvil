@@ -29,8 +29,8 @@ PanelWindow {
     readonly property color line: AnvilTheme.outline
     readonly property color fg: AnvilTheme.surfaceText
     readonly property color muted: AnvilTheme.surfaceVariantText
-    readonly property color ember: "#107c10"
-    readonly property color emberLight: "#22c55e"
+    readonly property color ember: "#ff6537"
+    readonly property color emberLight: "#ff8a66"
     readonly property color forgeGold: "#d9ad5f"
     readonly property color relayBlue: "#7aa8ff"
     readonly property color green: "#65d797"
@@ -433,7 +433,7 @@ PanelWindow {
                     selectSection(3); // Community / Achievements
                 } else if (selectedProfileIndex === 0) {
                     profileModalActive = false;
-                    selectSection(5); // Settings
+                    selectSection(6); // Settings
                 } else {
                     profileModalActive = false;
                 }
@@ -455,21 +455,43 @@ PanelWindow {
             }
             return;
         }
+        if (cartridgeModalActive) {
+            if (action === "up") {
+                selectedCartridgeOption = Math.max(0, selectedCartridgeOption - 1);
+            } else if (action === "down") {
+                selectedCartridgeOption = Math.min(2, selectedCartridgeOption + 1);
+            } else if (action === "south") {
+                triggerCartridgeInit(selectedCartridgeOption);
+            } else if (action === "east" || action === "back") {
+                cartridgeModalActive = false;
+            }
+            return;
+        }
         if (action === "lt" || action === "lb")
             selectSection(activeSection - 1);
         else if (action === "rt" || action === "rb")
             selectSection(activeSection + 1);
-        else if (action === "left")
-            activeSection === 0 || activeSection === 1 ? moveGameSelection(-1) : selectSection(activeSection - 1);
-        else if (action === "right")
-            activeSection === 0 || activeSection === 1 ? moveGameSelection(1) : selectSection(activeSection + 1);
-        else if (action === "up")
-            activeSection === 1 ? moveGameSelection(-4) : activeSection === 6 ? selectedSetting = Math.max(0, selectedSetting - 1) : selectSection(activeSection - 1);
-        else if (action === "down")
-            activeSection === 1 ? moveGameSelection(4) : activeSection === 6 ? selectedSetting = Math.min(settingsModel.count - 1, selectedSetting + 1) : selectSection(activeSection + 1);
-        else if (action === "south" && (activeSection === 0 || activeSection === 1))
-            launchGame();
-        else if (action === "start")
+        else if (action === "left") {
+            if (activeSection === 0 || activeSection === 1) moveGameSelection(-1);
+            else if (activeSection === 2) selectedStoreTile = Math.max(0, selectedStoreTile - 1);
+        } else if (action === "right") {
+            if (activeSection === 0 || activeSection === 1) moveGameSelection(1);
+            else if (activeSection === 2) selectedStoreTile = Math.min(storeModel.count - 1, selectedStoreTile + 1);
+        } else if (action === "up") {
+            if (activeSection === 1) moveGameSelection(-4);
+            else if (activeSection === 3) selectedCommunityItem = Math.max(0, selectedCommunityItem - 1);
+            else if (activeSection === 6) selectedSetting = Math.max(0, selectedSetting - 1);
+        } else if (action === "down") {
+            if (activeSection === 1) moveGameSelection(4);
+            else if (activeSection === 3) selectedCommunityItem = Math.min(communityModel.count - 1, selectedCommunityItem + 1);
+            else if (activeSection === 6) selectedSetting = Math.min(settingsModel.count - 1, selectedSetting + 1);
+        } else if (action === "south") {
+            if (activeSection === 0 || activeSection === 1) launchGame();
+            else if (activeSection === 6 && selectedSettingKey() === "storage") {
+                cartridgeModalActive = true;
+                cartridgeStatusMsg = "";
+            }
+        } else if (action === "start")
             powerMenuActive = !powerMenuActive;
         else if (action === "east" || action === "back") {
             if (powerMenuActive)
@@ -675,41 +697,41 @@ PanelWindow {
         ListElement {
             key: "storage"
             title: "Storage & Cartridges"
-            body: "Manage removable cartridge media, volume capacity, and read-only preservation."
-            value: "MicroSD Active"
-            icon: "💾"
+            body: "Configure removable SD cards, external USB drives, or folders as plug-and-play Anvil game cartridges."
+            value: "MicroSD Active · 48 Games"
+            badge: "SD"
         }
 
         ListElement {
             key: "input"
-            title: "Controller & Input"
-            body: "Steam Deck built-in controls, zero-drift deadzone calibration, and live button test."
-            value: "Zero Drift Calibrated"
-            icon: "🎮"
+            title: "Controller & Calibration"
+            body: "Steam Deck built-in gamepad, zero-drift deadzone filter, decoupled IMU gyro, and live button diagnostics."
+            value: "Zero-Drift Active"
+            badge: "PAD"
         }
 
         ListElement {
             key: "display"
             title: "Display & Graphics"
-            body: "Native Steam Deck 1280x800 resolution, 60Hz timing lock, and scaling modes."
+            body: "Steam Deck native 1280x800 resolution lock, 60Hz refresh rate timing, and fullscreen scaling."
             value: "1280x800 · 60Hz"
-            icon: "🖥️"
+            badge: "60"
         }
 
         ListElement {
             key: "runtime"
             title: "Proton & Compatibility"
-            body: "Compatibility runtime, per-cartridge working directory, and prefix manager."
-            value: "GE-Proton11-9"
-            icon: "⚙️"
+            body: "Compatibility runner selection, per-cartridge working directory preservation, and prefix isolation."
+            value: "GE-Proton"
+            badge: "RUN"
         }
 
         ListElement {
             key: "session"
             title: "System & Hardware"
-            body: "Steam Deck Jupiter hardware information, OS build, Anvil version, and updates."
-            value: "Steam Deck Jupiter"
-            icon: "ℹ️"
+            body: "Valve Steam Deck hardware specifications, Wayland compositor status, and Anvil OS build information."
+            value: "Anvil OS v2.4"
+            badge: "SYS"
         }
     }
 
@@ -1596,7 +1618,7 @@ PanelWindow {
                         anchors.fill: parent
                         radius: 12
                         color: "#131c28"
-                        border.color: focused ? "#38bdf8" : "#1e2a3c"
+                        border.color: focused ? ember : "#1e2a3c"
                         border.width: focused ? 3 : 1
                         clip: true
 
@@ -1765,7 +1787,7 @@ PanelWindow {
                     Image {
                         anchors.fill: parent
                         source: gameBoxArt(model)
-                        fillMode: Image.PreserveAspectFit
+                        fillMode: Image.PreserveAspectCrop
                         visible: source !== ""
                     }
 
@@ -2514,42 +2536,45 @@ PanelWindow {
             anchors.right: parent.right
             anchors.rightMargin: 54
             anchors.top: storeFeature.bottom
-            anchors.topMargin: 64
-            anchors.bottom: bottomHints.top
-            anchors.bottomMargin: 20
-            spacing: 16
+            anchors.topMargin: 60
+            height: 154
+            spacing: 14
 
             Repeater {
                 model: storeModel
 
                 Rectangle {
-                    width: Math.min(310, (parent.width - 32) / 3)
-                    height: 154
-                    radius: 7
-                    color: selectedStoreTile === index ? "#e5242d35" : "#d4161c22"
-                    border.color: selectedStoreTile === index ? ember : "#2b343d"
+                    width: (parent.width - 42) / 4
+                    height: 146
+                    radius: 10
+                    clip: true
+                    color: selectedStoreTile === index ? "#1c2532" : "#121822"
+                    border.color: selectedStoreTile === index ? ember : "#232f3e"
                     border.width: selectedStoreTile === index ? 2 : 1
-                    scale: selectedStoreTile === index ? 1 : 0.96
+                    scale: selectedStoreTile === index ? 1.02 : 1.0
 
                     Column {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.bottom: parent.bottom
-                        anchors.margins: 20
-                        spacing: 7
+                        anchors.margins: 18
+                        spacing: 6
 
                         Text {
                             text: model.eyebrow
                             color: selectedStoreTile === index ? emberLight : forgeGold
-                            font.pixelSize: 9
+                            font.pixelSize: 10
                             font.bold: true
+                            font.letterSpacing: 0.6
                         }
 
                         Text {
+                            width: parent.width
                             text: model.title
                             color: fg
-                            font.pixelSize: 23
+                            font.pixelSize: 17
                             font.bold: true
+                            elide: Text.ElideRight
                         }
 
                         Text {
@@ -2820,10 +2845,10 @@ PanelWindow {
             anchors.right: friendsPanel.left
             anchors.rightMargin: 44
             anchors.top: parent.top
-            anchors.topMargin: 218
-            anchors.bottom: bottomHints.top
-            anchors.bottomMargin: 24
-            spacing: 8
+            anchors.topMargin: 210
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 72
+            spacing: 10
 
             Repeater {
                 model: communityModel
@@ -2890,8 +2915,8 @@ PanelWindow {
             anchors.rightMargin: 64
             anchors.top: parent.top
             anchors.topMargin: 184
-            anchors.bottom: bottomHints.top
-            anchors.bottomMargin: 28
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 72
             width: Math.min(390, parent.width * 0.28)
 
             Text {
@@ -3327,35 +3352,35 @@ PanelWindow {
             anchors.right: parent.right
             anchors.rightMargin: 54
             anchors.top: parent.top
-            anchors.topMargin: 114
-            anchors.bottom: bottomHints.top
-            anchors.bottomMargin: 24
+            anchors.topMargin: 108
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 72
             spacing: 24
 
             // Left Col: Player ID Card, Gamertag, Level & Showcase
             Rectangle {
-                width: 380
+                width: 390
                 height: parent.height
                 radius: 12
-                color: "#f00e131a"
+                color: "#111722"
                 border.color: "#222f3e"
                 border.width: 1
 
                 Column {
                     anchors.fill: parent
                     anchors.margins: 24
-                    spacing: 16
+                    spacing: 18
 
                     // Player Avatar & Tag
                     Row {
                         spacing: 16
                         Rectangle {
-                            width: 64
-                            height: 64
+                            width: 68
+                            height: 68
                             radius: 16
                             gradient: Gradient {
                                 GradientStop { position: 0.0; color: "#ff6537" }
-                                GradientStop { position: 1.0; color: "#9a2104" }
+                                GradientStop { position: 1.0; color: "#b8320a" }
                             }
                             border.color: "#ff8a66"
                             border.width: 2
@@ -3363,18 +3388,18 @@ PanelWindow {
                                 anchors.centerIn: parent
                                 text: profileGamerTag.length > 0 ? profileGamerTag.charAt(0).toUpperCase() : "M"
                                 color: "#ffffff"
-                                font.pixelSize: 28
+                                font.pixelSize: 30
                                 font.bold: true
                             }
                         }
 
                         Column {
                             anchors.verticalCenter: parent.verticalCenter
-                            spacing: 3
+                            spacing: 4
                             Text {
                                 text: profileGamerTag
                                 color: "#ffffff"
-                                font.pixelSize: 22
+                                font.pixelSize: 24
                                 font.bold: true
                             }
                             Row {
@@ -3388,15 +3413,15 @@ PanelWindow {
                                 }
                                 Text {
                                     text: "Steam Deck · Online"
-                                    color: "#22c55e"
-                                    font.pixelSize: 11
+                                    color: "#4ade80"
+                                    font.pixelSize: 12
                                     font.bold: true
                                 }
                             }
                             Text {
-                                text: "Member since 2021"
+                                text: "Anvil Console Edition · Founder"
                                 color: "#8e9fad"
-                                font.pixelSize: 10
+                                font.pixelSize: 11
                             }
                         }
                     }
@@ -3404,97 +3429,102 @@ PanelWindow {
                     // Level Progress Card
                     Rectangle {
                         width: parent.width
-                        height: 72
-                        radius: 8
-                        color: "#161f2b"
+                        height: 78
+                        radius: 10
+                        color: "#161f2c"
                         border.color: "#253446"
 
                         Column {
                             anchors.fill: parent
-                            anchors.margins: 12
-                            spacing: 6
+                            anchors.margins: 14
+                            spacing: 8
 
-                            Row {
+                            Item {
                                 width: parent.width
+                                height: 18
                                 Text {
+                                    anchors.left: parent.left
                                     text: "LEVEL 42"
-                                    color: "#ff6537"
-                                    font.pixelSize: 12
+                                    color: ember
+                                    font.pixelSize: 13
                                     font.bold: true
+                                    font.letterSpacing: 0.8
                                 }
-                                Item { width: 1; height: 1 }
                                 Text {
-                                    text: "2,840 / 3,000 XP"
-                                    color: "#8e9fad"
-                                    font.pixelSize: 11
                                     anchors.right: parent.right
+                                    text: "2,840 / 3,000 XP"
+                                    color: "#94a3b8"
+                                    font.pixelSize: 11
+                                    font.bold: true
                                 }
                             }
 
                             Rectangle {
                                 width: parent.width
-                                height: 6
-                                radius: 3
-                                color: "#0c1117"
+                                height: 8
+                                radius: 4
+                                color: "#0b1017"
                                 Rectangle {
-                                    width: parent.width * 0.88
+                                    width: parent.width * 0.94
                                     height: parent.height
-                                    radius: 3
-                                    gradient: Gradient {
-                                        GradientStop { position: 0.0; color: "#ff6537" }
-                                        GradientStop { position: 1.0; color: "#ff8a66" }
-                                    }
+                                    radius: 4
+                                    color: ember
                                 }
                             }
 
                             Text {
-                                text: "160 XP to Level 43 · Next Reward: Obsidian Frame"
+                                text: "160 XP to Level 43 · Master Collector Rank"
                                 color: "#64748b"
-                                font.pixelSize: 9
+                                font.pixelSize: 10
                             }
                         }
                     }
 
-                    // Console Lifetime Stats
-                    Rectangle {
+                    // Stats Grid (2x2)
+                    Grid {
                         width: parent.width
-                        height: 120
-                        radius: 8
-                        color: "#161f2b"
-                        border.color: "#253446"
+                        columns: 2
+                        spacing: 12
 
-                        Grid {
-                            anchors.fill: parent
-                            anchors.margins: 14
-                            columns: 2
-                            spacing: 12
+                        Repeater {
+                            model: [
+                                { label: "CARTRIDGES", val: String(gameModel.count), sub: "Mounted Ready" },
+                                { label: "GAMERSCORE", val: "1,420 G", sub: "18 Unlocked" },
+                                { label: "HOURS PLAYED", val: "148.5 h", sub: "Last 30 Days" },
+                                { label: "PERFECT GAMES", val: "4", sub: "100% Completed" }
+                            ]
 
-                            Column {
-                                width: 150
-                                spacing: 2
-                                Text { text: "GAMES PLAYED"; color: "#64748b"; font.pixelSize: 9; font.bold: true }
-                                Text { text: gameModel.count.toString() + " Titles"; color: "#ffffff"; font.pixelSize: 15; font.bold: true }
-                            }
+                            Rectangle {
+                                width: (parent.width - 12) / 2
+                                height: 86
+                                radius: 10
+                                color: "#161f2c"
+                                border.color: "#233142"
 
-                            Column {
-                                width: 150
-                                spacing: 2
-                                Text { text: "TOTAL PLAYTIME"; color: "#64748b"; font.pixelSize: 9; font.bold: true }
-                                Text { text: "1,426 Hours"; color: "#ffffff"; font.pixelSize: 15; font.bold: true }
-                            }
+                                Column {
+                                    anchors.fill: parent
+                                    anchors.margins: 12
+                                    spacing: 4
 
-                            Column {
-                                width: 150
-                                spacing: 2
-                                Text { text: "MILESTONES UNLOCKED"; color: "#64748b"; font.pixelSize: 9; font.bold: true }
-                                Text { text: "3,840 Milestones"; color: "#ff8a66"; font.pixelSize: 15; font.bold: true }
-                            }
-
-                            Column {
-                                width: 150
-                                spacing: 2
-                                Text { text: "COMPLETION RATE"; color: "#64748b"; font.pixelSize: 9; font.bold: true }
-                                Text { text: "68% Average"; color: "#22c55e"; font.pixelSize: 15; font.bold: true }
+                                    Text {
+                                        text: modelData.label
+                                        color: "#8e9fad"
+                                        font.pixelSize: 10
+                                        font.bold: true
+                                        font.letterSpacing: 0.6
+                                    }
+                                    Text {
+                                        text: modelData.val
+                                        color: "#ffffff"
+                                        font.pixelSize: 22
+                                        font.bold: true
+                                    }
+                                    Text {
+                                        text: modelData.sub
+                                        color: emberLight
+                                        font.pixelSize: 10
+                                    }
+                                }
                             }
                         }
                     }
@@ -3502,24 +3532,26 @@ PanelWindow {
                     // Hardware & System Pill
                     Rectangle {
                         width: parent.width
-                        height: 38
-                        radius: 6
-                        color: "#121820"
-                        border.color: "#1e2936"
-                        Row {
+                        height: 44
+                        radius: 8
+                        color: "#141d29"
+                        border.color: "#233142"
+                        Text {
                             anchors.centerIn: parent
-                            spacing: 8
-                            Text { text: "🎮 Valve Steam Deck (eDP-1 1280x800)"; color: "#8e9fad"; font.pixelSize: 11; font.bold: true }
+                            text: "Valve Steam Deck · 1280x800 · 60Hz Native"
+                            color: "#94a3b8"
+                            font.pixelSize: 11
+                            font.bold: true
                         }
                     }
                 }
             }
 
-            // Right Col: Recent Milestones, Badges & Hardware Status
+            // Right Col: Recent Milestones, Library Showcase & Friends
             Column {
-                width: parent.width - 404
+                width: parent.width - 414
                 height: parent.height
-                spacing: 14
+                spacing: 18
 
                 Text {
                     text: "Recent Milestones & Trophies"
@@ -3530,35 +3562,53 @@ PanelWindow {
 
                 Row {
                     width: parent.width
-                    spacing: 12
+                    spacing: 14
 
                     Repeater {
                         model: [
-                            { icon: "🏆", title: "Relic Master", game: "Jak and Daxter", date: "Unlocked Today", xp: "+150 XP" },
-                            { icon: "⭐", title: "Wumpa King", game: "Crash Bandicoot", date: "Unlocked Yesterday", xp: "+100 XP" },
-                            { icon: "✦", title: "Archaeologist", game: "Outer Wilds", date: "3 Days ago", xp: "+250 XP" }
+                            { badge: "GOLD", title: "Relic Master", game: "Jak and Daxter", date: "Unlocked Today", xp: "+150 XP" },
+                            { badge: "RARE", title: "Wumpa King", game: "Crash Bandicoot 4", date: "Unlocked Yesterday", xp: "+100 XP" },
+                            { badge: "EPIC", title: "Park Tycoon", game: "Aquapark Tycoon", date: "3 Days ago", xp: "+250 XP" }
                         ]
 
                         Rectangle {
-                            width: (parent.width - 24) / 3
-                            height: 116
-                            radius: 8
-                            color: "#141c26"
-                            border.color: "#253446"
+                            width: (parent.width - 28) / 3
+                            height: 126
+                            radius: 10
+                            color: "#121924"
+                            border.color: "#233142"
 
                             Column {
                                 anchors.fill: parent
-                                anchors.margins: 14
-                                spacing: 6
+                                anchors.margins: 16
+                                spacing: 8
 
-                                Row {
+                                Item {
                                     width: parent.width
-                                    Text { text: modelData.icon; font.pixelSize: 22 }
+                                    height: 20
+
+                                    Rectangle {
+                                        anchors.left: parent.left
+                                        height: 20
+                                        width: 48
+                                        radius: 4
+                                        color: "#2a1810"
+                                        border.color: ember
+                                        Text {
+                                            anchors.centerIn: parent
+                                            text: modelData.badge
+                                            color: emberLight
+                                            font.pixelSize: 9
+                                            font.bold: true
+                                        }
+                                    }
+
                                     Text {
                                         anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
                                         text: modelData.xp
-                                        color: "#ff6537"
-                                        font.pixelSize: 10
+                                        color: ember
+                                        font.pixelSize: 11
                                         font.bold: true
                                     }
                                 }
@@ -3566,7 +3616,7 @@ PanelWindow {
                                 Text {
                                     text: modelData.title
                                     color: "#ffffff"
-                                    font.pixelSize: 14
+                                    font.pixelSize: 16
                                     font.bold: true
                                     elide: Text.ElideRight
                                     width: parent.width
@@ -3574,8 +3624,8 @@ PanelWindow {
 
                                 Text {
                                     text: modelData.game
-                                    color: "#8e9fad"
-                                    font.pixelSize: 11
+                                    color: "#94a3b8"
+                                    font.pixelSize: 12
                                     elide: Text.ElideRight
                                     width: parent.width
                                 }
@@ -3583,7 +3633,7 @@ PanelWindow {
                                 Text {
                                     text: modelData.date
                                     color: "#64748b"
-                                    font.pixelSize: 9
+                                    font.pixelSize: 10
                                 }
                             }
                         }
@@ -3591,7 +3641,7 @@ PanelWindow {
                 }
 
                 Text {
-                    text: "Console Friends & Parties"
+                    text: "Active Friends & Sessions"
                     color: fg
                     font.pixelSize: 20
                     font.bold: true
@@ -3599,39 +3649,39 @@ PanelWindow {
 
                 Row {
                     width: parent.width
-                    spacing: 12
+                    spacing: 14
 
                     Repeater {
                         model: [
-                            { avatar: "NK", name: "Niko", game: "Elden Ring", status: "In Boss Fight", online: true },
-                            { avatar: "AM", name: "Amaya", game: "Outer Wilds", status: "Exploring Sun Station", online: true },
-                            { avatar: "RO", name: "Rowan", game: "Borderlands 3", status: "In Lobby (2/4)", online: true }
+                            { avatar: "NK", name: "Niko", game: "Elden Ring", status: "In Boss Fight" },
+                            { avatar: "AM", name: "Amaya", game: "Outer Wilds", status: "Exploring Sun Station" },
+                            { avatar: "RO", name: "Rowan", game: "Rayman Origins", status: "Co-op Cartridge Session" }
                         ]
 
                         Rectangle {
-                            width: (parent.width - 24) / 3
-                            height: 96
-                            radius: 8
-                            color: "#141c26"
-                            border.color: "#253446"
+                            width: (parent.width - 28) / 3
+                            height: 104
+                            radius: 10
+                            color: "#121924"
+                            border.color: "#233142"
 
                             Row {
                                 anchors.fill: parent
-                                anchors.margins: 14
-                                spacing: 12
+                                anchors.margins: 16
+                                spacing: 14
 
                                 Rectangle {
-                                    width: 44
-                                    height: 44
-                                    radius: 22
-                                    color: "#1e2938"
-                                    border.color: "#38bdf8"
+                                    width: 48
+                                    height: 48
+                                    radius: 24
+                                    color: "#1c2636"
+                                    border.color: ember
                                     anchors.verticalCenter: parent.verticalCenter
                                     Text {
                                         anchors.centerIn: parent
                                         text: modelData.avatar
                                         color: "#ffffff"
-                                        font.pixelSize: 15
+                                        font.pixelSize: 16
                                         font.bold: true
                                     }
                                 }
@@ -3639,10 +3689,65 @@ PanelWindow {
                                 Column {
                                     anchors.verticalCenter: parent.verticalCenter
                                     spacing: 3
-                                    Text { text: modelData.name; color: "#ffffff"; font.pixelSize: 14; font.bold: true }
-                                    Text { text: modelData.game; color: "#ff6537"; font.pixelSize: 11; font.bold: true }
-                                    Text { text: modelData.status; color: "#64748b"; font.pixelSize: 10 }
+                                    Text { text: modelData.name; color: "#ffffff"; font.pixelSize: 15; font.bold: true }
+                                    Text { text: modelData.game; color: emberLight; font.pixelSize: 12; font.bold: true }
+                                    Text { text: modelData.status; color: "#64748b"; font.pixelSize: 11 }
                                 }
+                            }
+                        }
+                    }
+                }
+
+                // Quick Cartridge Status Strip
+                Rectangle {
+                    width: parent.width
+                    height: 92
+                    radius: 10
+                    color: "#121924"
+                    border.color: "#233142"
+
+                    Item {
+                        anchors.fill: parent
+                        anchors.margins: 18
+
+                        Column {
+                            anchors.left: parent.left
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: 4
+                            Text {
+                                text: "PRIMARY CARTRIDGE MEDIA"
+                                color: ember
+                                font.pixelSize: 10
+                                font.bold: true
+                                font.letterSpacing: 1.0
+                            }
+                            Text {
+                                text: "MicroSD Card (/mnt/sdcard) · " + gameModel.count + " Verified Titles Ready"
+                                color: "#ffffff"
+                                font.pixelSize: 15
+                                font.bold: true
+                            }
+                            Text {
+                                text: "Zero-install portable cartridge architecture · Plug & Play"
+                                color: "#94a3b8"
+                                font.pixelSize: 12
+                            }
+                        }
+
+                        Rectangle {
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 140
+                            height: 38
+                            radius: 8
+                            color: "#1a2e22"
+                            border.color: "#22c55e"
+                            Text {
+                                anchors.centerIn: parent
+                                text: "MOUNTED"
+                                color: "#4ade80"
+                                font.pixelSize: 12
+                                font.bold: true
                             }
                         }
                     }
@@ -3650,7 +3755,6 @@ PanelWindow {
             }
         }
     }
-
     Item {
         id: downloadsPage
 
@@ -3661,21 +3765,40 @@ PanelWindow {
             anchors.left: parent.left
             anchors.leftMargin: contentLeft
             anchors.right: parent.right
-            anchors.rightMargin: 72
+            anchors.rightMargin: 60
             anchors.top: parent.top
-            anchors.topMargin: 124
-            spacing: 18
+            anchors.topMargin: 112
+            spacing: 16
 
-            Text {
-                text: "Downloads"
-                color: fg
-                font.pixelSize: 58
-                font.bold: true
+            Row {
+                spacing: 14
+                Text {
+                    text: "Downloads & Updates"
+                    color: fg
+                    font.pixelSize: 34
+                    font.bold: true
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Rectangle {
+                    height: 24
+                    width: 120
+                    radius: 12
+                    color: "#1c2532"
+                    border.color: ember
+                    anchors.verticalCenter: parent.verticalCenter
+                    Text {
+                        anchors.centerIn: parent
+                        text: "NETWORK READY"
+                        color: emberLight
+                        font.pixelSize: 10
+                        font.bold: true
+                    }
+                }
             }
 
             Text {
-                text: "Scans, client updates, installs, verification, repair, and rollback."
-                color: muted
+                text: "Cartridge verification, shader pre-caching, and system updates."
+                color: "#94a3b8"
                 font.pixelSize: 14
             }
 
@@ -3684,75 +3807,89 @@ PanelWindow {
 
                 Rectangle {
                     width: parent.width
-                    height: 142
-                    radius: 8
-                    color: index === 0 ? "#1f2933" : "#121820"
-                    border.color: index === 0 ? ember : "#2c3743"
+                    height: 118
+                    radius: 10
+                    color: index === 0 ? "#161f2c" : "#111722"
+                    border.color: index === 0 ? ember : "#222f3e"
+                    border.width: index === 0 ? 1.5 : 1
 
                     Column {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.leftMargin: 22
-                        anchors.rightMargin: 22
+                        anchors.leftMargin: 24
+                        anchors.rightMargin: 24
                         spacing: 10
 
-                        Row {
+                        Item {
                             width: parent.width
+                            height: 28
 
                             Text {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
                                 text: model.title
                                 color: fg
-                                font.pixelSize: 28
+                                font.pixelSize: 20
                                 font.bold: true
-                                width: parent.width - 90
+                                width: parent.width - 180
                                 elide: Text.ElideRight
                             }
 
                             Text {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
                                 text: model.value
-                                color: model.value === "Live" ? green : forgeGold
-                                font.pixelSize: 12
+                                color: index === 0 ? emberLight : "#94a3b8"
+                                font.pixelSize: 13
                                 font.bold: true
-                                horizontalAlignment: Text.AlignRight
-                                width: 90
                             }
-
                         }
 
                         Text {
                             text: model.body
-                            color: muted
-                            font.pixelSize: 12
+                            color: "#94a3b8"
+                            font.pixelSize: 13
                             width: parent.width
                             elide: Text.ElideRight
                         }
 
                         Rectangle {
                             width: parent.width
-                            height: 8
-                            radius: 4
-                            color: "#28313a"
+                            height: 6
+                            radius: 3
+                            color: "#0b1017"
 
                             Rectangle {
                                 anchors.left: parent.left
                                 anchors.top: parent.top
                                 anchors.bottom: parent.bottom
                                 width: parent.width * model.progress / 100
-                                radius: 4
-                                color: model.value === "Live" ? forgeGold : ember
+                                radius: 3
+                                color: index === 0 ? ember : "#22c55e"
                             }
-
                         }
-
                     }
-
                 }
-
             }
-
         }
+    }
+    property int selectedCartridgeOption: 0
 
+    function triggerCartridgeInit(optIndex) {
+        if (optIndex === 0) {
+            initCartridgeProc.command = ["/usr/local/bin/anvil-cartridge-tool", "init", "/mnt/sdcard", "MicroSD Cartridge"];
+            initCartridgeProc.running = true;
+            cartridgeStatusMsg = "Verified & updated MicroSD Cartridge (/mnt/sdcard)!";
+        } else if (optIndex === 1) {
+            initCartridgeProc.command = ["/usr/local/bin/anvil-cartridge-tool", "init", "/mnt/usb", "USB Game Cartridge"];
+            initCartridgeProc.running = true;
+            cartridgeStatusMsg = "Formatted & registered External USB (/mnt/usb) as an Anvil Cartridge!";
+        } else if (optIndex === 2) {
+            initCartridgeProc.command = ["/usr/local/bin/anvil-cartridge-tool", "init", "/home/morphine/Games", "Local Cartridge Folder"];
+            initCartridgeProc.running = true;
+            cartridgeStatusMsg = "Initialized /home/morphine/Games as an Anvil Cartridge folder!";
+        }
     }
 
     Item {
@@ -3767,11 +3904,11 @@ PanelWindow {
             anchors.left: parent.left
             anchors.leftMargin: contentLeft
             anchors.top: parent.top
-            anchors.topMargin: 110
+            anchors.topMargin: 106
             spacing: 14
 
             Text {
-                text: "System Settings"
+                text: "Settings"
                 color: fg
                 font.pixelSize: 34
                 font.bold: true
@@ -3795,17 +3932,17 @@ PanelWindow {
             }
         }
 
-        // Left Navigation Blade (Xbox/SteamOS style category rail)
+        // Left Navigation Blade (SteamOS / Xbox Series X style rail)
         Rectangle {
             id: settingsBlade
             anchors.left: parent.left
             anchors.leftMargin: contentLeft
             anchors.top: settingsHeader.bottom
-            anchors.topMargin: 24
-            anchors.bottom: bottomHints.top
-            anchors.bottomMargin: 24
-            width: Math.min(420, parent.width * 0.28)
-            color: "#10161f"
+            anchors.topMargin: 20
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 68
+            width: 360
+            color: "#101620"
             radius: 12
             border.color: "#1e2938"
             border.width: 1
@@ -3813,7 +3950,7 @@ PanelWindow {
             Column {
                 anchors.fill: parent
                 anchors.margins: 12
-                spacing: 6
+                spacing: 8
 
                 Repeater {
                     model: settingsModel
@@ -3822,9 +3959,9 @@ PanelWindow {
                         width: parent.width
                         height: 68
                         radius: 8
-                        color: selectedSetting === index ? "#1e293b" : (catMouse.containsMouse ? "#141c26" : "transparent")
+                        color: selectedSetting === index ? "#1b2534" : (catMouse.containsMouse ? "#141c28" : "transparent")
                         border.color: selectedSetting === index ? ember : "transparent"
-                        border.width: 1.5
+                        border.width: selectedSetting === index ? 1.5 : 0
 
                         // Ember accent pill
                         Rectangle {
@@ -3838,21 +3975,25 @@ PanelWindow {
                             visible: selectedSetting === index
                         }
 
-                        // Category Icon Badge
+                        // Clean Typography Badge (No missing emoji glyphs)
                         Rectangle {
                             id: catIcon
                             anchors.left: parent.left
                             anchors.leftMargin: 18
                             anchors.verticalCenter: parent.verticalCenter
-                            width: 38
-                            height: 38
-                            radius: 8
-                            color: selectedSetting === index ? "#2a1810" : "#18202c"
+                            width: 42
+                            height: 36
+                            radius: 6
+                            color: selectedSetting === index ? ember : "#182230"
+                            border.color: selectedSetting === index ? emberLight : "#2a384b"
 
                             Text {
                                 anchors.centerIn: parent
-                                text: model.icon
-                                font.pixelSize: 18
+                                text: model.badge
+                                color: selectedSetting === index ? "#ffffff" : "#94a3b8"
+                                font.pixelSize: 11
+                                font.bold: true
+                                font.letterSpacing: 0.5
                             }
                         }
 
@@ -3868,7 +4009,7 @@ PanelWindow {
                             Text {
                                 width: parent.width
                                 text: model.title
-                                color: selectedSetting === index ? fg : "#94a3b8"
+                                color: selectedSetting === index ? "#ffffff" : "#cbd5e1"
                                 font.pixelSize: 15
                                 font.bold: selectedSetting === index
                                 elide: Text.ElideRight
@@ -3896,17 +4037,18 @@ PanelWindow {
             }
         }
 
-        // Right Settings Content Card (Flagship Slate Panel)
+        // Right Settings Content Card (Flagship Console Detail Panel)
         Rectangle {
+            id: settingsDetailCard
             anchors.left: settingsBlade.right
             anchors.leftMargin: 20
             anchors.right: parent.right
-            anchors.rightMargin: 60
+            anchors.rightMargin: 48
             anchors.top: settingsHeader.bottom
-            anchors.topMargin: 24
-            anchors.bottom: bottomHints.top
-            anchors.bottomMargin: 24
-            color: "#0e141c"
+            anchors.topMargin: 20
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 68
+            color: "#101620"
             radius: 12
             border.color: "#1e2938"
             border.width: 1
@@ -3914,15 +4056,15 @@ PanelWindow {
 
             Flickable {
                 anchors.fill: parent
-                anchors.margins: 28
+                anchors.margins: 26
                 contentWidth: width
-                contentHeight: detailColumn.implicitHeight + 40
+                contentHeight: detailColumn.implicitHeight + 24
                 boundsBehavior: Flickable.StopAtBounds
 
                 Column {
                     id: detailColumn
                     width: parent.width
-                    spacing: 22
+                    spacing: 18
 
                     // Card Header with Description
                     Column {
@@ -3931,8 +4073,8 @@ PanelWindow {
 
                         Text {
                             text: settingsModel.get(selectedSetting).title
-                            color: fg
-                            font.pixelSize: 26
+                            color: "#ffffff"
+                            font.pixelSize: 24
                             font.bold: true
                         }
 
@@ -3958,239 +4100,77 @@ PanelWindow {
                     Column {
                         visible: selectedSettingKey() === "storage"
                         width: parent.width
-                        spacing: 16
+                        spacing: 14
 
-                        Text {
-                            text: "MOUNTED CARTRIDGE VOLUMES"
-                            color: ember
-                            font.pixelSize: 11
-                            font.bold: true
-                            font.letterSpacing: 1.2
-                        }
-
-                        // Drive 1: Removable MicroSD Card (Active Cartridge)
+                        // Primary Action: Format / Register a Drive or Folder as Cartridge
                         Rectangle {
                             width: parent.width
-                            height: 106
+                            height: 68
                             radius: 10
-                            color: "#141d27"
+                            color: addCartridgeMouse.containsMouse ? "#261914" : "#1c1514"
                             border.color: ember
-                            border.width: 1.5
+                            border.width: 2
 
-                            Row {
+                            Item {
                                 anchors.fill: parent
-                                anchors.margins: 18
-                                spacing: 18
+                                anchors.margins: 16
 
                                 Rectangle {
-                                    width: 58
-                                    height: 58
-                                    radius: 10
-                                    color: "#231510"
-                                    border.color: ember
+                                    id: addBadge
+                                    anchors.left: parent.left
                                     anchors.verticalCenter: parent.verticalCenter
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: "🎴"
-                                        font.pixelSize: 28
-                                    }
-                                }
-
-                                Column {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    width: parent.width - 230
-                                    spacing: 5
-
-                                    Row {
-                                        spacing: 10
-                                        Text {
-                                            text: "MicroSD Cartridge (/mnt/sdcard)"
-                                            color: "#ffffff"
-                                            font.pixelSize: 16
-                                            font.bold: true
-                                        }
-                                        Rectangle {
-                                            width: 80
-                                            height: 20
-                                            radius: 4
-                                            color: "#22c55e22"
-                                            border.color: "#22c55e"
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            Text {
-                                                anchors.centerIn: parent
-                                                text: "PRIMARY"
-                                                color: "#4ade80"
-                                                font.pixelSize: 9
-                                                font.bold: true
-                                            }
-                                        }
-                                    }
-
-                                    Text {
-                                        text: "48 Cartridge Games Loaded · 32 GB Free of 234 GB (87% Used)"
-                                        color: "#94a3b8"
-                                        font.pixelSize: 12
-                                    }
-
-                                    Rectangle {
-                                        width: Math.min(360, parent.width)
-                                        height: 6
-                                        radius: 3
-                                        color: "#0c1117"
-                                        Rectangle {
-                                            width: parent.width * 0.87
-                                            height: parent.height
-                                            radius: 3
-                                            color: ember
-                                        }
-                                    }
-                                }
-
-                                Rectangle {
-                                    anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    width: 120
-                                    height: 38
+                                    width: 44
+                                    height: 36
                                     radius: 6
-                                    color: "#1a2e22"
-                                    border.color: "#22c55e"
+                                    color: ember
                                     Text {
                                         anchors.centerIn: parent
-                                        text: "INSERTED"
-                                        color: "#4ade80"
+                                        text: "NEW"
+                                        color: "#ffffff"
                                         font.pixelSize: 11
                                         font.bold: true
                                     }
                                 }
-                            }
-                        }
-
-                        // Drive 2: Internal NVMe Storage
-                        Rectangle {
-                            width: parent.width
-                            height: 106
-                            radius: 10
-                            color: "#141d27"
-                            border.color: "#273648"
-
-                            Row {
-                                anchors.fill: parent
-                                anchors.margins: 18
-                                spacing: 18
-
-                                Rectangle {
-                                    width: 58
-                                    height: 58
-                                    radius: 10
-                                    color: "#1a2330"
-                                    border.color: "#3b4c63"
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: "⚡"
-                                        font.pixelSize: 28
-                                    }
-                                }
 
                                 Column {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    width: parent.width - 230
-                                    spacing: 5
-
-                                    Row {
-                                        spacing: 10
-                                        Text {
-                                            text: "Internal SSD (/dev/nvme0n1p2)"
-                                            color: "#ffffff"
-                                            font.pixelSize: 16
-                                            font.bold: true
-                                        }
-                                        Rectangle {
-                                            width: 76
-                                            height: 20
-                                            radius: 4
-                                            color: "#38bdf822"
-                                            border.color: "#38bdf8"
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            Text {
-                                                anchors.centerIn: parent
-                                                text: "SYSTEM"
-                                                color: "#38bdf8"
-                                                font.pixelSize: 9
-                                                font.bold: true
-                                            }
-                                        }
-                                    }
-
-                                    Text {
-                                        text: "OS & Cartridge Cache · 229 GB Free of 238 GB (4% Used)"
-                                        color: "#94a3b8"
-                                        font.pixelSize: 12
-                                    }
-
-                                    Rectangle {
-                                        width: Math.min(360, parent.width)
-                                        height: 6
-                                        radius: 3
-                                        color: "#0c1117"
-                                        Rectangle {
-                                            width: parent.width * 0.04
-                                            height: parent.height
-                                            radius: 3
-                                            color: "#38bdf8"
-                                        }
-                                    }
-                                }
-
-                                Rectangle {
-                                    anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    width: 120
-                                    height: 38
-                                    radius: 6
-                                    color: "#1a2330"
-                                    border.color: "#334155"
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: "ONLINE"
-                                        color: "#94a3b8"
-                                        font.pixelSize: 11
-                                        font.bold: true
-                                    }
-                                }
-                            }
-                        }
-
-                        // Setup New Cartridge Drive Button
-                        Rectangle {
-                            width: parent.width
-                            height: 60
-                            radius: 10
-                            color: addCartridgeMouse.containsMouse ? "#243242" : "#17212c"
-                            border.color: ember
-                            border.width: 1.5
-
-                            Row {
-                                anchors.centerIn: parent
-                                spacing: 14
-                                Text {
-                                    text: "➕"
-                                    font.pixelSize: 18
-                                    anchors.verticalCenter: parent.verticalCenter
-                                }
-                                Column {
+                                    anchors.left: addBadge.right
+                                    anchors.leftMargin: 14
+                                    anchors.right: initBtnPill.left
+                                    anchors.rightMargin: 14
                                     anchors.verticalCenter: parent.verticalCenter
                                     spacing: 2
+
                                     Text {
-                                        text: "Make a Drive / SD Card / Folder into an Anvil Cartridge"
+                                        text: "Create or Register an Anvil Game Cartridge"
                                         color: "#ffffff"
-                                        font.pixelSize: 14
+                                        font.pixelSize: 15
                                         font.bold: true
+                                        elide: Text.ElideRight
+                                        width: parent.width
                                     }
                                     Text {
-                                        text: "Auto-formats cartridge metadata and prepares hot-swap storage directory"
+                                        text: "Turn any SD card, USB drive, or folder into a hot-swappable Anvil cartridge"
                                         color: emberLight
+                                        font.pixelSize: 12
+                                        elide: Text.ElideRight
+                                        width: parent.width
+                                    }
+                                }
+
+                                Rectangle {
+                                    id: initBtnPill
+                                    anchors.right: parent.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 156
+                                    height: 36
+                                    radius: 6
+                                    color: ember
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "A  CONFIGURE DRIVE"
+                                        color: "#ffffff"
                                         font.pixelSize: 11
+                                        font.bold: true
                                     }
                                 }
                             }
@@ -4207,28 +4187,217 @@ PanelWindow {
                             }
                         }
 
-                        // Rule Callout Banner
+                        Text {
+                            text: "MOUNTED CARTRIDGE & SYSTEM VOLUMES"
+                            color: "#94a3b8"
+                            font.pixelSize: 11
+                            font.bold: true
+                            font.letterSpacing: 1.0
+                        }
+
+                        // Drive 1: Removable MicroSD Card (Active Cartridge)
                         Rectangle {
                             width: parent.width
-                            height: 52
-                            radius: 8
-                            color: "#1a1e27"
-                            border.color: "#334155"
+                            height: 96
+                            radius: 10
+                            color: "#151e2b"
+                            border.color: "#2a394d"
+                            border.width: 1
 
-                            Row {
-                                anchors.centerIn: parent
-                                spacing: 12
-                                Text {
-                                    text: "🛡️"
-                                    font.pixelSize: 16
+                            Item {
+                                anchors.fill: parent
+                                anchors.margins: 16
+
+                                Rectangle {
+                                    id: sdIconBox
+                                    anchors.left: parent.left
                                     anchors.verticalCenter: parent.verticalCenter
+                                    width: 52
+                                    height: 52
+                                    radius: 10
+                                    color: "#231712"
+                                    border.color: ember
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "SD"
+                                        color: emberLight
+                                        font.pixelSize: 16
+                                        font.bold: true
+                                    }
                                 }
-                                Text {
-                                    text: "Strict Cartridge Rule: Games run natively off removable media. Internal SSD is never modified."
-                                    color: "#cbd5e1"
-                                    font.pixelSize: 12
-                                    font.bold: true
+
+                                Column {
+                                    anchors.left: sdIconBox.right
+                                    anchors.leftMargin: 16
+                                    anchors.right: sdStatusBadge.left
+                                    anchors.rightMargin: 16
                                     anchors.verticalCenter: parent.verticalCenter
+                                    spacing: 5
+
+                                    Row {
+                                        spacing: 10
+                                        Text {
+                                            text: "MicroSD Cartridge (/mnt/sdcard)"
+                                            color: "#ffffff"
+                                            font.pixelSize: 15
+                                            font.bold: true
+                                        }
+                                        Rectangle {
+                                            width: 72
+                                            height: 18
+                                            radius: 4
+                                            color: "#22c55e22"
+                                            border.color: "#22c55e"
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            Text {
+                                                anchors.centerIn: parent
+                                                text: "PRIMARY"
+                                                color: "#4ade80"
+                                                font.pixelSize: 9
+                                                font.bold: true
+                                            }
+                                        }
+                                    }
+
+                                    Text {
+                                        text: gameModel.count + " Cartridge Games Loaded · 32 GB Free of 234 GB (87% Used)"
+                                        color: "#94a3b8"
+                                        font.pixelSize: 12
+                                    }
+
+                                    Rectangle {
+                                        width: Math.min(360, parent.width)
+                                        height: 6
+                                        radius: 3
+                                        color: "#0b1017"
+                                        Rectangle {
+                                            width: parent.width * 0.87
+                                            height: parent.height
+                                            radius: 3
+                                            color: ember
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    id: sdStatusBadge
+                                    anchors.right: parent.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 108
+                                    height: 34
+                                    radius: 6
+                                    color: "#162920"
+                                    border.color: "#22c55e"
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "MOUNTED"
+                                        color: "#4ade80"
+                                        font.pixelSize: 11
+                                        font.bold: true
+                                    }
+                                }
+                            }
+                        }
+
+                        // Drive 2: Internal NVMe Storage
+                        Rectangle {
+                            width: parent.width
+                            height: 96
+                            radius: 10
+                            color: "#151e2b"
+                            border.color: "#233142"
+
+                            Item {
+                                anchors.fill: parent
+                                anchors.margins: 16
+
+                                Rectangle {
+                                    id: ssdIconBox
+                                    anchors.left: parent.left
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 52
+                                    height: 52
+                                    radius: 10
+                                    color: "#192330"
+                                    border.color: "#38bdf8"
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "NVMe"
+                                        color: "#38bdf8"
+                                        font.pixelSize: 13
+                                        font.bold: true
+                                    }
+                                }
+
+                                Column {
+                                    anchors.left: ssdIconBox.right
+                                    anchors.leftMargin: 16
+                                    anchors.right: ssdStatusBadge.left
+                                    anchors.rightMargin: 16
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    spacing: 5
+
+                                    Row {
+                                        spacing: 10
+                                        Text {
+                                            text: "Internal SSD (/dev/nvme0n1p2)"
+                                            color: "#ffffff"
+                                            font.pixelSize: 15
+                                            font.bold: true
+                                        }
+                                        Rectangle {
+                                            width: 68
+                                            height: 18
+                                            radius: 4
+                                            color: "#38bdf822"
+                                            border.color: "#38bdf8"
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            Text {
+                                                anchors.centerIn: parent
+                                                text: "SYSTEM"
+                                                color: "#38bdf8"
+                                                font.pixelSize: 9
+                                                font.bold: true
+                                            }
+                                        }
+                                    }
+
+                                    Text {
+                                        text: "Anvil OS & Shader Cache · 229 GB Free of 238 GB (4% Used)"
+                                        color: "#94a3b8"
+                                        font.pixelSize: 12
+                                    }
+
+                                    Rectangle {
+                                        width: Math.min(360, parent.width)
+                                        height: 6
+                                        radius: 3
+                                        color: "#0b1017"
+                                        Rectangle {
+                                            width: parent.width * 0.04
+                                            height: parent.height
+                                            radius: 3
+                                            color: "#38bdf8"
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    id: ssdStatusBadge
+                                    anchors.right: parent.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 108
+                                    height: 34
+                                    radius: 6
+                                    color: "#192330"
+                                    border.color: "#334155"
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "PROTECTED"
+                                        color: "#94a3b8"
+                                        font.pixelSize: 11
+                                        font.bold: true
+                                    }
                                 }
                             }
                         }
@@ -4242,60 +4411,57 @@ PanelWindow {
                         width: parent.width
                         spacing: 16
 
-                        Text {
-                            text: "CONTROLLER & HARDWARE STATUS"
-                            color: ember
-                            font.pixelSize: 11
-                            font.bold: true
-                            font.letterSpacing: 1.2
-                        }
-
                         Rectangle {
                             width: parent.width
-                            height: 94
+                            height: 92
                             radius: 10
-                            color: "#141d27"
-                            border.color: "#273648"
+                            color: "#151e2b"
+                            border.color: "#253446"
 
-                            Row {
+                            Item {
                                 anchors.fill: parent
                                 anchors.margins: 18
-                                spacing: 18
 
                                 Rectangle {
-                                    width: 58
-                                    height: 58
-                                    radius: 10
-                                    color: "#231510"
-                                    border.color: ember
+                                    id: padBadge
+                                    anchors.left: parent.left
                                     anchors.verticalCenter: parent.verticalCenter
+                                    width: 54
+                                    height: 54
+                                    radius: 10
+                                    color: "#231712"
+                                    border.color: ember
                                     Text {
                                         anchors.centerIn: parent
-                                        text: "🎮"
-                                        font.pixelSize: 28
+                                        text: "DECK"
+                                        color: emberLight
+                                        font.pixelSize: 13
+                                        font.bold: true
                                     }
                                 }
 
                                 Column {
+                                    anchors.left: padBadge.right
+                                    anchors.leftMargin: 16
                                     anchors.verticalCenter: parent.verticalCenter
                                     spacing: 4
 
                                     Text {
-                                        text: "Steam Deck Built-in Controller (Xbox Bridge Active)"
-                                        color: fg
+                                        text: "Steam Deck Built-in Controller (Xbox 360 Bridge Active)"
+                                        color: "#ffffff"
                                         font.pixelSize: 16
                                         font.bold: true
                                     }
 
                                     Text {
-                                        text: "Zero-Drift Deadzone Filter (4000 threshold) · Gyro IMU Decoupled"
+                                        text: "Hardware Deadzone Filter: 4000 threshold · Motion IMU Sensor Locked"
                                         color: "#4ade80"
                                         font.pixelSize: 12
                                     }
 
                                     Text {
-                                        text: "Last Input Detected: " + (controllerAction !== "" ? inputActionLabel(controllerAction) : "Idle / Neutral")
-                                        color: controllerAction !== "" ? emberLight : "#64748b"
+                                        text: "Live Input Event: " + (controllerAction !== "" ? inputActionLabel(controllerAction) : "Neutral (Zero Drift)")
+                                        color: controllerAction !== "" ? emberLight : "#94a3b8"
                                         font.pixelSize: 12
                                         font.bold: true
                                     }
@@ -4304,11 +4470,11 @@ PanelWindow {
                         }
 
                         Text {
-                            text: "INTERACTIVE BUTTON & TRIGGER TEST"
+                            text: "LIVE BUTTON DIAGNOSTIC MATRIX"
                             color: ember
                             font.pixelSize: 11
                             font.bold: true
-                            font.letterSpacing: 1.2
+                            font.letterSpacing: 1.0
                         }
 
                         Grid {
@@ -4321,22 +4487,19 @@ PanelWindow {
                                 model: ["south", "east", "north", "west", "lt", "rt", "lb", "rb", "back", "start", "guide", "up", "down", "left", "right"]
 
                                 Rectangle {
-                                    width: (parent.width - parent.columnSpacing * (parent.columns - 1)) / parent.columns
-                                    height: 54
+                                    width: (parent.width - 40) / 5
+                                    height: 52
                                     radius: 8
-                                    color: controllerAction === modelData ? ember : "#141c26"
-                                    border.color: controllerAction === modelData ? emberLight : "#2b3540"
+                                    color: controllerAction === modelData ? ember : "#151e2b"
+                                    border.color: controllerAction === modelData ? emberLight : "#253446"
                                     border.width: controllerAction === modelData ? 2 : 1
 
                                     Text {
                                         anchors.centerIn: parent
                                         text: modelData === "up" || modelData === "down" || modelData === "left" || modelData === "right" ? inputActionLabel(modelData) : ""
-                                        color: controllerAction === modelData ? "#160b07" : fg
+                                        color: "#ffffff"
                                         font.pixelSize: 12
                                         font.bold: true
-                                        width: parent.width - 14
-                                        elide: Text.ElideRight
-                                        horizontalAlignment: Text.AlignHCenter
                                         visible: text !== ""
                                     }
 
@@ -4362,124 +4525,55 @@ PanelWindow {
                     Column {
                         visible: selectedSettingKey() === "display"
                         width: parent.width
-                        spacing: 16
+                        spacing: 14
 
-                        Text {
-                            text: "DISPLAY & REFRESH CONFIGURATION"
-                            color: ember
-                            font.pixelSize: 11
-                            font.bold: true
-                            font.letterSpacing: 1.2
-                        }
+                        Repeater {
+                            model: [
+                                { title: "Display Resolution", sub: "Native Steam Deck 16:10 IPS/OLED Panel", pill: "1280 x 800" },
+                                { title: "Refresh Rate & Frame Limiter", sub: "Hardware scanout synchronized for smooth frame pacing", pill: "60 Hz Locked" },
+                                { title: "Fullscreen Scaling Mode", sub: "Automatic aspect correction for 16:9 and 16:10 titles", pill: "Native Aspect" }
+                            ]
 
-                        Rectangle {
-                            width: parent.width
-                            height: 72
-                            radius: 10
-                            color: "#141d27"
-                            border.color: "#273648"
+                            Rectangle {
+                                width: parent.width
+                                height: 74
+                                radius: 10
+                                color: "#151e2b"
+                                border.color: "#253446"
 
-                            Row {
-                                anchors.fill: parent
-                                anchors.margins: 18
-                                spacing: 14
+                                Item {
+                                    anchors.fill: parent
+                                    anchors.margins: 18
 
-                                Column {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    spacing: 3
-                                    Text {
-                                        text: "Native Resolution"
-                                        color: fg
-                                        font.pixelSize: 15
-                                        font.bold: true
-                                    }
-                                    Text {
-                                        text: "Steam Deck 16:10 Panel (1280 x 800)"
-                                        color: "#94a3b8"
-                                        font.pixelSize: 12
-                                    }
-                                }
-
-                                Item { width: 1; height: 1 }
-
-                                Rectangle {
-                                    anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    width: 140
-                                    height: 36
-                                    radius: 6
-                                    color: "#1e293b"
-                                    border.color: ember
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: "1280 x 800"
-                                        color: fg
-                                        font.pixelSize: 13
-                                        font.bold: true
-                                    }
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            width: parent.width
-                            height: 72
-                            radius: 10
-                            color: "#141d27"
-                            border.color: "#273648"
-
-                            Row {
-                                anchors.fill: parent
-                                anchors.margins: 18
-                                spacing: 14
-
-                                Column {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    spacing: 3
-                                    Text {
-                                        text: "Target Frame Rate & Refresh Rate"
-                                        color: fg
-                                        font.pixelSize: 15
-                                        font.bold: true
-                                    }
-                                    Text {
-                                        text: "Hardware display timing locked to 60 Hz"
-                                        color: "#94a3b8"
-                                        font.pixelSize: 12
-                                    }
-                                }
-
-                                Item { width: 1; height: 1 }
-
-                                Row {
-                                    anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    spacing: 8
-
-                                    Rectangle {
-                                        width: 70
-                                        height: 36
-                                        radius: 6
-                                        color: "#1e293b"
-                                        border.color: "#334155"
+                                    Column {
+                                        anchors.left: parent.left
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        spacing: 3
                                         Text {
-                                            anchors.centerIn: parent
-                                            text: "40 Hz"
+                                            text: modelData.title
+                                            color: "#ffffff"
+                                            font.pixelSize: 15
+                                            font.bold: true
+                                        }
+                                        Text {
+                                            text: modelData.sub
                                             color: "#94a3b8"
                                             font.pixelSize: 12
-                                            font.bold: true
                                         }
                                     }
 
                                     Rectangle {
-                                        width: 70
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        width: 144
                                         height: 36
                                         radius: 6
-                                        color: ember
+                                        color: "#1e293b"
+                                        border.color: ember
                                         Text {
                                             anchors.centerIn: parent
-                                            text: "60 Hz"
-                                            color: "#160b07"
+                                            text: modelData.pill
+                                            color: "#ffffff"
                                             font.pixelSize: 12
                                             font.bold: true
                                         }
@@ -4495,109 +4589,58 @@ PanelWindow {
                     Column {
                         visible: selectedSettingKey() === "runtime"
                         width: parent.width
-                        spacing: 16
+                        spacing: 14
 
-                        Text {
-                            text: "DEFAULT COMPATIBILITY RUNTIME"
-                            color: ember
-                            font.pixelSize: 11
-                            font.bold: true
-                            font.letterSpacing: 1.2
-                        }
+                        Repeater {
+                            model: [
+                                { title: "Default Compatibility Layer", sub: "Used automatically for Windows cartridge executables", pill: "GE-Proton" },
+                                { title: "Cartridge Working Directory", sub: "Always cd into executable folder so relative data loads cleanly", pill: "ENABLED" },
+                                { title: "Steam API Bridge Override", sub: "Configures WINEDLLOVERRIDES for standalone cartridge play", pill: "ACTIVE" }
+                            ]
 
-                        Rectangle {
-                            width: parent.width
-                            height: 72
-                            radius: 10
-                            color: "#141d27"
-                            border.color: "#273648"
+                            Rectangle {
+                                width: parent.width
+                                height: 74
+                                radius: 10
+                                color: "#151e2b"
+                                border.color: "#253446"
 
-                            Row {
-                                anchors.fill: parent
-                                anchors.margins: 18
-                                spacing: 14
+                                Item {
+                                    anchors.fill: parent
+                                    anchors.margins: 18
 
-                                Column {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    spacing: 3
-                                    Text {
-                                        text: "Primary Proton Runner"
-                                        color: fg
-                                        font.pixelSize: 15
-                                        font.bold: true
+                                    Column {
+                                        anchors.left: parent.left
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        spacing: 3
+                                        Text {
+                                            text: modelData.title
+                                            color: "#ffffff"
+                                            font.pixelSize: 15
+                                            font.bold: true
+                                        }
+                                        Text {
+                                            text: modelData.sub
+                                            color: "#94a3b8"
+                                            font.pixelSize: 12
+                                        }
                                     }
-                                    Text {
-                                        text: "Used automatically for Windows executable cartridges"
-                                        color: "#94a3b8"
-                                        font.pixelSize: 12
-                                    }
-                                }
 
-                                Item { width: 1; height: 1 }
-
-                                Rectangle {
-                                    anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    width: 170
-                                    height: 36
-                                    radius: 6
-                                    color: "#1e293b"
-                                    border.color: ember
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: "GE-Proton11-9"
-                                        color: fg
-                                        font.pixelSize: 13
-                                        font.bold: true
-                                    }
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            width: parent.width
-                            height: 72
-                            radius: 10
-                            color: "#141d27"
-                            border.color: "#273648"
-
-                            Row {
-                                anchors.fill: parent
-                                anchors.margins: 18
-                                spacing: 14
-
-                                Column {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    spacing: 3
-                                    Text {
-                                        text: "Working Directory Preservation"
-                                        color: fg
-                                        font.pixelSize: 15
-                                        font.bold: true
-                                    }
-                                    Text {
-                                        text: "cd into exe cartridge directory prior to launch"
-                                        color: "#94a3b8"
-                                        font.pixelSize: 12
-                                    }
-                                }
-
-                                Item { width: 1; height: 1 }
-
-                                Rectangle {
-                                    anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    width: 90
-                                    height: 36
-                                    radius: 6
-                                    color: "#1a2e22"
-                                    border.color: "#22c55e"
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: "ENABLED"
-                                        color: "#4ade80"
-                                        font.pixelSize: 11
-                                        font.bold: true
+                                    Rectangle {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        width: 136
+                                        height: 36
+                                        radius: 6
+                                        color: "#1e293b"
+                                        border.color: ember
+                                        Text {
+                                            anchors.centerIn: parent
+                                            text: modelData.pill
+                                            color: emberLight
+                                            font.pixelSize: 12
+                                            font.bold: true
+                                        }
                                     }
                                 }
                             }
@@ -4605,49 +4648,40 @@ PanelWindow {
                     }
 
                     // ==========================================
-                    // 5. SESSION & ABOUT SYSTEM PANE
+                    // 5. SYSTEM & HARDWARE PANE
                     // ==========================================
                     Column {
-                        visible: selectedSettingKey() === "session" || selectedSettingKey() === "cloud"
+                        visible: selectedSettingKey() === "session"
                         width: parent.width
-                        spacing: 16
-
-                        Text {
-                            text: "SYSTEM & SESSION DETAILS"
-                            color: ember
-                            font.pixelSize: 11
-                            font.bold: true
-                            font.letterSpacing: 1.2
-                        }
+                        spacing: 10
 
                         Repeater {
                             model: [
-                                {"name": "Hardware Platform", "val": "Valve Steam Deck (Jupiter)"},
-                                {"name": "Display Server", "val": "Wayland (Gamescope / Anvil OS)"},
-                                {"name": "Anvil Shell Version", "val": "v2.4.0 (Flagship Console Edition)"},
-                                {"name": "Cartridge Library Engine", "val": "Active · 48 Games Verified"},
-                                {"name": "Overlay Guide Interceptor", "val": "In-Game Only (Home Lock Active)"}
+                                { name: "Console Hardware", val: "Valve Steam Deck (Jupiter)" },
+                                { name: "System Interface", val: "Anvil Console OS v2.4" },
+                                { name: "Compositor & Windowing", val: "Hyprland Wayland + Quickshell" },
+                                { name: "Mounted Cartridge Library", val: gameModel.count + " Verified Titles on /mnt/sdcard" },
+                                { name: "Guide Button Overlay Guard", val: "Active In-Game Only (Home Locked)" }
                             ]
 
                             Rectangle {
                                 width: parent.width
-                                height: 58
+                                height: 54
                                 radius: 8
-                                color: "#141d27"
-                                border.color: "#1e2938"
+                                color: "#151e2b"
+                                border.color: "#222f3e"
 
-                                Row {
+                                Item {
                                     anchors.fill: parent
                                     anchors.margins: 16
 
                                     Text {
+                                        anchors.left: parent.left
                                         anchors.verticalCenter: parent.verticalCenter
                                         text: modelData.name
-                                        color: fg
+                                        color: "#cbd5e1"
                                         font.pixelSize: 14
                                     }
-
-                                    Item { width: 1; height: 1 }
 
                                     Text {
                                         anchors.right: parent.right
@@ -4666,7 +4700,6 @@ PanelWindow {
         }
     }
 
-
     // ==========================================
     // Interactive Cartridge Setup / Drive Modal
     // ==========================================
@@ -4676,7 +4709,7 @@ PanelWindow {
     Rectangle {
         id: cartridgeModalOverlay
         anchors.fill: parent
-        color: "#d005080d"
+        color: "#dc05080d"
         visible: cartridgeModalActive
         z: 99
 
@@ -4687,42 +4720,60 @@ PanelWindow {
 
         Rectangle {
             anchors.centerIn: parent
-            width: Math.min(680, parent.width - 80)
+            width: Math.min(720, parent.width - 80)
             height: 480
             radius: 14
-            color: "#111822"
+            color: "#101620"
             border.color: ember
-            border.width: 1.5
+            border.width: 2
 
             MouseArea {
                 anchors.fill: parent
-                // prevent click through
             }
 
             Column {
                 anchors.fill: parent
-                anchors.margins: 26
-                spacing: 18
+                anchors.margins: 28
+                spacing: 16
 
-                Row {
-                    spacing: 12
+                Item {
+                    width: parent.width
+                    height: 32
+
                     Text {
-                        text: "🎴"
-                        font.pixelSize: 26
+                        anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
-                    }
-                    Text {
-                        text: "Format & Register as Anvil Cartridge"
-                        color: fg
-                        font.pixelSize: 20
+                        text: "Initialize & Register Anvil Cartridge"
+                        color: "#ffffff"
+                        font.pixelSize: 22
                         font.bold: true
+                    }
+
+                    Rectangle {
+                        anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
+                        width: 90
+                        height: 28
+                        radius: 6
+                        color: "#1e293b"
+                        border.color: "#334155"
+                        Text {
+                            anchors.centerIn: parent
+                            text: "B  CLOSE"
+                            color: "#cbd5e1"
+                            font.pixelSize: 11
+                            font.bold: true
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: cartridgeModalActive = false
+                        }
                     }
                 }
 
                 Text {
                     width: parent.width
-                    text: "Select a mounted removable storage drive, SD card, or folder to initialize as an official Anvil Game Cartridge. Anvil will create the required cartridge structure (Games/, cartridge.meta) and preserve games directly on the media."
+                    text: "Select any storage drive, SD card, or folder below to turn it into an official Anvil Game Cartridge. Anvil creates the Games/ directory and cartridge.meta manifest so games run directly off the media."
                     color: "#94a3b8"
                     font.pixelSize: 13
                     wrapMode: Text.WordWrap
@@ -4735,236 +4786,112 @@ PanelWindow {
                     color: "#1e2938"
                 }
 
-                Text {
-                    text: "AVAILABLE DETECTED VOLUMES"
-                    color: ember
-                    font.pixelSize: 11
-                    font.bold: true
-                    font.letterSpacing: 1.2
-                }
-
                 Column {
                     width: parent.width
                     spacing: 10
 
-                    // Option 1: MicroSD Card
-                    Rectangle {
-                        width: parent.width
-                        height: 56
-                        radius: 8
-                        color: "#182230"
-                        border.color: ember
+                    Repeater {
+                        model: [
+                            { tag: "SD", title: "MicroSD Card (/mnt/sdcard)", sub: "Primary removable slot · 48 Games mounted", btn: "VERIFY / SYNC" },
+                            { tag: "USB", title: "External USB Drive (/mnt/usb)", sub: "Format & register USB storage as hot-swap cartridge", btn: "MAKE CARTRIDGE" },
+                            { tag: "DIR", title: "Custom Folder (/home/morphine/Games)", sub: "Register local directory as virtual cartridge library", btn: "MAKE CARTRIDGE" }
+                        ]
 
-                        Row {
-                            anchors.fill: parent
-                            anchors.margins: 14
-                            spacing: 14
+                        Rectangle {
+                            width: parent.width
+                            height: 64
+                            radius: 10
+                            color: selectedCartridgeOption === index ? "#1e293b" : "#151e2b"
+                            border.color: selectedCartridgeOption === index ? ember : "#253446"
+                            border.width: selectedCartridgeOption === index ? 2 : 1
 
-                            Text {
-                                text: "💾"
-                                font.pixelSize: 20
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
+                            Item {
+                                anchors.fill: parent
+                                anchors.margins: 14
 
-                            Column {
-                                anchors.verticalCenter: parent.verticalCenter
-                                spacing: 2
-                                Text {
-                                    text: "MicroSD Card (/mnt/sdcard)"
-                                    color: "#ffffff"
-                                    font.pixelSize: 14
-                                    font.bold: true
+                                Rectangle {
+                                    id: optBadge
+                                    anchors.left: parent.left
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 44
+                                    height: 36
+                                    radius: 6
+                                    color: selectedCartridgeOption === index ? ember : "#1e293b"
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: modelData.tag
+                                        color: "#ffffff"
+                                        font.pixelSize: 11
+                                        font.bold: true
+                                    }
                                 }
-                                Text {
-                                    text: "Default Primary Cartridge · Active"
-                                    color: "#4ade80"
-                                    font.pixelSize: 11
+
+                                Column {
+                                    anchors.left: optBadge.right
+                                    anchors.leftMargin: 14
+                                    anchors.right: optBtn.left
+                                    anchors.rightMargin: 14
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    spacing: 2
+
+                                    Text {
+                                        text: modelData.title
+                                        color: "#ffffff"
+                                        font.pixelSize: 15
+                                        font.bold: true
+                                    }
+                                    Text {
+                                        text: modelData.sub
+                                        color: "#94a3b8"
+                                        font.pixelSize: 12
+                                    }
                                 }
-                            }
 
-                            Item { width: 1; height: 1 }
-
-                            Rectangle {
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 90
-                                height: 30
-                                radius: 6
-                                color: "#1a2e22"
-                                border.color: "#22c55e"
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "ACTIVE"
-                                    color: "#4ade80"
-                                    font.pixelSize: 10
-                                    font.bold: true
-                                }
-                            }
-                        }
-                    }
-
-                    // Option 2: External USB Drive
-                    Rectangle {
-                        width: parent.width
-                        height: 56
-                        radius: 8
-                        color: usbOptMouse.containsMouse ? "#223145" : "#182230"
-                        border.color: usbOptMouse.containsMouse ? ember : "#2c3b4f"
-
-                        Row {
-                            anchors.fill: parent
-                            anchors.margins: 14
-                            spacing: 14
-
-                            Text {
-                                text: "🔌"
-                                font.pixelSize: 20
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
-
-                            Column {
-                                anchors.verticalCenter: parent.verticalCenter
-                                spacing: 2
-                                Text {
-                                    text: "External USB / Removable Media (/mnt/usb)"
-                                    color: "#ffffff"
-                                    font.pixelSize: 14
-                                    font.bold: true
-                                }
-                                Text {
-                                    text: "Initialize as secondary hot-swap cartridge"
-                                    color: "#94a3b8"
-                                    font.pixelSize: 11
+                                Rectangle {
+                                    id: optBtn
+                                    anchors.right: parent.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 136
+                                    height: 34
+                                    radius: 6
+                                    color: selectedCartridgeOption === index ? ember : "#1e293b"
+                                    border.color: ember
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: modelData.btn
+                                        color: "#ffffff"
+                                        font.pixelSize: 11
+                                        font.bold: true
+                                    }
                                 }
                             }
 
-                            Item { width: 1; height: 1 }
-
-                            Rectangle {
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 110
-                                height: 32
-                                radius: 6
-                                color: ember
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "INITIALIZE"
-                                    color: "#160b07"
-                                    font.pixelSize: 11
-                                    font.bold: true
+                            MouseArea {
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                onEntered: selectedCartridgeOption = index
+                                onClicked: {
+                                    selectedCartridgeOption = index;
+                                    triggerCartridgeInit(index);
                                 }
-                            }
-                        }
-
-                        MouseArea {
-                            id: usbOptMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            onClicked: {
-                                initCartridgeProc.command = ["/usr/local/bin/anvil-cartridge-tool", "init", "/mnt/usb", "USB Game Cartridge"];
-                                initCartridgeProc.running = true;
-                                cartridgeStatusMsg = "Initialized /mnt/usb as Game Cartridge!";
-                            }
-                        }
-                    }
-
-                    // Option 3: Custom Path (/home/morphine/Games)
-                    Rectangle {
-                        width: parent.width
-                        height: 56
-                        radius: 8
-                        color: gamesOptMouse.containsMouse ? "#223145" : "#182230"
-                        border.color: gamesOptMouse.containsMouse ? ember : "#2c3b4f"
-
-                        Row {
-                            anchors.fill: parent
-                            anchors.margins: 14
-                            spacing: 14
-
-                            Text {
-                                text: "📁"
-                                font.pixelSize: 20
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
-
-                            Column {
-                                anchors.verticalCenter: parent.verticalCenter
-                                spacing: 2
-                                Text {
-                                    text: "Local Storage (/home/morphine/Games)"
-                                    color: "#ffffff"
-                                    font.pixelSize: 14
-                                    font.bold: true
-                                }
-                                Text {
-                                    text: "Cartridge testbed folder"
-                                    color: "#94a3b8"
-                                    font.pixelSize: 11
-                                }
-                            }
-
-                            Item { width: 1; height: 1 }
-
-                            Rectangle {
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 110
-                                height: 32
-                                radius: 6
-                                color: "#1e293b"
-                                border.color: ember
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "REGISTER"
-                                    color: fg
-                                    font.pixelSize: 11
-                                    font.bold: true
-                                }
-                            }
-                        }
-
-                        MouseArea {
-                            id: gamesOptMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            onClicked: {
-                                initCartridgeProc.command = ["/usr/local/bin/anvil-cartridge-tool", "init", "/home/morphine/Games", "Local Cartridge"];
-                                initCartridgeProc.running = true;
-                                cartridgeStatusMsg = "Registered /home/morphine/Games!";
                             }
                         }
                     }
                 }
 
-                Text {
-                    text: cartridgeStatusMsg !== "" ? cartridgeStatusMsg : "Tip: Once initialized, drag & drop game folders with cartridge.json onto the drive."
-                    color: cartridgeStatusMsg !== "" ? "#4ade80" : "#64748b"
-                    font.pixelSize: 12
-                    font.bold: cartridgeStatusMsg !== ""
-                }
+                Rectangle {
+                    width: parent.width
+                    height: 44
+                    radius: 8
+                    color: cartridgeStatusMsg !== "" ? "#162920" : "#151e2b"
+                    border.color: cartridgeStatusMsg !== "" ? "#22c55e" : "#222f3e"
 
-                Row {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: 16
-
-                    Rectangle {
-                        width: 140
-                        height: 38
-                        radius: 8
-                        color: "#1e293b"
-                        border.color: "#334155"
-                        Text {
-                            anchors.centerIn: parent
-                            text: "Close"
-                            color: fg
-                            font.pixelSize: 13
-                            font.bold: true
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: cartridgeModalActive = false
-                        }
+                    Text {
+                        anchors.centerIn: parent
+                        text: cartridgeStatusMsg !== "" ? cartridgeStatusMsg : "Use D-Pad Up/Down and press A to initialize selected drive as an Anvil Cartridge."
+                        color: cartridgeStatusMsg !== "" ? "#4ade80" : "#94a3b8"
+                        font.pixelSize: 12
+                        font.bold: cartridgeStatusMsg !== ""
                     }
                 }
             }
