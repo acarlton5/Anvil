@@ -137,21 +137,21 @@ PanelWindow {
     function currentSectionSubtitle() {
         switch (activeSection) {
         case 0:
-            return "Resume";
+            return "Jump back in";
         case 1:
-            return "Installed and removable games";
+            return "Your complete game collection";
         case 2:
-            return "Discovery, demos, wishlists";
+            return "Featured titles, specials, discovery";
         case 3:
-            return "Friends, hubs, activity";
+            return "Activity feed, parties, screenshot showcase";
         case 4:
-            return "Queue, verify, update";
+            return "Level progression, milestones, showcase";
         case 5:
-            return "Session and runtime";
+            return "Network queue, background updates, verification";
         case 6:
-            return "Apps, builds, publishing";
+            return "Display, controller haptics, cloud sync, system";
         default:
-            return "Anvil";
+            return "Anvil OS";
         }
     }
 
@@ -464,9 +464,9 @@ PanelWindow {
         else if (action === "right")
             activeSection === 0 || activeSection === 1 ? moveGameSelection(1) : selectSection(activeSection + 1);
         else if (action === "up")
-            activeSection === 1 ? moveGameSelection(-4) : activeSection === 5 ? selectedSetting = Math.max(0, selectedSetting - 1) : selectSection(activeSection - 1);
+            activeSection === 1 ? moveGameSelection(-4) : activeSection === 6 ? selectedSetting = Math.max(0, selectedSetting - 1) : selectSection(activeSection - 1);
         else if (action === "down")
-            activeSection === 1 ? moveGameSelection(4) : activeSection === 5 ? selectedSetting = Math.min(settingsModel.count - 1, selectedSetting + 1) : selectSection(activeSection + 1);
+            activeSection === 1 ? moveGameSelection(4) : activeSection === 6 ? selectedSetting = Math.min(settingsModel.count - 1, selectedSetting + 1) : selectSection(activeSection + 1);
         else if (action === "south" && (activeSection === 0 || activeSection === 1))
             launchGame();
         else if (action === "start")
@@ -520,6 +520,11 @@ PanelWindow {
         ListElement {
             label: "Community"
             icon: "system-users-symbolic"
+        }
+
+        ListElement {
+            label: "Profile"
+            icon: "avatar-default-symbolic"
         }
 
         ListElement {
@@ -3288,11 +3293,348 @@ PanelWindow {
 
     }
 
+    // Flagship Console Profile Showcase (Tab 4: Profile)
+    Item {
+        id: fullProfilePage
+
+        anchors.fill: parent
+        visible: activeSection === 4
+
+        Row {
+            anchors.left: parent.left
+            anchors.leftMargin: contentLeft
+            anchors.right: parent.right
+            anchors.rightMargin: 54
+            anchors.top: parent.top
+            anchors.topMargin: 114
+            anchors.bottom: bottomHints.top
+            anchors.bottomMargin: 24
+            spacing: 24
+
+            // Left Col: Player ID Card, Gamertag, Level & Showcase
+            Rectangle {
+                width: 380
+                height: parent.height
+                radius: 12
+                color: "#f00e131a"
+                border.color: "#222f3e"
+                border.width: 1
+
+                Column {
+                    anchors.fill: parent
+                    anchors.margins: 24
+                    spacing: 16
+
+                    // Player Avatar & Tag
+                    Row {
+                        spacing: 16
+                        Rectangle {
+                            width: 64
+                            height: 64
+                            radius: 16
+                            gradient: Gradient {
+                                GradientStop { position: 0.0; color: "#ff6537" }
+                                GradientStop { position: 1.0; color: "#9a2104" }
+                            }
+                            border.color: "#ff8a66"
+                            border.width: 2
+                            Text {
+                                anchors.centerIn: parent
+                                text: profileGamerTag.length > 0 ? profileGamerTag.charAt(0).toUpperCase() : "M"
+                                color: "#ffffff"
+                                font.pixelSize: 28
+                                font.bold: true
+                            }
+                        }
+
+                        Column {
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: 3
+                            Text {
+                                text: profileGamerTag
+                                color: "#ffffff"
+                                font.pixelSize: 22
+                                font.bold: true
+                            }
+                            Row {
+                                spacing: 6
+                                Rectangle {
+                                    width: 8
+                                    height: 8
+                                    radius: 4
+                                    color: "#22c55e"
+                                    anchors.verticalCenter: parent.verticalCenter
+                                }
+                                Text {
+                                    text: "Steam Deck · Online"
+                                    color: "#22c55e"
+                                    font.pixelSize: 11
+                                    font.bold: true
+                                }
+                            }
+                            Text {
+                                text: "Member since 2021"
+                                color: "#8e9fad"
+                                font.pixelSize: 10
+                            }
+                        }
+                    }
+
+                    // Level Progress Card
+                    Rectangle {
+                        width: parent.width
+                        height: 72
+                        radius: 8
+                        color: "#161f2b"
+                        border.color: "#253446"
+
+                        Column {
+                            anchors.fill: parent
+                            anchors.margins: 12
+                            spacing: 6
+
+                            Row {
+                                width: parent.width
+                                Text {
+                                    text: "LEVEL 42"
+                                    color: "#ff6537"
+                                    font.pixelSize: 12
+                                    font.bold: true
+                                }
+                                Item { width: 1; height: 1; Layout.fillWidth: true }
+                                Text {
+                                    text: "2,840 / 3,000 XP"
+                                    color: "#8e9fad"
+                                    font.pixelSize: 11
+                                    anchors.right: parent.right
+                                }
+                            }
+
+                            Rectangle {
+                                width: parent.width
+                                height: 6
+                                radius: 3
+                                color: "#0c1117"
+                                Rectangle {
+                                    width: parent.width * 0.88
+                                    height: parent.height
+                                    radius: 3
+                                    gradient: Gradient {
+                                        GradientStop { position: 0.0; color: "#ff6537" }
+                                        GradientStop { position: 1.0; color: "#ff8a66" }
+                                    }
+                                }
+                            }
+
+                            Text {
+                                text: "160 XP to Level 43 · Next Reward: Obsidian Frame"
+                                color: "#64748b"
+                                font.pixelSize: 9
+                            }
+                        }
+                    }
+
+                    // Console Lifetime Stats
+                    Rectangle {
+                        width: parent.width
+                        height: 120
+                        radius: 8
+                        color: "#161f2b"
+                        border.color: "#253446"
+
+                        Grid {
+                            anchors.fill: parent
+                            anchors.margins: 14
+                            columns: 2
+                            spacing: 12
+
+                            Column {
+                                width: 150
+                                spacing: 2
+                                Text { text: "GAMES PLAYED"; color: "#64748b"; font.pixelSize: 9; font.bold: true }
+                                Text { text: gameModel.count.toString() + " Titles"; color: "#ffffff"; font.pixelSize: 15; font.bold: true }
+                            }
+
+                            Column {
+                                width: 150
+                                spacing: 2
+                                Text { text: "TOTAL PLAYTIME"; color: "#64748b"; font.pixelSize: 9; font.bold: true }
+                                Text { text: "1,426 Hours"; color: "#ffffff"; font.pixelSize: 15; font.bold: true }
+                            }
+
+                            Column {
+                                width: 150
+                                spacing: 2
+                                Text { text: "MILESTONES UNLOCKED"; color: "#64748b"; font.pixelSize: 9; font.bold: true }
+                                Text { text: "3,840 Milestones"; color: "#ff8a66"; font.pixelSize: 15; font.bold: true }
+                            }
+
+                            Column {
+                                width: 150
+                                spacing: 2
+                                Text { text: "COMPLETION RATE"; color: "#64748b"; font.pixelSize: 9; font.bold: true }
+                                Text { text: "68% Average"; color: "#22c55e"; font.pixelSize: 15; font.bold: true }
+                            }
+                        }
+                    }
+
+                    // Hardware & System Pill
+                    Rectangle {
+                        width: parent.width
+                        height: 38
+                        radius: 6
+                        color: "#121820"
+                        border.color: "#1e2936"
+                        Row {
+                            anchors.centerIn: parent
+                            spacing: 8
+                            Text { text: "🎮 Valve Steam Deck (eDP-1 1280x800)"; color: "#8e9fad"; font.pixelSize: 11; font.bold: true }
+                        }
+                    }
+                }
+            }
+
+            // Right Col: Recent Milestones, Badges & Hardware Status
+            Column {
+                width: parent.width - 404
+                height: parent.height
+                spacing: 14
+
+                Text {
+                    text: "Recent Milestones & Trophies"
+                    color: fg
+                    font.pixelSize: 20
+                    font.bold: true
+                }
+
+                Row {
+                    width: parent.width
+                    spacing: 12
+
+                    Repeater {
+                        model: [
+                            { icon: "🏆", title: "Relic Master", game: "Jak and Daxter", date: "Unlocked Today", xp: "+150 XP" },
+                            { icon: "⭐", title: "Wumpa King", game: "Crash Bandicoot", date: "Unlocked Yesterday", xp: "+100 XP" },
+                            { icon: "✦", title: "Archaeologist", game: "Outer Wilds", date: "3 Days ago", xp: "+250 XP" }
+                        ]
+
+                        Rectangle {
+                            width: (parent.width - 24) / 3
+                            height: 116
+                            radius: 8
+                            color: "#141c26"
+                            border.color: "#253446"
+
+                            Column {
+                                anchors.fill: parent
+                                anchors.margins: 14
+                                spacing: 6
+
+                                Row {
+                                    width: parent.width
+                                    Text { text: modelData.icon; font.pixelSize: 22 }
+                                    Text {
+                                        anchors.right: parent.right
+                                        text: modelData.xp
+                                        color: "#ff6537"
+                                        font.pixelSize: 10
+                                        font.bold: true
+                                    }
+                                }
+
+                                Text {
+                                    text: modelData.title
+                                    color: "#ffffff"
+                                    font.pixelSize: 14
+                                    font.bold: true
+                                    elide: Text.ElideRight
+                                    width: parent.width
+                                }
+
+                                Text {
+                                    text: modelData.game
+                                    color: "#8e9fad"
+                                    font.pixelSize: 11
+                                    elide: Text.ElideRight
+                                    width: parent.width
+                                }
+
+                                Text {
+                                    text: modelData.date
+                                    color: "#64748b"
+                                    font.pixelSize: 9
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Text {
+                    text: "Console Friends & Parties"
+                    color: fg
+                    font.pixelSize: 20
+                    font.bold: true
+                }
+
+                Row {
+                    width: parent.width
+                    spacing: 12
+
+                    Repeater {
+                        model: [
+                            { avatar: "NK", name: "Niko", game: "Elden Ring", status: "In Boss Fight", online: true },
+                            { avatar: "AM", name: "Amaya", game: "Outer Wilds", status: "Exploring Sun Station", online: true },
+                            { avatar: "RO", name: "Rowan", game: "Borderlands 3", status: "In Lobby (2/4)", online: true }
+                        ]
+
+                        Rectangle {
+                            width: (parent.width - 24) / 3
+                            height: 96
+                            radius: 8
+                            color: "#141c26"
+                            border.color: "#253446"
+
+                            Row {
+                                anchors.fill: parent
+                                anchors.margins: 14
+                                spacing: 12
+
+                                Rectangle {
+                                    width: 44
+                                    height: 44
+                                    radius: 22
+                                    color: "#1e2938"
+                                    border.color: "#38bdf8"
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: modelData.avatar
+                                        color: "#ffffff"
+                                        font.pixelSize: 15
+                                        font.bold: true
+                                    }
+                                }
+
+                                Column {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    spacing: 3
+                                    Text { text: modelData.name; color: "#ffffff"; font.pixelSize: 14; font.bold: true }
+                                    Text { text: modelData.game; color: "#ff6537"; font.pixelSize: 11; font.bold: true }
+                                    Text { text: modelData.status; color: "#64748b"; font.pixelSize: 10 }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     Item {
         id: downloadsPage
 
         anchors.fill: parent
-        visible: activeSection === 4
+        visible: activeSection === 5
 
         Column {
             anchors.left: parent.left
@@ -3396,7 +3738,7 @@ PanelWindow {
         id: settingsConsolePage
 
         anchors.fill: parent
-        visible: activeSection === 5
+        visible: activeSection === 6
 
         Text {
             anchors.left: parent.left
