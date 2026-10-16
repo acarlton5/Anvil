@@ -29,8 +29,8 @@ PanelWindow {
     readonly property color line: AnvilTheme.outline
     readonly property color fg: AnvilTheme.surfaceText
     readonly property color muted: AnvilTheme.surfaceVariantText
-    readonly property color ember: AnvilTheme.primary
-    readonly property color emberLight: AnvilTheme.secondary
+    readonly property color ember: "#107c10"
+    readonly property color emberLight: "#22c55e"
     readonly property color forgeGold: "#d9ad5f"
     readonly property color relayBlue: "#7aa8ff"
     readonly property color green: "#65d797"
@@ -1203,121 +1203,23 @@ PanelWindow {
 
             anchors.left: parent.left
             anchors.leftMargin: contentLeft
-            width: Math.min(980, parent.width * 0.58)
+            width: Math.min(980, parent.width * 0.62)
             anchors.top: parent.top
-            anchors.topMargin: 132
+            anchors.topMargin: 110
             anchors.bottom: shelf.top
             anchors.bottomMargin: 8
             color: "transparent"
-            border.color: "transparent"
-
-            Image {
-                anchors.fill: parent
-                source: gameArt(currentGame())
-                fillMode: Image.PreserveAspectCrop
-                visible: false
-            }
-
-            Rectangle {
-                anchors.fill: parent
-                visible: false
-
-                Text {
-                    anchors.centerIn: parent
-                    text: initials(currentGame() ? currentGame().name : "Anvil")
-                    color: "#f4c4ae"
-                    opacity: 0.55
-                    font.pixelSize: 132
-                    font.bold: true
-                }
-
-                gradient: Gradient {
-                    orientation: Gradient.Horizontal
-
-                    GradientStop {
-                        position: 0
-                        color: "#18222b"
-                    }
-
-                    GradientStop {
-                        position: 0.46
-                        color: "#27333a"
-                    }
-
-                    GradientStop {
-                        position: 1
-                        color: "#50351f"
-                    }
-
-                }
-
-            }
-
-            Rectangle {
-                anchors.fill: parent
-                visible: false
-
-                gradient: Gradient {
-                    orientation: Gradient.Horizontal
-
-                    GradientStop {
-                        position: 0
-                        color: "#f807090d"
-                    }
-
-                    GradientStop {
-                        position: 0.42
-                        color: "#7607090d"
-                    }
-
-                    GradientStop {
-                        position: 0.72
-                        color: "#2407090d"
-                    }
-
-                    GradientStop {
-                        position: 1
-                        color: "#9907090d"
-                    }
-
-                }
-
-            }
-
-            Rectangle {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                height: Math.min(210, parent.height * 0.46)
-                visible: false
-
-                gradient: Gradient {
-                    GradientStop {
-                        position: 0
-                        color: "#0007090d"
-                    }
-
-                    GradientStop {
-                        position: 1
-                        color: "#f807090d"
-                    }
-
-                }
-
-            }
 
             Column {
                 anchors.left: parent.left
-                anchors.leftMargin: 0
                 anchors.right: parent.right
-                anchors.rightMargin: 34
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 28
-                spacing: 10
+                anchors.bottomMargin: 24
+                spacing: 12
 
                 Image {
                     width: Math.min(480, parent.width)
-                    height: 120
+                    height: 110
                     source: currentGame() ? (currentGame().logo || "") : ""
                     fillMode: Image.PreserveAspectFit
                     horizontalAlignment: Image.AlignLeft
@@ -1328,7 +1230,7 @@ PanelWindow {
                 Text {
                     text: currentGame() ? currentGame().name : (libraryScanRunning ? "Scanning Cartridges" : "Anvil Library")
                     color: "#ffffff"
-                    font.pixelSize: 42
+                    font.pixelSize: 40
                     font.bold: true
                     font.letterSpacing: -0.5
                     width: Math.min(680, parent.width)
@@ -1336,21 +1238,21 @@ PanelWindow {
                     visible: !currentGame() || !currentGame().logo
                 }
 
+                // Xbox Feature Badges (e.g. X|S ENHANCED, DECK VERIFIED)
                 Row {
                     spacing: 8
                     visible: currentGame() !== null
 
                     Rectangle {
                         height: 22
-                        width: tagPill.implicitWidth + 16
+                        width: xsText.implicitWidth + 16
                         radius: 4
-                        color: "#1a2434"
-                        border.color: "#2d405a"
+                        color: "#107c10"
                         Text {
-                            id: tagPill
+                            id: xsText
                             anchors.centerIn: parent
-                            text: (currentGame() && currentGame().proton) ? currentGame().proton.toUpperCase() : "READY TO PLAY"
-                            color: "#38bdf8"
+                            text: "X|S ENHANCED"
+                            color: "#ffffff"
                             font.pixelSize: 9
                             font.bold: true
                             font.letterSpacing: 0.8
@@ -1359,15 +1261,15 @@ PanelWindow {
 
                     Rectangle {
                         height: 22
-                        width: verifiedPill.implicitWidth + 16
+                        width: protonText.implicitWidth + 16
                         radius: 4
-                        color: "#13281c"
-                        border.color: "#1e4e33"
+                        color: "#16202c"
+                        border.color: "#263548"
                         Text {
-                            id: verifiedPill
+                            id: protonText
                             anchors.centerIn: parent
-                            text: "DECK COMPATIBLE"
-                            color: "#4ade80"
+                            text: (currentGame() && currentGame().proton) ? currentGame().proton.toUpperCase() : "READY TO PLAY"
+                            color: "#94a3b8"
                             font.pixelSize: 9
                             font.bold: true
                             font.letterSpacing: 0.8
@@ -1375,23 +1277,20 @@ PanelWindow {
                     }
                 }
 
+                // Xbox Action Buttons Row ([A] PLAY, [X] OPTIONS)
                 Row {
                     spacing: 12
                     visible: currentGame() !== null
 
                     Rectangle {
-                        width: 154
+                        width: 160
                         height: 48
-                        radius: 24
-                        gradient: Gradient {
-                            orientation: Gradient.Horizontal
-                            GradientStop { position: 0.0; color: "#ff5722" }
-                            GradientStop { position: 1.0; color: "#ff7043" }
-                        }
+                        radius: 8
+                        color: ember
 
                         Row {
                             anchors.centerIn: parent
-                            spacing: 9
+                            spacing: 10
 
                             Rectangle {
                                 width: 22
@@ -1402,7 +1301,7 @@ PanelWindow {
                                 Text {
                                     anchors.centerIn: parent
                                     text: "A"
-                                    color: "#ff5722"
+                                    color: "#107c10"
                                     font.pixelSize: 13
                                     font.bold: true
                                 }
@@ -1410,11 +1309,11 @@ PanelWindow {
 
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: "PLAY"
+                                text: "PLAY GAME"
                                 color: "#ffffff"
-                                font.pixelSize: 15
+                                font.pixelSize: 14
                                 font.bold: true
-                                font.letterSpacing: 1.2
+                                font.letterSpacing: 1.0
                             }
                         }
 
@@ -1425,31 +1324,47 @@ PanelWindow {
                     }
 
                     Rectangle {
-                        width: 48
+                        width: 130
                         height: 48
-                        radius: 24
-                        color: "#1a2432"
-                        border.color: "#2a394a"
+                        radius: 8
+                        color: "#1a232f"
+                        border.color: "#2c3b4e"
 
-                        Text {
+                        Row {
                             anchors.centerIn: parent
-                            text: "⚙"
-                            color: "#94a3b8"
-                            font.pixelSize: 18
+                            spacing: 8
+
+                            Rectangle {
+                                width: 22
+                                height: 22
+                                radius: 11
+                                color: "#2c3b4e"
+                                anchors.verticalCenter: parent.verticalCenter
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "X"
+                                    color: "#38bdf8"
+                                    font.pixelSize: 12
+                                    font.bold: true
+                                }
+                            }
+
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "OPTIONS"
+                                color: "#94a3b8"
+                                font.pixelSize: 12
+                                font.bold: true
+                            }
                         }
 
                         MouseArea {
                             anchors.fill: parent
                             onClicked: selectSection(5)
                         }
-                    }                }
-
                     }
-
                 }
-
             }
-
         }
 
         Row {
