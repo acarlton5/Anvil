@@ -18,7 +18,26 @@ def ensure_single_instance(name):
     try:
         _lock_fd = os.open(lock_file, os.O_CREAT | os.O_RDWR, 0o600)
         fcntl.flock(_lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        os.ftruncate(_lock_fd, 0)
+        os.write(_lock_fd, f"{os.getpid()}\n".encode())
     except (BlockingIOError, OSError):
+        # Check if previous process is orphaned or dead
+        try:
+            with open(lock_file, "r") as lf:
+                old_pid = int(lf.read().strip())
+            if old_pid != os.getpid():
+                try:
+                    os.kill(old_pid, 15) # SIGTERM
+                    time.sleep(0.15)
+                except OSError:
+                    pass
+                _lock_fd = os.open(lock_file, os.O_CREAT | os.O_RDWR, 0o600)
+                fcntl.flock(_lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                os.ftruncate(_lock_fd, 0)
+                os.write(_lock_fd, f"{os.getpid()}\n".encode())
+                return
+        except Exception:
+            pass
         sys.exit(0)
 
 EV_KEY = 1
@@ -141,8 +160,8 @@ def send_action(anvil_root, action, controller):
     # Instant stream to parent Quickshell daemon via stdout:
     try:
         print(f"NAV {action} {family} {name}", flush=True)
-    except OSError:
-        pass
+    except (BrokenPipeError, OSError):
+        sys.exit(0)
 
     # Fallback to IPC if explicitly configured or running standalone
     if os.environ.get("ANVIL_IPC_FALLBACK") == "1":
@@ -273,6 +292,8 @@ def main():
 
         try:
             while True:
+                if os.getppid() == 1:
+                    sys.exit(0)
                 readable, _, _ = select.select(fds, [], [], 1.0)
                 for fd in readable:
                     controller = fd_controllers.get(fd, {})
