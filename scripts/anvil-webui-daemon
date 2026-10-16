@@ -122,13 +122,33 @@ class AnvilAPIHandler(SimpleHTTPRequestHandler):
         query = urllib.parse.parse_qs(parsed.query)
 
         if path == "/api/state":
+            bat_pct = 100
+            bat_charging = False
+            try:
+                for b in ("BAT1", "BAT0", "battery"):
+                    cap_file = f"/sys/class/power_supply/{b}/capacity"
+                    stat_file = f"/sys/class/power_supply/{b}/status"
+                    if os.path.exists(cap_file):
+                        with open(cap_file) as f:
+                            bat_pct = int(f.read().strip())
+                        if os.path.exists(stat_file):
+                            with open(stat_file) as sf:
+                                bat_charging = "Charging" in sf.read()
+                        break
+            except Exception:
+                pass
+
             self.send_json({
                 "games": CACHED_GAMES,
                 "drives": CACHED_DRIVES,
                 "game_running": GAME_RUNNING,
+                "battery": {
+                    "percent": bat_pct,
+                    "charging": bat_charging
+                },
                 "system": {
                     "model": "Valve Steam Deck (Jupiter)",
-                    "os": "Anvil Console OS v3.0 (Tauri/WebKit2 Engine)",
+                    "os": "Anvil Console OS v3.5 (Xbox Series X Shell)",
                     "resolution": "1280 x 800 (16:10 Native)",
                     "refresh_rate": "60 Hz",
                     "runner": "GE-Proton11-9",

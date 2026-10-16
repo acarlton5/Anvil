@@ -1,19 +1,15 @@
 :root {
-  --bg-deep: #06090e;
-  --bg-surface: rgba(16, 23, 34, 0.72);
-  --bg-card: rgba(22, 31, 46, 0.78);
-  --bg-card-hover: rgba(30, 42, 62, 0.88);
-  --ember: #ff6537;
-  --ember-light: #ff8a66;
-  --ember-glow: rgba(255, 101, 55, 0.42);
-  --cyan: #38bdf8;
-  --green: #22c55e;
-  --gold: #f59e0b;
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-highlight: rgba(255, 255, 255, 0.16);
+  --bg-deep: #0b0e13;
+  --xbox-Acrylic: rgba(20, 24, 31, 0.84);
+  --xbox-card: rgba(28, 34, 44, 0.86);
+  --xbox-card-solid: #1b212b;
+  --xbox-green: #107c10;
+  --xbox-green-bright: #22c55e;
+  --anvil-accent: #ff6537;
+  --focus-ring: #ffffff;
+  --text-primary: #ffffff;
+  --text-secondary: #a1aab8;
+  --text-muted: #6c7686;
 }
 
 * {
@@ -30,19 +26,19 @@ html, body {
   overflow: hidden;
   background-color: var(--bg-deep);
   color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 /* =========================================
-   1. AMBIENT CINEMATIC BACKDROP
+   1. FULL-BLEED DYNAMIC XBOX BACKDROP
    ========================================= */
 #backdrop-container {
   position: fixed;
   inset: 0;
   z-index: 0;
   overflow: hidden;
-  background: radial-gradient(circle at 70% 30%, #131c2b 0%, #06090e 100%);
+  background: #0b0e13;
 }
 
 #backdrop-img {
@@ -51,13 +47,13 @@ html, body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 20%;
-  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), filter 0.45s ease;
-  opacity: 0.85;
+  object-position: center 15%;
+  transition: opacity 0.35s ease, filter 0.35s ease, transform 0.5s ease;
+  opacity: 0.92;
 }
 
 body.subpage #backdrop-img {
-  filter: blur(28px) brightness(0.32) saturate(1.2);
+  filter: blur(36px) brightness(0.28) saturate(1.15);
   transform: scale(1.06);
 }
 
@@ -65,194 +61,247 @@ body.subpage #backdrop-img {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(6, 9, 14, 0.96) 0%, rgba(6, 9, 14, 0.78) 38%, rgba(6, 9, 14, 0.22) 72%, rgba(6, 9, 14, 0.65) 100%),
-    linear-gradient(180deg, rgba(6, 9, 14, 0.85) 0%, rgba(6, 9, 14, 0.08) 22%, rgba(6, 9, 14, 0.55) 64%, rgba(6, 9, 14, 0.98) 92%, #06090e 100%);
+    linear-gradient(180deg,
+      rgba(8, 11, 16, 0.68) 0%,
+      rgba(8, 11, 16, 0.05) 18%,
+      rgba(8, 11, 16, 0.12) 45%,
+      rgba(8, 11, 16, 0.78) 70%,
+      rgba(8, 11, 16, 0.97) 90%,
+      #080b10 100%),
+    linear-gradient(90deg,
+      rgba(8, 11, 16, 0.75) 0%,
+      rgba(8, 11, 16, 0.25) 40%,
+      transparent 75%);
 }
 
 /* =========================================
-   2. TOP CONSOLE STATUS & NAVIGATION BAR
+   2. XBOX SERIES X FLOATING TOP HEADER
    ========================================= */
-#top-bar {
+#xbox-topbar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 68px;
+  height: 74px;
   z-index: 30;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 40px;
-  background: linear-gradient(180deg, rgba(6, 9, 14, 0.92) 0%, rgba(6, 9, 14, 0.55) 75%, transparent 100%);
-  backdrop-filter: blur(12px);
+  padding: 0 46px;
 }
 
-.profile-pill {
+/* Top-Left: Gamerpic + Gamertag + Gamerscore (No Boxy Pill Border) */
+.xbox-profile {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 6px 14px 6px 6px;
-  border-radius: 999px;
-  background: rgba(20, 29, 43, 0.75);
-  border: 1px solid var(--border-subtle);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
   cursor: pointer;
-  transition: all 0.2s ease;
+  padding: 6px 10px 6px 6px;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  transition: all 0.16s ease;
 }
 
-.profile-pill:hover {
-  border-color: var(--ember);
+.xbox-profile:hover,
+.xbox-profile.focused {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--focus-ring);
 }
 
-.avatar-circle {
-  width: 34px;
-  height: 34px;
+.xbox-avatar {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--ember) 0%, #b82c04 100%);
+  background: linear-gradient(135deg, #107c10 0%, #0a4d0a 100%);
+  border: 2px solid rgba(255, 255, 255, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 15px;
+  font-size: 17px;
   color: #fff;
-  box-shadow: 0 0 12px var(--ember-glow);
   position: relative;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
 }
 
-.online-dot {
+.xbox-avatar .online-dot {
   position: absolute;
   bottom: -1px;
   right: -1px;
-  width: 10px;
-  height: 10px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
-  background: var(--green);
-  border: 2px solid #0b1017;
+  background: #22c55e;
+  border: 2px solid #0b0e13;
 }
 
-.profile-meta {
+.xbox-profile-text {
   display: flex;
   flex-direction: column;
-  line-height: 1.15;
+  gap: 2px;
 }
 
-.profile-name {
-  font-size: 13px;
+.xbox-gamertag {
+  font-size: 15px;
   font-weight: 700;
-  color: #fff;
+  color: #ffffff;
+  letter-spacing: 0.01em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
 }
 
-.profile-level {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--ember-light);
-  letter-spacing: 0.04em;
-}
-
-/* Center Nav Pills */
-.nav-cluster {
+.xbox-gamerscore-row {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(13, 19, 29, 0.72);
-  padding: 5px 8px;
-  border-radius: 999px;
-  border: 1px solid var(--border-subtle);
-  backdrop-filter: blur(18px);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
-}
-
-.bumper-badge {
-  padding: 4px 9px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--text-secondary);
-  letter-spacing: 0.05em;
-  cursor: pointer;
-}
-
-.nav-tab {
-  position: relative;
-  padding: 7px 16px;
-  border-radius: 999px;
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  font-weight: 600;
+  color: #d1d5db;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.75);
 }
 
-.nav-tab:hover {
-  color: #fff;
+.g-icon {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #0b0e13;
+  font-size: 10px;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.nav-tab.active {
-  color: #fff;
-  background: linear-gradient(135deg, rgba(255, 101, 55, 0.24) 0%, rgba(255, 101, 55, 0.08) 100%);
-  border: 1px solid rgba(255, 101, 55, 0.65);
-  box-shadow: 0 0 18px rgba(255, 101, 55, 0.25);
-}
-
-/* Right System Cluster */
-.status-cluster {
+/* Top-Center: Iconic Xbox Series X Floating Circular Nav Icons */
+.xbox-top-nav {
   display: flex;
   align-items: center;
   gap: 14px;
 }
 
-.status-pill {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: rgba(20, 29, 43, 0.72);
-  border: 1px solid var(--border-subtle);
-  font-size: 12px;
-  font-weight: 700;
-  color: #e2e8f0;
-  white-space: nowrap;
-}
-
-.status-icon {
-  width: 15px;
-  height: 15px;
-  fill: currentColor;
-  opacity: 0.85;
-}
-
-.power-btn {
-  width: 34px;
-  height: 34px;
+.top-nav-circle {
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  background: rgba(20, 29, 43, 0.75);
-  border: 1px solid var(--border-subtle);
+  background: rgba(20, 25, 34, 0.68);
+  backdrop-filter: blur(16px);
+  border: 2.5px solid transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-secondary);
+  color: #d1d5db;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 }
 
-.power-btn:hover {
-  color: #fff;
-  border-color: var(--ember);
-  background: rgba(255, 101, 55, 0.2);
+.top-nav-circle svg {
+  width: 19px;
+  height: 19px;
+  fill: currentColor;
+}
+
+.top-nav-circle.active {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.top-nav-circle.focused {
+  transform: scale(1.14);
+  background: #ffffff;
+  color: #0b0e13;
+  border-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35), 0 8px 20px rgba(0, 0, 0, 0.65);
+}
+
+.top-nav-label {
+  position: absolute;
+  bottom: -22px;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: all 0.15s ease;
+  pointer-events: none;
+}
+
+.top-nav-circle.focused .top-nav-label,
+.top-nav-circle.active .top-nav-label {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Top-Right: Clean Floating Console Status (Controller, Wi-Fi, Battery, Clock) */
+.xbox-status-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #ffffff;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.8));
+}
+
+.status-svg {
+  width: 19px;
+  height: 19px;
+  fill: currentColor;
+  opacity: 0.92;
+}
+
+.battery-cluster {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.battery-bar-shell {
+  width: 24px;
+  height: 12px;
+  border: 1.8px solid #ffffff;
+  border-radius: 3px;
+  padding: 1.5px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.battery-bar-shell::after {
+  content: "";
+  position: absolute;
+  right: -4px;
+  top: 2.5px;
+  width: 2px;
+  height: 4px;
+  background: #ffffff;
+  border-radius: 0 1px 1px 0;
+}
+
+.battery-bar-fill {
+  height: 100%;
+  background: #22c55e;
+  border-radius: 1px;
+  width: 85%;
+}
+
+.xbox-clock {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
 /* =========================================
-   3. MAIN VIEWPORT & SECTIONS
+   3. MAIN VIEWPORT & PAGES
    ========================================= */
 #viewport {
   position: fixed;
-  top: 68px;
-  bottom: 48px;
+  top: 74px;
+  bottom: 40px;
   left: 0;
   right: 0;
   z-index: 10;
@@ -261,569 +310,517 @@ body.subpage #backdrop-img {
 .page {
   position: absolute;
   inset: 0;
-  padding: 16px 44px 20px 44px;
+  padding: 10px 46px 12px 46px;
   display: none;
-  opacity: 0;
-  transition: opacity 0.22s ease;
 }
 
 .page.active {
   display: flex;
-  opacity: 1;
 }
 
 /* =========================================
-   PAGE 0: HOME (Hero Spotlight + Carousel)
+   PAGE 0: XBOX SERIES X HOME DASHBOARD
    ========================================= */
 #page-home {
   flex-direction: column;
-  justify-content: space-between;
-}
-
-.hero-stage {
-  margin-top: 24px;
-  max-width: 680px;
-  display: flex;
-  flex-direction: column;
+  justify-content: flex-end;
   gap: 14px;
 }
 
-.hero-logo {
-  max-width: 380px;
-  max-height: 115px;
+/* Middle-Left Game Logo & Meta (leaves upper screen open for Hero Art) */
+.xbox-hero-callout {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  max-width: 560px;
+  margin-bottom: 2px;
+  pointer-events: none;
+}
+
+.xbox-hero-logo {
+  max-width: 320px;
+  max-height: 92px;
   width: auto;
   height: auto;
   object-fit: contain;
   object-position: left bottom;
-  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.85));
+  filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.92));
 }
 
-.hero-title {
-  font-size: 42px;
+.xbox-hero-title {
+  font-size: 36px;
   font-weight: 800;
   letter-spacing: -0.02em;
-  line-height: 1.08;
-  text-shadow: 0 6px 24px rgba(0, 0, 0, 0.85);
+  line-height: 1.05;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.95);
 }
 
-.hero-badges {
+.xbox-hero-meta {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
-}
-
-.badge {
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 10px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 700;
   letter-spacing: 0.06em;
-  text-transform: uppercase;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.badge-ember {
-  background: var(--ember);
-  color: #fff;
-  box-shadow: 0 4px 14px var(--ember-glow);
-}
-
-.badge-glass {
-  background: rgba(15, 23, 36, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.16);
   color: #e2e8f0;
+  text-transform: uppercase;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+}
+
+.xbox-tag {
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(15, 20, 28, 0.78);
   backdrop-filter: blur(8px);
 }
 
-.badge-verified {
-  background: rgba(34, 197, 94, 0.16);
-  border: 1px solid rgba(34, 197, 94, 0.5);
-  color: #4ade80;
-}
-
-.hero-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 4px;
-}
-
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  height: 48px;
-  padding: 0 24px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #ff7449 0%, #e04a1f 100%);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  box-shadow: 0 8px 24px var(--ember-glow), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.btn-primary:hover {
-  transform: translateY(-1px) scale(1.02);
-  box-shadow: 0 12px 30px rgba(255, 101, 55, 0.6);
-}
-
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  height: 48px;
-  padding: 0 20px;
-  border-radius: 10px;
-  background: rgba(20, 29, 43, 0.78);
-  color: #e2e8f0;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  border: 1px solid var(--border-highlight);
-  backdrop-filter: blur(12px);
-  cursor: pointer;
-}
-
-.glyph-circle {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.95);
-  color: #090d14;
-  font-size: 11px;
-  font-weight: 900;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.glyph-circle.dark {
-  background: rgba(255, 255, 255, 0.14);
+.xbox-tag.green {
+  background: #107c10;
   color: #fff;
 }
 
-/* Carousel Shelf */
-.shelf-section {
+/* Main Xbox Lower Tile Row — Baseline Aligned */
+.xbox-main-shelf {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.shelf-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.shelf-title {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-}
-
-.carousel-track {
-  display: flex;
-  align-items: center;
-  gap: 18px;
+  align-items: flex-end;
+  gap: 14px;
   overflow-x: auto;
-  padding: 14px 8px 18px 8px;
+  padding: 12px 8px 8px 6px;
+  height: 266px;
   scroll-behavior: smooth;
 }
 
-.carousel-track::-webkit-scrollbar {
+.xbox-main-shelf::-webkit-scrollbar {
   display: none;
 }
 
-.game-card {
+/* Unfocused Game Tile: 100% Opaque, Compact, Crisp */
+.xbox-tile {
   position: relative;
-  flex: 0 0 162px;
-  height: 243px;
-  border-radius: 12px;
-  background: #121a26;
+  flex: 0 0 144px;
+  height: 186px;
+  border-radius: 10px;
+  background: var(--xbox-card-solid);
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55);
-  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
-  opacity: 0.72;
   cursor: pointer;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.65);
+  transition: width 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+              height 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+              flex-basis 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.2s ease;
+  border: 3px solid transparent;
 }
 
-.game-card img {
+.xbox-tile img.tile-art {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.game-card .card-shade {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 25%, transparent 60%, rgba(6, 9, 14, 0.92) 100%);
-  pointer-events: none;
-}
-
-.game-card .card-title {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
-  font-size: 12px;
-  font-weight: 700;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: all 0.2s ease;
-}
-
-.game-card.focused {
-  transform: translateY(-8px) scale(1.07);
-  opacity: 1;
-  border-color: var(--ember);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.75), 0 0 22px var(--ember-glow);
+/* Focused Game Tile: Expands Taller like Xbox Series X Active Tile! */
+.xbox-tile.focused {
+  flex: 0 0 184px;
+  height: 244px;
+  border-color: var(--focus-ring);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.28), 0 18px 40px rgba(0, 0, 0, 0.85);
   z-index: 5;
 }
 
-.game-card.focused .card-title {
+.xbox-tile-footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 38px;
+  background: linear-gradient(180deg, rgba(14, 18, 24, 0.88) 0%, #0e1218 100%);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.18s ease;
+}
+
+.xbox-tile.focused .xbox-tile-footer {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* =========================================
-   PAGE 1: LIBRARY (Full Grid + Details Card)
-   ========================================= */
-#page-library {
-  gap: 28px;
-}
-
-.library-left {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  height: 100%;
-}
-
-.section-header-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-}
-
-.section-title {
-  font-size: 30px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-.filter-pills {
-  display: flex;
-  gap: 8px;
-}
-
-.filter-pill {
-  padding: 5px 12px;
-  border-radius: 999px;
-  font-size: 11px;
+.tile-play-text {
+  font-size: 12px;
   font-weight: 700;
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-subtle);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.filter-pill.active {
-  background: rgba(255, 101, 55, 0.18);
-  color: #fff;
-  border-color: var(--ember);
+.a-btn-mini {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #0b0e13;
+  font-size: 10px;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.library-grid {
-  flex: 1;
+.disc-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(11, 14, 19, 0.82);
+  font-size: 9px;
+  font-weight: 800;
+  color: #e2e8f0;
+  letter-spacing: 0.04em;
+}
+
+/* Bottom Pinned Xbox Quick-Action Row ("My games & apps", "Cartridge Builder", etc.) */
+.xbox-quick-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: 232px;
-  gap: 16px;
-  overflow-y: auto;
-  padding: 14px 12px 24px 12px;
+  gap: 14px;
+  height: 76px;
 }
 
-.library-grid::-webkit-scrollbar {
-  width: 6px;
-}
-.library-grid::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.16);
-  border-radius: 3px;
-}
-
-.library-grid .game-card {
-  width: 100%;
-  height: 100%;
-  flex: none;
-}
-
-.library-preview {
-  width: 350px;
-  height: 100%;
-  border-radius: 16px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-highlight);
-  backdrop-filter: blur(24px);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  position: relative;
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6);
-}
-
-.preview-art {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.55;
-}
-
-.preview-gradient {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(10, 14, 22, 0.15) 0%, rgba(10, 14, 22, 0.82) 58%, #0a0e16 100%);
-}
-
-.preview-content {
-  position: relative;
-  z-index: 2;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-/* =========================================
-   PAGE 6: SETTINGS (SteamOS / Xbox Blade UI)
-   ========================================= */
-#page-settings {
-  gap: 24px;
-}
-
-.settings-sidebar {
-  width: 330px;
-  height: 100%;
-  border-radius: 16px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-highlight);
-  backdrop-filter: blur(24px);
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
-}
-
-.settings-cat {
+.xbox-quick-card {
+  border-radius: 10px;
+  background: rgba(24, 30, 40, 0.86);
+  backdrop-filter: blur(20px);
+  padding: 0 18px;
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 12px 14px;
-  border-radius: 12px;
   cursor: pointer;
-  border: 1px solid transparent;
-  transition: all 0.18s ease;
+  border: 3px solid transparent;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  transition: all 0.16s ease;
 }
 
-.settings-cat:hover {
-  background: rgba(255, 255, 255, 0.05);
+.xbox-quick-card.focused {
+  border-color: var(--focus-ring);
+  background: rgba(36, 45, 60, 0.95);
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25), 0 12px 28px rgba(0, 0, 0, 0.75);
 }
 
-.settings-cat.active {
-  background: linear-gradient(135deg, rgba(255, 101, 55, 0.22) 0%, rgba(30, 41, 59, 0.85) 100%);
-  border-color: var(--ember);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
-}
-
-.cat-icon-box {
-  width: 40px;
-  height: 40px;
+.quick-icon-circle {
+  width: 42px;
+  height: 42px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-secondary);
+  color: #ffffff;
   flex-shrink: 0;
 }
 
-.settings-cat.active .cat-icon-box {
-  background: var(--ember);
-  color: #fff;
-  box-shadow: 0 0 14px var(--ember-glow);
+.quick-icon-circle.green {
+  background: #107c10;
 }
 
-.cat-text {
+.quick-icon-circle.ember {
+  background: var(--anvil-accent);
+}
+
+.quick-text {
   display: flex;
   flex-direction: column;
   gap: 2px;
   overflow: hidden;
 }
 
-.cat-title {
+.quick-title {
   font-size: 14px;
   font-weight: 700;
-  color: #f1f5f9;
+  color: #ffffff;
+  white-space: nowrap;
 }
 
-.cat-sub {
+.quick-sub {
   font-size: 11px;
+  font-weight: 600;
   color: var(--text-secondary);
+  white-space: nowrap;
 }
 
-.settings-cat.active .cat-sub {
-  color: var(--ember-light);
+/* =========================================
+   PAGE 1: XBOX "MY GAMES & APPS" LIBRARY
+   ========================================= */
+#page-library {
+  gap: 28px;
+  padding-top: 14px;
 }
 
-.settings-panel {
-  flex: 1;
+.xbox-lib-sidebar {
+  width: 240px;
   height: 100%;
-  border-radius: 16px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-highlight);
-  backdrop-filter: blur(24px);
-  padding: 26px 30px;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  justify-content: space-between;
+  padding-right: 12px;
 }
 
-.panel-header h2 {
-  font-size: 24px;
+.xbox-lib-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.xbox-lib-header {
+  font-size: 26px;
   font-weight: 800;
-  margin-bottom: 4px;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
 }
 
-.panel-header p {
-  font-size: 13px;
+.xbox-side-item {
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--text-secondary);
-}
-
-.divider {
-  height: 1px;
-  background: var(--border-subtle);
-  width: 100%;
-}
-
-/* Settings Cards */
-.setting-card {
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
-  border-radius: 12px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  gap: 18px;
+  border: 2.5px solid transparent;
 }
 
-.setting-card.highlight {
-  background: linear-gradient(135deg, rgba(255, 101, 55, 0.16) 0%, rgba(22, 31, 46, 0.9) 100%);
-  border: 1.5px solid var(--ember);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+.xbox-side-item.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-weight: 700;
 }
 
-.drive-card {
+.xbox-storage-box {
+  background: rgba(22, 28, 38, 0.85);
+  border-radius: 10px;
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  gap: 8px;
+}
+
+.xbox-lib-main {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
+}
+
+.xbox-lib-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  padding: 0 8px;
+}
+
+.xbox-lib-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-auto-rows: 246px;
+  gap: 16px;
+  overflow-y: auto;
+  padding: 10px 12px 24px 8px;
+}
+
+.xbox-lib-grid::-webkit-scrollbar {
+  width: 6px;
+}
+.xbox-lib-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.lib-card {
+  position: relative;
+  border-radius: 8px;
+  background: var(--xbox-card-solid);
+  overflow: hidden;
+  cursor: pointer;
+  border: 3px solid transparent;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
+  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.lib-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lib-card.focused {
+  transform: scale(1.04);
+  border-color: var(--focus-ring);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.28), 0 14px 32px rgba(0, 0, 0, 0.8);
+  z-index: 4;
+}
+
+.lib-card-title-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 8px 10px;
+  background: rgba(12, 16, 22, 0.92);
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.lib-card.focused .lib-card-title-bar {
+  opacity: 1;
+}
+
+/* =========================================
+   PAGE 2: XBOX STORE
+   ========================================= */
+#page-store {
+  flex-direction: column;
+  gap: 18px;
+  padding-top: 14px;
+}
+
+/* =========================================
+   PAGE 3: XBOX SETTINGS (Clean Slate Tiles, Single Focus Ring)
+   ========================================= */
+#page-settings {
+  gap: 28px;
+  padding-top: 14px;
+}
+
+.xbox-settings-sidebar {
+  width: 260px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.xbox-settings-cat {
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border: 2.5px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.xbox-settings-cat.active {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.xbox-settings-cat.focused {
+  border-color: var(--focus-ring);
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.xbox-settings-content {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 4px 8px 20px 4px;
+}
+
+.xbox-slate-card {
+  background: rgba(26, 32, 42, 0.9);
+  backdrop-filter: blur(20px);
+  border-radius: 10px;
   padding: 18px 22px;
-  border-radius: 14px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  border: 3px solid transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
 
-.drive-card.active-drive {
-  border-color: var(--ember);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 16px rgba(255, 101, 55, 0.14);
+.xbox-slate-card.focused {
+  border-color: var(--focus-ring);
+  background: rgba(36, 44, 58, 0.96);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25), 0 12px 28px rgba(0, 0, 0, 0.7);
 }
 
-.drive-header {
+.slate-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
 }
 
-.drive-title {
+.slate-title {
   font-size: 16px;
-  font-weight: 800;
-  color: #fff;
+  font-weight: 700;
+  color: #ffffff;
 }
 
-.settings-panel-title {
-  font-size: 26px;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: -0.01em;
-}
-
-.settings-panel-sub {
-  font-size: 13px;
+.slate-sub {
+  font-size: 12px;
   color: var(--text-secondary);
-  margin-top: 4px;
+  margin-top: 3px;
 }
 
-.card-badge-top {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  padding: 3px 7px;
-  border-radius: 5px;
-  background: rgba(6, 9, 14, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  backdrop-filter: blur(6px);
-  font-size: 9px;
+.xbox-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #0b0e13;
+  font-size: 13px;
   font-weight: 800;
-  letter-spacing: 0.06em;
-  color: #e2e8f0;
-  pointer-events: none;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
-.card-play-overlay {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
-  padding: 6px 0;
-  border-radius: 7px;
-  background: linear-gradient(135deg, #ff7449 0%, #e04a1f 100%);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 800;
-  text-align: center;
-  letter-spacing: 0.06em;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.65);
-  opacity: 0;
-  transform: translateY(6px);
-  transition: all 0.2s ease;
-  pointer-events: none;
+.progress-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.5);
+  overflow: hidden;
 }
 
-.game-card.focused .card-play-overlay {
-  opacity: 1;
-  transform: translateY(0);
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: #107c10;
 }
 
 .pad-matrix {
@@ -835,142 +832,190 @@ body.subpage #backdrop-img {
 
 .pad-key {
   padding: 10px 6px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
   text-align: center;
   font-size: 11px;
   font-weight: 800;
   color: var(--text-secondary);
-  transition: all 0.12s ease;
 }
 
 .pad-key.pressed {
-  background: var(--ember);
-  border-color: #fff;
-  color: #fff;
-  box-shadow: 0 0 16px var(--ember-glow);
-  transform: scale(1.05);
+  background: #ffffff;
+  color: #0b0e13;
 }
 
-.drive-badge {
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
-  background: rgba(255, 101, 55, 0.15);
-  border: 1px solid var(--ember);
-  color: var(--ember-light);
-  font-weight: 800;
-  font-size: 14px;
+/* =========================================
+   4. XBOX GUIDE SLIDE-OUT BLADE (Left Acrylic Drawer)
+   ========================================= */
+#guide-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(4, 6, 10, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+#guide-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#xbox-guide {
+  position: fixed;
+  top: 16px;
+  bottom: 16px;
+  left: 16px;
+  width: 390px;
+  z-index: 95;
+  border-radius: 16px;
+  background: rgba(20, 25, 33, 0.94);
+  backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 20px 0 60px rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 14px;
+  transform: translateX(-430px);
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#xbox-guide.open {
+  transform: translateX(0);
+}
+
+.guide-top-row {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.drive-info {
-  flex: 1;
+.guide-tabs {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #ffffff;
+}
+
+.guide-profile-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.guide-menu-list {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  flex: 1;
+  overflow-y: auto;
 }
 
-.drive-title-row {
+.guide-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #e2e8f0;
+  cursor: pointer;
+  border: 2.5px solid transparent;
+  transition: all 0.12s ease;
 }
 
-.drive-name {
-  font-size: 15px;
+.guide-item.selected {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: var(--focus-ring);
+  color: #ffffff;
   font-weight: 700;
 }
 
-.progress-track {
-  width: 100%;
-  height: 7px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.45);
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--ember) 0%, var(--ember-light) 100%);
+.guide-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 600;
 }
 
 /* =========================================
-   OTHER PAGES (Store, Community, Profile, Downloads)
-   ========================================= */
-.grid-cards-3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-
-.glass-panel {
-  border-radius: 16px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-highlight);
-  backdrop-filter: blur(24px);
-  padding: 22px;
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
-}
-
-/* =========================================
-   BOTTOM CONSOLE CONTROLLER HINTS BAR
+   5. BOTTOM SUBTLE CONTROLLER LEGEND
    ========================================= */
 #bottom-bar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 48px;
+  height: 38px;
   z-index: 30;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 40px;
-  background: rgba(6, 9, 14, 0.88);
-  border-top: 1px solid var(--border-subtle);
-  backdrop-filter: blur(16px);
-}
-
-.hint-group {
-  display: flex;
-  align-items: center;
-  gap: 20px;
+  justify-content: flex-end;
+  gap: 22px;
+  padding: 0 46px;
 }
 
 .hint-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   font-size: 12px;
   font-weight: 600;
-  color: #cbd5e1;
+  color: #d1d5db;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
 }
 
-.pill-key {
-  padding: 2px 8px;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+.btn-glyph {
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #0b0e13;
+  font-size: 10px;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-glyph.dark {
+  background: rgba(30, 38, 50, 0.9);
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  color: #ffffff;
+}
+
+.pill-glyph {
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(30, 38, 50, 0.9);
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
   font-size: 10px;
   font-weight: 800;
-  color: #fff;
+  color: #ffffff;
 }
 
 /* =========================================
-   MODALS (Cartridge Provisioning & Power)
+   6. CARTRIDGE BUILDER & POWER MODALS
    ========================================= */
 .modal-backdrop {
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: rgba(4, 6, 10, 0.82);
-  backdrop-filter: blur(16px);
+  background: rgba(5, 7, 11, 0.8);
+  backdrop-filter: blur(18px);
   display: none;
   align-items: center;
   justify-content: center;
@@ -981,11 +1026,11 @@ body.subpage #backdrop-img {
 }
 
 .modal-card {
-  width: 680px;
-  border-radius: 18px;
-  background: #101724;
-  border: 1.5px solid var(--ember);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85), 0 0 32px rgba(255, 101, 55, 0.2);
+  width: 660px;
+  border-radius: 14px;
+  background: #161b24;
+  border: 2px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.9);
   padding: 28px;
   display: flex;
   flex-direction: column;
@@ -997,14 +1042,14 @@ body.subpage #backdrop-img {
   align-items: center;
   justify-content: space-between;
   padding: 14px 18px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1.5px solid var(--border-subtle);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 3px solid transparent;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.14s ease;
 }
 
 .modal-opt.selected {
-  background: rgba(255, 101, 55, 0.15);
-  border-color: var(--ember);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--focus-ring);
 }
