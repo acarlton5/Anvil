@@ -32,6 +32,11 @@ def find_steam_deck_event():
             pass
     return None
 
+def apply_deadzone(val, deadzone=4000):
+    if abs(val) < deadzone:
+        return 0
+    return val
+
 def main():
     print("[Anvil Xbox Bridge] Starting virtual Xbox 360 controller daemon...")
 
@@ -80,6 +85,7 @@ def main():
         318: ecodes.BTN_THUMBR, # R3
     }
 
+    last_axes = {ecodes.ABS_X: 0, ecodes.ABS_Y: 0, ecodes.ABS_RX: 0, ecodes.ABS_RY: 0}
     running = True
     def handle_sig(sig, frame):
         nonlocal running
@@ -123,18 +129,12 @@ def main():
                         ui.write(ecodes.EV_ABS, ecodes.ABS_RZ, 255 if event.value else 0)
                         ui.syn()
                 elif event.type == ecodes.EV_ABS:
-                    if event.code == ecodes.ABS_X:
-                        ui.write(ecodes.EV_ABS, ecodes.ABS_X, event.value)
-                        ui.syn()
-                    elif event.code == ecodes.ABS_Y:
-                        ui.write(ecodes.EV_ABS, ecodes.ABS_Y, event.value)
-                        ui.syn()
-                    elif event.code == ecodes.ABS_RX:
-                        ui.write(ecodes.EV_ABS, ecodes.ABS_RX, event.value)
-                        ui.syn()
-                    elif event.code == ecodes.ABS_RY:
-                        ui.write(ecodes.EV_ABS, ecodes.ABS_RY, event.value)
-                        ui.syn()
+                    if event.code in (ecodes.ABS_X, ecodes.ABS_Y, ecodes.ABS_RX, ecodes.ABS_RY):
+                        filtered_val = apply_deadzone(event.value, deadzone=4000)
+                        if filtered_val != last_axes[event.code]:
+                            last_axes[event.code] = filtered_val
+                            ui.write(ecodes.EV_ABS, event.code, filtered_val)
+                            ui.syn()
                     elif event.code == ecodes.ABS_HAT0X:
                         ui.write(ecodes.EV_ABS, ecodes.ABS_HAT0X, event.value)
                         ui.syn()
