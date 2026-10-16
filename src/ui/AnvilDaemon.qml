@@ -45,7 +45,10 @@ ShellRoot {
         if (!action || action.length === 0)
             return ;
         if (action === "guide") {
-            root.overlayActive = !root.overlayActive;
+            // Only open overlay if a game is currently running or launched (not on home launcher)
+            if (gameProcess.running || !root.gamerActive) {
+                root.overlayActive = !root.overlayActive;
+            }
             return ;
         }
         if (action === "quickaccess") {
@@ -260,7 +263,9 @@ ShellRoot {
 
     IpcHandler {
         function toggle() {
-            root.overlayActive = !root.overlayActive;
+            if (gameProcess.running || !root.gamerActive) {
+                root.overlayActive = !root.overlayActive;
+            }
         }
 
         function toggleQuickAccess() {
