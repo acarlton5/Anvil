@@ -103,6 +103,18 @@ def main():
                     if event.code in KEY_MAP:
                         ui.write(ecodes.EV_KEY, KEY_MAP[event.code], event.value)
                         ui.syn()
+                    elif event.code == 544:  # Steam Deck D-pad UP
+                        ui.write(ecodes.EV_ABS, ecodes.ABS_HAT0Y, -1 if event.value else 0)
+                        ui.syn()
+                    elif event.code == 545:  # Steam Deck D-pad DOWN
+                        ui.write(ecodes.EV_ABS, ecodes.ABS_HAT0Y, 1 if event.value else 0)
+                        ui.syn()
+                    elif event.code == 546:  # Steam Deck D-pad LEFT
+                        ui.write(ecodes.EV_ABS, ecodes.ABS_HAT0X, -1 if event.value else 0)
+                        ui.syn()
+                    elif event.code == 547:  # Steam Deck D-pad RIGHT
+                        ui.write(ecodes.EV_ABS, ecodes.ABS_HAT0X, 1 if event.value else 0)
+                        ui.syn()
                     elif event.code == 312:  # Steam Deck LT button
                         ui.write(ecodes.EV_ABS, ecodes.ABS_Z, 255 if event.value else 0)
                         ui.syn()

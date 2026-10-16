@@ -83,8 +83,8 @@ ABS_X = 0
 ABS_Y = 1
 ABS_HAT0X = 16
 ABS_HAT0Y = 17
-AXIS_THRESHOLD = 16000
-AXIS_DEADZONE = 8000
+AXIS_THRESHOLD = 20000
+AXIS_DEADZONE = 12000
 
 
 def read_text(path):
@@ -337,7 +337,8 @@ def main():
                         if not action:
                             continue
                         now = time.monotonic()
-                        if now - last_sent.get(action, 0) < 0.18:
+                        cooldown = 0.22 if event_type == EV_ABS else 0.14
+                        if now - last_sent.get(action, 0) < cooldown:
                             continue
                         last_sent[action] = now
                         send_action(anvil_root, action, controller)

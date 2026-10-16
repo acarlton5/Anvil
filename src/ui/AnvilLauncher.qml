@@ -372,7 +372,15 @@ PanelWindow {
     function moveGameSelection(delta) {
         if (gameModel.count === 0)
             return ;
-        selectedGameIndex = Math.max(0, Math.min(gameModel.count - 1, selectedGameIndex + delta));
+        let target = Math.max(0, Math.min(gameModel.count - 1, selectedGameIndex + delta));
+        selectedGameIndex = target;
+        if (activeSection === 0 && gameStrip) {
+            gameStrip.currentIndex = target;
+            gameStrip.positionViewAtIndex(target, ListView.Contain);
+        } else if (activeSection === 1 && libraryGrid) {
+            libraryGrid.currentIndex = target;
+            libraryGrid.positionViewAtIndex(target, GridView.Contain);
+        }
     }
 
     function handleControllerAction(action) {
