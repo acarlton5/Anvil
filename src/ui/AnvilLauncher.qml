@@ -49,6 +49,11 @@ PanelWindow {
     property int selectedSetting: 0
     property int selectedCommunityItem: 0
     property int selectedPowerIndex: 3
+    property bool profileModalActive: false
+    property int selectedProfileIndex: 0
+    property string profileGamerTag: "Morphine"
+    property string profileBio: "Steam Deck Console Edition"
+    property int profileGamerscore: 1420
 
     function triggerPowerAction(actionName) {
         if (actionName === "Switch to Desktop") {
@@ -388,6 +393,27 @@ PanelWindow {
             if (action === "east" || action === "back")
                 cancelGameLaunch();
             return ;
+        }
+        if (profileModalActive) {
+            let pOptions = ["Customize Profile", "View Achievements", "Privacy & Online Safety", "Switch User / Sign Out"];
+            if (action === "up") {
+                selectedProfileIndex = Math.max(0, selectedProfileIndex - 1);
+            } else if (action === "down") {
+                selectedProfileIndex = Math.min(pOptions.length - 1, selectedProfileIndex + 1);
+            } else if (action === "south") {
+                if (selectedProfileIndex === 1) {
+                    profileModalActive = false;
+                    selectSection(3); // Community / Achievements
+                } else if (selectedProfileIndex === 0) {
+                    profileModalActive = false;
+                    selectSection(5); // Settings
+                } else {
+                    profileModalActive = false;
+                }
+            } else if (action === "east" || action === "back" || action === "start") {
+                profileModalActive = false;
+            }
+            return;
         }
         if (powerMenuActive) {
             let options = ["Sleep", "Restart", "Shut Down", "Switch to Desktop"];
@@ -815,55 +841,77 @@ PanelWindow {
         border.width: 1
         z: 30
 
-        // Profile & Gamer Info (Xbox style)
-        Row {
+        // Profile & Gamer Info (Xbox style interactive chip)
+        Rectangle {
             anchors.left: parent.left
-            anchors.leftMargin: contentLeft
+            anchors.leftMargin: contentLeft - 8
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 12
+            height: 44
+            width: profileRow.implicitWidth + 20
+            radius: 22
+            color: profileChipArea.containsMouse || profileModalActive ? "#182330" : "transparent"
+            border.color: profileModalActive ? "#22c55e" : (profileChipArea.containsMouse ? "#2f3e50" : "transparent")
+            border.width: 1.5
 
-            Rectangle {
-                width: 36
-                height: 36
-                radius: 18
-                color: "#107c10"
-                border.color: "#22c55e"
-                border.width: 2
-                anchors.verticalCenter: parent.verticalCenter
+            Row {
+                id: profileRow
+                anchors.centerIn: parent
+                spacing: 11
 
-                Text {
-                    anchors.centerIn: parent
-                    text: "M"
-                    color: "#ffffff"
-                    font.pixelSize: 16
-                    font.bold: true
+                Rectangle {
+                    width: 34
+                    height: 34
+                    radius: 17
+                    color: "#107c10"
+                    border.color: "#22c55e"
+                    border.width: 2
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: profileGamerTag.length > 0 ? profileGamerTag.charAt(0).toUpperCase() : "M"
+                        color: "#ffffff"
+                        font.pixelSize: 15
+                        font.bold: true
+                    }
+                }
+
+                Column {
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 1
+
+                    Text {
+                        text: profileGamerTag
+                        color: "#ffffff"
+                        font.pixelSize: 13
+                        font.bold: true
+                    }
+
+                    Row {
+                        spacing: 4
+                        Text {
+                            text: "★"
+                            color: "#22c55e"
+                            font.pixelSize: 10
+                        }
+                        Text {
+                            text: profileGamerscore + " G"
+                            color: "#8e9fad"
+                            font.pixelSize: 10
+                            font.bold: true
+                        }
+                    }
                 }
             }
 
-            Column {
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 1
-
-                Text {
-                    text: "Morphine"
-                    color: "#ffffff"
-                    font.pixelSize: 14
-                    font.bold: true
-                }
-
-                Row {
-                    spacing: 4
-                    Text {
-                        text: "★"
-                        color: "#22c55e"
-                        font.pixelSize: 10
-                    }
-                    Text {
-                        text: "1,420 G"
-                        color: "#8e9fad"
-                        font.pixelSize: 10
-                        font.bold: true
-                    }
+            MouseArea {
+                id: profileChipArea
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    profileModalActive = !profileModalActive;
+                    if (profileModalActive) powerMenuActive = false;
                 }
             }
         }
@@ -3674,6 +3722,289 @@ PanelWindow {
 
         }
 
+    }
+
+    // Dimmer Backdrop for Modals
+    Rectangle {
+        anchors.fill: parent
+        color: "#99000000"
+        visible: profileModalActive
+        opacity: profileModalActive ? 1 : 0
+        z: 48
+        MouseArea {
+            anchors.fill: parent
+            onClicked: profileModalActive = false
+        }
+    }
+
+    // Xbox Console Profile Flyout
+    Rectangle {
+        id: profileFlyout
+        width: 480
+        height: 460
+        anchors.left: parent.left
+        anchors.leftMargin: contentLeft
+        anchors.top: parent.top
+        anchors.topMargin: 74
+        radius: 12
+        color: "#f50c1117"
+        border.color: "#273648"
+        border.width: 1.5
+        visible: profileModalActive
+        opacity: profileModalActive ? 1 : 0
+        z: 50
+
+        // Subtle gradient top bar
+        Rectangle {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            height: 4
+            radius: 2
+            color: "#107c10"
+        }
+
+        Column {
+            anchors.fill: parent
+            anchors.margins: 24
+            spacing: 16
+
+            // Header: Avatar, Name, Status
+            Row {
+                width: parent.width
+                spacing: 16
+
+                Rectangle {
+                    width: 58
+                    height: 58
+                    radius: 29
+                    color: "#107c10"
+                    border.color: "#22c55e"
+                    border.width: 2.5
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: profileGamerTag.length > 0 ? profileGamerTag.charAt(0).toUpperCase() : "M"
+                        color: "#ffffff"
+                        font.pixelSize: 26
+                        font.bold: true
+                    }
+                }
+
+                Column {
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 3
+
+                    Row {
+                        spacing: 8
+                        Text {
+                            text: profileGamerTag
+                            color: "#ffffff"
+                            font.pixelSize: 20
+                            font.bold: true
+                        }
+                        Rectangle {
+                            width: 8
+                            height: 8
+                            radius: 4
+                            color: "#22c55e"
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        Text {
+                            text: "Online"
+                            color: "#22c55e"
+                            font.pixelSize: 11
+                            font.bold: true
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+
+                    Text {
+                        text: profileBio
+                        color: "#8e9fad"
+                        font.pixelSize: 12
+                    }
+                }
+            }
+
+            // Gamerscore & Stats Cards Row
+            Row {
+                width: parent.width
+                spacing: 10
+
+                Rectangle {
+                    width: (parent.width - 20) / 3
+                    height: 56
+                    radius: 8
+                    color: "#151e28"
+                    border.color: "#222f3e"
+
+                    Column {
+                        anchors.centerIn: parent
+                        spacing: 2
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "★ " + profileGamerscore + " G"
+                            color: "#22c55e"
+                            font.pixelSize: 13
+                            font.bold: true
+                        }
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "Gamerscore"
+                            color: "#8e9fad"
+                            font.pixelSize: 10
+                        }
+                    }
+                }
+
+                Rectangle {
+                    width: (parent.width - 20) / 3
+                    height: 56
+                    radius: 8
+                    color: "#151e28"
+                    border.color: "#222f3e"
+
+                    Column {
+                        anchors.centerIn: parent
+                        spacing: 2
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: gameModel.count.toString()
+                            color: "#ffffff"
+                            font.pixelSize: 14
+                            font.bold: true
+                        }
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "Installed Games"
+                            color: "#8e9fad"
+                            font.pixelSize: 10
+                        }
+                    }
+                }
+
+                Rectangle {
+                    width: (parent.width - 20) / 3
+                    height: 56
+                    radius: 8
+                    color: "#151e28"
+                    border.color: "#222f3e"
+
+                    Column {
+                        anchors.centerIn: parent
+                        spacing: 2
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "Deck Verified"
+                            color: "#60a5fa"
+                            font.pixelSize: 12
+                            font.bold: true
+                        }
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "Compatibility"
+                            color: "#8e9fad"
+                            font.pixelSize: 10
+                        }
+                    }
+                }
+            }
+
+            // Divider
+            Rectangle {
+                width: parent.width
+                height: 1
+                color: "#1e2a38"
+            }
+
+            // Action Options List
+            Column {
+                width: parent.width
+                spacing: 6
+
+                Repeater {
+                    model: ["Customize Profile", "View Achievements", "Privacy & Online Safety", "Switch User / Sign Out"]
+
+                    Rectangle {
+                        width: profileFlyout.width - 48
+                        height: 44
+                        radius: 6
+                        color: selectedProfileIndex === index ? "#1c2836" : (actionMouse.containsMouse ? "#141c26" : "transparent")
+                        border.color: selectedProfileIndex === index ? "#22c55e" : "transparent"
+                        border.width: 1.5
+
+                        Row {
+                            anchors.left: parent.left
+                            anchors.leftMargin: 14
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: 12
+
+                            Text {
+                                text: index === 0 ? "⚙" : index === 1 ? "🏆" : index === 2 ? "🛡" : "👤"
+                                color: selectedProfileIndex === index ? "#22c55e" : "#8e9fad"
+                                font.pixelSize: 15
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+
+                            Text {
+                                text: modelData
+                                color: selectedProfileIndex === index ? "#ffffff" : "#c6d4df"
+                                font.pixelSize: 13
+                                font.bold: selectedProfileIndex === index
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+                        }
+
+                        MouseArea {
+                            id: actionMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                selectedProfileIndex = index;
+                                if (index === 1) {
+                                    profileModalActive = false;
+                                    selectSection(3);
+                                } else if (index === 0) {
+                                    profileModalActive = false;
+                                    selectSection(5);
+                                } else {
+                                    profileModalActive = false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Footer Hint
+            Row {
+                anchors.right: parent.right
+                spacing: 8
+                Rectangle {
+                    width: 20
+                    height: 20
+                    radius: 10
+                    color: "#dc2626"
+                    anchors.verticalCenter: parent.verticalCenter
+                    Text {
+                        anchors.centerIn: parent
+                        text: "B"
+                        color: "#ffffff"
+                        font.pixelSize: 10
+                        font.bold: true
+                    }
+                }
+                Text {
+                    text: "Close"
+                    color: "#8e9fad"
+                    font.pixelSize: 11
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+        }
     }
 
     Rectangle {
