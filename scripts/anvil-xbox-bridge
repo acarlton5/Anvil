@@ -1,0 +1,138 @@
+#!/usr/bin/env python3
+import os
+import sys
+import time
+import signal
+import evdev
+from evdev import UInput, ecodes, AbsInfo
+
+def find_steam_deck_event():
+    input_dir = "/sys/class/input"
+    for ev in sorted(os.listdir(input_dir)):
+        if not ev.startswith("event"):
+            continue
+        dev_name_path = os.path.join(input_dir, ev, "device", "name")
+        phys_path = os.path.join(input_dir, ev, "device", "phys")
+        try:
+            with open(dev_name_path) as f:
+                name = f.read().strip()
+            phys = ""
+            if os.path.exists(phys_path):
+                with open(phys_path) as f:
+                    phys = f.read().strip()
+            if "Steam Deck" in name and "Motion" not in name:
+                dev_path = os.path.join("/dev/input", ev)
+                if os.path.exists(dev_path):
+                    return dev_path
+            elif "28de" in phys and "input2" in phys:
+                dev_path = os.path.join("/dev/input", ev)
+                if os.path.exists(dev_path):
+                    return dev_path
+        except OSError:
+            pass
+    return None
+
+def main():
+    print("[Anvil Xbox Bridge] Starting virtual Xbox 360 controller daemon...")
+
+    # Capabilities matching official Microsoft Xbox 360 controller
+    cap = {
+        ecodes.EV_KEY: [
+            ecodes.BTN_SOUTH,  # A (304)
+            ecodes.BTN_EAST,   # B (305)
+            ecodes.BTN_NORTH,  # X (307)
+            ecodes.BTN_WEST,   # Y (308)
+            ecodes.BTN_TL,     # LB (310)
+            ecodes.BTN_TR,     # RB (311)
+            ecodes.BTN_SELECT, # Back (314)
+            ecodes.BTN_START,  # Start (315)
+            ecodes.BTN_MODE,   # Guide (316)
+            ecodes.BTN_THUMBL, # L3 (317)
+            ecodes.BTN_THUMBR, # R3 (318)
+        ],
+        ecodes.EV_ABS: [
+            (ecodes.ABS_X, AbsInfo(0, -32768, 32767, 16, 128, 0)),
+            (ecodes.ABS_Y, AbsInfo(0, -32768, 32767, 16, 128, 0)),
+            (ecodes.ABS_RX, AbsInfo(0, -32768, 32767, 16, 128, 0)),
+            (ecodes.ABS_RY, AbsInfo(0, -32768, 32767, 16, 128, 0)),
+            (ecodes.ABS_Z, AbsInfo(0, 0, 255, 0, 0, 0)),   # LT (0-255)
+            (ecodes.ABS_RZ, AbsInfo(0, 0, 255, 0, 0, 0)),  # RT (0-255)
+            (ecodes.ABS_HAT0X, AbsInfo(0, -1, 1, 0, 0, 0)), # D-pad X
+            (ecodes.ABS_HAT0Y, AbsInfo(0, -1, 1, 0, 0, 0)), # D-pad Y
+        ]
+    }
+
+    ui = UInput(cap, name="Microsoft X-Box 360 pad", vendor=0x045e, product=0x028e, version=0x0114, bustype=ecodes.BUS_USB)
+    print(f"[Anvil Xbox Bridge] Virtual controller active at {ui.device.path}")
+
+    # Map from Steam Deck input codes to Xbox 360 codes
+    KEY_MAP = {
+        304: ecodes.BTN_SOUTH,  # A
+        305: ecodes.BTN_EAST,   # B
+        307: ecodes.BTN_NORTH,  # X
+        308: ecodes.BTN_WEST,   # Y
+        310: ecodes.BTN_TL,     # LB
+        311: ecodes.BTN_TR,     # RB
+        314: ecodes.BTN_SELECT, # Back/View
+        315: ecodes.BTN_START,  # Start/Menu
+        316: ecodes.BTN_MODE,   # Steam/Guide
+        317: ecodes.BTN_THUMBL, # L3
+        318: ecodes.BTN_THUMBR, # R3
+    }
+
+    running = True
+    def handle_sig(sig, frame):
+        nonlocal running
+        running = False
+    signal.signal(signal.SIGINT, handle_sig)
+    signal.signal(signal.SIGTERM, handle_sig)
+
+    while running:
+        dev_path = find_steam_deck_event()
+        if not dev_path:
+            time.sleep(1.0)
+            continue
+
+        try:
+            dev = evdev.InputDevice(dev_path)
+            print(f"[Anvil Xbox Bridge] Attached to hardware: {dev.name} ({dev_path})")
+            for event in dev.read_loop():
+                if not running:
+                    break
+                if event.type == ecodes.EV_KEY:
+                    if event.code in KEY_MAP:
+                        ui.write(ecodes.EV_KEY, KEY_MAP[event.code], event.value)
+                        ui.syn()
+                    elif event.code == 312:  # Steam Deck LT button
+                        ui.write(ecodes.EV_ABS, ecodes.ABS_Z, 255 if event.value else 0)
+                        ui.syn()
+                    elif event.code == 313:  # Steam Deck RT button
+                        ui.write(ecodes.EV_ABS, ecodes.ABS_RZ, 255 if event.value else 0)
+                        ui.syn()
+                elif event.type == ecodes.EV_ABS:
+                    if event.code == ecodes.ABS_X:
+                        ui.write(ecodes.EV_ABS, ecodes.ABS_X, event.value)
+                        ui.syn()
+                    elif event.code == ecodes.ABS_Y:
+                        ui.write(ecodes.EV_ABS, ecodes.ABS_Y, event.value)
+                        ui.syn()
+                    elif event.code == ecodes.ABS_RX:
+                        ui.write(ecodes.EV_ABS, ecodes.ABS_RX, event.value)
+                        ui.syn()
+                    elif event.code == ecodes.ABS_RY:
+                        ui.write(ecodes.EV_ABS, ecodes.ABS_RY, event.value)
+                        ui.syn()
+                    elif event.code == ecodes.ABS_HAT0X:
+                        ui.write(ecodes.EV_ABS, ecodes.ABS_HAT0X, event.value)
+                        ui.syn()
+                    elif event.code == ecodes.ABS_HAT0Y:
+                        ui.write(ecodes.EV_ABS, ecodes.ABS_HAT0Y, event.value)
+                        ui.syn()
+        except (OSError, RuntimeError) as e:
+            time.sleep(1.0)
+
+    ui.close()
+    print("[Anvil Xbox Bridge] Stopped.")
+
+if __name__ == "__main__":
+    main()

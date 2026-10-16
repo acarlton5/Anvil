@@ -128,6 +128,16 @@ stage_tree "$anvil_root/config/controller-layouts" config/controller-layouts
 controller_layouts_src="$STAGED_RESULT"
 stage_tree "$anvil_root/config/achievements" config/achievements
 achievements_src="$STAGED_RESULT"
+xbox_bridge_src=""
+if [ -f "$anvil_root/scripts/anvil-xbox-bridge" ]; then
+    stage_file "$anvil_root/scripts/anvil-xbox-bridge" scripts/anvil-xbox-bridge
+    xbox_bridge_src="$STAGED_RESULT"
+fi
+xbox_bridge_service_src=""
+if [ -f "$anvil_root/system/anvil-xbox-bridge.service" ]; then
+    stage_file "$anvil_root/system/anvil-xbox-bridge.service" system/anvil-xbox-bridge.service
+    xbox_bridge_service_src="$STAGED_RESULT"
+fi
 stage_file "$anvil_root/src/daemon/anvil-library-bridge" src/daemon/anvil-library-bridge
 anvil_library_bridge_src="$STAGED_RESULT"
 stage_file "$anvil_root/src/daemon/anvil_library.py" src/daemon/anvil_library.py
@@ -190,6 +200,18 @@ sudo cp -R "$achievements_src"/. /usr/local/share/anvil/config/achievements/
 sudo chmod -R u=rwX,go=rX /usr/local/share/anvil/config/achievements
 sudo install -D -m 755 "$anvil_library_bridge_src" /usr/local/share/anvil/src/daemon/anvil-library-bridge
 sudo install -D -m 644 "$anvil_library_src" /usr/local/share/anvil/src/daemon/anvil_library.py
+
+if [ -n "$xbox_bridge_src" ]; then
+    sudo install -D -m 755 "$xbox_bridge_src" /usr/local/bin/anvil-xbox-bridge
+    sudo install -D -m 755 "$xbox_bridge_src" /usr/local/share/anvil/scripts/anvil-xbox-bridge
+fi
+if [ -n "$xbox_bridge_service_src" ]; then
+    sudo install -D -m 644 "$xbox_bridge_service_src" /etc/systemd/system/anvil-xbox-bridge.service
+    if command -v systemctl >/dev/null 2>&1; then
+        sudo systemctl daemon-reload || true
+        sudo systemctl enable --now anvil-xbox-bridge.service || true
+    fi
+fi
 
 release_file="$(mktemp)"
 revision=""

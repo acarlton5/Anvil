@@ -1,0 +1,15 @@
+[Unit]
+Description=Anvil Virtual Xbox 360 Controller Bridge for Steam Deck
+After=systemd-udevd.service
+Wants=systemd-udevd.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/anvil-xbox-bridge
+Restart=always
+RestartSec=1
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
