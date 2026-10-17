@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=1280, initial-scale=1.0" />
   <title>Anvil Console OS</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/styles.css?v=42" />
 </head>
 <body>
   <!-- 1. FULL-BLEED DYNAMIC HERO BACKDROP -->
@@ -65,6 +65,7 @@
 
     <!-- Top-Right: Clean Floating Status Icons -->
     <div class="xbox-status-right">
+      <div class="bumper-key" style="cursor:pointer; padding:2px 8px;" onclick="toggleQamSidebar()" title="Quick Access Menu (•••)">•••</div>
       <svg class="status-svg" viewBox="0 0 24 24" title="Xbox 360 Player 1 Bridge Active">
         <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
       </svg>
@@ -80,6 +81,41 @@
       <div class="xbox-clock" id="clock-label">12:00 PM</div>
     </div>
   </header>
+
+  <!-- 2B. HARDWARE VOLUME & BRIGHTNESS OSD PILL -->
+  <div id="system-osd">
+    <div class="osd-icon" id="osd-icon" style="display:flex;align-items:center;justify-content:center;color:#22c55e;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+    </div>
+    <div class="osd-body">
+      <div class="osd-header">
+        <span id="osd-title">VOLUME</span>
+        <span id="osd-val">75%</span>
+      </div>
+      <div class="osd-track">
+        <div class="osd-fill" id="osd-fill" style="width:75%;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2C. INSTANT 0ms GAME LAUNCH & IN-GAME OVERLAY CURTAIN -->
+  <div id="game-curtain">
+    <div class="curtain-art-box">
+      <img id="curtain-art-img" src="" alt="" />
+    </div>
+    <span class="xbox-tag green" id="curtain-badge">STARTING CARTRIDGE...</span>
+    <h1 id="curtain-title" style="font-size:32px; font-weight:800; letter-spacing:-0.02em; text-align:center;">Launching Game...</h1>
+    <div class="curtain-loader-bar" id="curtain-loader">
+      <div class="curtain-loader-fill"></div>
+    </div>
+    <div id="curtain-sub" style="font-size:13px; color:#cbd5e1; font-weight:600; margin-top:4px;">
+      Press <strong>STEAM</strong> for Left Guide or <strong>•••</strong> for Quick Access Menu
+    </div>
+    <div id="curtain-actions" style="display:flex; gap:14px; margin-top:8px;">
+      <button class="xbox-btn" onclick="resumeGameSession()"><span class="a-btn-mini">A</span><span>Resume Game</span></button>
+      <button class="xbox-btn" style="background:rgba(239,68,68,0.2); color:#fca5a5; border:1px solid rgba(239,68,68,0.5);" onclick="quitGameSession()"><span>✕ Quit Game</span></button>
+    </div>
+  </div>
 
   <!-- 3. MAIN VIEWPORT -->
   <main id="viewport">
@@ -251,12 +287,12 @@
     </section>
   </main>
 
-  <!-- 4. XBOX GUIDE SLIDE-OUT LEFT BLADE -->
+  <!-- 4A. LEFT SIDEBAR: XBOX / STEAM GUIDE BLADE (STEAM BUTTON) -->
   <div id="guide-backdrop" onclick="closeGuideBlade()"></div>
   <aside id="xbox-guide">
     <div class="guide-top-row">
       <div class="guide-tabs">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+        <span class="pill-glyph" style="background:#22c55e; color:#070a0f; border:none;">STEAM</span>
         <span style="font-size:13px; font-weight:800; letter-spacing:0.04em;">ANVIL GUIDE</span>
       </div>
       <div style="font-size:13px; font-weight:700; color:#cbd5e1;" id="guide-clock">12:00 PM</div>
@@ -281,10 +317,31 @@
     </div>
   </aside>
 
+  <!-- 4B. RIGHT SIDEBAR: QUICK ACCESS MENU (••• THREE-DOT BUTTON) -->
+  <div id="qam-backdrop" onclick="closeQamSidebar()"></div>
+  <aside id="qam-sidebar">
+    <div class="guide-top-row">
+      <div class="guide-tabs">
+        <span class="pill-glyph" style="background:#38bdf8; color:#070a0f; border:none;">•••</span>
+        <span style="font-size:13px; font-weight:800; letter-spacing:0.04em;">QUICK SETTINGS</span>
+      </div>
+      <div style="font-size:12px; font-weight:800; color:#22c55e;" id="qam-battery-label">100% ⚡</div>
+    </div>
+
+    <div class="guide-menu-list" id="qam-menu-list" style="gap:10px;"></div>
+
+    <div class="guide-footer">
+      <span><span class="pill-glyph" style="font-size:9px;">◀ ▶</span> Adjust</span>
+      <span><span class="btn-glyph" style="width:16px;height:16px;font-size:9px;">A</span> Toggle</span>
+      <span><span class="btn-glyph dark" style="width:16px;height:16px;font-size:9px;">B</span> Close</span>
+    </div>
+  </aside>
+
   <!-- 5. BOTTOM SUBTLE CONTROLLER LEGEND -->
   <footer id="bottom-bar">
-    <div class="hint-item"><span class="pill-glyph">SELECT</span><span>Guide Blade</span></div>
-    <div class="hint-item"><span class="pill-glyph">LB / RB</span><span>Switch Section</span></div>
+    <div class="hint-item"><span class="pill-glyph">STEAM</span><span>Guide</span></div>
+    <div class="hint-item"><span class="pill-glyph">•••</span><span>Quick Access</span></div>
+    <div class="hint-item"><span class="pill-glyph">LB / RB</span><span>Section</span></div>
     <div class="hint-item"><span class="btn-glyph">A</span><span>Play / Select</span></div>
     <div class="hint-item"><span class="btn-glyph dark">B</span><span>Back</span></div>
     <div class="hint-item"><span class="btn-glyph dark">X</span><span>Make Cartridge</span></div>
@@ -322,6 +379,6 @@
     </div>
   </div>
 
-  <script src="/app.js"></script>
+  <script src="/app.js?v=42"></script>
 </body>
 </html>

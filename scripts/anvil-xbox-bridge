@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
-Anvil Xbox 360 Controller Bridge (Zero-Drift + Exclusive Hardware Grab)
+Anvil Xbox 360 Controller Bridge (Zero-Drift + Exclusive Hardware Grab + QAM/STEAM Support)
 - Grabs Steam Deck Lizard Mode mouse/keyboard (event5, event6) and raw gamepad (event7)
   so games and UI never receive stray keyboard/mouse inputs or unmapped raw HID events.
 - Hides raw Valve hidraw/js/event nodes from non-root processes so Wine/Proton/SDL2
   always bind the virtual 'Microsoft X-Box 360 pad' (045e:028e) as Player 1 (Slot 0).
+- Forwards STEAM (316 / BTN_MODE) and Three-Dot Quick Access (294 / BTN_BASE) buttons.
 """
 import os
 import sys
@@ -42,7 +43,6 @@ def find_steam_deck_devices():
 
         if vendor == "28de":
             hide_nodes.append(dev_path)
-            # Also find matching js* node under this input device
             for js_dir in glob.glob(f"{sys_ev}/device/js*"):
                 js_dev = f"/dev/input/{os.path.basename(js_dir)}"
                 if os.path.exists(js_dev):
@@ -50,7 +50,7 @@ def find_steam_deck_devices():
 
             if "motion" in name:
                 continue
-            elif "input2" in phys or product == "1205" and "steam deck" in name:
+            elif "input2" in phys or (product == "1205" and "steam deck" in name):
                 gamepad_path = dev_path
             else:
                 lizard_paths.append(dev_path)
@@ -79,7 +79,6 @@ def lock_down_raw_nodes(hide_nodes, virtual_event_path):
         except Exception:
             pass
 
-    # Make sure virtual Xbox 360 pad event* and js* are 0666
     if virtual_event_path and os.path.exists(virtual_event_path):
         try:
             os.chmod(virtual_event_path, 0o666)
@@ -99,10 +98,11 @@ def apply_deadzone(val, deadzone=4000):
 
 
 def main():
-    print("[Anvil Xbox Bridge] Starting virtual Xbox 360 controller daemon (Player 1 lock)...")
+    print("[Anvil Xbox Bridge] Starting virtual Xbox 360 controller daemon (Player 1 + STEAM/QAM)...")
 
     cap = {
         ecodes.EV_KEY: [
+            ecodes.BTN_BASE,    # Three-Dot QAM button (294)
             ecodes.BTN_SOUTH,   # A (304)
             ecodes.BTN_EAST,    # B (305)
             ecodes.BTN_NORTH,   # X (307)
@@ -139,6 +139,7 @@ def main():
     print(f"[Anvil Xbox Bridge] Virtual Xbox 360 pad active at {virt_path}")
 
     KEY_MAP = {
+        294: ecodes.BTN_BASE,    # Three-Dot (...) Quick Access Menu button
         304: ecodes.BTN_SOUTH,   # A
         305: ecodes.BTN_EAST,    # B
         307: ecodes.BTN_NORTH,   # X
@@ -177,7 +178,6 @@ def main():
         dev = None
         grabbed_lizards = []
         try:
-            # Grab Lizard Mode mouse/keyboard interfaces so pressing buttons never sends Enter/Esc/Arrow keys
             for lp in lizard_paths:
                 try:
                     ldev = evdev.InputDevice(lp)
@@ -233,7 +233,6 @@ def main():
                             ui.write(ecodes.EV_ABS, event.code, filtered_val)
                             ui.syn()
                     elif event.code in (ecodes.ABS_Z, ecodes.ABS_RZ):
-                        # Analog trigger axes (if reported as 0..32767 or 0..255)
                         val = event.value
                         if val > 255:
                             val = min(255, max(0, val // 128))

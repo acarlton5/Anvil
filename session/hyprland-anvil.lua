@@ -105,18 +105,32 @@ hl.config({
     }
 })
 
--- Audio & Brightness Hardware Keys
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+"), { repeating = true, locked = true })
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"), { repeating = true, locked = true })
-hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
+-- Automatic Workspace 1 (Anvil Shell) vs Workspace 2 (Fullscreen Games) separation
+_G._anvil_ws_hook_installed = true
+hl.on("window.open", function(w)
+    if w.class == "anvil-webui-daemon" then
+        hl.dispatch(hl.dsp.window.move({ workspace = 1, window = w }))
+        hl.dispatch(hl.dsp.window.fullscreen({ mode = "fullscreen", action = "set", window = w }))
+    else
+        hl.dispatch(hl.dsp.window.move({ workspace = 2, window = w }))
+        hl.dispatch(hl.dsp.window.fullscreen({ mode = "fullscreen", action = "set", window = w }))
+        hl.dispatch(hl.dsp.focus({ workspace = 2 }))
+        hl.dispatch(hl.dsp.focus({ window = w }))
+    end
+end)
+
+-- Audio & Brightness Hardware Keys (routed through Anvil WebUI Daemon for on-screen OSD)
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("curl -s 'http://127.0.0.1:19480/api/volume?dir=up' >/dev/null 2>&1 || wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+"), { repeating = true, locked = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("curl -s 'http://127.0.0.1:19480/api/volume?dir=down' >/dev/null 2>&1 || wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"), { repeating = true, locked = true })
+hl.bind("XF86AudioMute", hl.dsp.exec_cmd("curl -s 'http://127.0.0.1:19480/api/volume?dir=mute' >/dev/null 2>&1 || wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
 hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), { locked = true })
-hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl set 5%+"), { repeating = true, locked = true })
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"), { repeating = true, locked = true })
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("curl -s 'http://127.0.0.1:19480/api/brightness?dir=up' >/dev/null 2>&1 || brightnessctl set 10%+"), { repeating = true, locked = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("curl -s 'http://127.0.0.1:19480/api/brightness?dir=down' >/dev/null 2>&1 || brightnessctl set 10%-"), { repeating = true, locked = true })
 hl.bind("SUPER + SHIFT + Q", hl.dsp.exit())
 
 -- Launch Anvil WebKit2/Tauri Console UI automatically
 hl.on("hyprland.start", function()
     hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XDG_SESSION_DESKTOP")
     hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XDG_SESSION_DESKTOP")
-    hl.exec_cmd("env ANVIL_ROOT=" .. anvil_root .. " " .. webui_daemon .. "; hyprctl dispatch exit")
+    hl.exec_cmd("env ANVIL_ROOT=" .. anvil_root .. " " .. webui_daemon .. "; hyprctl eval 'hl.dispatch(hl.dsp.exit())'")
 end)

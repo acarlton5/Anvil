@@ -2,9 +2,11 @@
 """
 Anvil WebUI / Tauri-WebKit2GTK Console Shell
 Provides a hardware-accelerated 60fps CSS/WebGL console UI on Steam Deck (1280x800)
-with direct controller input streaming, cartridge management, and game launching.
+with direct controller input streaming, STEAM (Left Guide) & Three-Dot QAM (Right Sidebar),
+hardware Volume OSD (both on Dashboard and In-Game), and instant Workspace 2 game switching.
 """
 import os
+import re
 import sys
 import json
 import time
@@ -25,7 +27,6 @@ ANVIL_ROOT = os.environ.get("ANVIL_ROOT", "/usr/local/share/anvil")
 WEBUI_DIR = os.path.join(ANVIL_ROOT, "src", "webui")
 LIBRARY_SCRIPT = os.path.join(ANVIL_ROOT, "src", "daemon", "anvil_library.py")
 GAME_SESSION_SCRIPT = os.path.join(ANVIL_ROOT, "scripts", "anvil-game-session")
-NAV_WATCH_SCRIPT = os.path.join(ANVIL_ROOT, "scripts", "anvil-controller-nav-watch")
 CARTRIDGE_TOOL = "/usr/local/bin/anvil-cartridge-tool"
 
 # Global state
@@ -33,9 +34,181 @@ CACHED_GAMES = []
 CACHED_DRIVES = []
 GAME_RUNNING = False
 GAME_PROC = None
+OVERLAY_OPEN = False
+OVERLAY_MODE = ""  # "guide" (left STEAM sidebar) or "qam" (right Three-Dot sidebar)
 WINDOW_INSTANCE = None
 WEBVIEW_INSTANCE = None
 PORT = 19480
+
+_last_vol_time = 0.0
+_vol_lock = threading.Lock()
+
+
+def hypr_eval(lua_code):
+    """Execute Lua code in the active Hyprland compositor."""
+    try:
+        subprocess.run(
+            ["hyprctl", "eval", lua_code],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=1.5
+        )
+    except Exception:
+        pass
+
+
+def setup_hyprland_game_rules():
+    """Register a live Hyprland window.open hook so games immediately open fullscreen on Workspace 2."""
+    lua_hook = (
+        'if not _G._anvil_ws_hook_installed then '
+        '_G._anvil_ws_hook_installed = true; '
+        'hl.on("window.open", function(w) '
+        'if w.class == "anvil-webui-daemon" then '
+        'hl.dispatch(hl.dsp.window.move({ workspace = 1, window = w })); '
+        'hl.dispatch(hl.dsp.window.fullscreen({ mode = "fullscreen", action = "set", window = w })) '
+        'else '
+        'hl.dispatch(hl.dsp.window.move({ workspace = 2, window = w })); '
+        'hl.dispatch(hl.dsp.window.fullscreen({ mode = "fullscreen", action = "set", window = w })); '
+        'hl.dispatch(hl.dsp.focus({ workspace = 2 })); '
+        'hl.dispatch(hl.dsp.focus({ window = w })) '
+        'end '
+        'end) '
+        'end'
+    )
+    hypr_eval(lua_hook)
+
+
+def show_anvil_window():
+    """Switch immediately to Workspace 1 where Anvil Console OS is fullscreen."""
+    hypr_eval(
+        'for _, w in ipairs(hl.get_windows()) do '
+        'if w.class == "anvil-webui-daemon" then '
+        'hl.dispatch(hl.dsp.window.move({ workspace = 1, window = w })); '
+        'hl.dispatch(hl.dsp.window.fullscreen({ mode = "fullscreen", action = "set", window = w })); '
+        'hl.dispatch(hl.dsp.focus({ workspace = 1 })); '
+        'hl.dispatch(hl.dsp.focus({ window = w })) '
+        'end '
+        'end'
+    )
+
+
+def show_game_window():
+    """Ensure active game window is on Workspace 2 fullscreen and switch focus to Workspace 2."""
+    hypr_eval(
+        'for _, w in ipairs(hl.get_windows()) do '
+        'if w.class ~= "anvil-webui-daemon" then '
+        'hl.dispatch(hl.dsp.window.move({ workspace = 2, window = w })); '
+        'hl.dispatch(hl.dsp.window.fullscreen({ mode = "fullscreen", action = "set", window = w })); '
+        'hl.dispatch(hl.dsp.focus({ workspace = 2 })); '
+        'hl.dispatch(hl.dsp.focus({ window = w })) '
+        'end '
+        'end'
+    )
+
+
+def has_game_window():
+    """Check if any non-Anvil window is mapped in Hyprland."""
+    try:
+        out = subprocess.check_output(["hyprctl", "clients", "-j"], stderr=subprocess.DEVNULL, timeout=1.0)
+        clients = json.loads(out.decode("utf-8", errors="ignore"))
+        for c in clients:
+            if c.get("class") != "anvil-webui-daemon" and c.get("mapped"):
+                return True
+    except Exception:
+        pass
+    return False
+
+
+def get_volume_state():
+    """Return (percent_int, muted_bool) from PipeWire wpctl."""
+    try:
+        out = subprocess.check_output(
+            ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"],
+            stderr=subprocess.DEVNULL,
+            timeout=1.5
+        ).decode("utf-8", errors="ignore")
+        m = re.search(r"Volume:\s*([0-9.]+)", out)
+        pct = int(round(float(m.group(1)) * 100)) if m else 75
+        muted = "MUTED" in out.upper()
+        return max(0, min(100, pct)), muted
+    except Exception:
+        return 75, False
+
+
+def handle_volume_action(direction="status"):
+    """Adjust PipeWire volume, trigger WebUI Volume OSD, and show in-game Hyprland OSD if game is active."""
+    global _last_vol_time
+    now = time.monotonic()
+    with _vol_lock:
+        if direction in ("up", "down", "mute"):
+            if now - _last_vol_time < 0.06:
+                return get_volume_state()
+            _last_vol_time = now
+            try:
+                if direction == "up":
+                    subprocess.run(["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "0"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=1.0)
+                    subprocess.run(["wpctl", "set-volume", "-l", "1.0", "@DEFAULT_AUDIO_SINK@", "5%+"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=1.0)
+                elif direction == "down":
+                    subprocess.run(["wpctl", "set-volume", "-l", "1.0", "@DEFAULT_AUDIO_SINK@", "5%-"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=1.0)
+                elif direction == "mute":
+                    subprocess.run(["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=1.0)
+            except Exception:
+                pass
+
+    pct, muted = get_volume_state()
+    if direction in ("up", "down", "mute"):
+        eval_js(f"window.onAnvilVolumeOSD && window.onAnvilVolumeOSD({pct}, {'true' if muted else 'false'});")
+        # Also show native compositor OSD if a game is currently on screen
+        if GAME_RUNNING and not OVERLAY_OPEN:
+            filled = max(0, min(10, round(pct / 10)))
+            bar = ("█" * filled) + ("░" * (10 - filled))
+            label = f"VOLUME  {bar}  {'MUTED' if muted else f'{pct}%'}"
+            try:
+                subprocess.Popen(
+                    ["sh", "-c", f"hyprctl dismissnotify >/dev/null 2>&1; hyprctl notify -1 1800 'rgb(22c55e)' {json.dumps(label)} >/dev/null 2>&1"],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL
+                )
+            except Exception:
+                pass
+    return pct, muted
+
+
+def get_brightness_state():
+    """Return current screen brightness percentage (10..100)."""
+    try:
+        out = subprocess.check_output(["brightnessctl", "-m"], stderr=subprocess.DEVNULL, timeout=1.0).decode("utf-8", errors="ignore")
+        parts = out.strip().split(",")
+        if len(parts) >= 4:
+            pct_str = parts[3].replace("%", "").strip()
+            if pct_str.isdigit():
+                return max(5, min(100, int(pct_str)))
+    except Exception:
+        pass
+    return 85
+
+
+def handle_brightness_action(direction="status"):
+    if direction == "up":
+        subprocess.run(["brightnessctl", "set", "10%+"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    elif direction == "down":
+        subprocess.run(["brightnessctl", "-n", "10%", "set", "10%-"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    pct = get_brightness_state()
+    if direction in ("up", "down"):
+        eval_js(f"window.onAnvilBrightnessOSD && window.onAnvilBrightnessOSD({pct});")
+        if GAME_RUNNING and not OVERLAY_OPEN:
+            filled = max(0, min(10, round(pct / 10)))
+            bar = ("█" * filled) + ("░" * (10 - filled))
+            label = f"BRIGHTNESS  {bar}  {pct}%"
+            try:
+                subprocess.Popen(
+                    ["sh", "-c", f"hyprctl dismissnotify >/dev/null 2>&1; hyprctl notify -1 1800 'rgb(38bdf8)' {json.dumps(label)} >/dev/null 2>&1"],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL
+                )
+            except Exception:
+                pass
+    return pct
 
 
 def get_disk_usage(path, require_mount=False):
@@ -105,7 +278,7 @@ def refresh_library():
 
 class AnvilAPIHandler(SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
-        pass  # keep console clean
+        pass
 
     def send_json(self, data, status=200):
         body = json.dumps(data).encode("utf-8")
@@ -138,23 +311,42 @@ class AnvilAPIHandler(SimpleHTTPRequestHandler):
             except Exception:
                 pass
 
+            vol_pct, vol_muted = get_volume_state()
+            bright_pct = get_brightness_state()
+
             self.send_json({
                 "games": CACHED_GAMES,
                 "drives": CACHED_DRIVES,
                 "game_running": GAME_RUNNING,
+                "overlay_open": OVERLAY_OPEN,
+                "overlay_mode": OVERLAY_MODE,
+                "volume": {"percent": vol_pct, "muted": vol_muted},
+                "brightness": {"percent": bright_pct},
                 "battery": {
                     "percent": bat_pct,
                     "charging": bat_charging
                 },
                 "system": {
                     "model": "Valve Steam Deck (Jupiter)",
-                    "os": "Anvil Console OS v3.5 (Xbox Series X Shell)",
+                    "os": "Anvil Console OS v4.2 (Next-Gen Xbox + SteamOS Shell)",
                     "resolution": "1280 x 800 (16:10 Native)",
                     "refresh_rate": "60 Hz",
                     "runner": "GE-Proton11-9",
-                    "controller": "Steam Deck Built-in Xbox Bridge (Zero-Drift 4000dz)"
+                    "controller": "Steam Deck Built-in Xbox Bridge (Player 1 Locked)"
                 }
             })
+            return
+
+        if path == "/api/volume":
+            direction = query.get("dir", ["status"])[0]
+            pct, muted = handle_volume_action(direction)
+            self.send_json({"ok": True, "percent": pct, "muted": muted})
+            return
+
+        if path == "/api/brightness":
+            direction = query.get("dir", ["status"])[0]
+            pct = handle_brightness_action(direction)
+            self.send_json({"ok": True, "percent": pct})
             return
 
         if path == "/api/rescan":
@@ -165,7 +357,7 @@ class AnvilAPIHandler(SimpleHTTPRequestHandler):
         if path == "/api/input":
             act = query.get("a", [""])[0]
             if act:
-                eval_js(f"window.onAnvilInput && window.onAnvilInput({json.dumps(act)}, 'steamdeck', 'Steam Deck');")
+                dispatch_controller_action(act, "steamdeck", "Steam Deck")
             self.send_json({"ok": True, "action": act})
             return
 
@@ -196,7 +388,6 @@ class AnvilAPIHandler(SimpleHTTPRequestHandler):
             self.end_headers()
             return
 
-        # Serve static files from WEBUI_DIR
         if path == "/" or path == "":
             path = "/index.html"
         full_path = os.path.realpath(os.path.join(WEBUI_DIR, path.lstrip("/")))
@@ -248,9 +439,11 @@ class AnvilAPIHandler(SimpleHTTPRequestHandler):
             return
 
         if parsed.path == "/api/resume":
-            global OVERLAY_OPEN
+            global OVERLAY_OPEN, OVERLAY_MODE
             OVERLAY_OPEN = False
-            subprocess.Popen(["hyprctl", "dispatch", "focuscurrentorlast"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            OVERLAY_MODE = ""
+            eval_js("window.onAnvilOverlayState && window.onAnvilOverlayState(false, '');")
+            show_game_window()
             self.send_json({"ok": True})
             return
 
@@ -279,14 +472,11 @@ class AnvilAPIHandler(SimpleHTTPRequestHandler):
             elif action == "shutdown":
                 subprocess.Popen(["systemctl", "poweroff"])
             elif action == "desktop":
-                subprocess.Popen(["sh", "-c", "command -v anvil-switch-desktop >/dev/null 2>&1 && anvil-switch-desktop || hyprctl dispatch exit"])
+                subprocess.Popen(["sh", "-c", "command -v anvil-switch-desktop >/dev/null 2>&1 && anvil-switch-desktop || hyprctl eval 'hl.dispatch(hl.dsp.exit())'"])
             self.send_json({"ok": True})
             return
 
         self.send_json({"ok": False}, 404)
-
-
-OVERLAY_OPEN = False
 
 
 def eval_js(script):
@@ -294,13 +484,32 @@ def eval_js(script):
         GLib.idle_add(lambda: WEBVIEW_INSTANCE.evaluate_javascript(script, -1, None, None, None, None, None) and False)
 
 
+def game_window_watcher():
+    """While a game is starting up, immediately move its window to Workspace 2 fullscreen as soon as it maps."""
+    setup_hyprland_game_rules()
+    switched_once = False
+    while GAME_RUNNING:
+        if not OVERLAY_OPEN:
+            if has_game_window():
+                show_game_window()
+                if not switched_once:
+                    switched_once = True
+                    eval_js("window.onAnvilGameWindowReady && window.onAnvilGameWindowReady();")
+                time.sleep(1.0)
+                continue
+        time.sleep(0.2)
+
+
 def launch_game_session(cmd, name, game_id):
-    global GAME_RUNNING, GAME_PROC, OVERLAY_OPEN
+    global GAME_RUNNING, GAME_PROC, OVERLAY_OPEN, OVERLAY_MODE
     if GAME_RUNNING:
         return
     GAME_RUNNING = True
     OVERLAY_OPEN = False
+    OVERLAY_MODE = ""
     eval_js(f"window.onAnvilGameState && window.onAnvilGameState(true, {json.dumps(name)});")
+
+    threading.Thread(target=game_window_watcher, daemon=True).start()
 
     try:
         full_cmd = [
@@ -318,14 +527,16 @@ def launch_game_session(cmd, name, game_id):
     finally:
         GAME_RUNNING = False
         OVERLAY_OPEN = False
+        OVERLAY_MODE = ""
         GAME_PROC = None
         eval_js("window.onAnvilGameState && window.onAnvilGameState(false, '');")
-        subprocess.Popen(["hyprctl", "dispatch", "focuswindow", "title:^(Anvil Console OS)$"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        show_anvil_window()
 
 
 def kill_game_session():
-    global GAME_RUNNING, GAME_PROC, OVERLAY_OPEN
+    global GAME_RUNNING, GAME_PROC, OVERLAY_OPEN, OVERLAY_MODE
     OVERLAY_OPEN = False
+    OVERLAY_MODE = ""
     try:
         subprocess.run([GAME_SESSION_SCRIPT, "stop"], timeout=5)
     except Exception:
@@ -337,27 +548,46 @@ def kill_game_session():
             pass
     GAME_RUNNING = False
     eval_js("window.onAnvilGameState && window.onAnvilGameState(false, '');")
-    subprocess.Popen(["hyprctl", "dispatch", "focuswindow", "title:^(Anvil Console OS)$"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    show_anvil_window()
 
 
 def dispatch_controller_action(action, family="xbox", name="Xbox Series X Controller"):
-    global OVERLAY_OPEN
+    global OVERLAY_OPEN, OVERLAY_MODE
     if not action:
         return
+
+    if action == "vol_up":
+        handle_volume_action("up")
+        return
+    if action == "vol_down":
+        handle_volume_action("down")
+        return
+    if action == "vol_mute":
+        handle_volume_action("mute")
+        return
+
+    # In-Game Overlay handling (STEAM button = Left Guide Sidebar, Three-Dot QAM = Right Sidebar)
     if GAME_RUNNING:
-        if action == "guide":
-            OVERLAY_OPEN = not OVERLAY_OPEN
-            if OVERLAY_OPEN:
-                subprocess.Popen(["hyprctl", "dispatch", "focuswindow", "title:^(Anvil Console OS)$"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if action in ("guide", "qam"):
+            if OVERLAY_OPEN and OVERLAY_MODE == action:
+                # Pressing the same sidebar button again closes the overlay and returns to the game!
+                OVERLAY_OPEN = False
+                OVERLAY_MODE = ""
+                eval_js("window.onAnvilOverlayState && window.onAnvilOverlayState(false, '');")
+                show_game_window()
             else:
-                subprocess.Popen(["hyprctl", "dispatch", "focuscurrentorlast"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            eval_js(f"window.onAnvilInput && window.onAnvilInput('guide', {json.dumps(family)}, {json.dumps(name)});")
-        elif OVERLAY_OPEN:
+                # Open or switch between Left Guide ('guide') and Right QAM ('qam') over the running game!
+                OVERLAY_OPEN = True
+                OVERLAY_MODE = action
+                eval_js(f"window.onAnvilOverlayState && window.onAnvilOverlayState(true, {json.dumps(action)});")
+                show_anvil_window()
+            return
+
+        if OVERLAY_OPEN:
             eval_js(f"window.onAnvilInput && window.onAnvilInput({json.dumps(action)}, {json.dumps(family)}, {json.dumps(name)});")
         return
-    # When no game is running, ignore 'guide' so STEAM button never opens overlay on Home
-    if action == "guide":
-        return
+
+    # On Dashboard (no game running): both 'guide' (STEAM) and 'qam' (Three-Dot ...) open their respective sidebars!
     eval_js(f"window.onAnvilInput && window.onAnvilInput({json.dumps(action)}, {json.dumps(family)}, {json.dumps(name)});")
 
 
@@ -367,22 +597,29 @@ def controller_watch_thread():
     import select as _select
 
     KEY_TO_ACTION = {
-        304: "south",   # A
-        305: "east",    # B
-        307: "west",    # X (physical X on Steam Deck / xpad)
-        308: "north",   # Y (physical Y on Steam Deck / xpad)
-        310: "lb",      # LB
-        311: "rb",      # RB
-        312: "lt",      # LT digital
-        313: "rt",      # RT digital
-        314: "select",  # View / Select
-        315: "start",   # Menu / Start
-        316: "guide",   # STEAM / Guide
+        294: "qam",       # Three-Dot (...) Quick Access Button
+        148: "qam",
+        149: "qam",
+        217: "qam",
+        304: "south",     # A
+        305: "east",      # B
+        307: "west",      # X (physical X on Steam Deck / xpad)
+        308: "north",     # Y (physical Y on Steam Deck / xpad)
+        310: "lb",        # LB
+        311: "rb",        # RB
+        312: "lt",        # LT digital
+        313: "rt",        # RT digital
+        314: "select",    # View / Select
+        315: "start",     # Menu / Start
+        316: "guide",     # STEAM / Guide
         172: "guide",
         544: "up",
         545: "down",
         546: "left",
         547: "right",
+        113: "vol_mute",  # Hardware Mute
+        114: "vol_down",  # Hardware Volume Down (top of Steam Deck)
+        115: "vol_up",    # Hardware Volume Up (top of Steam Deck)
     }
 
     axis_active = {}
@@ -395,7 +632,15 @@ def controller_watch_thread():
                 try:
                     d = evdev.InputDevice(p)
                     nm = (d.name or "").lower()
-                    if any(k in nm for k in ("x-box", "xbox", "steam deck", "gamepad", "controller")) and "motion" not in nm and "mouse" not in nm and "keyboard" not in nm:
+                    caps = d.capabilities().get(ecodes.EV_KEY, [])
+                    is_pad = (
+                        any(k in nm for k in ("x-box", "xbox", "steam deck", "gamepad", "controller"))
+                        and "motion" not in nm
+                        and "mouse" not in nm
+                        and "keyboard" not in nm
+                    )
+                    is_vol_hw = (114 in caps or 115 in caps) and "valve software" not in nm
+                    if is_pad or is_vol_hw:
                         devs.append(d)
                 except Exception:
                     pass
@@ -411,8 +656,12 @@ def controller_watch_thread():
                     d = fd_map[fd]
                     for ev in d.read():
                         act = None
-                        if ev.type == ecodes.EV_KEY and ev.value == 1:
-                            act = KEY_TO_ACTION.get(ev.code)
+                        if ev.type == ecodes.EV_KEY:
+                            # Allow key-repeat (ev.value == 2) for Volume Up / Volume Down!
+                            if ev.code in (114, 115) and ev.value in (1, 2):
+                                act = KEY_TO_ACTION.get(ev.code)
+                            elif ev.value == 1:
+                                act = KEY_TO_ACTION.get(ev.code)
                         elif ev.type == ecodes.EV_ABS:
                             c = ev.code
                             v = ev.value
@@ -481,7 +730,8 @@ def controller_watch_thread():
 
                         if act:
                             now = time.monotonic()
-                            if now - last_fire.get(act, 0) >= 0.11:
+                            cooldown = 0.07 if act in ("vol_up", "vol_down") else 0.11
+                            if now - last_fire.get(act, 0) >= cooldown:
                                 last_fire[act] = now
                                 dispatch_controller_action(act, "xbox", d.name or "Xbox Controller")
         except Exception as e:
@@ -512,6 +762,7 @@ def main():
     os.environ.setdefault("GDK_BACKEND", "wayland,x11")
     os.environ.setdefault("WEBKIT_DISABLE_COMPOSITING_MODE", "0")
 
+    setup_hyprland_game_rules()
     refresh_library()
     start_http_server()
     threading.Thread(target=controller_watch_thread, daemon=True).start()
@@ -523,7 +774,6 @@ def main():
     win.set_decorated(False)
     win.fullscreen()
 
-    # Dark background so startup never flashes white
     rgba = Gdk.RGBA(0.03, 0.04, 0.06, 1.0)
     win.override_background_color(Gtk.StateFlags.NORMAL, rgba)
 

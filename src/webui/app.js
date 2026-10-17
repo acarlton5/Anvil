@@ -16,6 +16,11 @@ const state = {
   settingsFocusSide: true,
   guideOpen: false,
   guideIdx: 0,
+  qamOpen: false,
+  qamIdx: 0,
+  volumePct: 75,
+  volumeMuted: false,
+  brightnessPct: 85,
   cartridgeModalOpen: false,
   cartridgeModalIdx: 0,
   powerModalOpen: false,
@@ -72,6 +77,13 @@ async function loadState() {
     state.battery = data.battery || { percent: 100, charging: false };
     state.system = data.system || {};
     state.gameRunning = !!data.game_running;
+    if (data.volume) {
+      state.volumePct = data.volume.percent ?? 75;
+      state.volumeMuted = !!data.volume.muted;
+    }
+    if (data.brightness) {
+      state.brightnessPct = data.brightness.percent ?? 85;
+    }
 
     const count = state.games.length;
     const topCart = document.getElementById("top-cart-count");
@@ -83,8 +95,10 @@ async function loadState() {
 
     const batFill = document.getElementById("battery-fill");
     const batText = document.getElementById("battery-text");
+    const qamBat = document.getElementById("qam-battery-label");
     if (batFill) batFill.style.width = `${Math.max(8, Math.min(100, state.battery.percent))}%`;
     if (batText) batText.textContent = `${state.battery.percent}%${state.battery.charging ? " ⚡" : ""}`;
+    if (qamBat) qamBat.textContent = `${state.battery.percent}%${state.battery.charging ? " ⚡" : ""}`;
 
     renderHomeShelf();
     renderLibraryGrid();
@@ -309,6 +323,7 @@ function switchTab(newTab) {
   // Always close any open modal/drawer when switching tabs so LB/RB never gets stuck!
   closeCartridgeModal();
   closeGuideBlade();
+  closeQamSidebar();
   if (state.powerModalOpen) togglePowerModal();
 
   const count = 5;
@@ -570,6 +585,7 @@ function renderGuideMenu() {
 }
 
 function toggleGuideBlade() {
+  if (!state.guideOpen) closeQamSidebar();
   state.guideOpen = !state.guideOpen;
   state.guideIdx = 0;
   renderGuideMenu();
@@ -586,6 +602,210 @@ function closeGuideBlade() {
   if (blade) blade.classList.remove("open");
   if (bg) bg.classList.remove("open");
 }
+
+/* =================================================
+   RIGHT SIDEBAR: THREE-DOT (•••) QUICK ACCESS MENU
+   ================================================= */
+const QAM_ICONS = {
+  vol: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:6px;color:#22c55e;"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>`,
+  mute: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:6px;color:#f87171;"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>`,
+  sun: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:6px;color:#38bdf8;"><path d="M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69zM12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm0-10c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/></svg>`,
+  bolt: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:6px;color:#fbbf24;"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>`,
+  pad: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:6px;color:#22c55e;"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>`,
+  cart: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:6px;color:#a855f7;"><path d="M18 2h-8L4 8v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-6 6h-2V4h2v4zm3 0h-2V4h2v4zm3 0h-2V4h2v4z"/></svg>`
+};
+
+function getQamItems() {
+  const items = [];
+  if (state.gameRunning) {
+    items.push({
+      id: "resume",
+      title: `▶ Resume ${state.activeGameName || "Game"}`,
+      sub: "Return immediately to fullscreen game",
+      badge: "PLAYING",
+      green: true,
+      onA: () => resumeGameSession()
+    });
+    items.push({
+      id: "quit",
+      title: "✕ Quit Game to Dashboard",
+      sub: "Close active game session",
+      badge: "STOP",
+      onA: () => quitGameSession()
+    });
+  }
+  items.push(
+    {
+      id: "volume",
+      title: `${state.volumeMuted ? QAM_ICONS.mute + "Master Audio (MUTED)" : QAM_ICONS.vol + "Master Audio Volume"}`,
+      sub: "Use ◀ / ▶ to adjust volume, or press A to toggle mute",
+      badge: state.volumeMuted ? "MUTED" : `${state.volumePct}%`,
+      green: !state.volumeMuted,
+      progress: state.volumeMuted ? 0 : state.volumePct,
+      onLeft: () => adjustVolume("down"),
+      onRight: () => adjustVolume("up"),
+      onA: () => adjustVolume("mute")
+    },
+    {
+      id: "brightness",
+      title: `${QAM_ICONS.sun}Display Brightness`,
+      sub: "Use ◀ / ▶ or A to adjust Steam Deck panel backlight",
+      badge: `${state.brightnessPct}%`,
+      progress: state.brightnessPct,
+      onLeft: () => adjustBrightness("down"),
+      onRight: () => adjustBrightness("up"),
+      onA: () => adjustBrightness("up")
+    },
+    {
+      id: "perf",
+      title: `${QAM_ICONS.bolt}Performance & Refresh Lock`,
+      sub: "1280 × 800 Native  •  60 FPS Target  •  VRR Enabled",
+      badge: "60 HZ VRR",
+      green: true,
+      onA: () => { closeQamSidebar(); switchTab(4); selectSettingCat(2); }
+    },
+    {
+      id: "controller",
+      title: `${QAM_ICONS.pad}Xbox 360 Player 1 Bridge`,
+      sub: "Slot 0 Locked  •  4000 Deadzone  •  Lizard HID Blocked",
+      badge: "PLAYER 1",
+      green: true,
+      onA: () => { closeQamSidebar(); switchTab(4); selectSettingCat(1); }
+    },
+    {
+      id: "rescan",
+      title: `${QAM_ICONS.cart}Rescan Cartridge Slots`,
+      sub: "Refresh /mnt/sdcard/Games and /mnt/usb/Games",
+      badge: `${state.games.length} GAMES`,
+      onA: async () => {
+        await fetch("/api/rescan");
+        await loadState();
+        renderQamMenu();
+      }
+    }
+  );
+  return items;
+}
+
+function renderQamMenu() {
+  const list = document.getElementById("qam-menu-list");
+  if (!list) return;
+  const items = getQamItems();
+  state.qamIdx = Math.max(0, Math.min(items.length - 1, state.qamIdx));
+  list.innerHTML = items
+    .map((item, idx) => {
+      const barHtml =
+        typeof item.progress === "number"
+          ? `<div class="progress-track" style="height:6px; margin-top:4px;"><div class="progress-fill" style="width:${item.progress}%;"></div></div>`
+          : "";
+      return `
+        <div class="qam-card ${idx === state.qamIdx ? "selected" : ""}" id="qam-item-${idx}">
+          <div class="qam-row-top">
+            <span>${item.title}</span>
+            <span class="xbox-tag ${item.green ? "green" : ""}">${item.badge}</span>
+          </div>
+          <div class="qam-sub">${item.sub}</div>
+          ${barHtml}
+        </div>
+      `;
+    })
+    .join("");
+
+  items.forEach((item, idx) => {
+    const el = document.getElementById(`qam-item-${idx}`);
+    if (el) {
+      el.onclick = () => {
+        state.qamIdx = idx;
+        if (item.onA) item.onA();
+        renderQamMenu();
+      };
+    }
+  });
+}
+
+function toggleQamSidebar() {
+  if (!state.qamOpen) closeGuideBlade();
+  state.qamOpen = !state.qamOpen;
+  state.qamIdx = 0;
+  renderQamMenu();
+  const sb = document.getElementById("qam-sidebar");
+  const bg = document.getElementById("qam-backdrop");
+  if (sb) sb.classList.toggle("open", state.qamOpen);
+  if (bg) bg.classList.toggle("open", state.qamOpen);
+}
+
+function closeQamSidebar() {
+  state.qamOpen = false;
+  const sb = document.getElementById("qam-sidebar");
+  const bg = document.getElementById("qam-backdrop");
+  if (sb) sb.classList.remove("open");
+  if (bg) bg.classList.remove("open");
+}
+
+async function adjustVolume(dir) {
+  try {
+    const res = await fetch(`/api/volume?dir=${encodeURIComponent(dir)}`);
+    const data = await res.json();
+    if (data.ok) {
+      state.volumePct = data.percent;
+      state.volumeMuted = !!data.muted;
+      renderQamMenu();
+    }
+  } catch (e) {}
+}
+
+async function adjustBrightness(dir) {
+  try {
+    const res = await fetch(`/api/brightness?dir=${encodeURIComponent(dir)}`);
+    const data = await res.json();
+    if (data.ok) {
+      state.brightnessPct = data.percent;
+      renderQamMenu();
+    }
+  } catch (e) {}
+}
+
+/* =================================================
+   TOP-CENTER HARDWARE VOLUME & BRIGHTNESS OSD PILL
+   ================================================= */
+let osdTimer = null;
+
+function showSystemOSD(title, pct, muted, svgHtml) {
+  const osd = document.getElementById("system-osd");
+  const iconEl = document.getElementById("osd-icon");
+  const titleEl = document.getElementById("osd-title");
+  const valEl = document.getElementById("osd-val");
+  const fillEl = document.getElementById("osd-fill");
+  if (!osd) return;
+
+  if (iconEl) iconEl.innerHTML = svgHtml;
+  if (titleEl) titleEl.textContent = title;
+  if (valEl) valEl.textContent = muted ? "MUTED" : `${pct}%`;
+  if (fillEl) fillEl.style.width = `${muted ? 0 : Math.max(0, Math.min(100, pct))}%`;
+
+  osd.classList.add("visible");
+  if (osdTimer) clearTimeout(osdTimer);
+  osdTimer = setTimeout(() => {
+    osd.classList.remove("visible");
+  }, 2100);
+}
+
+window.onAnvilVolumeOSD = function (pct, muted) {
+  state.volumePct = pct;
+  state.volumeMuted = !!muted;
+  const svg = muted
+    ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="#f87171"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>`
+    : `<svg width="22" height="22" viewBox="0 0 24 24" fill="#22c55e"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>`;
+  showSystemOSD("VOLUME", pct, muted, svg);
+  if (state.qamOpen) renderQamMenu();
+};
+
+window.onAnvilBrightnessOSD = function (pct) {
+  state.brightnessPct = pct;
+  const svg = `<svg width="22" height="22" viewBox="0 0 24 24" fill="#38bdf8"><path d="M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69zM12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm0-10c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/></svg>`;
+  showSystemOSD("BRIGHTNESS", pct, false, svg);
+  if (state.qamOpen) renderQamMenu();
+};
 
 function renderCartridgeModalOptions() {
   const container = document.getElementById("modal-drive-options");
@@ -682,15 +902,32 @@ async function triggerPower(action) {
   if (modal) modal.classList.remove("open");
 }
 
+function updateGameCurtain(active, gameName, isOverlay) {
+  const curtain = document.getElementById("game-curtain");
+  if (!curtain) return;
+  curtain.classList.toggle("active", !!active);
+  if (!active) return;
+
+  const g = state.games.find((item) => item.name === gameName) || state.games[state.selectedIndex] || {};
+  const artEl = document.getElementById("curtain-art-img");
+  const badgeEl = document.getElementById("curtain-badge");
+  const titleEl = document.getElementById("curtain-title");
+  const loaderEl = document.getElementById("curtain-loader");
+
+  if (artEl) artEl.src = artUrl(g.box_art || g.cover_art || g.hero_art);
+  if (badgeEl) badgeEl.textContent = isOverlay ? "IN-GAME OVERLAY ACTIVE" : "STARTING CARTRIDGE...";
+  if (titleEl) titleEl.textContent = gameName || g.name || "Running Cartridge";
+  if (loaderEl) loaderEl.style.display = isOverlay ? "none" : "block";
+}
+
 async function launchSelectedGame() {
   const g = state.games[state.selectedIndex];
   if (!g || state.gameRunning) return;
 
-  const titleEl = document.getElementById("home-title");
-  if (titleEl) {
-    titleEl.style.display = "block";
-    titleEl.textContent = `Launching ${g.name}...`;
-  }
+  // Hide Dashboard in 0ms with the Console Launch Curtain!
+  state.gameRunning = true;
+  state.activeGameName = g.name;
+  updateGameCurtain(true, g.name, false);
 
   await fetch("/api/launch", {
     method: "POST",
@@ -705,19 +942,54 @@ async function launchSelectedGame() {
 
 async function resumeGameSession() {
   closeGuideBlade();
+  closeQamSidebar();
   await fetch("/api/resume", { method: "POST" });
 }
 
 async function quitGameSession() {
   closeGuideBlade();
+  closeQamSidebar();
+  updateGameCurtain(false, "", false);
   await fetch("/api/kill", { method: "POST" });
 }
+
+window.onAnvilGameWindowReady = function () {
+  updateGameCurtain(true, state.activeGameName, true);
+};
+
+window.onAnvilOverlayState = function (open, mode) {
+  if (!open) {
+    closeGuideBlade();
+    closeQamSidebar();
+    return;
+  }
+  updateGameCurtain(true, state.activeGameName, true);
+  if (mode === "guide") {
+    closeQamSidebar();
+    state.guideOpen = true;
+    state.guideIdx = 0;
+    renderGuideMenu();
+    document.getElementById("xbox-guide")?.classList.add("open");
+    document.getElementById("guide-backdrop")?.classList.add("open");
+  } else if (mode === "qam") {
+    closeGuideBlade();
+    state.qamOpen = true;
+    state.qamIdx = 0;
+    renderQamMenu();
+    document.getElementById("qam-sidebar")?.classList.add("open");
+    document.getElementById("qam-backdrop")?.classList.add("open");
+  }
+};
 
 window.onAnvilGameState = function (running, gameName) {
   state.gameRunning = !!running;
   state.activeGameName = gameName || "";
-  if (!running) {
+  if (running) {
+    updateGameCurtain(true, state.activeGameName, false);
+  } else {
     closeGuideBlade();
+    closeQamSidebar();
+    updateGameCurtain(false, "", false);
     updateSelectedGameHero();
   }
 };
@@ -741,7 +1013,8 @@ window.onAnvilInput = function (action, family, controllerName) {
     select: "SELECT",
     back: "SELECT",
     start: "START",
-    guide: "GUIDE"
+    guide: "GUIDE",
+    qam: "QAM"
   };
   state.lastButton = btnMap[action] || action.toUpperCase();
 
@@ -754,12 +1027,8 @@ window.onAnvilInput = function (action, family, controllerName) {
     if (lbl) lbl.textContent = `LAST INPUT: ${state.lastButton}`;
   }
 
-  // 1. In-Game Guide Blade handling (ONLY when a game is running)
+  // 1. In-Game Overlay Navigation (when a game is running and STEAM or ••• opened a sidebar)
   if (state.gameRunning) {
-    if (action === "guide") {
-      toggleGuideBlade();
-      return;
-    }
     if (state.guideOpen) {
       const items = getGuideItems();
       if (action === "up") {
@@ -773,11 +1042,45 @@ window.onAnvilInput = function (action, family, controllerName) {
       } else if (action === "east") {
         resumeGameSession();
       }
+      return;
+    }
+    if (state.qamOpen) {
+      const items = getQamItems();
+      const cur = items[state.qamIdx];
+      if (action === "up") {
+        state.qamIdx = (state.qamIdx + items.length - 1) % items.length;
+        renderQamMenu();
+      } else if (action === "down") {
+        state.qamIdx = (state.qamIdx + 1) % items.length;
+        renderQamMenu();
+      } else if (action === "left" && cur?.onLeft) {
+        cur.onLeft();
+      } else if (action === "right" && cur?.onRight) {
+        cur.onRight();
+      } else if (action === "south" && cur?.onA) {
+        cur.onA();
+      } else if (action === "east") {
+        resumeGameSession();
+      }
+      return;
+    }
+    if (action === "south" || action === "east") {
+      resumeGameSession();
     }
     return;
   }
 
-  // 2. LB / RB ALWAYS switches tabs cleanly (even if a modal/blade was open, so it NEVER gets stuck!)
+  // 2. STEAM Button (Left Guide Sidebar) & Three-Dot ••• Button (Right Quick Access Sidebar) on Dashboard!
+  if (action === "guide" || action === "select" || action === "back") {
+    toggleGuideBlade();
+    return;
+  }
+  if (action === "qam") {
+    toggleQamSidebar();
+    return;
+  }
+
+  // 3. LB / RB ALWAYS switches tabs cleanly (even if a modal/blade was open, so it NEVER gets stuck!)
   if (action === "lb") {
     switchTab(state.tab - 1);
     return;
@@ -787,7 +1090,7 @@ window.onAnvilInput = function (action, family, controllerName) {
     return;
   }
 
-  // 3. Xbox Guide Blade handling (when on Dashboard)
+  // 4. Left Sidebar (STEAM Guide Blade) navigation on Dashboard
   if (state.guideOpen) {
     const items = getGuideItems();
     if (action === "up") {
@@ -798,13 +1101,35 @@ window.onAnvilInput = function (action, family, controllerName) {
       renderGuideMenu();
     } else if (action === "south") {
       items[state.guideIdx]?.action();
-    } else if (action === "east" || action === "select" || action === "back") {
+    } else if (action === "east") {
       closeGuideBlade();
     }
     return;
   }
 
-  // 4. Power Modal handling
+  // 5. Right Sidebar (••• Quick Access Menu) navigation on Dashboard
+  if (state.qamOpen) {
+    const items = getQamItems();
+    const cur = items[state.qamIdx];
+    if (action === "up") {
+      state.qamIdx = (state.qamIdx + items.length - 1) % items.length;
+      renderQamMenu();
+    } else if (action === "down") {
+      state.qamIdx = (state.qamIdx + 1) % items.length;
+      renderQamMenu();
+    } else if (action === "left" && cur?.onLeft) {
+      cur.onLeft();
+    } else if (action === "right" && cur?.onRight) {
+      cur.onRight();
+    } else if (action === "south" && cur?.onA) {
+      cur.onA();
+    } else if (action === "east") {
+      closeQamSidebar();
+    }
+    return;
+  }
+
+  // 6. Power Modal handling
   if (state.powerModalOpen) {
     const actions = ["sleep", "desktop", "restart", "shutdown", "cancel"];
     if (action === "up") {
@@ -826,7 +1151,7 @@ window.onAnvilInput = function (action, family, controllerName) {
     return;
   }
 
-  // 5. Cartridge Builder Modal handling
+  // 7. Cartridge Builder Modal handling
   if (state.cartridgeModalOpen) {
     const total = state.cartridgeTargets.length;
     if (action === "up") {
@@ -843,11 +1168,7 @@ window.onAnvilInput = function (action, family, controllerName) {
     return;
   }
 
-  // 6. Global Dashboard Shortcuts
-  if (action === "select" || action === "back") {
-    toggleGuideBlade();
-    return;
-  }
+  // 8. Global Dashboard Shortcuts
   if (action === "start") {
     togglePowerModal();
     return;
