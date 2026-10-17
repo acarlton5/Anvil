@@ -22,8 +22,10 @@ from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 import gi
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
+gi.require_version("GdkPixbuf", "2.0")
 gi.require_version("WebKit2", "4.1")
-from gi.repository import Gtk, Gdk, GLib, WebKit2
+from gi.repository import Gtk, Gdk, GdkPixbuf, GLib, WebKit2
+import hashlib
 
 ANVIL_ROOT = os.environ.get("ANVIL_ROOT", "/usr/local/share/anvil")
 WEBUI_DIR = os.path.join(ANVIL_ROOT, "src", "webui")
@@ -31,6 +33,8 @@ LIBRARY_SCRIPT = os.path.join(ANVIL_ROOT, "src", "daemon", "anvil_library.py")
 GAME_SESSION_SCRIPT = os.path.join(ANVIL_ROOT, "scripts", "anvil-game-session")
 AUDIO_SCRIPT = os.path.join(ANVIL_ROOT, "scripts", "anvil-audio-control")
 CARTRIDGE_TOOL = "/usr/local/bin/anvil-cartridge-tool"
+ART_CACHE_DIR = "/dev/shm/anvil-art"
+ART_BYTES_CACHE = {}
 
 # Global state
 CACHED_GAMES = []
@@ -335,6 +339,78 @@ def get_disk_usage(path, require_mount=False):
     return {"total_gb": 0, "used_gb": 0, "free_gb": 0, "percent": 0, "mounted": False}
 
 
+def get_optimized_art_bytes(file_path):
+    """Return RAM-cached & resolution-optimized image bytes so WebKit2GTK never lags on MicroSD reads."""
+    if not file_path or not os.path.isfile(file_path):
+        return None, None
+
+    cached = ART_BYTES_CACHE.get(file_path)
+    if cached:
+        return cached
+
+    os.makedirs(ART_CACHE_DIR, exist_ok=True)
+    base = os.path.basename(file_path).lower()
+    ext = os.path.splitext(file_path)[1].lower()
+    key = hashlib.md5(file_path.encode("utf-8")).hexdigest()[:16]
+
+    try:
+        if "hero" in base:
+            shm_file = os.path.join(ART_CACHE_DIR, f"{key}_hero.jpg")
+            if not os.path.isfile(shm_file):
+                pb = GdkPixbuf.Pixbuf.new_from_file_at_scale(file_path, 1280, -1, True)
+                pb.savev(shm_file, "jpeg", ["quality"], ["85"])
+            with open(shm_file, "rb") as f:
+                data = f.read()
+            ART_BYTES_CACHE[file_path] = (data, "image/jpeg")
+            return data, "image/jpeg"
+
+        elif "grid" in base or "600x900" in base or "cover" in base or "poster" in base:
+            shm_file = os.path.join(ART_CACHE_DIR, f"{key}_grid.jpg")
+            if not os.path.isfile(shm_file):
+                pb = GdkPixbuf.Pixbuf.new_from_file_at_scale(file_path, 340, -1, True)
+                pb.savev(shm_file, "jpeg", ["quality"], ["86"])
+            with open(shm_file, "rb") as f:
+                data = f.read()
+            ART_BYTES_CACHE[file_path] = (data, "image/jpeg")
+            return data, "image/jpeg"
+
+        elif "logo" in base:
+            shm_file = os.path.join(ART_CACHE_DIR, f"{key}_logo.png")
+            if not os.path.isfile(shm_file):
+                pb = GdkPixbuf.Pixbuf.new_from_file_at_scale(file_path, 520, -1, True)
+                pb.savev(shm_file, "png", [], [])
+            with open(shm_file, "rb") as f:
+                data = f.read()
+            ART_BYTES_CACHE[file_path] = (data, "image/png")
+            return data, "image/png"
+    except Exception:
+        pass
+
+    try:
+        mime = {
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+            ".png": "image/png",
+            ".webp": "image/webp",
+            ".svg": "image/svg+xml"
+        }.get(ext, "application/octet-stream")
+        with open(file_path, "rb") as f:
+            data = f.read()
+        ART_BYTES_CACHE[file_path] = (data, mime)
+        return data, mime
+    except Exception:
+        return None, None
+
+
+def prewarm_art_cache():
+    """Pre-warm all 48 games' hero, grid, and logo images into /dev/shm/anvil-art and RAM."""
+    for g in list(CACHED_GAMES):
+        for k in ("hero", "grid", "logo"):
+            p = g.get(k)
+            if p:
+                get_optimized_art_bytes(p)
+
+
 def refresh_library():
     global CACHED_GAMES, CACHED_DRIVES
     try:
@@ -345,6 +421,7 @@ def refresh_library():
         )
         games = json.loads(res.decode("utf-8", errors="ignore"))
         CACHED_GAMES = [g for g in games if not g.get("dummy")]
+        threading.Thread(target=prewarm_art_cache, daemon=True).start()
     except Exception as e:
         print(f"[anvil-webui] Library scan error: {e}", file=sys.stderr)
 
@@ -439,7 +516,7 @@ class AnvilAPIHandler(SimpleHTTPRequestHandler):
                 },
                 "system": {
                     "model": "Valve Steam Deck (Jupiter)",
-                    "os": "Anvil Console OS 4.5 (SteamOS + Xbox Fluent Edition)",
+                    "os": "Anvil Console OS 5.0 (SteamOS 3.6 Deck Edition)",
                     "resolution": "1280 x 800 (16:10 Native)",
                     "refresh_rate": "60 Hz VRR",
                     "runner": "GE-Proton11-9",
@@ -480,22 +557,13 @@ class AnvilAPIHandler(SimpleHTTPRequestHandler):
 
         if path == "/art":
             file_path = query.get("p", [""])[0]
-            if file_path and os.path.isfile(file_path):
-                ext = os.path.splitext(file_path)[1].lower()
-                mime = {
-                    ".jpg": "image/jpeg",
-                    ".jpeg": "image/jpeg",
-                    ".png": "image/png",
-                    ".webp": "image/webp",
-                    ".svg": "image/svg+xml"
-                }.get(ext, "application/octet-stream")
+            content, mime = get_optimized_art_bytes(file_path)
+            if content and mime:
                 try:
-                    with open(file_path, "rb") as f:
-                        content = f.read()
                     self.send_response(200)
                     self.send_header("Content-Type", mime)
                     self.send_header("Content-Length", str(len(content)))
-                    self.send_header("Cache-Control", "public, max-age=3600")
+                    self.send_header("Cache-Control", "public, max-age=86400, immutable")
                     self.end_headers()
                     self.wfile.write(content)
                     return

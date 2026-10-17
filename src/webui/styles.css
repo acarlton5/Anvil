@@ -43,21 +43,24 @@ html, body {
   background: radial-gradient(circle at 75% 25%, #131d2e 0%, #070a0f 100%);
 }
 
-#backdrop-img {
+.backdrop-layer {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 14%;
-  transition: opacity 0.35s ease, filter 0.35s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-  opacity: 0.96;
-  filter: saturate(1.18) contrast(1.05);
+  background-position: center 14%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0;
+  will-change: opacity;
+  transform: translateZ(0);
+  transition: opacity 0.24s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-body.subpage #backdrop-img {
-  filter: blur(36px) brightness(0.32) saturate(1.25);
-  transform: scale(1.06);
+.backdrop-layer.active {
+  opacity: 0.96;
+}
+
+body.subpage .backdrop-layer.active {
+  opacity: 0.16;
 }
 
 #backdrop-vignette {
@@ -172,6 +175,7 @@ body.night-mode #night-mode-overlay {
   font-size: 11px;
   font-weight: 700;
   color: #cbd5e1;
+  white-space: nowrap;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
 }
 
@@ -287,6 +291,8 @@ body.night-mode #night-mode-overlay {
   font-size: 11px;
   font-weight: 800;
   color: #f1f5f9;
+  white-space: nowrap;
+  flex-shrink: 0;
   cursor: pointer;
 }
 
@@ -849,58 +855,218 @@ body.night-mode #night-mode-overlay {
 }
 
 /* =========================================
-   PAGE 4: SETTINGS
+   PAGE 4: AUTHENTIC STEAMOS 3.6 SETTINGS PANEL
    ========================================= */
 #page-settings {
-  gap: 26px;
-  padding-top: 12px;
+  padding-top: 8px;
 }
 
-.xbox-settings-sidebar {
-  width: 265px;
+.steamos-settings-layout {
+  width: 100%;
   height: 100%;
-  background: var(--glass-dark);
-  border: 1px solid var(--border-glass);
-  border-radius: 16px;
-  padding: 18px;
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 24px;
+}
+
+.steamos-settings-blade {
+  height: 100%;
+  background: rgba(14, 19, 27, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  padding: 18px 14px;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.xbox-settings-cat {
-  padding: 13px 16px;
-  border-radius: 10px;
+.steamos-blade-title {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: #64748b;
+  padding: 4px 12px 10px 12px;
+}
+
+.steamos-cat-btn {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.025);
+  color: #94a3b8;
   font-size: 14px;
   font-weight: 700;
-  color: var(--text-secondary);
+  text-align: left;
   cursor: pointer;
-  border: 2.5px solid transparent;
-  transition: all 0.15s ease;
+  transition: all 0.14s ease;
 }
 
-.xbox-settings-cat.active {
-  background: rgba(255, 255, 255, 0.12);
+.steamos-cat-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  opacity: 0.85;
+}
+
+.steamos-cat-btn b {
+  font-size: 20px;
+  font-weight: 400;
+  color: #64748b;
+}
+
+.steamos-cat-btn.active {
+  background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
+  box-shadow: inset 3px 0 0 #22c55e;
 }
 
-.xbox-settings-cat.focused {
+.steamos-cat-btn.active svg {
+  color: #22c55e;
+  opacity: 1;
+}
+
+.steamos-cat-btn.focused {
+  background: #202938;
   border-color: #ffffff;
-  background: rgba(255, 255, 255, 0.2);
   color: #ffffff;
-  box-shadow: 0 0 16px rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.5), 0 12px 26px rgba(0, 0, 0, 0.65);
 }
 
-.xbox-settings-content {
-  flex: 1;
+.steamos-cat-btn.focused b {
+  color: #ffffff;
+}
+
+/* Unified Right Settings Detail Container */
+.steamos-settings-detail {
   height: 100%;
+  background: rgba(15, 21, 30, 0.94);
+  border: 1.5px solid rgba(255, 255, 255, 0.13);
+  border-radius: 18px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 2px 8px 20px 4px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
 }
 
+.steamos-settings-detail::-webkit-scrollbar {
+  width: 6px;
+}
+.steamos-settings-detail::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 3px;
+}
+
+.settings-detail-head {
+  padding: 20px 26px 16px 26px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(90deg, rgba(34, 197, 94, 0.08) 0%, transparent 70%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-detail-head p {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #4ade80;
+  margin-bottom: 4px;
+}
+
+.settings-detail-head h2 {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.console-setting-row {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  min-height: 82px;
+  padding: 16px 26px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 4px solid transparent;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.console-setting-row:last-child {
+  border-bottom: none;
+}
+
+.console-setting-row.focused {
+  background: rgba(255, 255, 255, 0.11);
+  border-left-color: #22c55e;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.65);
+}
+
+.console-setting-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.console-setting-info strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.console-setting-info small {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.38;
+}
+
+/* Authentic SteamOS Pill Toggle Switch */
+.steamos-toggle {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  border-radius: 999px;
+  background: #2b3442;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
+  transition: all 0.18s ease;
+}
+
+.steamos-toggle::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  transition: all 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.steamos-toggle.on {
+  background: #22c55e;
+  border-color: #4ade80;
+  box-shadow: 0 0 14px rgba(34, 197, 94, 0.45);
+}
+
+.steamos-toggle.on::after {
+  left: 27px;
+  background: #070a0f;
+}
+
+/* Keep xbox-slate-card for Store & Cartridges pages */
 .xbox-slate-card {
   background: var(--glass-card);
   border-radius: 14px;
@@ -944,7 +1110,7 @@ body.night-mode #night-mode-overlay {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  height: 40px;
+  height: 38px;
   padding: 0 18px;
   border-radius: 999px;
   background: #ffffff;
@@ -973,16 +1139,16 @@ body.night-mode #night-mode-overlay {
 
 .pad-matrix {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 8px;
   margin-top: 6px;
 }
 
 .pad-key {
-  padding: 10px 6px;
+  padding: 9px 4px;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   text-align: center;
   font-size: 11px;
   font-weight: 800;
@@ -999,106 +1165,212 @@ body.night-mode #night-mode-overlay {
 }
 
 /* =========================================
-   4. XBOX GUIDE SLIDE-OUT BLADE
+   4. FULL-HEIGHT STEAMOS LEFT & RIGHT DRAWERS
    ========================================= */
-#guide-backdrop {
+#guide-backdrop,
+#qam-backdrop {
   position: fixed;
   inset: 0;
   z-index: 90;
-  background: rgba(4, 6, 10, 0.6);
+  background: rgba(3, 5, 9, 0.68);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease;
 }
 
-#guide-backdrop.open {
+#guide-backdrop.open,
+#qam-backdrop.open {
   opacity: 1;
   pointer-events: auto;
 }
 
-#xbox-guide {
+/* Left STEAM Drawer (Flush Full-Height) */
+.steamos-left-drawer {
   position: fixed;
-  top: 16px;
-  bottom: 16px;
-  left: 16px;
-  width: 390px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 345px;
   z-index: 95;
-  border-radius: 18px;
-  background: rgba(16, 21, 30, 0.94);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 20px 0 60px rgba(0, 0, 0, 0.88);
+  background: #0d121a;
+  border-right: 1.5px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 24px 0 64px rgba(0, 0, 0, 0.92);
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 22px 18px;
   gap: 14px;
-  transform: translateX(-430px);
-  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translateX(-360px);
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-#xbox-guide.open {
+.steamos-left-drawer.open {
   transform: translateX(0);
 }
 
-.guide-top-row {
+.steamos-drawer-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 10px;
+  padding-bottom: 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.guide-tabs {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #ffffff;
-}
-
-.guide-profile-banner {
+.steamos-user-card {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.guide-menu-list {
+.steamos-drawer-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   flex: 1;
   overflow-y: auto;
 }
 
 .guide-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
   align-items: center;
-  justify-content: space-between;
+  gap: 12px;
   padding: 12px 14px;
   border-radius: 10px;
   font-size: 14px;
-  font-weight: 600;
-  color: #e2e8f0;
+  font-weight: 700;
+  color: #cbd5e1;
   cursor: pointer;
-  border: 2.5px solid transparent;
+  border: 2px solid transparent;
   transition: all 0.12s ease;
 }
 
-.guide-item.selected {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: #ffffff;
-  color: #ffffff;
-  font-weight: 700;
+.guide-item svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  opacity: 0.85;
 }
 
-.guide-footer {
+.guide-item.selected {
+  background: #ffffff;
+  color: #070a0f;
+  border-color: #ffffff;
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
+}
+
+.guide-item.selected svg {
+  fill: #070a0f;
+  opacity: 1;
+}
+
+.guide-item.selected .xbox-tag {
+  background: #070a0f;
+  color: #4ade80;
+}
+
+.steamos-drawer-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 10px;
+  padding-top: 12px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+/* Right ••• Quick Access Drawer (Flush Full-Height with Vertical Icon Rail) */
+.steamos-right-drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 420px;
+  z-index: 96;
+  background: #0d121a;
+  border-left: 1.5px solid rgba(255, 255, 255, 0.16);
+  box-shadow: -24px 0 64px rgba(0, 0, 0, 0.92);
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  transform: translateX(440px);
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.steamos-right-drawer.open {
+  transform: translateX(0);
+}
+
+.qam-icon-rail {
+  background: rgba(7, 10, 15, 0.78);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 22px 0;
+  gap: 12px;
+}
+
+.qam-rail-pill {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.14s ease;
+}
+
+.qam-rail-pill svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.qam-rail-pill.active {
+  background: rgba(56, 189, 248, 0.18);
+  color: #38bdf8;
+  box-shadow: inset 3px 0 0 #38bdf8;
+}
+
+.qam-main-col {
+  display: flex;
+  flex-direction: column;
+  padding: 22px 18px;
+  gap: 12px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.qam-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 13px 15px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 2px solid rgba(255, 255, 255, 0.07);
+  cursor: pointer;
+  transition: all 0.14s ease;
+}
+
+.qam-card.selected {
+  background: rgba(255, 255, 255, 0.13);
+  border-color: #ffffff;
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.3);
+}
+
+.qam-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.qam-sub {
   font-size: 11px;
   color: var(--text-secondary);
   font-weight: 600;
@@ -1206,79 +1478,6 @@ body.night-mode #night-mode-overlay {
   border-color: #ffffff;
 }
 
-/* =========================================
-   7. RIGHT SIDEBAR: QUICK ACCESS MENU (•••)
-   ========================================= */
-#qam-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  background: rgba(4, 6, 10, 0.6);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-}
-
-#qam-backdrop.open {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-#qam-sidebar {
-  position: fixed;
-  top: 16px;
-  bottom: 16px;
-  right: 16px;
-  width: 390px;
-  z-index: 96;
-  border-radius: 18px;
-  background: rgba(14, 19, 28, 0.96);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.9);
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  gap: 14px;
-  transform: translateX(430px);
-  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-#qam-sidebar.open {
-  transform: translateX(0);
-}
-
-.qam-card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 13px 15px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 2.5px solid rgba(255, 255, 255, 0.06);
-  cursor: pointer;
-  transition: all 0.14s ease;
-}
-
-.qam-card.selected {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: #ffffff;
-  box-shadow: 0 0 18px rgba(34, 197, 94, 0.35);
-}
-
-.qam-row-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 13px;
-  font-weight: 800;
-  color: #ffffff;
-}
-
-.qam-sub {
-  font-size: 11px;
-  color: var(--text-secondary);
-  font-weight: 600;
-}
 
 /* =========================================
    8. HARDWARE VOLUME & BRIGHTNESS OSD PILL

@@ -1,4 +1,4 @@
-// Anvil Console OS v4.5 — SteamOS 3.6 + Xbox Series X Flagship Dashboard Frontend
+// Anvil Console OS v5.0 — SteamOS 3.6 + Xbox Series X Flagship Dashboard Frontend
 const state = {
   tab: 0, // 0: Home, 1: Library, 2: Store, 3: Cartridges, 4: Settings
   homeZone: "shelf", // "top" | "shelf" | "quick"
@@ -11,7 +11,7 @@ const state = {
   battery: { percent: 100, charging: false },
   system: {},
   network: { connected: true, ssid: "SteamDeck-5GHz", ip: "192.168.1.100", tailscale_ip: "100.101.162.75", hostname: "steamdeck" },
-  update: { version: "4.5.0", build: "20261017.5", channel: "Stable", up_to_date: true, last_checked: "Just now", changelog: [] },
+  update: { version: "5.0.0", build: "20261017.8", channel: "Stable (Recommended)", up_to_date: true, last_checked: "Just now", changelog: [] },
   selectedIndex: 0,
   settingsCat: 0, // 0: Updates, 1: Audio & Volume, 2: Display, 3: Network, 4: Storage & Cartridges, 5: Controller, 6: Proton & System
   settingsRightIdx: 0,
@@ -26,6 +26,10 @@ const state = {
   micMuted: false,
   sinkName: "Steam Deck Speakers (acp5x)",
   uiSounds: true,
+  autoUpdates: true,
+  vrrEnabled: true,
+  wifiEnabled: true,
+  rumbleEnabled: true,
   brightnessPct: 85,
   nightMode: false,
   updateModalOpen: false,
@@ -60,6 +64,41 @@ const state = {
     }
   ]
 };
+
+// Double-buffered Hero Backdrop State + Preloader Cache
+let activeBackdropSlot = "a";
+let currentBackdropUrl = "";
+const preloadedHeroUrls = new Set();
+
+function preloadHeroImage(url) {
+  if (!url || preloadedHeroUrls.has(url)) return;
+  preloadedHeroUrls.add(url);
+  const img = new Image();
+  img.decoding = "async";
+  img.src = url;
+}
+
+function setHeroBackdropSmooth(url) {
+  if (!url || url === currentBackdropUrl) return;
+  currentBackdropUrl = url;
+
+  const layerA = document.getElementById("backdrop-layer-a");
+  const layerB = document.getElementById("backdrop-layer-b");
+  if (!layerA || !layerB) return;
+
+  const img = new Image();
+  img.decoding = "async";
+  img.onload = () => {
+    if (currentBackdropUrl !== url) return;
+    const nextLayer = activeBackdropSlot === "a" ? layerB : layerA;
+    const prevLayer = activeBackdropSlot === "a" ? layerA : layerB;
+    nextLayer.style.backgroundImage = `url("${url}")`;
+    nextLayer.classList.add("active");
+    prevLayer.classList.remove("active");
+    activeBackdropSlot = activeBackdropSlot === "a" ? "b" : "a";
+  };
+  img.src = url;
+}
 
 // Web Audio API Synthesizer for Subtle Console UI Navigation Sounds
 let audioCtx = null;
@@ -144,7 +183,8 @@ function syncTopStatusBar() {
   }
   const quickVolSub = document.getElementById("quick-vol-sub");
   if (quickVolSub) {
-    quickVolSub.textContent = `${state.volumeMuted ? "Muted" : state.volumePct + "%"} • ${state.sinkName.split(" ")[0]} Audio`;
+    const outType = state.sinkName.toLowerCase().includes("headphone") ? "Headphones" : "Speakers";
+    quickVolSub.textContent = `${state.volumeMuted ? "Muted" : state.volumePct + "%"} • ${outType} • ${state.brightnessPct}% Bright`;
   }
   const batFill = document.getElementById("battery-fill");
   const batText = document.getElementById("battery-text");
@@ -193,6 +233,11 @@ async function loadState() {
     renderGuideMenu();
     renderCartridgeModalOptions();
     syncHomeFocusVisuals();
+
+    // Preload the first 8 games' hero art into WebKit memory immediately
+    state.games.slice(0, 8).forEach((g) => {
+      preloadHeroImage(artUrl(g.hero || g.grid || g.cover));
+    });
   } catch (err) {
     console.error("Failed to load state:", err);
   }
@@ -221,7 +266,8 @@ function renderHomeShelf() {
     if (coverSrc) {
       const img = document.createElement("img");
       img.className = "tile-art";
-      img.loading = "lazy";
+      img.decoding = "async";
+      img.loading = idx < 10 ? "eager" : "lazy";
       img.src = coverSrc;
       tile.appendChild(img);
     }
@@ -266,6 +312,7 @@ function renderLibraryGrid() {
     const coverSrc = artUrl(g.grid || g.cover || g.poster || g.hero);
     if (coverSrc) {
       const img = document.createElement("img");
+      img.decoding = "async";
       img.loading = "lazy";
       img.src = coverSrc;
       card.appendChild(img);
@@ -333,6 +380,14 @@ function selectGame(idx) {
     }
   });
 
+  // Preload neighbor hero images (-2 to +3) for instant 0ms D-Pad scrolling
+  for (let offset = -2; offset <= 3; offset++) {
+    const neighbor = state.games[state.selectedIndex + offset];
+    if (neighbor) {
+      preloadHeroImage(artUrl(neighbor.hero || neighbor.grid || neighbor.cover));
+    }
+  }
+
   updateSelectedGameHero();
 }
 
@@ -343,9 +398,8 @@ function updateSelectedGameHero() {
   const heroSrc = artUrl(g.hero || g.grid || g.cover);
   const logoSrc = artUrl(g.logo);
 
-  const backdropImg = document.getElementById("backdrop-img");
-  if (backdropImg && heroSrc) {
-    backdropImg.src = heroSrc;
+  if (heroSrc) {
+    setHeroBackdropSmooth(heroSrc);
   }
 
   const homeLogo = document.getElementById("home-logo");
@@ -491,7 +545,7 @@ function renderCartridgesPage() {
 }
 
 /* =================================================
-   7-CATEGORY STEAMOS & XBOX SETTINGS PAGE
+   AUTHENTIC STEAMOS 3.6 + CONSOLE SETTINGS PANEL
    ================================================= */
 function selectSettingCat(catIdx) {
   state.settingsCat = Math.max(0, Math.min(6, catIdx));
@@ -501,26 +555,25 @@ function selectSettingCat(catIdx) {
 
 function toggleNightMode() {
   state.nightMode = !state.nightMode;
-  const overlay = document.getElementById("night-mode-overlay");
-  if (overlay) overlay.classList.toggle("active", state.nightMode);
+  document.body.classList.toggle("night-mode", state.nightMode);
   renderSettingsPane();
 }
 
 function getSettingsRightItemsCount() {
-  if (state.settingsCat === 0) return 3; // Check Updates, Channel Selector, Release Notes
-  if (state.settingsCat === 1) return 4; // Master Vol, Output Device, Mic Vol, UI Sounds
-  if (state.settingsCat === 2) return 3; // Brightness, Night Mode, 1280x800 Scaling
-  if (state.settingsCat === 3) return 2; // Wi-Fi, Tailscale
+  if (state.settingsCat === 0) return 4; // Software Update, Update Channel, Auto-Update Toggle, Release Notes
+  if (state.settingsCat === 1) return 4; // Master Vol, Output Sink, Mic Gain, UI Sounds Toggle
+  if (state.settingsCat === 2) return 4; // Brightness Slider, Night Mode Toggle, VRR Toggle, Fullscreen Scaling
+  if (state.settingsCat === 3) return 3; // Wi-Fi Toggle, Connected SSID/IP, Tailscale VPN
   if (state.settingsCat === 4) return 1 + state.drives.length; // Cartridge Builder + Drives
-  if (state.settingsCat === 5) return 2; // Controller Bridge, Guide Lock
-  return 2; // Proton & System Info
+  if (state.settingsCat === 5) return 3; // Xbox 360 Bridge, Haptics Toggle, 16-Button Matrix
+  return 3; // Proton Runner, Zero-Copy Mode, Hardware Specs
 }
 
 function handleSettingsRightAction(action) {
   const cat = state.settingsCat;
   const idx = state.settingsRightIdx;
 
-  // Category 0: System Updates
+  // Category 0: System & Updates
   if (cat === 0) {
     if (idx === 0 && action === "south") {
       openUpdateModal();
@@ -529,7 +582,10 @@ function handleSettingsRightAction(action) {
       state.updateChannelIdx = (state.updateChannelIdx + (action === "left" ? channels.length - 1 : 1)) % channels.length;
       state.update.channel = channels[state.updateChannelIdx];
       renderSettingsPane();
-    } else if (idx === 2 && action === "south") {
+    } else if (idx === 2 && (action === "left" || action === "right" || action === "south")) {
+      state.autoUpdates = !state.autoUpdates;
+      renderSettingsPane();
+    } else if (idx === 3 && action === "south") {
       openUpdateModal();
     }
     return;
@@ -568,6 +624,20 @@ function handleSettingsRightAction(action) {
       if (action === "left" || action === "right" || action === "south") {
         toggleNightMode();
       }
+    } else if (idx === 2) {
+      if (action === "left" || action === "right" || action === "south") {
+        state.vrrEnabled = !state.vrrEnabled;
+        renderSettingsPane();
+      }
+    }
+    return;
+  }
+
+  // Category 3: Internet & Wi-Fi
+  if (cat === 3) {
+    if (idx === 0 && (action === "left" || action === "right" || action === "south")) {
+      state.wifiEnabled = !state.wifiEnabled;
+      renderSettingsPane();
     }
     return;
   }
@@ -575,6 +645,13 @@ function handleSettingsRightAction(action) {
   // Category 4: Storage & Cartridges
   if (cat === 4 && action === "south") {
     openCartridgeModal();
+    return;
+  }
+
+  // Category 5: Controller & Input
+  if (cat === 5 && idx === 1 && (action === "left" || action === "right" || action === "south")) {
+    state.rumbleEnabled = !state.rumbleEnabled;
+    renderSettingsPane();
   }
 }
 
@@ -582,49 +659,61 @@ function renderSettingsPane() {
   const pane = document.getElementById("settings-detail-pane");
   if (!pane) return;
 
-  document.querySelectorAll("#settings-cat-list .xbox-settings-cat").forEach((el, i) => {
+  document.querySelectorAll("#settings-cat-list .steamos-cat-btn").forEach((el, i) => {
     el.classList.toggle("active", i === state.settingsCat);
     el.classList.toggle("focused", state.settingsFocusSide && i === state.settingsCat);
   });
 
   const f = (idx) => (!state.settingsFocusSide && state.settingsRightIdx === idx ? "focused" : "");
 
-  // 0: SYSTEM UPDATES
+  // 0: SYSTEM & UPDATES
   if (state.settingsCat === 0) {
     pane.innerHTML = `
-      <div class="xbox-slate-card ${f(0)}" onclick="openUpdateModal()">
-        <div class="slate-row">
-          <div>
-            <span class="xbox-tag green" style="margin-bottom:6px; display:inline-block;">ANVIL CONSOLE OS ${state.update.version || "4.5.0"}</span>
-            <div class="slate-title">Software Updates & SteamOS System Image</div>
-            <div class="slate-sub">Build ${state.update.build || "20261017.5"}  •  Last checked: <strong>${state.update.last_checked || "Just now"}</strong>  •  Your console is up to date.</div>
+      <div class="settings-detail-head">
+        <div>
+          <p>ANVIL CONSOLE OS 5.0</p>
+          <h2>System & Software Updates</h2>
+        </div>
+        <span class="xbox-tag green">UP TO DATE</span>
+      </div>
+
+      <div class="console-setting-row ${f(0)}" onclick="openUpdateModal()">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Software Update Status</strong>
+            <small>Anvil Console OS 5.0 (Build ${state.update.build || "20261017.8"})  •  Last checked: ${state.update.last_checked || "Just now"}</small>
           </div>
           <button class="xbox-btn"><span class="a-btn-mini">A</span><span>Check for Updates</span></button>
         </div>
       </div>
 
-      <div class="xbox-slate-card ${f(1)}" onclick="handleSettingsRightAction('south')">
-        <div class="slate-row">
-          <div>
-            <div class="slate-title">OS Update Channel</div>
-            <div class="slate-sub">Use ◀ / ▶ or press A to switch between Stable, Preview, and Developer OS channels.</div>
+      <div class="console-setting-row ${f(1)}" onclick="handleSettingsRightAction('south')">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>OS Update Channel</strong>
+            <small>Select the SteamOS & Anvil release track (use ◀ / ▶ or A to cycle)</small>
           </div>
           <span class="settings-pill-value cyan">◀  ${state.update.channel || "Stable (Recommended)"}  ▶</span>
         </div>
       </div>
 
-      <div class="xbox-slate-card ${f(2)}" onclick="openUpdateModal()">
-        <div class="slate-row">
-          <div>
-            <div class="slate-title">What's New in Anvil Console OS 4.5.0</div>
-            <div class="slate-sub">
-              • Added SteamOS-style System Update Window & Release Notes Viewer<br>
-              • Added Full Audio & Volume Mixer (Master Output, Sink Switcher, Mic Level, Console UI Sounds)<br>
-              • Added Display Brightness Slider & Night Mode Eye-Care Filter<br>
-              • Instant Workspace 2 Game Switching + STEAM / ••• In-Game Overlay Sidebars
-            </div>
+      <div class="console-setting-row ${f(2)}" onclick="state.autoUpdates = !state.autoUpdates; renderSettingsPane();">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Automatic Background Updates</strong>
+            <small>Automatically download OS patches and Proton runtime updates while idle</small>
           </div>
-          <span class="xbox-tag">CHANGELOG</span>
+          <div class="steamos-toggle ${state.autoUpdates ? "on" : ""}"></div>
+        </div>
+      </div>
+
+      <div class="console-setting-row ${f(3)}" onclick="openUpdateModal()">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Anvil OS 5.0 Patch Notes & Changelog</strong>
+            <small>Zero-lag RAM-cached Hero art (/dev/shm/anvil-art), SteamOS 3.6 Settings Panel, and Full-Height Quick Drawers</small>
+          </div>
+          <span class="settings-pill-value">View Notes ›</span>
         </div>
       </div>
     `;
@@ -634,11 +723,19 @@ function renderSettingsPane() {
     const volPct = state.volumeMuted ? 0 : state.volumePct;
     const micPct = state.micMuted ? 0 : state.micPct;
     pane.innerHTML = `
-      <div class="xbox-slate-card ${f(0)}" onclick="adjustVolume('mute')">
-        <div class="slate-row">
-          <div>
-            <div class="slate-title">Master Output Volume ${state.volumeMuted ? '<span style="color:#f87171;">(MUTED)</span>' : ""}</div>
-            <div class="slate-sub">Use D-Pad ◀ / ▶ to adjust volume level, or press A to toggle mute. Hardware Volume buttons also control this live.</div>
+      <div class="settings-detail-head">
+        <div>
+          <p>PIPEWIRE SOUND SERVER</p>
+          <h2>Audio & Volume Mixer</h2>
+        </div>
+        <span class="xbox-tag ${state.volumeMuted ? "" : "green"}">${state.volumeMuted ? "MUTED" : state.volumePct + "% MASTER"}</span>
+      </div>
+
+      <div class="console-setting-row ${f(0)}" onclick="adjustVolume('mute')">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Master Output Volume ${state.volumeMuted ? '<span style="color:#f87171;">(MUTED)</span>' : ""}</strong>
+            <small>Use D-Pad ◀ / ▶ to adjust volume level, or press A to toggle mute</small>
           </div>
           <span class="settings-pill-value ${state.volumeMuted ? "" : "green"}">${state.volumeMuted ? "MUTED" : `${state.volumePct}%`}</span>
         </div>
@@ -648,21 +745,21 @@ function renderSettingsPane() {
         </div>
       </div>
 
-      <div class="xbox-slate-card ${f(1)}" onclick="adjustVolume('cycle-sink')">
-        <div class="slate-row">
-          <div>
-            <div class="slate-title">Audio Output Device (PipeWire Sink)</div>
-            <div class="slate-sub">Press A or ◀ / ▶ to switch active output between Internal Steam Deck Speakers, Headphones, and DisplayPort/HDMI Audio.</div>
+      <div class="console-setting-row ${f(1)}" onclick="adjustVolume('cycle-sink')">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Output Device (PipeWire Sink)</strong>
+            <small>Switch between Steam Deck Speakers (acp5x), 3.5mm Headphones, and HDMI/DisplayPort Audio</small>
           </div>
           <span class="settings-pill-value cyan">◀  ${state.sinkName}  ▶</span>
         </div>
       </div>
 
-      <div class="xbox-slate-card ${f(2)}" onclick="adjustVolume('mic-mute')">
-        <div class="slate-row">
-          <div>
-            <div class="slate-title">Microphone Input Gain ${state.micMuted ? '<span style="color:#f87171;">(MUTED)</span>' : ""}</div>
-            <div class="slate-sub">Use D-Pad ◀ / ▶ to adjust voice chat microphone gain, or press A to mute microphone.</div>
+      <div class="console-setting-row ${f(2)}" onclick="adjustVolume('mic-mute')">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Microphone Input Gain ${state.micMuted ? '<span style="color:#f87171;">(MUTED)</span>' : ""}</strong>
+            <small>Use D-Pad ◀ / ▶ to adjust voice chat microphone gain, or press A to mute mic</small>
           </div>
           <span class="settings-pill-value ${state.micMuted ? "" : "cyan"}">${state.micMuted ? "MIC MUTED" : `${state.micPct}%`}</span>
         </div>
@@ -672,13 +769,13 @@ function renderSettingsPane() {
         </div>
       </div>
 
-      <div class="xbox-slate-card ${f(3)}" onclick="state.uiSounds = !state.uiSounds; renderSettingsPane();">
-        <div class="slate-row">
-          <div>
-            <div class="slate-title">Console UI Navigation Sounds</div>
-            <div class="slate-sub">Play subtle tactile acoustic feedback when moving across cartridges, bumpers, and menus.</div>
+      <div class="console-setting-row ${f(3)}" onclick="state.uiSounds = !state.uiSounds; renderSettingsPane();">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Console UI Navigation Sounds</strong>
+            <small>Play tactile acoustic feedback when moving across cartridges, bumpers, and menus</small>
           </div>
-          <span class="settings-pill-value ${state.uiSounds ? "green" : ""}">${state.uiSounds ? "ENABLED" : "MUTED"}</span>
+          <div class="steamos-toggle ${state.uiSounds ? "on" : ""}"></div>
         </div>
       </div>
     `;
@@ -686,11 +783,19 @@ function renderSettingsPane() {
   // 2: DISPLAY & BRIGHTNESS
   else if (state.settingsCat === 2) {
     pane.innerHTML = `
-      <div class="xbox-slate-card ${f(0)}" onclick="adjustBrightness('up')">
-        <div class="slate-row">
-          <div>
-            <div class="slate-title">Steam Deck Panel Backlight Brightness</div>
-            <div class="slate-sub">Use D-Pad ◀ / ▶ to adjust display brightness (amdgpu_bl0 hardware backlight).</div>
+      <div class="settings-detail-head">
+        <div>
+          <p>STEAM DECK DISPLAY</p>
+          <h2>Picture, Brightness & Motion</h2>
+        </div>
+        <span class="xbox-tag green">1280×800 60HZ</span>
+      </div>
+
+      <div class="console-setting-row ${f(0)}" onclick="adjustBrightness('up')">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Display Backlight Brightness</strong>
+            <small>Use D-Pad ◀ / ▶ to adjust Steam Deck panel backlight (amdgpu_bl0)</small>
           </div>
           <span class="settings-pill-value cyan">${state.brightnessPct}%</span>
         </div>
@@ -700,47 +805,75 @@ function renderSettingsPane() {
         </div>
       </div>
 
-      <div class="xbox-slate-card ${f(1)}" onclick="toggleNightMode()">
-        <div class="slate-row">
-          <div>
-            <div class="slate-title">Night Mode (Warm Amber Eye-Care Tint)</div>
-            <div class="slate-sub">Reduces blue light emission for comfortable late-night handheld gaming. Press A to toggle.</div>
+      <div class="console-setting-row ${f(1)}" onclick="toggleNightMode()">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Night Mode (Warm Amber Eye-Care Tint)</strong>
+            <small>Reduce blue light emission for comfortable late-night handheld play</small>
           </div>
-          <span class="settings-pill-value ${state.nightMode ? "green" : ""}">${state.nightMode ? "ACTIVE (WARM)" : "OFF"}</span>
+          <div class="steamos-toggle ${state.nightMode ? "on" : ""}"></div>
         </div>
       </div>
 
-      <div class="xbox-slate-card ${f(2)}">
-        <div class="slate-row">
-          <div>
-            <div class="slate-title">Native Resolution & Fullscreen Game Scaling</div>
-            <div class="slate-sub">1280 × 800 (16:10 Landscape) @ 60 Hz VRR  •  Automatic Workspace 2 Fullscreen Game Windowing</div>
+      <div class="console-setting-row ${f(2)}" onclick="state.vrrEnabled = !state.vrrEnabled; renderSettingsPane();">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Variable Refresh Rate (VRR) & 60 Hz Lock</strong>
+            <small>Eliminate screen tearing and maintain smooth frame pacing across all cartridges</small>
           </div>
-          <span class="xbox-tag green">1280×800 60HZ</span>
+          <div class="steamos-toggle ${state.vrrEnabled ? "on" : ""}"></div>
+        </div>
+      </div>
+
+      <div class="console-setting-row ${f(3)}">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Workspace 2 Fullscreen Game Windowing</strong>
+            <small>Automatically isolates launched Unity, Unreal, and Proton games on Workspace 2 at 1280×800</small>
+          </div>
+          <span class="settings-pill-value green">ACTIVE</span>
         </div>
       </div>
     `;
   }
-  // 3: NETWORK & WI-FI
+  // 3: INTERNET & WI-FI
   else if (state.settingsCat === 3) {
     pane.innerHTML = `
-      <div class="xbox-slate-card ${f(0)}">
-        <div class="slate-row">
-          <div>
-            <div class="slate-title">Wi-Fi Connection (${state.network.ssid || "Connected"})</div>
-            <div class="slate-sub">Local IPv4 Address: <code>${state.network.ip || "192.168.1.100"}</code>  •  Hostname: <code>${state.network.hostname || "steamdeck"}</code></div>
+      <div class="settings-detail-head">
+        <div>
+          <p>NETWORK INTERFACES</p>
+          <h2>Internet, Wi-Fi & Tailscale</h2>
+        </div>
+        <span class="xbox-tag green">${state.network.connected ? "ONLINE" : "OFFLINE"}</span>
+      </div>
+
+      <div class="console-setting-row ${f(0)}" onclick="state.wifiEnabled = !state.wifiEnabled; renderSettingsPane();">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Wi-Fi Radio (802.11ax 5GHz)</strong>
+            <small>Enable wireless networking and local LAN discovery</small>
           </div>
-          <span class="xbox-tag green">${state.network.connected ? "CONNECTED" : "OFFLINE"}</span>
+          <div class="steamos-toggle ${state.wifiEnabled ? "on" : ""}"></div>
         </div>
       </div>
 
-      <div class="xbox-slate-card ${f(1)}">
-        <div class="slate-row">
-          <div>
-            <div class="slate-title">Tailscale Mesh VPN & Remote DevBox Link</div>
-            <div class="slate-sub">Tailscale IPv4: <code>${state.network.tailscale_ip || "100.101.162.75"}</code>  •  Encrypted Console Link Active</div>
+      <div class="console-setting-row ${f(1)}">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Connected Network: ${state.network.ssid || "Wireless LAN"}</strong>
+            <small>Local IPv4: <code>${state.network.ip || "192.168.1.100"}</code>  •  Hostname: <code>${state.network.hostname || "steamdeck"}</code></small>
           </div>
-          <span class="xbox-tag green">ONLINE</span>
+          <span class="settings-pill-value green">CONNECTED</span>
+        </div>
+      </div>
+
+      <div class="console-setting-row ${f(2)}">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Tailscale Mesh VPN & Remote DevBox Link</strong>
+            <small>Tailscale IPv4: <code>${state.network.tailscale_ip || "100.101.162.75"}</code>  •  Encrypted Console Link Active</small>
+          </div>
+          <span class="settings-pill-value cyan">100.101.162.75</span>
         </div>
       </div>
     `;
@@ -750,16 +883,16 @@ function renderSettingsPane() {
     const drivesHtml = state.drives
       .map(
         (d, idx) => `
-      <div class="xbox-slate-card ${f(idx + 1)}" onclick="openCartridgeModal()">
-        <div class="slate-row">
-          <div>
-            <div class="slate-title">${d.name} <span style="font-size:12px; color:var(--text-secondary); font-weight:600;">(${d.path})</span></div>
-            <div class="slate-sub">
+      <div class="console-setting-row ${f(idx + 1)}" onclick="openCartridgeModal()">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>${d.name} <span style="font-size:12px; color:#94a3b8; font-weight:600;">(${d.path})</span></strong>
+            <small>
               ${d.mounted ? `${d.used_gb} GB used of ${d.total_gb} GB (${d.free_gb} GB free)` : "Slot Ready — Insert USB Drive to Mount"}
-              ${d.game_count > 0 ? `  •  <strong style="color:#22c55e;">${d.game_count} Cartridge Games Ready</strong>` : ""}
-            </div>
+              ${d.game_count > 0 ? `  •  <span style="color:#4ade80; font-weight:700;">${d.game_count} Cartridge Games Mounted</span>` : ""}
+            </small>
           </div>
-          <span class="xbox-tag ${d.id === "sdcard" ? "green" : ""}">${d.role}</span>
+          <span class="settings-pill-value ${d.id === "sdcard" ? "green" : ""}">${d.role}</span>
         </div>
         <div class="progress-track">
           <div class="progress-fill" style="width:${d.percent || 3}%;"></div>
@@ -770,12 +903,19 @@ function renderSettingsPane() {
       .join("");
 
     pane.innerHTML = `
-      <div class="xbox-slate-card ${f(0)}" onclick="openCartridgeModal()">
-        <div class="slate-row">
-          <div>
-            <span class="xbox-tag green" style="margin-bottom:6px; display:inline-block;">CARTRIDGE PROVISIONING</span>
-            <div class="slate-title">Make a Drive, SD Card, or Folder into an Anvil Cartridge</div>
-            <div class="slate-sub">Formats <code>Games/</code> + <code>cartridge.meta</code> and registers the mount without touching internal storage.</div>
+      <div class="settings-detail-head">
+        <div>
+          <p>ZERO-COPY CARTRIDGE ENGINE</p>
+          <h2>Storage & Cartridge Provisioner</h2>
+        </div>
+        <span class="xbox-tag green">${state.games.length} CARTRIDGES</span>
+      </div>
+
+      <div class="console-setting-row ${f(0)}" onclick="openCartridgeModal()">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Make a Drive, SD Card, or Folder into an Anvil Cartridge</strong>
+            <small>Initializes <code>Games/</code> + <code>cartridge.meta</code> on any removable media without touching internal SSD</small>
           </div>
           <button class="xbox-btn"><span class="a-btn-mini">A</span><span>Configure Drive</span></button>
         </div>
@@ -791,43 +931,81 @@ function renderSettingsPane() {
       .join("");
 
     pane.innerHTML = `
-      <div class="xbox-slate-card ${f(0)}">
-        <div class="slate-row">
-          <div>
-            <div class="slate-title">Player 1 Exclusive Xbox 360 Bridge & Zero-Drift Filter</div>
-            <div class="slate-sub">Locks <code>Microsoft X-Box 360 pad</code> as XInput Slot 0 (Player 1), hides raw Lizard HID/Gyro, and enforces <strong>4000</strong> deadzone.</div>
+      <div class="settings-detail-head">
+        <div>
+          <p>XINPUT SLOT 0 EXCLUSIVE</p>
+          <h2>Controller, Deadzone & Diagnostics</h2>
+        </div>
+        <span class="xbox-tag green">PLAYER 1 LOCKED</span>
+      </div>
+
+      <div class="console-setting-row ${f(0)}">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Player 1 Exclusive Xbox 360 Bridge & Zero-Drift Filter</strong>
+            <small>Locks <code>Microsoft X-Box 360 pad</code> as Slot 0, hides Lizard Mode HID/Gyro, and enforces <strong>4000</strong> deadzone</small>
           </div>
-          <span class="xbox-tag green">PLAYER 1 LOCKED</span>
+          <span class="settings-pill-value green">4000 DEADZONE</span>
         </div>
       </div>
-      <div class="xbox-slate-card ${f(1)}">
-        <div class="slate-row">
-          <span style="font-size:12px; font-weight:800; color:var(--text-secondary);">LIVE 16-BUTTON CONTROLLER DIAGNOSTIC MATRIX</span>
-          <span style="font-size:12px; font-weight:800; color:#22c55e;" id="last-btn-label">LAST INPUT: ${state.lastButton}</span>
+
+      <div class="console-setting-row ${f(1)}" onclick="state.rumbleEnabled = !state.rumbleEnabled; renderSettingsPane();">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Steam Deck Haptics & Game Rumble</strong>
+            <small>Allow games and Anvil Console OS to use force-feedback vibration</small>
+          </div>
+          <div class="steamos-toggle ${state.rumbleEnabled ? "on" : ""}"></div>
+        </div>
+      </div>
+
+      <div class="console-setting-row ${f(2)}">
+        <div class="console-setting-top">
+          <span style="font-size:12px; font-weight:800; color:#94a3b8;">LIVE 16-BUTTON CONTROLLER DIAGNOSTIC MATRIX</span>
+          <span style="font-size:12px; font-weight:800; color:#4ade80;" id="last-btn-label">LAST INPUT: ${state.lastButton}</span>
         </div>
         <div class="pad-matrix">${matrixHtml}</div>
       </div>
     `;
   }
-  // 6: PROTON & SYSTEM INFO
+  // 6: PROTON & HARDWARE
   else {
     pane.innerHTML = `
-      <div class="xbox-slate-card ${f(0)}">
-        <div class="slate-row">
-          <div>
-            <div class="slate-title">Default Compatibility Layer</div>
-            <div class="slate-sub">GE-Proton11-9 & Proton Experimental with Goldberg Steam API, Media Foundation, and VC++ 2022 Runtime</div>
+      <div class="settings-detail-head">
+        <div>
+          <p>VALVE STEAM DECK (JUPITER)</p>
+          <h2>Proton Runtime & System Specs</h2>
+        </div>
+        <span class="xbox-tag green">GE-PROTON11-9</span>
+      </div>
+
+      <div class="console-setting-row ${f(0)}">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Default Proton Compatibility Layer</strong>
+            <small>GE-Proton11-9 & Proton Experimental with Goldberg Steam API, Media Foundation, and VC++ 2022 Runtime</small>
           </div>
-          <span class="xbox-tag green">GE-PROTON11-9</span>
+          <span class="settings-pill-value green">GE-PROTON11-9</span>
         </div>
       </div>
-      <div class="xbox-slate-card ${f(1)}">
-        <div class="slate-row">
-          <div>
-            <div class="slate-title">${state.system.model || "Valve Steam Deck (Jupiter)"}</div>
-            <div class="slate-sub">AMD Custom APU 0405  •  16 GB LPDDR5  •  Kernel ${state.system.kernel || "6.12-hypeos"}  •  Uptime: ${state.system.uptime || "Active"}</div>
+
+      <div class="console-setting-row ${f(1)}">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>Hero & Box Art RAM Cache (/dev/shm/anvil-art)</strong>
+            <small>Pre-scales and caches all 48 games' widescreen Hero & Grid art in RAM for 0ms lag-free browsing</small>
           </div>
-          <span class="xbox-tag green">VERIFIED</span>
+          <span class="settings-pill-value cyan">RAM CACHED</span>
+        </div>
+      </div>
+
+      <div class="console-setting-row ${f(2)}">
+        <div class="console-setting-top">
+          <div class="console-setting-info">
+            <strong>${state.system.model || "Valve Steam Deck (Jupiter)"}</strong>
+            <small>AMD Custom APU 0405  •  16 GB LPDDR5  •  Kernel ${state.system.kernel || "6.12-hypeos"}  •  Anvil OS 5.0</small>
+          </div>
+          <span class="settings-pill-value">VERIFIED</span>
         </div>
       </div>
     `;
@@ -864,7 +1042,7 @@ async function runSystemUpdateCheck() {
     { pct: 25, msg: "Querying Anvil OS Release Manifest (Stable Channel)...", sub: "Connecting to Anvil Console repository..." },
     { pct: 60, msg: "Verifying GE-Proton11-9 & Xbox 360 Bridge Signatures...", sub: "Checking /usr/local/share/anvil integrity..." },
     { pct: 90, msg: "Synchronizing Cartridge Mounts & PipeWire Audio Profiles...", sub: "Validating 48 MicroSD cartridges..." },
-    { pct: 100, msg: "Anvil Console OS 4.5.0 is Up to Date", sub: "All system components, Proton runners, and audio drivers are current." }
+    { pct: 100, msg: "Anvil Console OS 5.0 is Up to Date", sub: "All system components, Proton runners, and audio drivers are current." }
   ];
 
   if (btnLabel) btnLabel.textContent = "Checking...";
@@ -889,25 +1067,34 @@ async function runSystemUpdateCheck() {
 }
 
 /* =================================================
-   LEFT SIDEBAR: STEAM / GUIDE BLADE
+   LEFT SIDEBAR: FULL-HEIGHT STEAMOS "STEAM" DRAWER
    ================================================= */
+const GUIDE_SVGS = {
+  play: `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`,
+  stop: `<svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>`,
+  home: `<svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>`,
+  lib: `<svg viewBox="0 0 24 24"><path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/></svg>`,
+  vol: `<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>`,
+  upd: `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`,
+  cart: `<svg viewBox="0 0 24 24"><path d="M18 2h-8L4 8v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-6 6h-2V4h2v4zm3 0h-2V4h2v4zm3 0h-2V4h2v4z"/></svg>`,
+  gear: `<svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>`,
+  pwr: `<svg viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>`
+};
+
 function getGuideItems() {
   const items = [];
   if (state.gameRunning) {
-    items.push({ label: `Resume ${state.activeGameName || "Game"}`, badge: "IN-GAME", action: () => resumeGameSession() });
-    items.push({ label: "Quit Game to Dashboard", badge: "STOP", action: () => quitGameSession() });
+    items.push({ icon: GUIDE_SVGS.play, label: `Resume ${state.activeGameName || "Game"}`, badge: "IN-GAME", action: () => resumeGameSession() });
+    items.push({ icon: GUIDE_SVGS.stop, label: "Quit Game to Dashboard", badge: "STOP", action: () => quitGameSession() });
   }
   items.push(
-    { label: "Home Dashboard", badge: "HOME", action: () => { closeGuideBlade(); switchTab(0); } },
-    { label: `My Games & Apps (${state.games.length})`, badge: "LIBRARY", action: () => { closeGuideBlade(); switchTab(1); } },
-    { label: "Audio & Volume Mixer", badge: `${state.volumePct}%`, action: () => { closeGuideBlade(); switchTab(4); selectSettingCat(1); } },
-    { label: "System Update Center", badge: "OS 4.5", action: () => { closeGuideBlade(); openUpdateModal(); } },
-    { label: "Make a Drive / SD Card into Cartridge", badge: "BUILDER", action: () => { closeGuideBlade(); openCartridgeModal(); } },
-    { label: "Settings", badge: "SYSTEM", action: () => { closeGuideBlade(); switchTab(4); selectSettingCat(0); } },
-    { label: "Sleep Console", badge: "SUSPEND", action: () => { closeGuideBlade(); triggerPower("sleep"); } },
-    { label: "Switch to Desktop Mode", badge: "EXIT", action: () => { closeGuideBlade(); triggerPower("desktop"); } },
-    { label: "Restart Console", badge: "REBOOT", action: () => { closeGuideBlade(); triggerPower("restart"); } },
-    { label: "Shut Down Console", badge: "OFF", action: () => { closeGuideBlade(); triggerPower("shutdown"); } }
+    { icon: GUIDE_SVGS.home, label: "Home", badge: "HOME", action: () => { closeGuideBlade(); switchTab(0); } },
+    { icon: GUIDE_SVGS.lib, label: `Library (${state.games.length})`, badge: "48 GAMES", action: () => { closeGuideBlade(); switchTab(1); } },
+    { icon: GUIDE_SVGS.cart, label: "Cartridge Builder", badge: "SD / USB", action: () => { closeGuideBlade(); openCartridgeModal(); } },
+    { icon: GUIDE_SVGS.vol, label: "Audio & Volume", badge: `${state.volumePct}%`, action: () => { closeGuideBlade(); switchTab(4); selectSettingCat(1); } },
+    { icon: GUIDE_SVGS.upd, label: "System Updates", badge: "OS 5.0", action: () => { closeGuideBlade(); openUpdateModal(); } },
+    { icon: GUIDE_SVGS.gear, label: "Settings", badge: "SYSTEM", action: () => { closeGuideBlade(); switchTab(4); selectSettingCat(0); } },
+    { icon: GUIDE_SVGS.pwr, label: "Power & Desktop Mode", badge: "POWER", action: () => { closeGuideBlade(); togglePowerModal(); } }
   );
   return items;
 }
@@ -921,6 +1108,7 @@ function renderGuideMenu() {
     .map(
       (item, idx) => `
     <div class="guide-item ${idx === state.guideIdx ? "selected" : ""}" id="guide-item-${idx}">
+      ${item.icon}
       <span>${item.label}</span>
       <span class="xbox-tag ${idx === 0 && state.gameRunning ? "green" : ""}">${item.badge}</span>
     </div>
@@ -997,6 +1185,17 @@ function getQamItems() {
       onA: () => adjustVolume("mute")
     },
     {
+      id: "brightness",
+      title: `${QAM_ICONS.sun}Display Brightness`,
+      sub: "Use ◀ / ▶ or A to adjust Steam Deck panel backlight",
+      badge: `${state.brightnessPct}%`,
+      progress: state.brightnessPct,
+      cyan: true,
+      onLeft: () => adjustBrightness("down"),
+      onRight: () => adjustBrightness("up"),
+      onA: () => adjustBrightness("up")
+    },
+    {
       id: "sink",
       title: `${QAM_ICONS.vol}Audio Output Sink`,
       sub: "Press A or ◀ / ▶ to switch Speakers / Headphones",
@@ -1012,19 +1211,10 @@ function getQamItems() {
       sub: "Use ◀ / ▶ to adjust mic input, or A to toggle mic mute",
       badge: state.micMuted ? "MUTED" : `${state.micPct}%`,
       progress: state.micMuted ? 0 : state.micPct,
+      cyan: true,
       onLeft: () => adjustVolume("mic-down"),
       onRight: () => adjustVolume("mic-up"),
       onA: () => adjustVolume("mic-mute")
-    },
-    {
-      id: "brightness",
-      title: `${QAM_ICONS.sun}Display Brightness`,
-      sub: "Use ◀ / ▶ or A to adjust Steam Deck panel backlight",
-      badge: `${state.brightnessPct}%`,
-      progress: state.brightnessPct,
-      onLeft: () => adjustBrightness("down"),
-      onRight: () => adjustBrightness("up"),
-      onA: () => adjustBrightness("up")
     },
     {
       id: "night",
@@ -1036,7 +1226,7 @@ function getQamItems() {
     },
     {
       id: "updates",
-      title: `${QAM_ICONS.bolt}Anvil OS 4.5 System Update`,
+      title: `${QAM_ICONS.bolt}Anvil OS 5.0 System Update`,
       sub: "Check for OS & Proton compatibility updates",
       badge: "UP TO DATE",
       green: true,
@@ -1055,7 +1245,10 @@ function renderQamMenu() {
     .map((item, idx) => {
       const barHtml =
         typeof item.progress === "number"
-          ? `<div class="progress-track" style="height:6px; margin-top:4px;"><div class="progress-fill" style="width:${item.progress}%;"></div></div>`
+          ? `<div class="slider-track" style="height:8px; margin-top:4px;">
+               <div class="slider-fill ${item.cyan ? "cyan" : ""}" style="width:${item.progress}%;"></div>
+               <div class="slider-thumb ${item.cyan ? "cyan" : ""}" style="left:${item.progress}%; width:14px; height:14px;"></div>
+             </div>`
           : "";
       return `
         <div class="qam-card ${idx === state.qamIdx ? "selected" : ""}" id="qam-item-${idx}">
@@ -1283,7 +1476,7 @@ function updateGameCurtain(active, gameName, isOverlay) {
   const titleEl = document.getElementById("curtain-title");
   const loaderEl = document.getElementById("curtain-loader");
 
-  if (artEl) artEl.src = artUrl(g.box_art || g.cover_art || g.hero_art);
+  if (artEl) artEl.src = artUrl(g.grid || g.cover || g.hero);
   if (badgeEl) badgeEl.textContent = isOverlay ? "IN-GAME OVERLAY ACTIVE" : "STARTING CARTRIDGE...";
   if (titleEl) titleEl.textContent = gameName || g.name || "Running Cartridge";
   if (loaderEl) loaderEl.style.display = isOverlay ? "none" : "block";
@@ -1662,7 +1855,15 @@ window.onAnvilInput = function (action, family, controllerName) {
         state.settingsRightIdx = Math.min(maxRight, state.settingsRightIdx + 1);
         renderSettingsPane();
       } else if (action === "left" || action === "right" || action === "south") {
-        if (action === "left" && state.settingsCat !== 1 && state.settingsCat !== 2 && !(state.settingsCat === 0 && state.settingsRightIdx === 1)) {
+        // In categories where Left adjusts a slider/cycle, only return to sidebar if the row isn't a slider/cycle
+        const isAdjustableRow =
+          (state.settingsCat === 0 && (state.settingsRightIdx === 1 || state.settingsRightIdx === 2)) ||
+          state.settingsCat === 1 ||
+          (state.settingsCat === 2 && state.settingsRightIdx <= 2) ||
+          (state.settingsCat === 3 && state.settingsRightIdx === 0) ||
+          (state.settingsCat === 5 && state.settingsRightIdx === 1);
+
+        if (action === "left" && !isAdjustableRow) {
           state.settingsFocusSide = true;
           renderSettingsPane();
         } else {
