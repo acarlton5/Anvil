@@ -1,0 +1,4155 @@
+<html><head><style type="text/css">.turbo-progress-bar {
+  position: fixed;
+  display: block;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: #0076ff;
+  z-index: 9999;
+  transition:
+    width 300ms ease-out,
+    opacity 150ms 150ms ease-in;
+  transform: translate3d(0, 0, 0);
+}
+</style><style id="st_globalStyles">
+/* MEDIA QUERIES */
+.anima-desktop-only {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+/* SCROLLBAR */
+
+[dark-scroll]::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+[dark-scroll]::-webkit-scrollbar-track-piece {
+  background-color: #2b2b2b;
+  border: 1px solid #1d1d1d;
+}
+
+[dark-scroll]::-webkit-scrollbar-thumb {
+  height: 10px;
+  background-color: #4d4d4d;
+}
+[dark-scroll]::-webkit-scrollbar-thumb:hover {
+  background-color: #5a5a5a;
+}
+
+/* LOAD PROGRESS */
+
+.turbolinks-progress-bar {
+  height: 3px;
+  background-color: #ff6250;
+}
+
+/* GROUPING */
+
+[data-id].ui-selecting {
+  box-shadow: inset 0 0 0 1px #4285f4 !important;
+}
+[data-id].ui-selected {
+  box-shadow: inset 0 0 0 1px #4285f4 !important;
+}
+
+/* CURSOR */
+
+body[mode='comments'] * {
+  cursor: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkxNjQ4IDIzLjQxMDlDNS40OTE1MyAyMi45ODg3IDUuOTMxNzkgMjIuMzkzNSA2LjIzMjggMjEuNjQwN0M0Ljc5MDY5IDE5LjczODMgNCAxNy4zOTMzIDQgMTQuOTk3NUM0IDguOTM0MSA4LjkzMjgyIDQgMTUuMDAyMiA0QzIxLjA3MTcgNCAyNiA4LjkzOTE5IDI2IDE1LjAwMjVDMjYgMjEuMDY1OSAyMS4wNjcyIDI2IDE0Ljk5NzggMjZDMTIuOTg5NiAyNiAxMS4wMzUzIDI1LjQ1NTcgOS4zMjM2NyAyNC40MjMxQzguNDI5NjUgMjQuOTU3MiA3LjQxNDM0IDI1LjIyNjggNi4zMDAxOCAyNS4yMjY4QzUuOTU0MjYgMjUuMjI2OCA1LjU5OTM1IDI1LjIwMTQgNS4yNTM0MiAyNS4xNDU0QzQuOTAzIDI1LjA4OTUgNC42Mjg5NiAyNC44MDQ2IDQuNTUyNTggMjQuNDE4QzQuNDc2MjEgMjQuMDI2NCA0LjYxOTk3IDIzLjYyOTYgNC45MTY0OCAyMy40MTA5WiIgZmlsbD0iI0ZGNjI1MCIvPgo8L3N2Zz4K')
+      0 24,
+    auto !important;
+}
+
+body[mode='code'] [data-id]:not(.hidden) {
+  cursor: default;
+}
+
+/* default node state */
+
+body[mode='code'] [data-id]:not(.hidden), body[mode='comments'] [data-id]:not(.hidden) {
+  pointer-events: all;
+}
+
+/* is_image */
+
+body[mode='code'] [data-id].is_image [data-id], body[mode='comments'] [data-id].is_image [data-id] {
+  pointer-events: none !important;
+}
+
+/* without a data-id or ignored */
+
+[data-id].ignore,body[mode='code'] *:not([data-id]) {
+  pointer-events: none !important;
+}
+/* disable transforms for ignored elements */
+
+
+body[mode='code'] [data-id]:hover{
+  transform: none !important;
+}
+
+/* ANIMA BUTTONS */
+.an-button {
+  position: relative;
+  height: 28px;
+  padding: 0 20px;
+  font-size: 14px;
+  border-radius: 4px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  transition-property: all;
+  transition-duration: 100ms;
+  appearance: none;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  border-width: 0;
+}
+
+.an-button > div {
+  width: 100%;
+}
+
+.an-button.primary {
+  background: #ff6250;
+  color: #ffffff;
+}
+
+.an-button.primary:hover:not(:disabled) {
+  background: #e2412e;
+}
+
+.an-button.secondary {
+  background: transparent;
+  border: 1px solid #ff6250;
+  color: #ff6250;
+}
+
+.an-button.secondary:hover:not(:disabled) {
+  color: #ffffff;
+  background: #ff6250;
+}
+
+.an-button.rounded {
+  border-radius: 100px;
+}
+
+.an-button:disabled {
+  opacity: 0.5;
+}
+
+.an-button:disabled {
+  cursor: default;
+}
+
+.an-button:active,
+.an-button:focus {
+  outline: none;
+}
+
+</style><meta charset="utf-8"><meta name="viewport" content="width=1920, maximum-scale=1.0"><link rel="shortcut icon" type="image/png" href="https://animaproject.s3.amazonaws.com/home/favicon.png"><meta name="og:type" content="website"><meta name="twitter:card" content="photo"><script id="anima-load-script" src="load.js"></script><script id="anima-hotspots-script" src="hotspots.js"></script><style id="hotspots-styles">
+    .hotspot {
+      position: absolute;
+      border: 1px solid #2a9fd8;
+      background: rgba(0, 173, 255, 0.54);
+      opacity: 0;
+      z-index: -1;
+      pointer-events:none;
+    }
+  </style><script id="s_turbo" src="https://animaapp.s3.amazonaws.com/static/turbo.es2017-umd.js"></script><script id="anima-overrides-script" src="overrides.js"></script><script src="https://animaapp.s3.amazonaws.com/js/timeline.js"></script><style>
+@import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
+
+@font-face {
+  font-family: "Motiva Sans-Bold";
+  font-style: normal;
+  font-weight: 700;
+  src: url('https://anima-uploads.s3.amazonaws.com/5c53487020495e000abca926/.35959.otf') format("opentype");
+}
+
+@font-face {
+  font-family: "Motiva Sans-Regular";
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://anima-uploads.s3.amazonaws.com/5c53487020495e000abca926/.35967.otf') format("opentype");
+}
+/* The following line is used to measure usage of this code. You can remove it if you want. */
+@import url("https://px.animaapp.com/65ae977d4ea7e6982e9805db.65ae977e4ea7e6982e9805de.XJaxSnm.hch.png");
+
+
+.screen textarea:focus,
+.screen input:focus {
+  outline: none;
+}
+
+.screen * {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+
+.screen div {
+  -webkit-text-size-adjust: none;
+}
+
+.component-wrapper a {
+  display: contents;
+  pointer-events: auto;
+  text-decoration: none;
+}
+
+.component-wrapper * {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.component-wrapper a *,
+.component-wrapper input,
+.component-wrapper video,
+.component-wrapper iframe {
+  pointer-events: auto;
+}
+
+.component-wrapper.not-ready,
+.component-wrapper.not-ready * {
+  visibility: hidden !important;
+}
+
+.screen a {
+  display: contents;
+  text-decoration: none;
+}
+
+.full-width-a {
+  width: 100%;
+}
+
+.full-height-a {
+  height: 100%;
+}
+
+.container-center-vertical {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  pointer-events: none;
+}
+
+.container-center-vertical > * {
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
+.container-center-horizontal {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  pointer-events: none;
+  width: 100%;
+}
+
+.container-center-horizontal > * {
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
+.auto-animated div {
+  --z-index: -1;
+  opacity: 0;
+  position: absolute;
+}
+
+.auto-animated input {
+  --z-index: -1;
+  opacity: 0;
+  position: absolute;
+}
+
+.auto-animated .container-center-vertical,
+.auto-animated .container-center-horizontal {
+  opacity: 1;
+}
+
+.overlay-base {
+  display: none;
+  height: 100%;
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.overlay-base.animate-appear {
+  align-items: center;
+  animation: reveal 0.3s ease-in-out 1 normal forwards;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0;
+}
+
+.overlay-base.animate-disappear {
+  animation: reveal 0.3s ease-in-out 1 reverse forwards;
+  display: block;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.overlay-base.animate-disappear * {
+  pointer-events: none;
+}
+
+@keyframes reveal {
+  from { opacity: 0 }
+ to { opacity: 1 }
+}
+
+.animate-nodelay {
+  animation-delay: 0s;
+}
+
+.align-self-flex-start {
+  align-self: flex-start;
+}
+
+.align-self-flex-end {
+  align-self: flex-end;
+}
+
+.align-self-flex-center {
+  align-self: flex-center;
+}
+
+.valign-text-middle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.valign-text-bottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+input:focus {
+  outline: none;
+}
+
+.listeners-active,
+.listeners-active * {
+  pointer-events: auto;
+}
+
+.hidden,
+.hidden * {
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.smart-layers-pointers,
+.smart-layers-pointers * {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.listeners-active-click,
+.listeners-active-click * {
+  cursor: pointer;
+}
+
+* {
+  box-sizing: border-box;
+}
+:root { 
+  --accentgreen: #a1cd44;
+  --accentred: #cd5444;
+  --accentyellow: #c0b05e;
+  --alto: #d9d9d903;
+  --backgroundhighlight: #1e2329;
+  --backgroundhover: #313843;
+  --backgroundmain: #0e141b;
+  --backgroundmain20: #0e141b33;
+  --backgroundmain50: #0e141b80;
+  --backgroundtertiary: #212b45;
+  --big-stone: #212b4533;
+  --black: #000000;
+  --colorprimary: #66c0f4;
+  --colorsecondary: #4b619b;
+  --emerald: #54c358;
+  --fuchsia-blue: #7054c3;
+  --fuchsia-pink: #c054c3;
+  --fuzzy-wuzzy-brown: #c35454;
+  --shark: #1e232905;
+  --shark-2: #1e232963;
+  --shark-3: #1e232940;
+  --shark-4: #1e232966;
+  --shark-5: #1e2329d1;
+  --slate-gray: #75808ccc;
+  --slate-gray-2: #75808c0d;
+  --slate-gray-3: #75808c1a;
+  --slate-gray-4: #75808c33;
+  --slate-gray-5: #76808c;
+  --textdim: #75808c;
+  --textmain: #f3f3f3;
+  --tuna: #31384380;
+  --tuna-2: #31384359;
+  --turmeric: #c3be54;
+  --white: #ffffff;
+  --white-2: #ffffff1a;
+  --wild-sand: #f3f3f380;
+ 
+  --font-size-l: 18px;
+  --font-size-m: 16px;
+  --font-size-s: 14px;
+  --font-size-xl: 19px;
+  --font-size-xs: 12px;
+  --font-size-xxl: 22px;
+  --font-size-xxxl: 26px;
+ 
+  --font-family-motiva_sans-bold: "Motiva Sans-Bold", Helvetica;
+  --font-family-motiva_sans-regular: "Motiva Sans-Regular", Helvetica;
+}
+.motivasans-regular-normal-wild-sand-16px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-14px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-wild-sand-14px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-16px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-12px {
+  color: var(--slate-gray);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-wild-sand-18px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-wild-sand-12px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-12px-2 {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-malibu-12px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-malibu-16px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-kashmir-blue-14px {
+  color: var(--colorsecondary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-wild-sand-22px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-malibu-18px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-vulcan-12px {
+  color: var(--backgroundmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-vulcan-18px {
+  color: var(--backgroundmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-wild-sand-26px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-malibu-14px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-white-12px {
+  color: var(--white);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-white-14px {
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-vulcan-19px {
+  color: var(--backgroundmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-tuna-18px {
+  color: var(--backgroundhover);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-jasper-12px {
+  color: var(--accentred);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-atlantis-18px {
+  color: var(--accentgreen);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-slate-gray-22px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-white-16px {
+  color: var(--white);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-14px-2 {
+  color: var(--slate-gray-5);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-slate-gray-18px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-slate-gray-16px-2 {
+  color: var(--slate-gray-5);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-white-16px-2 {
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-wild-sand-16px-2 {
+  color: var(--wild-sand);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-jasper-14px {
+  color: var(--accentred);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-wild-sand-16px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-jasper-16px {
+  color: var(--accentred);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-atlantis-16px {
+  color: var(--accentgreen);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-wild-sand-20-2px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: 20.2px;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-sundance-16px {
+  color: var(--accentyellow);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-sundance-12px {
+  color: var(--accentyellow);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-white-22px {
+  color: var(--white);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+:root {
+}
+
+
+.group-97 {
+  background-color: transparent;
+  height: 47px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 47px;
+}
+
+.info-outline {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.juxtopposed {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+}
+
+.rectangle-60 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.store-menu {
+  background-color: transparent;
+  height: 22px;
+  position: relative;
+}
+
+.arrow-forward-ios {
+  background-color: transparent;
+  position: relative;
+}
+
+.home {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.image-122 {
+  background-color: transparent;
+  height: 233px;
+  left: 0px;
+  object-fit: cover;
+  position: absolute;
+  top: 0px;
+  width: 240px;
+}
+
+.image-123 {
+  background-color: transparent;
+  height: 233px;
+  left: 0px;
+  object-fit: cover;
+  position: absolute;
+  top: 0px;
+  width: 240px;
+}
+
+.rectangle-115 {
+  -webkit-backdrop-filter: blur(2px) brightness(100%);
+  backdrop-filter: blur(2px) brightness(100%);
+  background-color: var(--alto);
+  border-radius: 5px;
+  height: 233px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 240px;
+}
+
+.rectangle-79 {
+  background-color: var(--colorsecondary);
+  border-radius: 40px;
+  height: 8px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.search {
+  background-color: transparent;
+  position: absolute;
+}
+
+.x2309 {
+  background-color: transparent;
+  height: auto;
+  left: 85px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 22px;
+  width: auto;
+}
+
+.frame-161 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 15px;
+  height: 20px;
+  padding: 3px 0px;
+  position: relative;
+}
+
+.image-191 {
+  background-color: transparent;
+  height: 25px;
+  margin-bottom: -11.00px;
+  margin-top: -11.00px;
+  object-fit: cover;
+  position: relative;
+  width: 25px;
+}
+
+.sprite-0003-1 {
+  background-color: transparent;
+  position: relative;
+}
+
+.x374 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x5 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.award {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.frame-162 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  height: 49px;
+  justify-content: space-between;
+  padding: 3px 0px;
+  position: relative;
+  width: 639px;
+}
+
+.frame-30 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 3px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.frame-31 {
+  align-items: center;
+  background-color: transparent;
+  display: flex;
+  gap: 3px;
+  justify-content: flex-end;
+  left: 106px;
+  position: absolute;
+  top: 0px;
+  width: 32px;
+}
+
+.frame-32 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  gap: 2px;
+  left: 0px;
+  position: absolute;
+  top: 19px;
+  width: 138px;
+}
+
+.funny {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.group-100 {
+  background-color: transparent;
+  height: 72px;
+  margin-right: -2.00px;
+  position: relative;
+  width: 74px;
+}
+
+.image-137 {
+  background-color: transparent;
+  height: 16px;
+  object-fit: cover;
+  position: relative;
+  width: 17px;
+}
+
+.insert-emoticon {
+  background-color: transparent;
+  height: 18px;
+  margin-bottom: -7.50px;
+  margin-top: -7.50px;
+  position: relative;
+  width: 18px;
+}
+
+.no {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.posted-on-12-sep-2023 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.recommended {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.rectangle-120 {
+  background-color: transparent;
+  height: 72px;
+  object-fit: cover;
+  position: relative;
+  width: 72px;
+}
+
+.rectangle-123 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  height: 72px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 72px;
+}
+
+.rectangle-88 {
+  background-color: var(--accentred);
+  border-radius: 2px;
+  flex: 1;
+  flex-grow: 1;
+  height: 4px;
+  opacity: 0.8;
+  position: relative;
+}
+
+.share {
+  background-color: transparent;
+  position: relative;
+}
+
+.was-this-review-helpful {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 9px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.x21302-hrs-on-record {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x3-reviews {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -0.50px;
+  margin-top: -2.50px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x6 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x90 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.yes {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.view-list {
+  background-color: transparent;
+  position: absolute;
+}
+
+.community {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+}
+
+.frame-214 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 9px;
+  position: relative;
+}
+
+.offline {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.frame-34 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 5px;
+  position: relative;
+}
+
+.drag-handle {
+  background-color: transparent;
+  height: 24px;
+  position: relative;
+  width: 24px;
+}
+
+.ellipse-3 {
+  background-color: transparent;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.frame-180 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  position: relative;
+}
+
+.frame-199 {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.frame-200 {
+  flex: 0 0 auto;
+  justify-content: space-between;
+  position: relative;
+}
+
+.frame-201 {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.frame-202 {
+  align-items: center;
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.group-123 {
+  background-color: transparent;
+  height: 30px;
+  margin-right: -2.00px;
+  position: relative;
+  width: 32px;
+}
+
+.group-125 {
+  background-color: transparent;
+  position: relative;
+}
+
+.image-141 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-142 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-143 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-144 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-146 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-147 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 2px;
+  height: 30px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 30px;
+}
+
+.profile-sections {
+  background-color: transparent;
+  position: relative;
+}
+
+.x32 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+}
+
+.construction {
+  background-color: transparent;
+  height: 40px;
+  position: relative;
+  width: 40px;
+}
+
+.frame-136 {
+  display: flex;
+  position: relative;
+}
+
+.frame-221 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  width: 100%;
+}
+
+.frame-311 {
+  align-items: flex-start;
+  align-self: stretch;
+  border-bottom-style: none;
+  border-left-style: solid;
+  border-left-width: 5px;
+  border-radius: 5px;
+  border-right-style: none;
+  border-top-style: none;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 7px;
+  padding: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.frame-407 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 10px;
+  position: relative;
+}
+
+.frame-51 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.icon-select {
+  background-color: transparent;
+  height: 40px;
+  position: relative;
+  width: 40px;
+}
+
+.people {
+  background-color: transparent;
+  position: absolute;
+  top: 6px;
+}
+
+.vector-5 {
+  align-self: stretch;
+  background-color: transparent;
+  height: 1px;
+  margin-bottom: -0.50px;
+  object-fit: cover;
+  position: relative;
+  width: 100%;
+}
+
+.disk-size {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.filter-list {
+  background-color: transparent;
+  height: 24px;
+  left: 1px;
+  position: absolute;
+  top: 1px;
+  width: 24px;
+}
+
+.frame-52 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 536px;
+  position: absolute;
+  top: 65px;
+}
+
+.frame-53 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 691px;
+  position: absolute;
+  top: 65px;
+}
+
+.frame-65 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.frame-85 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  left: 13px;
+  position: absolute;
+  width: 326px;
+}
+
+.frame-86 {
+  align-items: flex-start;
+  background-color: var(--shark-4);
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  left: 1px;
+  padding: 9px 12px;
+  position: absolute;
+  top: 0px;
+  width: 350px;
+}
+
+.frame-92 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 1007px;
+  position: absolute;
+  top: 65px;
+}
+
+.group-59 {
+  background-color: transparent;
+  height: 44px;
+  left: 826px;
+  position: absolute;
+  top: 65px;
+  width: 159px;
+}
+
+.group-61 {
+  background-color: transparent;
+  height: 126px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 1458px;
+}
+
+.image-94 {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.insert-drive-file {
+  background-color: transparent;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.last-played {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.play-time {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.rectangle-104 {
+  background-color: var(--shark-3);
+  border-radius: 5px;
+  height: 126px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1456px;
+}
+
+.x2065 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x50-gb {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.frame-292 {
+  background-color: transparent;
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.frame-269 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 13px;
+  justify-content: center;
+  position: relative;
+}
+
+.game-card {
+  background-color: transparent;
+  border-radius: 5px;
+  height: 282px;
+  overflow: hidden;
+  position: relative;
+  width: 191px;
+}
+
+.group-58 {
+  background-color: transparent;
+  height: 74px;
+  left: 0px;
+  position: absolute;
+  top: 290px;
+  width: 191px;
+}
+
+.rectangle-97 {
+  -webkit-backdrop-filter: blur(20px) brightness(100%);
+  backdrop-filter: blur(20px) brightness(100%);
+  background-color: var(--shark);
+  border-radius: 0px 0px 3px 3px;
+  height: 74px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 191px;
+}
+
+.text {
+  background-color: transparent;
+  height: 19px;
+  left: 9px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -22px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.cool-user {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.hi-newcomers {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x11-mins-ago {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x150000 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  width: fit-content;
+}
+
+.x2500700 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -7.00px;
+  margin-top: -9.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x5546 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -7.00px;
+  margin-top: -9.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+/* screen - library-home-recent-filter */
+
+.library-home-recent-filter {
+  background-color: transparent;
+  height: 1080px;
+  overflow: hidden;
+  overflow-x: hidden;
+  position: relative;
+  width: 1920px;
+}
+
+.library-home-recent-filter .rectangle-89-TnH6Ij {
+  background: linear-gradient(180deg, rgb(49.00000087916851, 56.000000461936, 67.00000360608101) 0%, rgb(30.00000011175871, 35.00000171363354, 41.00000135600567) 100%);
+  background-color: transparent;
+  height: 1080px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.library-home-recent-filter .rectangle-95-TnH6Ij {
+  background: linear-gradient(180deg, rgb(30.00000011175871, 35.00000171363354, 41.00000135600567) 0%, rgba(37.311159297823906, 43.22505556046963, 51.052844524383545, 0.2800000011920929) 99.98999834060669%, rgba(38.0000015348196, 44.000001177191734, 52.000000700354576, 0) 100%);
+  background-color: transparent;
+  height: 964px;
+  left: 0px;
+  position: absolute;
+  top: 116px;
+  width: 390px;
+}
+
+.library-home-recent-filter .rectangle-96-TnH6Ij {
+  background-color: var(--backgroundhover);
+  height: 336px;
+  left: 371px;
+  position: absolute;
+  top: 126px;
+  width: 9px;
+}
+
+.library-home-recent-filter .frame-56-TnH6Ij {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  left: 11px;
+  position: absolute;
+  top: 126px;
+  width: 350px;
+}
+
+.library-home-recent-filter .october-2dT852 {
+  background-color: transparent;
+  height: 26px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: 226px;
+}
+
+.library-home-recent-filter .frame-59-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-rNBFNI {
+  background-color: var(--backgroundhover);
+}
+
+.library-home-recent-filter .image-88-rNBFNI {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-57-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-2c1xO7 {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-86-2c1xO7 {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-58-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-Rc1Quj {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-87-Rc1Quj {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-73-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-KaHlaz {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-102-KaHlaz {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-60-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-vxn2di {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-89-vxn2di {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .september-2dT852 {
+  background-color: transparent;
+  height: 26px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: 226px;
+}
+
+.library-home-recent-filter .frame-61-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-2YQ7ZH {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-90-2YQ7ZH {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-62-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-b7UOpA {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-91-b7UOpA {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-63-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-8eas1x {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-92-8eas1x {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-64-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-pTs9wF {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-93-pTs9wF {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-72-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-sDRfrw {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-101-sDRfrw {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-74-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-jhnZtA {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-103-jhnZtA {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-70-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-dTLakq {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-99-dTLakq {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-75-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-xZQSin {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-104-xZQSin {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-76-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-5ZhMY0 {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-105-5ZhMY0 {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-77-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-bvO3d4 {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-106-bvO3d4 {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-65-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-QURodV {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-94-QURodV {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-66-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-pCCc5N {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-95-pCCc5N {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-67-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-jEk9si {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-96-jEk9si {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-68-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-asmzl3 {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-97-asmzl3 {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-69-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-lrMnIg {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-98-lrMnIg {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .august-2dT852 {
+  background-color: transparent;
+  height: 26px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: 226px;
+}
+
+.library-home-recent-filter .frame-56-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-MtxnJS {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-85-MtxnJS {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .frame-71-2dT852 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .tag-Cx1mQs {
+  background-color: transparent;
+}
+
+.library-home-recent-filter .image-100-Cx1mQs {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-home-recent-filter .image-107-TnH6Ij {
+  background-color: transparent;
+  height: 964px;
+  left: 390px;
+  mix-blend-mode: color-dodge;
+  position: absolute;
+  top: 116px;
+  width: 1530px;
+}
+
+.library-home-recent-filter .rectangle-97-TnH6Ij {
+  -webkit-backdrop-filter: blur(40px) brightness(100%);
+  backdrop-filter: blur(40px) brightness(100%);
+  background-color: var(--shark);
+  height: 653px;
+  left: 390px;
+  position: absolute;
+  top: 427px;
+  width: 1530px;
+}
+
+.library-home-recent-filter .group-60-TnH6Ij {
+  background-color: transparent;
+  height: 53px;
+  left: 414px;
+  position: absolute;
+  top: 445px;
+  width: 1477px;
+}
+
+.library-home-recent-filter .play-button-xbyRSn {
+  align-items: center;
+  background-color: var(--accentgreen);
+  border-radius: 3px;
+  display: flex;
+  gap: 10px;
+  height: 53px;
+  justify-content: center;
+  left: 257px;
+  padding: 16px 66px 16px 53px;
+  position: absolute;
+  top: 0px;
+  width: 113px;
+}
+
+.library-home-recent-filter .play-arrow-9xrfl2 {
+  background-color: transparent;
+  height: 24px;
+  margin-bottom: -1.50px;
+  margin-left: -38.50px;
+  margin-top: -1.50px;
+  position: relative;
+  width: 24px;
+}
+
+.library-home-recent-filter .play-9xrfl2 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-left: -4.50px;
+  margin-right: -38.50px;
+  margin-top: -1.50px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-home-recent-filter .bioshock-remastered-xbyRSn {
+  background-color: transparent;
+  height: 26px;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 14px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.library-home-recent-filter .frame-52-xbyRSn {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 397px;
+  position: absolute;
+  top: 5px;
+}
+
+.library-home-recent-filter .date-range-IaTHjH {
+  background-color: transparent;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.library-home-recent-filter .last-played-izSYvv {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-home-recent-filter .x21-aug-2022-izSYvv {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-home-recent-filter .frame-53-xbyRSn {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 557px;
+  position: absolute;
+  top: 5px;
+}
+
+.library-home-recent-filter .timelapse-jekjnO {
+  background-color: transparent;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.library-home-recent-filter .play-time-pFLpHA {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-home-recent-filter .x92-hours-pFLpHA {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-home-recent-filter .frame-54-xbyRSn {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 697px;
+  position: absolute;
+  top: 5px;
+}
+
+.library-home-recent-filter .cloud-iS5HbO {
+  background-color: transparent;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.library-home-recent-filter .cloud-status-4KHuiU {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-home-recent-filter .up-to-date-4KHuiU {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-home-recent-filter .group-59-xbyRSn {
+  background-color: transparent;
+  height: 44px;
+  left: 868px;
+  position: absolute;
+  top: 5px;
+  width: 159px;
+}
+
+.library-home-recent-filter .frame-56-yrlagh {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.library-home-recent-filter .stars-I8X8jp {
+  background-color: transparent;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.library-home-recent-filter .achievements-Ll4xY5 {
+  width: fit-content;
+}
+
+.library-home-recent-filter .x2065-Ll4xY5 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-home-recent-filter .vector-15-yrlagh {
+  background-color: transparent;
+  height: 5px;
+  left: 92px;
+  position: absolute;
+  top: 34px;
+  width: 70px;
+}
+
+.library-home-recent-filter .vector-16-yrlagh {
+  background-color: transparent;
+  height: 3px;
+  left: 92px;
+  position: absolute;
+  top: 34px;
+  width: 25px;
+}
+
+.library-home-recent-filter .frame-91-xbyRSn {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 11px;
+  justify-content: flex-end;
+  left: 1231px;
+  position: absolute;
+  top: 7px;
+}
+
+.library-home-recent-filter .sports-esports-4MT5Sb {
+  background-color: transparent;
+  height: 28px;
+  left: 6px;
+  position: absolute;
+  top: 6px;
+  width: 28px;
+}
+
+.library-home-recent-filter .people-qzIex7 {
+  height: 28px;
+  left: 6px;
+  width: 28px;
+}
+
+.library-home-recent-filter .rectangle-86-USDJN8 {
+  background-color: var(--slate-gray-3);
+}
+
+.library-home-recent-filter .star-border-USDJN8 {
+  background-color: transparent;
+  height: 30px;
+  left: 5px;
+  position: absolute;
+  top: 5px;
+  width: 30px;
+}
+
+.library-home-recent-filter .rectangle-86-XGQoiN {
+  background-color: var(--slate-gray-3);
+}
+
+.library-home-recent-filter .settings-XGQoiN {
+  background-color: transparent;
+  height: 26px;
+  left: 7px;
+  position: absolute;
+  top: 7px;
+  width: 26px;
+}
+
+.library-home-recent-filter .rectangle-86-Q55cdv {
+  background-color: var(--slate-gray-3);
+}
+
+.library-home-recent-filter .info-Q55cdv {
+  background-color: transparent;
+  height: 26px;
+  left: 7px;
+  position: absolute;
+  top: 7px;
+  width: 26px;
+}
+
+.library-home-recent-filter .library-header-TnH6Ij {
+  background-color: transparent;
+  height: 57px;
+  left: 0px;
+  overflow: hidden;
+  position: absolute;
+  top: 59px;
+  width: 1920px;
+}
+
+.library-home-recent-filter .rectangle-67-FrMBld {
+  background-color: var(--backgroundtertiary);
+  height: 57px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.library-home-recent-filter .frame-15-FrMBld {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 7px;
+  left: 10px;
+  position: absolute;
+  top: 6px;
+}
+
+.library-home-recent-filter .menu-eDL0WC {
+  background-color: var(--colorsecondary);
+}
+
+.library-home-recent-filter .menu-Fb9xGM {
+  background-color: var(--backgroundtertiary);
+}
+
+.library-home-recent-filter .group-15-eDL0WC {
+  align-items: center;
+  background-color: var(--backgroundtertiary);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.library-home-recent-filter .frame-79-FrMBld {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 6px;
+  left: 501px;
+  position: absolute;
+  top: 8px;
+}
+
+.library-home-recent-filter .search-uNJu53 {
+  background-color: transparent;
+  height: 41px;
+  position: relative;
+  width: 374px;
+}
+
+.library-home-recent-filter .rectangle-70-HDbr5Q {
+  background-color: var(--backgroundmain20);
+  border-radius: 3px;
+  height: 41px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 374px;
+}
+
+.library-home-recent-filter .search-HDbr5Q {
+  background-color: transparent;
+  height: auto;
+  left: 19px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 12px;
+  width: auto;
+}
+
+.library-home-recent-filter .search-IQ5ya7 {
+  background-color: transparent;
+  height: 20px;
+  left: 343px;
+  position: absolute;
+  top: 11px;
+  width: 20px;
+}
+
+.library-home-recent-filter .icon-box-uNJu53 {
+  cursor: pointer;
+}
+
+.library-home-recent-filter .rectangle-86-dyTUux {
+  background-color: var(--slate-gray-2);
+}
+
+.library-home-recent-filter .filter-alt-dyTUux {
+  background-color: transparent;
+  height: 30px;
+  left: 6px;
+  position: absolute;
+  top: 5px;
+  width: 30px;
+}
+
+.library-home-recent-filter .frame-78-FrMBld {
+  -webkit-backdrop-filter: blur(10px) brightness(100%);
+  align-items: center;
+  backdrop-filter: blur(10px) brightness(100%);
+  background-color: transparent;
+  border-radius: 3px;
+  display: inline-flex;
+  gap: 7px;
+  height: 43px;
+  left: 1067px;
+  overflow: hidden;
+  padding: 0px 0px 0px 10px;
+  position: absolute;
+  top: 7px;
+}
+
+.library-home-recent-filter .icon-select-965G3C {
+  cursor: pointer;
+}
+
+.library-home-recent-filter .icon-select-veURqW {
+  cursor: pointer;
+}
+
+.library-home-recent-filter .icon-select-PI4xTZ {
+  cursor: pointer;
+}
+
+.library-home-recent-filter .frame-80-FrMBld {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 7px;
+  justify-content: flex-end;
+  left: 1466px;
+  position: absolute;
+  top: 6px;
+}
+
+.library-home-recent-filter .group-16-x59min {
+  align-items: center;
+  background-color: var(--backgroundtertiary);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.library-home-recent-filter .group-17-x59min {
+  align-items: center;
+  background-color: var(--backgroundtertiary);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.library-home-recent-filter .frame-318-TnH6Ij {
+  align-items: flex-end;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 27px;
+  left: 405px;
+  position: absolute;
+  top: 525px;
+}
+
+.library-home-recent-filter .sorting-y6BO8h {
+  align-items: center;
+  background-color: var(--tuna);
+  border-radius: 5px;
+  display: flex;
+  gap: 172px;
+  height: 45px;
+  padding: 10px 5px;
+  position: relative;
+  width: 1484px;
+}
+
+.library-home-recent-filter .frame-211-QxqCnE {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  margin-bottom: -7.00px;
+  margin-top: -7.00px;
+  position: relative;
+}
+
+.library-home-recent-filter .frame-34-iWOdE8 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 5px;
+  position: relative;
+}
+
+.library-home-recent-filter .frame-316-y6BO8h {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 21px;
+  position: relative;
+}
+
+.library-home-recent-filter .frame-315-gzrOlK {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  width: 909px;
+}
+
+.library-home-recent-filter .frame-134-xEfvFm {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: var(--tuna);
+  border-radius: 5px;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 7px;
+  padding: 25px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .friends-who-play-this-game-wMofZO {
+  align-self: stretch;
+  background-color: transparent;
+  height: 30px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+}
+
+.library-home-recent-filter .frame-136-wMofZO {
+  align-items: flex-start;
+  background-color: transparent;
+  flex: 0 0 auto;
+  gap: 15px;
+  width: 402px;
+}
+
+.library-home-recent-filter .friend4-xbgvCA {
+  background-color: transparent;
+  height: 53px;
+  margin-bottom: -2.00px;
+  margin-left: -2.00px;
+  margin-top: -2.00px;
+  object-fit: cover;
+  position: relative;
+  width: 53px;
+}
+
+.library-home-recent-filter .friend1-xbgvCA {
+  background-color: transparent;
+  height: 53px;
+  margin-bottom: -2.00px;
+  margin-top: -2.00px;
+  object-fit: cover;
+  position: relative;
+  width: 53px;
+}
+
+.library-home-recent-filter .friend3-xbgvCA {
+  background-color: transparent;
+  height: 53px;
+  margin-bottom: -2.00px;
+  margin-top: -2.00px;
+  object-fit: cover;
+  position: relative;
+  width: 53px;
+}
+
+.library-home-recent-filter .frame-136-xEfvFm {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: var(--tuna);
+  border-radius: 5px;
+  flex: 0 0 auto;
+  gap: 7px;
+  padding: 25px;
+  width: 100%;
+}
+
+.library-home-recent-filter .achievements-9fig1n {
+  align-self: stretch;
+  height: 25px;
+}
+
+.library-home-recent-filter .frame-135-9fig1n {
+  background-color: transparent;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  width: 402px;
+}
+
+.library-home-recent-filter .x16-aCLgzw {
+  background-color: transparent;
+  height: auto;
+  left: 20px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 27px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.library-home-recent-filter .frame-406-28Afzf {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 10px;
+  position: relative;
+}
+
+.library-home-recent-filter .locked-achievements-R6cYn6 {
+  align-self: stretch;
+  background-color: transparent;
+  flex: 1;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+}
+
+.library-home-recent-filter .frame-136-R6cYn6 {
+  align-items: flex-start;
+  background-color: transparent;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  width: 402px;
+}
+
+.library-home-recent-filter .rectangle-119-GbxCyu {
+  mix-blend-mode: luminosity;
+}
+
+.library-home-recent-filter .rectangle-120-GbxCyu {
+  mix-blend-mode: luminosity;
+}
+
+.library-home-recent-filter .rectangle-121-GbxCyu {
+  mix-blend-mode: luminosity;
+}
+
+.library-home-recent-filter .rectangle-122-GbxCyu {
+  mix-blend-mode: luminosity;
+}
+
+.library-home-recent-filter .x41-z5RLSD {
+  background-color: transparent;
+  height: auto;
+  left: 20px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 27px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.library-home-recent-filter .frame-135-xEfvFm {
+  align-self: stretch;
+  background-color: var(--tuna);
+  border-radius: 5px;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  padding: 25px;
+  width: 100%;
+}
+
+.library-home-recent-filter .screenshots-RVFYUW {
+  align-self: stretch;
+  background-color: transparent;
+  height: 25px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+}
+
+.library-home-recent-filter .frame-310-RVFYUW {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 7px;
+  width: 859px;
+}
+
+.library-home-recent-filter .frame-135-G9B79a {
+  background-color: transparent;
+  border-radius: 5px;
+  flex: 1;
+  flex-grow: 1;
+  gap: 8px;
+  height: 110px;
+  justify-content: space-around;
+}
+
+.library-home-recent-filter .frame-136-G9B79a {
+  align-items: flex-start;
+  background-color: transparent;
+  border-radius: 5px;
+  flex: 1;
+  flex-grow: 1;
+  gap: 8px;
+  height: 110px;
+  justify-content: space-around;
+}
+
+.library-home-recent-filter .frame-137-G9B79a {
+  align-items: flex-start;
+  background-color: transparent;
+  border-radius: 5px;
+  display: flex;
+  flex: 1;
+  flex-grow: 1;
+  gap: 8px;
+  height: 110px;
+  justify-content: space-around;
+  position: relative;
+}
+
+.library-home-recent-filter .frame-138-G9B79a {
+  align-items: flex-start;
+  background-color: transparent;
+  border-radius: 5px;
+  display: flex;
+  flex: 1;
+  flex-grow: 1;
+  gap: 8px;
+  height: 110px;
+  justify-content: space-around;
+  position: relative;
+}
+
+.library-home-recent-filter .frame-136-gzrOlK {
+  align-items: center;
+  background-color: var(--tuna);
+  border-radius: 5px;
+  flex-direction: column;
+  gap: 7px;
+  height: 467px;
+  padding: 25px;
+  width: 553px;
+}
+
+.library-home-recent-filter .activity-QuipOj {
+  align-self: stretch;
+  background-color: transparent;
+  height: 42px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+}
+
+.library-home-recent-filter .frame-314-QuipOj {
+  align-items: center;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .frame-312-s19pWz {
+  align-items: center;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .oct-13-5IQ9hs {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.library-home-recent-filter .frame-311-93hnWe {
+  background-color: var(--backgroundhighlight);
+  border-color: var(--colorsecondary);
+}
+
+.library-home-recent-filter .frame-310-6GKAF3 {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.library-home-recent-filter .small-update-019Ytx {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-home-recent-filter .its-just-a-small-but-noteworthy-update-019Ytx {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.library-home-recent-filter .frame-313-s19pWz {
+  align-items: center;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .oct-12-fnkbFx {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.library-home-recent-filter .frame-311-r3ekFR {
+  background-color: var(--white-2);
+  border-color: var(--colorprimary);
+}
+
+.library-home-recent-filter .frame-310-pVPTat {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.library-home-recent-filter .big-update-74PTom {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-home-recent-filter .wow-heres-a-big-update-74PTom {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.library-home-recent-filter .client-TnH6Ij {
+  background-color: transparent;
+  height: 1080px;
+  left: 0px;
+  overflow: hidden;
+  position: fixed;
+  top: 0px;
+  width: 1920px;
+}
+
+.library-home-recent-filter .rectangle-68-IqqFZM {
+  background-color: var(--backgroundmain);
+  height: 59px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.library-home-recent-filter .frame-11-IqqFZM {
+  align-items: flex-end;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  left: 1658px;
+  position: absolute;
+  top: 17px;
+}
+
+.library-home-recent-filter .frame-2-SBVYhS {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 18px;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.library-home-recent-filter .frame-239-O3hgfq {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.library-home-recent-filter .help-PuipWM {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.library-home-recent-filter .frame-240-O3hgfq {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.library-home-recent-filter .view-ENJryV {
+  margin-top: -0.50px;
+  white-space: nowrap;
+}
+
+.library-home-recent-filter .minimize-O3hgfq {
+  background-color: transparent;
+  height: 25px;
+  position: relative;
+  width: 25px;
+}
+
+.library-home-recent-filter .content-copy-O3hgfq {
+  background-color: transparent;
+  height: 25px;
+  position: relative;
+  width: 25px;
+}
+
+.library-home-recent-filter .close-O3hgfq {
+  background-color: transparent;
+  height: 25px;
+  position: relative;
+  width: 25px;
+}
+
+.library-home-recent-filter .frame-3-IqqFZM {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 66px;
+  left: 94px;
+  position: absolute;
+  top: 18px;
+}
+
+.library-home-recent-filter .group-WDHB98 {
+  background-color: transparent;
+  height: 20.98845863342285px;
+  position: relative;
+  width: 88.00003814697266px;
+}
+
+.library-home-recent-filter .store-menu-WDHB98 {
+  width: 60px;
+}
+
+.library-home-recent-filter .store-n83ZJV {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.library-home-recent-filter .store-menu-LriuGx {
+  cursor: pointer;
+  width: 114px;
+}
+
+.library-home-recent-filter .community-qLQvp2 {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.library-home-recent-filter .store-menu-KxeNQw {
+  width: 131px;
+}
+
+.library-home-recent-filter .juxtopposed-qQRoNW {
+  height: auto;
+  left: 0px;
+  position: absolute;
+  top: -1px;
+  width: auto;
+}
+
+.library-home-recent-filter .store-menu-rx3GfL {
+  width: 77px;
+}
+
+.library-home-recent-filter .library-Vfox8Y {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.library-home-recent-filter .frame-233-IqqFZM {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 4px;
+  left: 894px;
+  position: absolute;
+  top: 18px;
+}
+
+.library-home-recent-filter .store-menu-NrHOgF {
+  cursor: pointer;
+  width: 118px;
+}
+
+.library-home-recent-filter .downloads-bur6Bm {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.library-home-recent-filter .frame-330-IqqFZM {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 10px;
+  justify-content: flex-end;
+  left: 1259px;
+  position: absolute;
+  top: 10px;
+}
+
+.library-home-recent-filter .friends-S5SP9z {
+  background-color: transparent;
+  height: 37px;
+  position: relative;
+  width: 56px;
+}
+
+.library-home-recent-filter .group-9-7fSxM1 {
+  background-color: transparent;
+  height: 37px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 56px;
+}
+
+.library-home-recent-filter .rectangle-61-4RyrT2 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  height: 37px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 56px;
+}
+
+.library-home-recent-filter .people-4RyrT2 {
+  height: 25px;
+  left: 15px;
+  width: 25px;
+}
+
+.library-home-recent-filter .notifications-S5SP9z {
+  background-color: transparent;
+  height: 37px;
+  position: relative;
+  width: 56px;
+}
+
+.library-home-recent-filter .group-135-DU4urb {
+  background-color: transparent;
+  height: 37px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 56px;
+}
+
+.library-home-recent-filter .group-8-FtZ0gB {
+  background-color: transparent;
+  height: 37px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 56px;
+}
+
+.library-home-recent-filter .rectangle-60-x9WFDV {
+  height: 37px;
+  width: 56px;
+}
+
+.library-home-recent-filter .notifications-x9WFDV {
+  background-color: transparent;
+  height: 25px;
+  left: 15px;
+  position: absolute;
+  top: 6px;
+  width: 25px;
+}
+
+.library-home-recent-filter .group-12-DU4urb {
+  background-color: transparent;
+  height: 16px;
+  left: 43px;
+  position: absolute;
+  top: -2px;
+  width: 18px;
+}
+
+.library-home-recent-filter .ellipse-2-QKXPVQ {
+  background-color: var(--colorprimary);
+  border-radius: 8px;
+  height: 16px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 16px;
+}
+
+.library-home-recent-filter .x1-QKXPVQ {
+  background-color: transparent;
+  height: auto;
+  left: 5px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 1px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.library-home-recent-filter .component-2-S5SP9z {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 15px;
+  height: 39px;
+  position: relative;
+}
+
+.library-home-recent-filter .group-7-qIL0JE {
+  background-color: transparent;
+  height: 39px;
+  position: relative;
+  width: 210px;
+}
+
+.library-home-recent-filter .rectangle-60-LU5Q4A {
+  height: 39px;
+  width: 210px;
+}
+
+.library-home-recent-filter .frame-1-LU5Q4A {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 8px;
+  height: 33px;
+  left: 3px;
+  position: absolute;
+  top: 3px;
+}
+
+.library-home-recent-filter .sprite-0003-1-meDYBd {
+  background-color: transparent;
+  height: 31px;
+  position: relative;
+  width: 31px;
+}
+
+.library-home-recent-filter .juxtopposed-meDYBd {
+  position: relative;
+  width: fit-content;
+}
+
+.library-home-recent-filter .x525-meDYBd {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-home-recent-filter .frame-331-IqqFZM {
+  background-color: transparent;
+  height: 24px;
+  left: 22px;
+  position: absolute;
+  top: 17px;
+  width: 53px;
+}
+
+.library-home-recent-filter .achievements {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+}
+
+.library-home-recent-filter .frame-135 {
+  align-items: flex-start;
+  display: flex;
+  position: relative;
+}
+
+.library-home-recent-filter .frame-310 {
+  align-items: flex-start;
+  background-color: transparent;
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.library-home-recent-filter .icon-box {
+  background-color: transparent;
+  height: 40px;
+  position: relative;
+  width: 40px;
+}
+
+.library-home-recent-filter .image-159 {
+  align-self: stretch;
+  background-color: transparent;
+  flex: 1;
+  flex-grow: 1;
+  object-fit: cover;
+  position: relative;
+}
+
+.library-home-recent-filter .keyboard-arrow-down {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.library-home-recent-filter .menu {
+  align-items: center;
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.library-home-recent-filter .new-and-trending {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  width: fit-content;
+}
+
+.library-home-recent-filter .rectangle-119 {
+  background-color: transparent;
+  height: 72px;
+  object-fit: cover;
+  position: relative;
+  width: 72px;
+}
+
+.library-home-recent-filter .rectangle-121 {
+  background-color: transparent;
+  height: 72px;
+  object-fit: cover;
+  position: relative;
+  width: 72px;
+}
+
+.library-home-recent-filter .rectangle-122 {
+  background-color: transparent;
+  height: 72px;
+  object-fit: cover;
+  position: relative;
+  width: 72px;
+}
+
+.library-home-recent-filter .rectangle-86 {
+  border-radius: 3px;
+  height: 40px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 40px;
+}
+
+.library-home-recent-filter .sort-filter {
+  align-items: center;
+  background-color: transparent;
+  border-radius: 3.33px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  height: 39px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 7px 20px;
+  position: relative;
+}
+
+.library-home-recent-filter .souls-like {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  width: fit-content;
+}
+
+.library-home-recent-filter .tag {
+  align-items: center;
+  align-self: stretch;
+  border-radius: 3px;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  overflow: hidden;
+  padding: 8px 44px;
+  position: relative;
+  width: 100%;
+}
+
+.library-home-recent-filter .view {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-home-recent-filter .x5000 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  opacity: 0;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+</style><style id="action-links-styles">
+@import url('https://fonts.googleapis.com/css2?family=Mulish&display=swap');
+
+#anima-interface{
+  transition: all 0.5s ease-in-out;
+}
+
+#anima-watermark {
+  transition: all 0.5s ease-in-out;
+  display: none;
+}
+#anima-watermark-link{
+  position: fixed;
+  bottom:20px;
+  height:30px;
+  border-radius: 1000px;
+  background: #3B3B3B;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  user-select:none;
+  transition: width 0.25s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+  text-decoration:none;
+  color:#fff;
+  padding:8px 16px 8px 11px;
+  font-family:Mulish, sans-serif;
+  font-size:12px;
+}
+#anima-watermark-link .text {
+  margin-left: 6px;
+}
+
+.omniview-anima-action-links .link{
+  height: 30px;
+  width: 30px;
+  border-radius: 1000px;
+  background: #3B3B3B;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  user-select:none;
+  transition: width 0.25s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+  text-decoration:none;
+  color:#fff;
+}
+.omniview-anima-action-links #comment-link .text,.omniview-anima-action-links #code-link .text{
+  display:none;
+  font-size:12px;
+  margin-right:5px;
+}
+.omniview-anima-action-links #comment-link:hover,.omniview-anima-action-links #code-link:hover{
+  width:105px;
+}
+.omniview-anima-action-links #comment-link.pop-active,.omniview-anima-action-links #code-link.pop-active{
+  width:105px;
+  background: #FF6250;
+}
+.omniview-anima-action-links #comment-link.pop-active .text,.omniview-anima-action-links #code-link.pop-active .text{
+  display:block
+}
+.omniview-anima-action-links #comment-link:hover .text,.omniview-anima-action-links #code-link:hover .text{
+  display:block;
+}
+
+.link.navigation{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  width:auto;
+  height:32px;
+  color:#fff;
+  font-size:12px;
+  cursor:default;
+  padding:0 5px;
+}
+.link.navigation .icon{
+  margin:0 6px;
+  fill:none;
+  stroke:currentColor;
+  cursor:pointer;
+}
+.link.navigation .icon.disabled{
+  opacity:0.5;
+  cursor:default;
+}
+
+
+.link.navigation .home-icon{
+  margin-left:6px;
+  fill:currentColor;
+  stroke:currentColor;
+  cursor:pointer;
+}
+
+.omniview-anima-action-links .restart{
+  height: 30px;
+  padding:0 12px;
+  background: #3B3B3B;
+  border-radius: 1000px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  color:#f1f1f1;
+  font-size: 12px;
+}
+
+.omniview-anima-action-links{
+  display:flex;
+  align-items:center;
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  font-family:Mulish, sans-serif;
+  transition: all 0.5s ease-in-out;
+  opacity:1;
+}
+
+.omniview-anima-action-links > * + *{
+   margin-right: 0;
+   margin-left: 10px;
+}
+
+.idle{
+  opacity:0;
+  pointer-events:none;
+}
+
+#popoverOpener {
+  position: absolute;
+  left: 50%;
+  margin-left: -10vw;
+  text-align: center;
+  top: 45vh;
+  width: 20vw;
+}
+
+
+.popover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1060;
+  display: none;
+  font-family: "sans-serif";
+  font-size: 14px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+.popover.top {
+  margin-top: -12px
+}
+
+.popover.right {
+  margin-left: 10px
+}
+
+.popover.bottom {
+  margin-top: 10px
+}
+
+.popover.left {
+  margin-left: -10px
+}
+
+.popover-title {
+  padding: 8px 14px;
+  margin: 0;
+  font-size: 14px;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #ebebeb;
+  border-radius: 5px 5px 0 0
+}
+
+.popover-content {
+  height: 100%;
+  width: 100%;
+  display:flex;
+  overflow:hidden;
+  font-family:Mulish, sans-serif;
+}
+
+
+
+.popover>.arrow,.popover>.arrow:after {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid
+}
+
+.popover>.arrow {
+  border-width: 11px
+}
+
+.popover>.arrow:after {
+  content: "";
+  border-width: 10px
+}
+
+.popover.top>.arrow {
+  bottom: -11px;
+  left: 50%;
+  margin-left: -11px;
+  border-top-color: #999;
+  border-top-color: rgba(0,0,0,.25);
+  border-bottom-width: 0
+}
+
+.popover.top>.arrow:after {
+  bottom: 1px;
+  margin-left: -10px;
+  content: " ";
+  border-top-color: #fff;
+  border-bottom-width: 0
+}
+
+.popover.right>.arrow {
+  top: 50%;
+  left: -11px;
+  margin-top: -11px;
+  border-right-color: #999;
+  border-right-color: rgba(0,0,0,.25);
+  border-left-width: 0
+}
+
+.popover.right>.arrow:after {
+  bottom: -10px;
+  left: 1px;
+  content: " ";
+  border-right-color: #fff;
+  border-left-width: 0
+}
+
+.popover.bottom>.arrow {
+  top: -11px;
+  left: 50%;
+  margin-left: -11px;
+  border-top-width: 0;
+  border-bottom-color: #999;
+  border-bottom-color: rgba(0,0,0,.25)
+}
+
+.popover.bottom>.arrow:after {
+  top: 1px;
+  margin-left: -10px;
+  content: " ";
+  border-top-width: 0;
+  border-bottom-color: #fff
+}
+
+.popover.left>.arrow {
+  top: 50%;
+  right: -11px;
+  margin-top: -11px;
+  border-right-width: 0;
+  border-left-color: #999;
+  border-left-color: rgba(0,0,0,.25)
+}
+
+.popover.left>.arrow:after {
+  right: 1px;
+  bottom: -10px;
+  content: " ";
+  border-right-width: 0;
+  border-left-color: #fff
+}
+
+
+
+#anima-comment-popover,#anima-code-popover{
+  background:#333333;
+  color:#fff;
+}
+
+#anima-comment-popover.top>.arrow,#anima-comment-popover.top>.arrow:after,#anima-code-popover.top>.arrow:after,#anima-code-popover.top>.arrow {
+  border-top-color:#333;
+}
+
+#anima-comment-popover .btn,#anima-code-popover .btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 6px 20px;
+  background: #FF6250;
+  color:#fff;
+  border-radius: 100px;
+  width: max-content;
+  text-decoration:none;
+}
+
+@media screen and (max-width: 550px) {
+  #anima-watermark-link {
+    padding: 6px !important;
+  }
+  #anima-watermark-link .text {
+    display: none !important;
+  }
+}
+
+</style><script id="anime-js-script" src="https://cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js" integrity="sha256-98Q574VkbV+PkxXCKSgL6jVq9mrVbS7uCdA+vt0sLS8=" crossorigin="anonymous"></script><script id="imgloaded-js-script" src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script></head><body style="margin: 0px; overflow-x: hidden;" dark-scroll=""><input type="hidden" id="anPageName" name="page" value="library-home-recent-filter"><div class="container-center-horizontal"><div class="library-home-recent-filter screen " data-id="727:40268"><div class="rectangle-89-TnH6Ij" data-id="727:40269"></div><div class="rectangle-95-TnH6Ij" data-id="727:40271"></div><div class="rectangle-96-TnH6Ij" data-id="727:40272"></div><div class="frame-56-TnH6Ij" data-id="727:40273"><div class="october-2dT852 motivasans-regular-normal-slate-gray-16px" data-id="727:40740">October</div><div class="frame-59-2dT852" data-id="727:40286"><div class="tag-rNBFNI tag" data-id="727:40287"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I727:40287;280:207">Bioshock</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40287;662:10842">5,000</div></div><img class="image-88-rNBFNI" data-id="727:40288" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-88@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-88@2x.png" alt="image 88"></div><div class="frame-57-2dT852" data-id="727:40280"><div class="tag-2c1xO7 tag" data-id="727:40281"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I727:40281;280:205">Batman: Arkham Knight</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40281;662:10883">5,000</div></div><img class="image-86-2c1xO7" data-id="727:40282" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-86@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-86@2x.png" alt="image 86"></div><div class="frame-58-2dT852" data-id="727:40283"><div class="tag-Rc1Quj tag" data-id="727:40284"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I727:40284;280:205">Beneath a Steel Sky</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40284;662:10883">5,000</div></div><img class="image-87-Rc1Quj" data-id="727:40285" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-87@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-87@2x.png" alt="image 87"></div><div class="frame-73-2dT852" data-id="727:40328"><div class="tag-KaHlaz tag" data-id="727:40329"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I727:40329;280:205">Grand Theft Auto V</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40329;662:10883">5,000</div></div><img class="image-102-KaHlaz" data-id="727:40330" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-102@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-102@2x.png" alt="image 102"></div><div class="frame-60-2dT852" data-id="727:40289"><div class="tag-vxn2di tag" data-id="727:40290"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I727:40290;280:205">Bioshock 2</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40290;662:10883">5,000</div></div><img class="image-89-vxn2di" data-id="727:40291" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-89@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-89@2x.png" alt="image 89"></div><div class="september-2dT852 motivasans-regular-normal-slate-gray-16px" data-id="727:40741">September</div><div class="frame-61-2dT852" data-id="727:40292"><div class="tag-2YQ7ZH tag" data-id="727:40293"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I727:40293;280:205">Bioshock Infinite</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40293;662:10883">5,000</div></div><img class="image-90-2YQ7ZH" data-id="727:40294" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-90@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-90@2x.png" alt="image 90"></div><div class="frame-62-2dT852" data-id="727:40295"><div class="tag-b7UOpA tag" data-id="727:40296"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I727:40296;280:205">Black Mesa</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40296;662:10883">5,000</div></div><img class="image-91-b7UOpA" data-id="727:40297" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-91@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-91@2x.png" alt="image 91"></div><div class="frame-63-2dT852" data-id="727:40298"><div class="tag-8eas1x tag" data-id="727:40299"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I727:40299;280:205">Borderlands</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40299;662:10883">5,000</div></div><img class="image-92-8eas1x" data-id="727:40300" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-92@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-92@2x.png" alt="image 92"></div><div class="frame-64-2dT852" data-id="727:40301"><div class="tag-pTs9wF tag" data-id="727:40302"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I727:40302;280:205">Borderlands 2</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40302;662:10883">5,000</div></div><img class="image-93-pTs9wF" data-id="727:40303" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-93@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-93@2x.png" alt="image 93"></div><div class="frame-72-2dT852" data-id="727:40325"><div class="tag-sDRfrw tag" data-id="727:40326"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I727:40326;280:205">Garry’s Mod</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40326;662:10883">5,000</div></div><img class="image-101-sDRfrw" data-id="727:40327" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-101@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-101@2x.png" alt="image 101"></div><div class="frame-74-2dT852" data-id="727:40331"><div class="tag-jhnZtA tag" data-id="727:40332"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I727:40332;280:205">Half-Life</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40332;662:10883">5,000</div></div><img class="image-103-jhnZtA" data-id="727:40333" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-103@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-103@2x.png" alt="image 103"></div><div class="frame-70-2dT852" data-id="727:40319"><div class="tag-dTLakq tag" data-id="727:40320"><p class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I727:40320;280:205">The Elder Scrolls V: Skyrim</p><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40320;662:10883">5,000</div></div><img class="image-99-dTLakq" data-id="727:40321" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-99@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-99@2x.png" alt="image 99"></div><div class="frame-75-2dT852" data-id="727:40334"><div class="tag-xZQSin tag" data-id="727:40335"><p class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I727:40335;280:205">Halo: The Master Chief Collection</p><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40335;662:10883">5,000</div></div><img class="image-104-xZQSin" data-id="727:40336" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-104@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-104@2x.png" alt="image 104"></div><div class="frame-76-2dT852" data-id="727:40337"><div class="tag-5ZhMY0 tag" data-id="727:40338"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I727:40338;280:205">Mass Effect 2</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40338;662:10883">5,000</div></div><img class="image-105-5ZhMY0" data-id="727:40339" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-105@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-105@2x.png" alt="image 105"></div><div class="frame-77-2dT852" data-id="727:40340"><div class="tag-bvO3d4 tag" data-id="727:40341"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I727:40341;280:205">Starbound</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40341;662:10883">5,000</div></div><img class="image-106-bvO3d4" data-id="727:40342" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-106@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-106@2x.png" alt="image 106"></div><div class="frame-65-2dT852" data-id="727:40304"><div class="tag-QURodV tag" data-id="727:40305"><div class="souls-like motivasans-regular-normal-slate-gray-14px" data-id="I727:40305;280:205">Borderlands 3</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40305;662:10883">5,000</div></div><img class="image-94-QURodV" data-id="727:40306" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-94-6.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-94-6.svg" alt="image 94"></div><div class="frame-66-2dT852" data-id="727:40307"><div class="tag-pCCc5N tag" data-id="727:40308"><div class="souls-like motivasans-regular-normal-slate-gray-14px" data-id="I727:40308;280:205">Crysis</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40308;662:10883">5,000</div></div><img class="image-95-pCCc5N" data-id="727:40309" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-95-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-95-2.svg" alt="image 95"></div><div class="frame-67-2dT852" data-id="727:40310"><div class="tag-jEk9si tag" data-id="727:40311"><div class="souls-like motivasans-regular-normal-slate-gray-14px" data-id="I727:40311;280:205">Deus Ex: GOTY Edition</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40311;662:10883">5,000</div></div><img class="image-96-jEk9si" data-id="727:40312" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-96@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-96@2x.png" alt="image 96"></div><div class="frame-68-2dT852" data-id="727:40313"><div class="tag-asmzl3 tag" data-id="727:40314"><div class="souls-like motivasans-regular-normal-slate-gray-14px" data-id="I727:40314;280:205">DOOM</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40314;662:10883">5,000</div></div><img class="image-97-asmzl3" data-id="727:40315" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-97@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-97@2x.png" alt="image 97"></div><div class="frame-69-2dT852" data-id="727:40316"><div class="tag-lrMnIg tag" data-id="727:40317"><div class="souls-like motivasans-regular-normal-slate-gray-14px" data-id="I727:40317;280:205">DOOM Eternal</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40317;662:10883">5,000</div></div><img class="image-98-lrMnIg" data-id="727:40318" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-98@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-98@2x.png" alt="image 98"></div><div class="august-2dT852 motivasans-regular-normal-slate-gray-16px" data-id="727:40742">August</div><div class="frame-56-2dT852" data-id="727:40277"><div class="tag-MtxnJS tag" data-id="727:40278"><div class="souls-like motivasans-regular-normal-slate-gray-14px" data-id="I727:40278;280:205">Batman: Arkham Origins</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40278;662:10883">5,000</div></div><img class="image-85-MtxnJS" data-id="727:40279" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-85@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-85@2x.png" alt="image 85"></div><div class="frame-71-2dT852" data-id="727:40322"><div class="tag-Cx1mQs tag" data-id="727:40323"><div class="souls-like motivasans-regular-normal-slate-gray-14px" data-id="I727:40323;280:205">Fallout 4</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I727:40323;662:10883">5,000</div></div><img class="image-100-Cx1mQs" data-id="727:40324" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-100@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-100@2x.png" alt="image 100"></div></div><img class="image-107-TnH6Ij" data-id="727:40343" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-107-1.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-107-1.png" alt="image 107"><div class="rectangle-97-TnH6Ij" data-id="727:40344"></div><div class="group-60-TnH6Ij" data-id="727:40345"><div class="play-button-xbyRSn" data-id="727:40346"><img class="play-arrow-9xrfl2" data-id="I727:40346;335:1188" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/play-arrow-4.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/play-arrow-4.svg" alt="Play arrow"><div class="play-9xrfl2 motivasans-bold-vulcan-18px" data-id="I727:40346;335:1185">Play</div></div><div class="bioshock-remastered-xbyRSn valign-text-middle motivasans-bold-wild-sand-22px" data-id="727:40347">Bioshock Remastered</div><div class="frame-52-xbyRSn" data-id="727:40348"><img class="date-range-IaTHjH" data-id="727:40349" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/date-range-21.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/date-range-21.svg" alt="Date range"><div class="frame-51" data-id="727:40352"><div class="last-played-izSYvv motivasans-regular-normal-slate-gray-14px" data-id="727:40353">LAST PLAYED</div><div class="x21-aug-2022-izSYvv motivasans-regular-normal-wild-sand-14px" data-id="727:40354">21 Aug 2022</div></div></div><div class="frame-53-xbyRSn" data-id="727:40355"><img class="timelapse-jekjnO" data-id="727:40356" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/timelapse-21.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/timelapse-21.svg" alt="Timelapse"><div class="frame-51" data-id="727:40359"><div class="play-time-pFLpHA motivasans-regular-normal-slate-gray-14px" data-id="727:40360">PLAY TIME</div><div class="x92-hours-pFLpHA motivasans-regular-normal-wild-sand-14px" data-id="727:40361">92 hours</div></div></div><div class="frame-54-xbyRSn" data-id="727:40362"><img class="cloud-iS5HbO" data-id="727:40363" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/cloud-4.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/cloud-4.svg" alt="Cloud"><div class="frame-51" data-id="727:40366"><div class="cloud-status-4KHuiU motivasans-regular-normal-slate-gray-14px" data-id="727:40367">CLOUD STATUS</div><div class="up-to-date-4KHuiU motivasans-regular-normal-wild-sand-14px" data-id="727:40368">Up to date</div></div></div><div class="group-59-xbyRSn" data-id="727:40369"><div class="frame-56-yrlagh" data-id="727:40370"><img class="stars-I8X8jp" data-id="727:40371" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/stars-22.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/stars-22.svg" alt="Stars"><div class="frame-51" data-id="727:40374"><div class="achievements-Ll4xY5 achievements motivasans-regular-normal-slate-gray-14px" data-id="727:40375">ACHIEVEMENTS</div><div class="x2065-Ll4xY5 motivasans-regular-normal-wild-sand-14px" data-id="727:40376">20/65</div></div></div><img class="vector-15-yrlagh" data-id="727:40377" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-15.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-15.svg" alt="Vector 15"><img class="vector-16-yrlagh" data-id="727:40378" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-16.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-16.svg" alt="Vector 16"></div><div class="frame-91-xbyRSn" data-id="727:40379"><div class="icon-box" data-id="727:40380"><img class="sports-esports-4MT5Sb" data-id="727:40382" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sports-esports-4.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sports-esports-4.svg" alt="Sports esports"></div><div class="icon-box" data-id="727:40389"><img class="people-qzIex7 people" data-id="727:40391" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/people-29.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/people-29.svg" alt="People"></div><div class="icon-box" data-id="727:40394"><div class="rectangle-86-USDJN8 rectangle-86" data-id="727:40395"></div><img class="star-border-USDJN8" data-id="727:40396" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/star-border-13.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/star-border-13.svg" alt="Star border"></div><div class="icon-box" data-id="727:40399"><div class="rectangle-86-XGQoiN rectangle-86" data-id="727:40400"></div><img class="settings-XGQoiN" data-id="727:40401" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/settings-21.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/settings-21.svg" alt="Settings"></div><div class="icon-box" data-id="727:40404"><div class="rectangle-86-Q55cdv rectangle-86" data-id="727:40405"></div><img class="info-Q55cdv" data-id="727:40406" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/info-3.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/info-3.svg" alt="Info"></div></div></div><div class="library-header-TnH6Ij" data-id="727:40409"><div class="rectangle-67-FrMBld" data-id="727:40410"></div><div class="frame-15-FrMBld" data-id="727:40411"><article class="menu-eDL0WC menu" data-id="727:40412"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I727:40412;82:341">Home</div></article><article class="menu-Fb9xGM menu" data-id="727:40413"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I727:40413;82:314">Collections</div></article><article class="group-15-eDL0WC" data-id="727:40414"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I727:40414;82:314">News and Updates</div></article></div><div class="frame-79-FrMBld" data-id="727:40415"><div class="search-uNJu53" data-id="727:40416"><div class="rectangle-70-HDbr5Q" data-id="I727:40416;280:52"></div><div class="search-HDbr5Q motivasans-regular-normal-kashmir-blue-14px" data-id="I727:40416;280:53">Search...</div><img class="search-IQ5ya7" data-id="I727:40416;280:54" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/search-29.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/search-29.svg" alt="Search"></div><a href="library-home-filters"><div class="icon-box-uNJu53 icon-box" data-id="727:40417" data-hotspot-id="hp-0"><div class="rectangle-86-dyTUux rectangle-86" data-id="727:40418"></div><img class="filter-alt-dyTUux" data-id="727:40419" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/filter-alt-4.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/filter-alt-4.svg" alt="Filter alt"></div></a><img class="icon-select" data-id="727:40424" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-20.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-20.svg" alt="icon select"><img class="icon-select" data-id="727:40425" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-1.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-1.svg" alt="icon select"></div><div class="frame-78-FrMBld" data-id="727:40426"><div class="view valign-text-middle motivasans-regular-normal-wild-sand-14px" data-id="727:40427">View</div><a href="library-home-recent-filter"><img class="icon-select-965G3C icon-select" data-id="727:40428" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-22.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-22.svg" alt="icon select" data-hotspot-id="hp-1"></a><a href="library-home-grid-view-2"><img class="icon-select-veURqW icon-select" data-id="727:40441" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-23.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-23.svg" alt="icon select" data-hotspot-id="hp-2"></a><a href="library-home-detail-view-2"><img class="icon-select-PI4xTZ icon-select" data-id="727:40454" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-24.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-24.svg" alt="icon select" data-hotspot-id="hp-3"></a></div><div class="frame-80-FrMBld" data-id="727:40467"><article class="group-16-x59min" data-id="727:40468"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I727:40468;82:314">Activate a Product</div></article><article class="group-17-x59min" data-id="727:40469"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I727:40469;82:314">Add a non-Steam Game</div></article></div></div><div class="frame-318-TnH6Ij" data-id="727:40470"><div class="sorting-y6BO8h" data-id="727:40471"><div class="frame-211-QxqCnE" data-id="I727:40471;457:12111"><div class="frame-34-iWOdE8" data-id="I727:40471;302:1483"><article class="sort-filter" data-id="I727:40471;302:1484"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-14px" data-id="I727:40471;302:1484;296:577">Store Page</div></article><article class="sort-filter" data-id="I727:40471;302:1485"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-14px" data-id="I727:40471;302:1485;296:577">DLCs</div></article><article class="sort-filter" data-id="I727:40471;302:1486"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-14px" data-id="I727:40471;302:1486;296:577">Community</div></article><article class="sort-filter" data-id="I727:40471;302:1487"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-14px" data-id="I727:40471;302:1487;296:577">Discussions</div></article><article class="sort-filter" data-id="I727:40471;302:1488"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-14px" data-id="I727:40471;302:1488;296:577">Workshop</div></article><article class="sort-filter" data-id="I727:40471;302:1489"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-14px" data-id="I727:40471;302:1489;296:577">Guides</div></article><article class="sort-filter" data-id="I727:40471;302:1490"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-14px" data-id="I727:40471;302:1490;296:577">Support</div></article></div></div></div><div class="frame-316-y6BO8h" data-id="727:40472"><div class="frame-315-gzrOlK" data-id="727:40473"><div class="frame-134-xEfvFm" data-id="727:40474"><div class="frame-407" data-id="727:40475"><p class="friends-who-play-this-game-wMofZO motivasans-regular-normal-wild-sand-16px" data-id="727:40476">Friends who play this game</p><div class="frame-136-wMofZO frame-136" data-id="727:40477"><img class="friend4-xbgvCA" data-id="727:40478" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend4-1@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend4-1@2x.png" alt="friend4"><img class="friend1-xbgvCA" data-id="727:40479" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend1-1@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend1-1@2x.png" alt="friend1"><img class="friend3-xbgvCA" data-id="727:40480" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend3-1@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend3-1@2x.png" alt="friend3"></div></div></div><div class="frame-136-xEfvFm frame-136" data-id="727:40481"><div class="frame-407" data-id="727:40482"><div class="achievements-9fig1n achievements motivasans-regular-normal-wild-sand-16px" data-id="727:40483">Achievements</div><div class="frame-135-9fig1n frame-135" data-id="727:40484"><img class="rectangle-119" data-id="727:40485" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-119@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-119@2x.png" alt="Rectangle 119"><img class="rectangle-120" data-id="727:40486" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-120@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-120@2x.png" alt="Rectangle 120"><img class="rectangle-121" data-id="727:40487" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-121@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-121@2x.png" alt="Rectangle 121"><img class="rectangle-122" data-id="727:40488" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-122@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-122@2x.png" alt="Rectangle 122"><div class="group-100" data-id="727:40489"><div class="rectangle-123" data-id="727:40490"></div><div class="x16-aCLgzw motivasans-regular-normal-wild-sand-16px" data-id="727:40491">+16</div></div></div></div><div class="frame-406-28Afzf" data-id="727:40492"><div class="locked-achievements-R6cYn6 valign-text-middle motivasans-regular-normal-slate-gray-14px" data-id="727:40493">Locked Achievements</div><div class="frame-136-R6cYn6 frame-136" data-id="727:40494"><img class="rectangle-119-GbxCyu rectangle-119" data-id="727:40495" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-119@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-119@2x.png" alt="Rectangle 119"><img class="rectangle-120-GbxCyu rectangle-120" data-id="727:40496" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-120@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-120@2x.png" alt="Rectangle 120"><img class="rectangle-121-GbxCyu rectangle-121" data-id="727:40497" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-121@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-121@2x.png" alt="Rectangle 121"><img class="rectangle-122-GbxCyu rectangle-122" data-id="727:40498" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-122@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-122@2x.png" alt="Rectangle 122"><div class="group-100" data-id="727:40499"><div class="rectangle-123" data-id="727:40500"></div><div class="x41-z5RLSD motivasans-regular-normal-wild-sand-16px" data-id="727:40501">+41</div></div></div></div></div><div class="frame-135-xEfvFm frame-135" data-id="727:40502"><div class="screenshots-RVFYUW motivasans-regular-normal-wild-sand-16px" data-id="727:40503">Screenshots</div><div class="frame-310-RVFYUW frame-310" data-id="731:41853"><div class="frame-135-G9B79a frame-135" data-id="731:41854"><img class="image-159" data-id="731:41855" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-1.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-1.png" alt="image 159"></div><div class="frame-136-G9B79a frame-136" data-id="731:41856"><img class="image-159" data-id="731:41857" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-2.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-2.png" alt="image 159"></div><div class="frame-137-G9B79a" data-id="731:41858"><img class="image-159" data-id="731:41859" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-3.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-3.png" alt="image 159"></div><div class="frame-138-G9B79a" data-id="731:41860"><img class="image-159" data-id="731:41861" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-4.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-4.png" alt="image 159"></div></div></div></div><div class="frame-136-gzrOlK frame-136" data-id="727:40513"><div class="activity-QuipOj motivasans-regular-normal-slate-gray-16px" data-id="727:40514">Activity</div><div class="frame-314-QuipOj" data-id="727:40515"><div class="frame-312-s19pWz" data-id="727:40516"><div class="frame-221" data-id="727:40517"><div class="oct-13-5IQ9hs motivasans-regular-normal-malibu-16px" data-id="727:40518">Oct 13</div><img class="vector-5" data-id="727:40519" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-5-1.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-5-1.svg" alt="Vector 5"></div><div class="frame-311-93hnWe frame-311" data-id="727:40520"><img class="construction" data-id="727:40521" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/construction-6.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/construction-6.svg" alt="Construction"><div class="frame-310-6GKAF3 frame-310" data-id="727:40529"><div class="small-update-019Ytx motivasans-regular-normal-slate-gray-14px" data-id="727:40530">Small Update</div><p class="its-just-a-small-but-noteworthy-update-019Ytx motivasans-regular-normal-wild-sand-16px" data-id="727:40531">It’s just a small but noteworthy update~</p></div></div></div><div class="frame-313-s19pWz" data-id="727:40532"><div class="frame-221" data-id="727:40533"><div class="oct-12-fnkbFx motivasans-regular-normal-malibu-16px" data-id="727:40534">Oct 12</div><img class="vector-5" data-id="727:40535" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-5-1.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-5-1.svg" alt="Vector 5"></div><div class="frame-311-r3ekFR frame-311" data-id="727:40536"><img class="construction" data-id="727:40537" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/construction-7.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/construction-7.svg" alt="Construction"><div class="frame-310-pVPTat frame-310" data-id="727:40545"><div class="big-update-74PTom motivasans-regular-normal-slate-gray-14px" data-id="727:40546">Big Update</div><p class="wow-heres-a-big-update-74PTom motivasans-regular-normal-wild-sand-16px" data-id="727:40547">Wow here’s a BIG update!</p></div></div></div></div></div></div></div><div class="client-TnH6Ij" data-id="727:40548"><div class="rectangle-68-IqqFZM" data-id="I727:40548;333:2374"></div><div class="frame-11-IqqFZM" data-id="I727:40548;333:2375"><div class="frame-2-SBVYhS" data-id="I727:40548;333:2381"><div class="frame-239-O3hgfq" data-id="I727:40548;475:5954"><div class="help-PuipWM motivasans-regular-normal-slate-gray-16px" data-id="I727:40548;475:4731">Help</div></div><div class="frame-240-O3hgfq" data-id="I727:40548;618:6950"><div class="view-ENJryV view motivasans-regular-normal-slate-gray-16px" data-id="I727:40548;618:6951">View</div><img class="keyboard-arrow-down" data-id="I727:40548;618:6952" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down.svg" alt="Keyboard arrow down"></div><img class="minimize-O3hgfq" data-id="I727:40548;333:2384" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/minimize-24.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/minimize-24.svg" alt="Minimize"><img class="content-copy-O3hgfq" data-id="I727:40548;333:2387" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/content-copy-24.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/content-copy-24.svg" alt="Content copy"><img class="close-O3hgfq" data-id="I727:40548;333:2390" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/close-24.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/close-24.svg" alt="Close"></div></div><div class="frame-3-IqqFZM" data-id="I727:40548;333:2404"><img class="group-WDHB98" data-id="I727:40548;435:10471" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-1@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-1@2x.png" alt="Group"><div class="store-menu-WDHB98 store-menu" data-id="I727:40548;333:2405"><div class="store-n83ZJV motivasans-bold-wild-sand-18px" data-id="I727:40548;333:2405;18:271">STORE</div></div><a href="community-home"><div class="store-menu-LriuGx store-menu" data-id="I727:40548;333:2406" data-hotspot-id="hp-4"><div class="community-qLQvp2 motivasans-bold-wild-sand-18px" data-id="I727:40548;333:2406;18:782">COMMUNITY</div></div></a><div class="store-menu-KxeNQw store-menu" data-id="I727:40548;333:2407"><div class="juxtopposed-qQRoNW juxtopposed motivasans-bold-wild-sand-18px" data-id="I727:40548;333:2407;18:879">JUXTOPPOSED</div></div><div class="store-menu-rx3GfL store-menu" data-id="I727:40548;333:2408"><div class="library-Vfox8Y motivasans-bold-malibu-18px" data-id="I727:40548;333:2408;18:832">LIBRARY</div></div></div><div class="frame-233-IqqFZM" data-id="I727:40548;460:23404"><a href="download"><div class="store-menu-NrHOgF store-menu" data-id="I727:40548;333:2409" data-hotspot-id="hp-5"><div class="downloads-bur6Bm motivasans-bold-wild-sand-18px" data-id="I727:40548;333:2410">DOWNLOADS</div></div></a></div><div class="frame-330-IqqFZM" data-id="I727:40548;618:13985"><div class="friends-S5SP9z" data-id="I727:40548;447:7373"><div class="group-9-7fSxM1" data-id="I727:40548;447:7373;447:3840"><div class="rectangle-61-4RyrT2" data-id="I727:40548;447:7373;447:3841"></div><img class="people-4RyrT2 people" data-id="I727:40548;447:7373;447:3842" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/people-30.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/people-30.svg" alt="People"></div></div><div class="notifications-S5SP9z" data-id="I727:40548;850:10413"><div class="group-135-DU4urb" data-id="I727:40548;850:10413;766:10295"><div class="group-8-FtZ0gB" data-id="I727:40548;850:10413;766:10296"><div class="rectangle-60-x9WFDV rectangle-60" data-id="I727:40548;850:10413;766:10297"></div><img class="notifications-x9WFDV" data-id="I727:40548;850:10413;766:10298" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/notifications-24.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/notifications-24.svg" alt="Notifications"></div></div><div class="group-12-DU4urb" data-id="I727:40548;850:10413;766:10166"><div class="ellipse-2-QKXPVQ" data-id="I727:40548;850:10413;766:10167"></div><div class="x1-QKXPVQ motivasans-regular-normal-vulcan-12px" data-id="I727:40548;850:10413;766:10168">1</div></div></div><div class="component-2-S5SP9z" data-id="I727:40548;333:2393"><div class="group-7-qIL0JE" data-id="I727:40548;333:2393;18:1014"><div class="rectangle-60-LU5Q4A rectangle-60" data-id="I727:40548;333:2393;18:1015"></div><div class="frame-1-LU5Q4A" data-id="I727:40548;333:2393;18:1016"><img class="sprite-0003-1-meDYBd" data-id="I727:40548;333:2393;18:1017" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-46.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-46.svg" alt="Sprite-0003 1"><div class="juxtopposed-meDYBd juxtopposed motivasans-regular-normal-wild-sand-14px" data-id="I727:40548;333:2393;18:1018">Juxtopposed</div><div class="x525-meDYBd motivasans-regular-normal-slate-gray-14px" data-id="I727:40548;333:2393;18:1019">$5.25</div><img class="keyboard-arrow-down" data-id="I727:40548;333:2393;18:1020" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-1.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-1.svg" alt="Keyboard arrow down"></div></div></div></div><img class="frame-331-IqqFZM" data-id="I727:40548;628:10825" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-331-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-331-2.svg" alt="Frame 331"></div></div></div><script src="launchpad-js/launchpad-banner.js" async=""></script><script defer="" src="https://animaapp.s3.amazonaws.com/static/restart-btn.min.js"></script><div id="anima-interface" data-turbo-permanent="true" class="idle"><!---->
+        <div id="anima-comment-popover" class="popover top" role="tooltip" style="left: -205px; top: -220px;">
+          <div class="arrow" style="margin-left: 128px;"></div>
+          <div class="popover-content" style="align-items:center">
+            <div style="display:flex;flex-direction:column;height: 100%;padding: 20px;">
+              <h3 style="font-size:18px;margin-bottom:10px;font-weight:500;line-height: 26px;font-family: Roslindale;">
+                Leave feedback and collaborate
+              </h3>
+              <p style="font-size:12px;margin-bottom:20px;font-weight:400;line-height: 20px;">
+                Login to your account to leave comments. Don't have an account?
+                Sign up for free!
+              </p>
+              <a target="_blank" rel="noopener noreferrer" class="btn" href="https://projects.animaapp.com/p/undefined/s/undefined?mode=comments&amp;utm_campaign=add-comment&amp;utm_medium=add-comment&amp;utm_source=animaapp.io">Add comment</a>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:center;padding-right:20px">
+              <img src="https://animaapp.s3.amazonaws.com/static/comment-illustration.svg">
+            </div>
+          </div>
+        </div>
+        <div id="anima-code-popover" class="popover top" role="tooltip" style="left: -205px; top: -220px;">
+          <div class="arrow" style="margin-left: 168px;"></div>
+          <div class="popover-content" style="align-items:center">
+            <div style="display:flex;flex-direction:column;height: 100%;padding: 20px;">
+              <h3 style="font-size:18px;margin-bottom:10px;font-weight:500;line-height: 26px;font-family: Roslindale;">
+                Get clean code you’ll love with Anima
+              </h3>
+              <p style="font-size:12px;margin-bottom:20px;font-weight:400;line-height: 20px;">
+                Login and easily export HTML, React or Vue of this prototype.
+                Don’t have an account? Sign up for free!
+              </p>
+              <a target="_blank" rel="noopener noreferrer" class="btn" href="https://projects.animaapp.com/p/undefined/s/undefined?mode=code&amp;utm_campaign=get-code&amp;utm_medium=get-code&amp;utm_source=animaapp.io">
+                Get code
+              </a>
+            </div>
+
+            <img src="https://animaapp.s3.amazonaws.com/static/code-illustration.svg">
+          </div>
+        </div>
+        <div class="omniview-anima-action-links" id="actions-wrap">
+          <div class="omniview-anima-action-links">
+            <div id="page-nav" class="link navigation" style="display: none;">
+              <svg id="homepage-icon" class="home-icon" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.151 11a.25.25 0 01-.167-.436l4.349-3.913a.25.25 0 01.334 0l4.349 3.913a.25.25 0 01-.167.436H8.15zM16 12H9v4a1 1 0 001 1h5a1 1 0 001-1v-4z" fill="#fff"></path>
+              </svg>
+
+              <svg class="icon" id="arrow-left" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18l-6-6 6-6" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+
+              <span id="page-num"></span>
+
+              <svg class="icon" id="arrow-right" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+
+            <a class="link" id="comment-link" target="_blank" style="display: none;">
+              <span class="text">Comment</span>
+              <svg width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M4.301 15.137a.551.551 0 01.199-.55c.314-.23.554-.554.718-.965A6.015 6.015 0 014 10 6.006 6.006 0   0110.001 4 6.006 6.006 0 0116 10.001 6.006 6.006 0 019.999 16a5.98 5.98 0 01-3.095-.86 3.165 3.165 0 01-1.65.438 3.6  3.6 0 01-.57-.044c-.191-.03-.34-.186-.383-.397z" fill="#fff"></path>
+              </svg>
+            </a>
+
+            <a class="link" id="code-link" target="_blank" style="display: none;">
+              <span class="text">Get Code</span>
+              <svg width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 15.667a1 1 0 01-.707-1.708l3.626-3.625-3.626-3.626a1 1 0 111.415-1.415l4.333 4.333a1 1 0 010 1.414l-4.333 4.333a.993.993 0 01-.707.294zM7.333 5a1 1 0 01.707 1.708l-3.626 3.625 3.627 3.626a1 1 0 11-1.415 1.415L2.293 11.04a1 1 0 010-1.415l4.333-4.333A.992.992 0 017.333 5z" fill="#fff"></path>
+              </svg>
+            </a>
+
+            <div class="restart" id="restart-btn" style="display: none;">
+              <svg style="margin-right: 6px" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 11.817A5.017 5.017 0 01.994 6.811c0-.207.169-.375.375-.375s.375.168.375.375A4.265 4.265 0 006 11.067a4.265 4.265 0 004.256-4.256A4.265 4.265 0 006 2.555a.376.376 0 01-.375-.376c0-.206.169-.374.375-.374a5.017 5.017 0 015.006 5.006A5.017 5.017 0 016 11.817z" fill="#fff"></path>
+                <path d="M6.75 4.237a.37.37 0 01-.263-.112l-1.65-1.65a.363.363 0 010-.525L6.487.3c.15-.15.375-.15.525 0 .15.15.15.375 0 .525L5.625 2.212 7.012 3.6c.15.15.15.375 0 .525-.056.075-.15.112-.262.112z" fill="#fff"></path>
+              </svg>
+              Restart
+            </div>
+          </div>
+        </div>
+      <!----></div><div id="anima-watermark" style="display: none;" class="idle"><!----><a id="anima-watermark-link" target="_blank" href="https://www.animaapp.com?utm_campaign=public-link-banner&amp;utm_medium=public-link-banner&amp;utm_source=animaapp.io" style="right: 20px; left: auto; padding: 6px;">
+        <svg width="20" height="20" viewBox="0 0 20 20" id="anima-logo-icon" fill="none" xmlns="http://www.w3.org/2000/svg" data-hotspot-id="hp-6">
+          <path d="M4.09293 3.00001H16.5327C16.5484 2.99976 16.5638 3.00351 16.5776 3.01092C16.5913 3.01832 16.603 3.02913 16.6114 3.04231C16.6198 3.0555 16.6247 3.07061 16.6256 3.08622C16.6265 3.10182 16.6233 3.1174 16.6165 3.13146C15.5441 5.29706 13.9276 7.14699 11.9253 8.50009C8.69117 10.6822 5.43436 10.9075 4.09389 10.9196C4.08165 10.9198 4.06949 10.9176 4.05811 10.9131C4.04672 10.9086 4.03636 10.9019 4.02761 10.8933C4.01887 10.8848 4.01192 10.8745 4.00718 10.8633C4.00244 10.852 4 10.8399 4 10.8276V3.09198C4 3.07982 4.00241 3.06778 4.00709 3.05656C4.01177 3.04534 4.01863 3.03516 4.02728 3.02661C4.03592 3.01805 4.04617 3.0113 4.05744 3.00673C4.06871 3.00217 4.08077 2.99988 4.09293 3.00001Z" fill="#FF6250"></path>
+          <path d="M6.77772 17.4446C8.31182 17.4446 9.55545 16.201 9.55545 14.6669C9.55545 13.1328 8.31182 11.8892 6.77772 11.8892C5.24363 11.8892 4 13.1328 4 14.6669C4 16.201 5.24363 17.4446 6.77772 17.4446Z" fill="#FFDF90"></path>
+          <path d="M12.4559 17.2799C11.6701 16.9799 11.2522 16.1151 11.5185 15.3496L13.6153 9.3656C13.884 8.60003 14.7387 8.22302 15.5245 8.52299C16.3103 8.82344 16.7282 9.68772 16.4619 10.4538L14.365 16.4377C14.0964 17.2033 13.2417 17.5808 12.4559 17.2799Z" fill="#3366FF"></path>
+        </svg>
+        <span class="text" style="display: none;">Made with Anima</span>
+      </a><!----></div><div id="hotspots_wrapper"><div class="hotspot" id="hp-0" style="width: 40px; height: 40px; top: 67.5px; left: 881px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-1" style="width: 40px; height: 40px; top: 67.5px; left: 1116.35px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-2" style="width: 40px; height: 40px; top: 67.5px; left: 1163.35px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-3" style="width: 40px; height: 40px; top: 67.5px; left: 1210.35px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-4" style="width: 114px; height: 22px; top: 18px; left: 374px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-5" style="width: 118px; height: 22px; top: 18px; left: 894px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-6" style="top: 0px; left: 0px; z-index: -1; opacity: 0;"></div></div><div id="t_preload_links"><link href="/game-community-hub-workshop" rel="prefetch"><link href="/game-community-hub-discussions" rel="prefetch"><link href="/library-home-detail-view-2" rel="prefetch"><link href="/forum" rel="prefetch"><link href="/library-home-grid-view-2" rel="prefetch"><link href="/library-home-ready-to-play-filter" rel="prefetch"><link href="/library-home-recent-filter" rel="prefetch"><link href="/library-home-grid-view-1" rel="prefetch"><link href="/library-home-filters" rel="prefetch"><link href="/library-collections" rel="prefetch"><link href="/screenshots" rel="prefetch"></div></body></html>

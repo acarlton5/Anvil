@@ -1,0 +1,3558 @@
+<html><head><style type="text/css">.turbo-progress-bar {
+  position: fixed;
+  display: block;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: #0076ff;
+  z-index: 9999;
+  transition:
+    width 300ms ease-out,
+    opacity 150ms 150ms ease-in;
+  transform: translate3d(0, 0, 0);
+}
+</style><style id="st_globalStyles">
+/* MEDIA QUERIES */
+.anima-desktop-only {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+/* SCROLLBAR */
+
+[dark-scroll]::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+[dark-scroll]::-webkit-scrollbar-track-piece {
+  background-color: #2b2b2b;
+  border: 1px solid #1d1d1d;
+}
+
+[dark-scroll]::-webkit-scrollbar-thumb {
+  height: 10px;
+  background-color: #4d4d4d;
+}
+[dark-scroll]::-webkit-scrollbar-thumb:hover {
+  background-color: #5a5a5a;
+}
+
+/* LOAD PROGRESS */
+
+.turbolinks-progress-bar {
+  height: 3px;
+  background-color: #ff6250;
+}
+
+/* GROUPING */
+
+[data-id].ui-selecting {
+  box-shadow: inset 0 0 0 1px #4285f4 !important;
+}
+[data-id].ui-selected {
+  box-shadow: inset 0 0 0 1px #4285f4 !important;
+}
+
+/* CURSOR */
+
+body[mode='comments'] * {
+  cursor: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkxNjQ4IDIzLjQxMDlDNS40OTE1MyAyMi45ODg3IDUuOTMxNzkgMjIuMzkzNSA2LjIzMjggMjEuNjQwN0M0Ljc5MDY5IDE5LjczODMgNCAxNy4zOTMzIDQgMTQuOTk3NUM0IDguOTM0MSA4LjkzMjgyIDQgMTUuMDAyMiA0QzIxLjA3MTcgNCAyNiA4LjkzOTE5IDI2IDE1LjAwMjVDMjYgMjEuMDY1OSAyMS4wNjcyIDI2IDE0Ljk5NzggMjZDMTIuOTg5NiAyNiAxMS4wMzUzIDI1LjQ1NTcgOS4zMjM2NyAyNC40MjMxQzguNDI5NjUgMjQuOTU3MiA3LjQxNDM0IDI1LjIyNjggNi4zMDAxOCAyNS4yMjY4QzUuOTU0MjYgMjUuMjI2OCA1LjU5OTM1IDI1LjIwMTQgNS4yNTM0MiAyNS4xNDU0QzQuOTAzIDI1LjA4OTUgNC42Mjg5NiAyNC44MDQ2IDQuNTUyNTggMjQuNDE4QzQuNDc2MjEgMjQuMDI2NCA0LjYxOTk3IDIzLjYyOTYgNC45MTY0OCAyMy40MTA5WiIgZmlsbD0iI0ZGNjI1MCIvPgo8L3N2Zz4K')
+      0 24,
+    auto !important;
+}
+
+body[mode='code'] [data-id]:not(.hidden) {
+  cursor: default;
+}
+
+/* default node state */
+
+body[mode='code'] [data-id]:not(.hidden), body[mode='comments'] [data-id]:not(.hidden) {
+  pointer-events: all;
+}
+
+/* is_image */
+
+body[mode='code'] [data-id].is_image [data-id], body[mode='comments'] [data-id].is_image [data-id] {
+  pointer-events: none !important;
+}
+
+/* without a data-id or ignored */
+
+[data-id].ignore,body[mode='code'] *:not([data-id]) {
+  pointer-events: none !important;
+}
+/* disable transforms for ignored elements */
+
+
+body[mode='code'] [data-id]:hover{
+  transform: none !important;
+}
+
+/* ANIMA BUTTONS */
+.an-button {
+  position: relative;
+  height: 28px;
+  padding: 0 20px;
+  font-size: 14px;
+  border-radius: 4px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  transition-property: all;
+  transition-duration: 100ms;
+  appearance: none;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  border-width: 0;
+}
+
+.an-button > div {
+  width: 100%;
+}
+
+.an-button.primary {
+  background: #ff6250;
+  color: #ffffff;
+}
+
+.an-button.primary:hover:not(:disabled) {
+  background: #e2412e;
+}
+
+.an-button.secondary {
+  background: transparent;
+  border: 1px solid #ff6250;
+  color: #ff6250;
+}
+
+.an-button.secondary:hover:not(:disabled) {
+  color: #ffffff;
+  background: #ff6250;
+}
+
+.an-button.rounded {
+  border-radius: 100px;
+}
+
+.an-button:disabled {
+  opacity: 0.5;
+}
+
+.an-button:disabled {
+  cursor: default;
+}
+
+.an-button:active,
+.an-button:focus {
+  outline: none;
+}
+
+</style><meta charset="utf-8"><meta name="viewport" content="width=1920, maximum-scale=1.0"><link rel="shortcut icon" type="image/png" href="https://animaproject.s3.amazonaws.com/home/favicon.png"><meta name="og:type" content="website"><meta name="twitter:card" content="photo"><script id="anima-load-script" src="load.js"></script><script id="anima-hotspots-script" src="hotspots.js"></script><style id="hotspots-styles">
+    .hotspot {
+      position: absolute;
+      border: 1px solid #2a9fd8;
+      background: rgba(0, 173, 255, 0.54);
+      opacity: 0;
+      z-index: -1;
+      pointer-events:none;
+    }
+  </style><script id="s_turbo" src="https://animaapp.s3.amazonaws.com/static/turbo.es2017-umd.js"></script><script id="anima-overrides-script" src="overrides.js"></script><script src="https://animaapp.s3.amazonaws.com/js/timeline.js"></script><style>
+@import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
+
+@font-face {
+  font-family: "Motiva Sans-Bold";
+  font-style: normal;
+  font-weight: 700;
+  src: url('https://anima-uploads.s3.amazonaws.com/5c53487020495e000abca926/.35959.otf') format("opentype");
+}
+
+@font-face {
+  font-family: "Motiva Sans-Regular";
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://anima-uploads.s3.amazonaws.com/5c53487020495e000abca926/.35967.otf') format("opentype");
+}
+/* The following line is used to measure usage of this code. You can remove it if you want. */
+@import url("https://px.animaapp.com/65ae977d4ea7e6982e9805db.65ae977e4ea7e6982e9805de.XJaxSnm.hch.png");
+
+
+.screen textarea:focus,
+.screen input:focus {
+  outline: none;
+}
+
+.screen * {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+
+.screen div {
+  -webkit-text-size-adjust: none;
+}
+
+.component-wrapper a {
+  display: contents;
+  pointer-events: auto;
+  text-decoration: none;
+}
+
+.component-wrapper * {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.component-wrapper a *,
+.component-wrapper input,
+.component-wrapper video,
+.component-wrapper iframe {
+  pointer-events: auto;
+}
+
+.component-wrapper.not-ready,
+.component-wrapper.not-ready * {
+  visibility: hidden !important;
+}
+
+.screen a {
+  display: contents;
+  text-decoration: none;
+}
+
+.full-width-a {
+  width: 100%;
+}
+
+.full-height-a {
+  height: 100%;
+}
+
+.container-center-vertical {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  pointer-events: none;
+}
+
+.container-center-vertical > * {
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
+.container-center-horizontal {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  pointer-events: none;
+  width: 100%;
+}
+
+.container-center-horizontal > * {
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
+.auto-animated div {
+  --z-index: -1;
+  opacity: 0;
+  position: absolute;
+}
+
+.auto-animated input {
+  --z-index: -1;
+  opacity: 0;
+  position: absolute;
+}
+
+.auto-animated .container-center-vertical,
+.auto-animated .container-center-horizontal {
+  opacity: 1;
+}
+
+.overlay-base {
+  display: none;
+  height: 100%;
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.overlay-base.animate-appear {
+  align-items: center;
+  animation: reveal 0.3s ease-in-out 1 normal forwards;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0;
+}
+
+.overlay-base.animate-disappear {
+  animation: reveal 0.3s ease-in-out 1 reverse forwards;
+  display: block;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.overlay-base.animate-disappear * {
+  pointer-events: none;
+}
+
+@keyframes reveal {
+  from { opacity: 0 }
+ to { opacity: 1 }
+}
+
+.animate-nodelay {
+  animation-delay: 0s;
+}
+
+.align-self-flex-start {
+  align-self: flex-start;
+}
+
+.align-self-flex-end {
+  align-self: flex-end;
+}
+
+.align-self-flex-center {
+  align-self: flex-center;
+}
+
+.valign-text-middle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.valign-text-bottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+input:focus {
+  outline: none;
+}
+
+.listeners-active,
+.listeners-active * {
+  pointer-events: auto;
+}
+
+.hidden,
+.hidden * {
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.smart-layers-pointers,
+.smart-layers-pointers * {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.listeners-active-click,
+.listeners-active-click * {
+  cursor: pointer;
+}
+
+* {
+  box-sizing: border-box;
+}
+:root { 
+  --accentgreen: #a1cd44;
+  --accentred: #cd5444;
+  --accentyellow: #c0b05e;
+  --alto: #d9d9d903;
+  --backgroundhighlight: #1e2329;
+  --backgroundhover: #313843;
+  --backgroundmain: #0e141b;
+  --backgroundmain20: #0e141b33;
+  --backgroundmain50: #0e141b80;
+  --backgroundtertiary: #212b45;
+  --big-stone: #212b4533;
+  --black: #000000;
+  --colorprimary: #66c0f4;
+  --colorsecondary: #4b619b;
+  --emerald: #54c358;
+  --fuchsia-blue: #7054c3;
+  --fuchsia-pink: #c054c3;
+  --fuzzy-wuzzy-brown: #c35454;
+  --shark: #1e232905;
+  --shark-2: #1e232963;
+  --shark-3: #1e232940;
+  --shark-4: #1e232966;
+  --shark-5: #1e2329d1;
+  --slate-gray: #75808ccc;
+  --slate-gray-2: #75808c0d;
+  --slate-gray-3: #75808c1a;
+  --slate-gray-4: #75808c33;
+  --slate-gray-5: #76808c;
+  --textdim: #75808c;
+  --textmain: #f3f3f3;
+  --tuna: #31384380;
+  --tuna-2: #31384359;
+  --turmeric: #c3be54;
+  --white: #ffffff;
+  --white-2: #ffffff1a;
+  --wild-sand: #f3f3f380;
+ 
+  --font-size-l: 18px;
+  --font-size-m: 16px;
+  --font-size-s: 14px;
+  --font-size-xl: 19px;
+  --font-size-xs: 12px;
+  --font-size-xxl: 22px;
+  --font-size-xxxl: 26px;
+ 
+  --font-family-motiva_sans-bold: "Motiva Sans-Bold", Helvetica;
+  --font-family-motiva_sans-regular: "Motiva Sans-Regular", Helvetica;
+}
+.motivasans-regular-normal-wild-sand-16px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-14px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-wild-sand-14px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-16px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-12px {
+  color: var(--slate-gray);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-wild-sand-18px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-wild-sand-12px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-12px-2 {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-malibu-12px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-malibu-16px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-kashmir-blue-14px {
+  color: var(--colorsecondary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-wild-sand-22px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-malibu-18px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-vulcan-12px {
+  color: var(--backgroundmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-vulcan-18px {
+  color: var(--backgroundmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-wild-sand-26px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-malibu-14px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-white-12px {
+  color: var(--white);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-white-14px {
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-vulcan-19px {
+  color: var(--backgroundmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-tuna-18px {
+  color: var(--backgroundhover);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-jasper-12px {
+  color: var(--accentred);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-atlantis-18px {
+  color: var(--accentgreen);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-slate-gray-22px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-white-16px {
+  color: var(--white);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-14px-2 {
+  color: var(--slate-gray-5);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-slate-gray-18px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-slate-gray-16px-2 {
+  color: var(--slate-gray-5);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-white-16px-2 {
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-wild-sand-16px-2 {
+  color: var(--wild-sand);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-jasper-14px {
+  color: var(--accentred);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-wild-sand-16px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-jasper-16px {
+  color: var(--accentred);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-atlantis-16px {
+  color: var(--accentgreen);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-wild-sand-20-2px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: 20.2px;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-sundance-16px {
+  color: var(--accentyellow);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-sundance-12px {
+  color: var(--accentyellow);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-white-22px {
+  color: var(--white);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+:root {
+}
+
+
+.group-97 {
+  background-color: transparent;
+  height: 47px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 47px;
+}
+
+.info-outline {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.juxtopposed {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+}
+
+.rectangle-60 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.store-menu {
+  background-color: transparent;
+  height: 22px;
+  position: relative;
+}
+
+.arrow-forward-ios {
+  background-color: transparent;
+  position: relative;
+}
+
+.home {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.image-122 {
+  background-color: transparent;
+  height: 233px;
+  left: 0px;
+  object-fit: cover;
+  position: absolute;
+  top: 0px;
+  width: 240px;
+}
+
+.image-123 {
+  background-color: transparent;
+  height: 233px;
+  left: 0px;
+  object-fit: cover;
+  position: absolute;
+  top: 0px;
+  width: 240px;
+}
+
+.rectangle-115 {
+  -webkit-backdrop-filter: blur(2px) brightness(100%);
+  backdrop-filter: blur(2px) brightness(100%);
+  background-color: var(--alto);
+  border-radius: 5px;
+  height: 233px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 240px;
+}
+
+.rectangle-79 {
+  background-color: var(--colorsecondary);
+  border-radius: 40px;
+  height: 8px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.search {
+  background-color: transparent;
+  position: absolute;
+}
+
+.x2309 {
+  background-color: transparent;
+  height: auto;
+  left: 85px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 22px;
+  width: auto;
+}
+
+.frame-161 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 15px;
+  height: 20px;
+  padding: 3px 0px;
+  position: relative;
+}
+
+.image-191 {
+  background-color: transparent;
+  height: 25px;
+  margin-bottom: -11.00px;
+  margin-top: -11.00px;
+  object-fit: cover;
+  position: relative;
+  width: 25px;
+}
+
+.sprite-0003-1 {
+  background-color: transparent;
+  position: relative;
+}
+
+.x374 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x5 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.award {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.frame-162 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  height: 49px;
+  justify-content: space-between;
+  padding: 3px 0px;
+  position: relative;
+  width: 639px;
+}
+
+.frame-30 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 3px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.frame-31 {
+  align-items: center;
+  background-color: transparent;
+  display: flex;
+  gap: 3px;
+  justify-content: flex-end;
+  left: 106px;
+  position: absolute;
+  top: 0px;
+  width: 32px;
+}
+
+.frame-32 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  gap: 2px;
+  left: 0px;
+  position: absolute;
+  top: 19px;
+  width: 138px;
+}
+
+.funny {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.group-100 {
+  background-color: transparent;
+  height: 72px;
+  margin-right: -2.00px;
+  position: relative;
+  width: 74px;
+}
+
+.image-137 {
+  background-color: transparent;
+  height: 16px;
+  object-fit: cover;
+  position: relative;
+  width: 17px;
+}
+
+.insert-emoticon {
+  background-color: transparent;
+  height: 18px;
+  margin-bottom: -7.50px;
+  margin-top: -7.50px;
+  position: relative;
+  width: 18px;
+}
+
+.no {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.posted-on-12-sep-2023 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.recommended {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.rectangle-120 {
+  background-color: transparent;
+  height: 72px;
+  object-fit: cover;
+  position: relative;
+  width: 72px;
+}
+
+.rectangle-123 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  height: 72px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 72px;
+}
+
+.rectangle-88 {
+  background-color: var(--accentred);
+  border-radius: 2px;
+  flex: 1;
+  flex-grow: 1;
+  height: 4px;
+  opacity: 0.8;
+  position: relative;
+}
+
+.share {
+  background-color: transparent;
+  position: relative;
+}
+
+.was-this-review-helpful {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 9px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.x21302-hrs-on-record {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x3-reviews {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -0.50px;
+  margin-top: -2.50px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x6 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x90 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.yes {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.view-list {
+  background-color: transparent;
+  position: absolute;
+}
+
+.community {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+}
+
+.frame-214 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 9px;
+  position: relative;
+}
+
+.offline {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.frame-34 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 5px;
+  position: relative;
+}
+
+.drag-handle {
+  background-color: transparent;
+  height: 24px;
+  position: relative;
+  width: 24px;
+}
+
+.ellipse-3 {
+  background-color: transparent;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.frame-180 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  position: relative;
+}
+
+.frame-199 {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.frame-200 {
+  flex: 0 0 auto;
+  justify-content: space-between;
+  position: relative;
+}
+
+.frame-201 {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.frame-202 {
+  align-items: center;
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.group-123 {
+  background-color: transparent;
+  height: 30px;
+  margin-right: -2.00px;
+  position: relative;
+  width: 32px;
+}
+
+.group-125 {
+  background-color: transparent;
+  position: relative;
+}
+
+.image-141 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-142 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-143 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-144 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-146 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-147 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 2px;
+  height: 30px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 30px;
+}
+
+.profile-sections {
+  background-color: transparent;
+  position: relative;
+}
+
+.x32 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+}
+
+.construction {
+  background-color: transparent;
+  height: 40px;
+  position: relative;
+  width: 40px;
+}
+
+.frame-136 {
+  display: flex;
+  position: relative;
+}
+
+.frame-221 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  width: 100%;
+}
+
+.frame-311 {
+  align-items: flex-start;
+  align-self: stretch;
+  border-bottom-style: none;
+  border-left-style: solid;
+  border-left-width: 5px;
+  border-radius: 5px;
+  border-right-style: none;
+  border-top-style: none;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 7px;
+  padding: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.frame-407 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 10px;
+  position: relative;
+}
+
+.frame-51 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.icon-select {
+  background-color: transparent;
+  height: 40px;
+  position: relative;
+  width: 40px;
+}
+
+.people {
+  background-color: transparent;
+  position: absolute;
+  top: 6px;
+}
+
+.vector-5 {
+  align-self: stretch;
+  background-color: transparent;
+  height: 1px;
+  margin-bottom: -0.50px;
+  object-fit: cover;
+  position: relative;
+  width: 100%;
+}
+
+.disk-size {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.filter-list {
+  background-color: transparent;
+  height: 24px;
+  left: 1px;
+  position: absolute;
+  top: 1px;
+  width: 24px;
+}
+
+.frame-52 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 536px;
+  position: absolute;
+  top: 65px;
+}
+
+.frame-53 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 691px;
+  position: absolute;
+  top: 65px;
+}
+
+.frame-65 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.frame-85 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  left: 13px;
+  position: absolute;
+  width: 326px;
+}
+
+.frame-86 {
+  align-items: flex-start;
+  background-color: var(--shark-4);
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  left: 1px;
+  padding: 9px 12px;
+  position: absolute;
+  top: 0px;
+  width: 350px;
+}
+
+.frame-92 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 1007px;
+  position: absolute;
+  top: 65px;
+}
+
+.group-59 {
+  background-color: transparent;
+  height: 44px;
+  left: 826px;
+  position: absolute;
+  top: 65px;
+  width: 159px;
+}
+
+.group-61 {
+  background-color: transparent;
+  height: 126px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 1458px;
+}
+
+.image-94 {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.insert-drive-file {
+  background-color: transparent;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.last-played {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.play-time {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.rectangle-104 {
+  background-color: var(--shark-3);
+  border-radius: 5px;
+  height: 126px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1456px;
+}
+
+.x2065 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x50-gb {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.frame-292 {
+  background-color: transparent;
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.frame-269 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 13px;
+  justify-content: center;
+  position: relative;
+}
+
+.game-card {
+  background-color: transparent;
+  border-radius: 5px;
+  height: 282px;
+  overflow: hidden;
+  position: relative;
+  width: 191px;
+}
+
+.group-58 {
+  background-color: transparent;
+  height: 74px;
+  left: 0px;
+  position: absolute;
+  top: 290px;
+  width: 191px;
+}
+
+.rectangle-97 {
+  -webkit-backdrop-filter: blur(20px) brightness(100%);
+  backdrop-filter: blur(20px) brightness(100%);
+  background-color: var(--shark);
+  border-radius: 0px 0px 3px 3px;
+  height: 74px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 191px;
+}
+
+.text {
+  background-color: transparent;
+  height: 19px;
+  left: 9px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -22px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.cool-user {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.hi-newcomers {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x11-mins-ago {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x150000 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  width: fit-content;
+}
+
+.x2500700 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -7.00px;
+  margin-top: -9.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x5546 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -7.00px;
+  margin-top: -9.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+/* screen - point-shop */
+
+.point-shop {
+  background-color: transparent;
+  height: 2368px;
+  overflow: hidden;
+  overflow-x: hidden;
+  position: relative;
+  width: 1920px;
+}
+
+.point-shop .rectangle-89-IB93EH {
+  background: linear-gradient(180deg, rgb(33.26086923480034, 43.017389103770256, 68.7391322851181) 0%, rgb(14.000000115484, 20.000000707805157, 27.000000290572643) 100%);
+  background-color: transparent;
+  height: 2043px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.point-shop .image-81-IB93EH {
+  background-color: transparent;
+  height: 1080px;
+  left: 0px;
+  object-fit: cover;
+  position: absolute;
+  top: 116px;
+  width: 1920px;
+}
+
+.point-shop .filters-IB93EH {
+  background-color: transparent;
+  height: 764px;
+  left: 180px;
+  overflow: hidden;
+  position: absolute;
+  top: 311px;
+  width: 252px;
+}
+
+.point-shop .rectangle-85-5PxK9f {
+  background-color: var(--backgroundmain);
+  border-radius: 5px;
+  height: 1337px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 252px;
+}
+
+.point-shop .frame-36-5PxK9f {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  left: 14px;
+  position: absolute;
+  top: 19px;
+  width: 225px;
+}
+
+.point-shop .group-24-JLuMkJ {
+  background-color: transparent;
+  height: 172px;
+  margin-right: -2.00px;
+  position: relative;
+  width: 227px;
+}
+
+.point-shop .featured-8aKOxt {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 0px;
+  width: 224px;
+}
+
+.point-shop .tag-8aKOxt {
+  background-color: var(--backgroundhover);
+  top: 31px;
+  width: 225px;
+}
+
+.point-shop .x5000-ixEWCr {
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .tag-PJA41C {
+  background-color: transparent;
+  top: 68px;
+  width: 225px;
+}
+
+.point-shop .x5000-lSrtnt {
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .tag-iblRu2 {
+  background-color: transparent;
+  top: 105px;
+  width: 225px;
+}
+
+.point-shop .x5000-W1xiN6 {
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .tag-pxdvyV {
+  background-color: transparent;
+  top: 142px;
+  width: 225px;
+}
+
+.point-shop .x5000-Hdzd5U {
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .group-25-JLuMkJ {
+  background-color: transparent;
+  height: 113px;
+  margin-right: -2.00px;
+  position: relative;
+  width: 227px;
+}
+
+.point-shop .interface-HlFodH {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 15px;
+  width: 225px;
+}
+
+.point-shop .tag-HlFodH {
+  background-color: transparent;
+  top: 46px;
+  width: 222px;
+}
+
+.point-shop .x5000-cYVvN4 {
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .tag-q2JxiQ {
+  background-color: transparent;
+  top: 83px;
+  width: 222px;
+}
+
+.point-shop .x5000-b66u1H {
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .group-26-JLuMkJ {
+  background-color: transparent;
+  height: 261px;
+  margin-right: -2.00px;
+  position: relative;
+  width: 227px;
+}
+
+.point-shop .profile-NJ0hrk {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 15px;
+  width: 159px;
+}
+
+.point-shop .tag-NJ0hrk {
+  background-color: transparent;
+  top: 46px;
+  width: 222px;
+}
+
+.point-shop .x5000-1AZYKU {
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .tag-HwTvUR {
+  background-color: transparent;
+  top: 83px;
+  width: 222px;
+}
+
+.point-shop .x5000-u8TazU {
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .tag-JlExhA {
+  background-color: transparent;
+  top: 120px;
+  width: 222px;
+}
+
+.point-shop .x5000-h5sMkO {
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .tag-dkDyWp {
+  background-color: transparent;
+  top: 157px;
+  width: 222px;
+}
+
+.point-shop .x5000-P9uSM0 {
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .tag-FgL586 {
+  background-color: transparent;
+  top: 194px;
+  width: 222px;
+}
+
+.point-shop .x5000-4h5qaf {
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .tag-RjOleU {
+  background-color: transparent;
+  top: 231px;
+  width: 222px;
+}
+
+.point-shop .x5000-KiJZVP {
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .group-27-JLuMkJ {
+  background-color: transparent;
+  height: 150px;
+  margin-right: -2.00px;
+  position: relative;
+  width: 227px;
+}
+
+.point-shop .chat-4L02WW {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 15px;
+  width: 119px;
+}
+
+.point-shop .tag-4L02WW {
+  background-color: transparent;
+  top: 46px;
+  width: 222px;
+}
+
+.point-shop .x5000-k5VBsx {
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .tag-Isxmr9 {
+  background-color: transparent;
+  top: 83px;
+  width: 222px;
+}
+
+.point-shop .x5000-ys7Pe6 {
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .tag-u15d21 {
+  background-color: transparent;
+  top: 120px;
+  width: 222px;
+}
+
+.point-shop .x5000-5xIK17 {
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .frame-50-IB93EH {
+  background-color: transparent;
+  border-radius: 3px;
+  height: 534px;
+  left: 456px;
+  overflow: hidden;
+  position: absolute;
+  top: 311px;
+  width: 1286px;
+}
+
+.point-shop .rectangle-92-kGsJgs {
+  background-color: transparent;
+  height: 534px;
+  left: 0px;
+  object-fit: cover;
+  position: absolute;
+  top: 0px;
+  width: 1286px;
+}
+
+.point-shop .rectangle-93-kGsJgs {
+  -webkit-backdrop-filter: blur(12px) brightness(100%);
+  backdrop-filter: blur(12px) brightness(100%);
+  background: linear-gradient(180deg, rgba(14.000000115484, 20.000000707805157, 27.000000290572643, 0.5400000214576721) 0%, rgba(18.509692177176476, 25.38923442363739, 36.772697791457176, 0.42115181808280155) 23.156265914440155%, rgba(33.26086923480034, 43.017389103770256, 68.7391322851181, 0.010800000187754621) 65.34626483917236%, rgba(30.00000011175871, 35.00000171363354, 41.00000135600567, 0) 100%);
+  background-color: transparent;
+  border-radius: 3px;
+  height: 534px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1286px;
+}
+
+.point-shop .steam-scream-2023-items-kGsJgs {
+  background-color: transparent;
+  height: auto;
+  left: 36px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 28px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.point-shop .group-49-IB93EH {
+  background-color: transparent;
+  height: 128px;
+  left: 0px;
+  position: absolute;
+  top: 110px;
+  width: 1924px;
+}
+
+.point-shop .rectangle-91-87tjzG {
+  background-color: #212b4403;
+  height: 128px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.point-shop .title-87tjzG {
+  background-color: transparent;
+  height: auto;
+  left: 180px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 34px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.point-shop .customize-your-steam-87tjzG {
+  background-color: transparent;
+  height: auto;
+  left: 180px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 79px;
+  width: auto;
+}
+
+.point-shop .group-48-87tjzG {
+  background-color: transparent;
+  height: 58px;
+  left: 1547px;
+  position: absolute;
+  top: 38px;
+  width: 197px;
+}
+
+.point-shop .rectangle-90-Nbuodg {
+  background-color: var(--backgroundtertiary);
+  border-radius: 3px;
+  height: 58px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 195px;
+}
+
+.point-shop .image-80-Nbuodg {
+  height: 32px;
+  left: 13px;
+  top: 13px;
+  width: 32px;
+}
+
+.point-shop .x2500-Nbuodg {
+  background-color: transparent;
+  height: auto;
+  left: 62px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 18px;
+  width: auto;
+}
+
+.point-shop .tertiary-button-87tjzG {
+  left: 1419px;
+}
+
+.point-shop .tertiary-button-6XM56y {
+  left: 1313px;
+}
+
+.point-shop .tertiary-button-okh3xd {
+  left: 1163px;
+}
+
+.point-shop .group-51-IB93EH {
+  background-color: transparent;
+  height: 386px;
+  left: 492px;
+  position: absolute;
+  top: 423px;
+  width: 270px;
+}
+
+.point-shop .image-80-9PQcxa {
+  height: 22px;
+  left: 0px;
+  top: 0px;
+  width: 22px;
+}
+
+.point-shop .x5000-9PQcxa {
+  height: auto;
+  left: 29px;
+  position: absolute;
+  text-align: left;
+  top: 0px;
+  width: auto;
+}
+
+.point-shop .group-52-IB93EH {
+  background-color: transparent;
+  height: 386px;
+  left: 806px;
+  position: absolute;
+  top: 423px;
+  width: 270px;
+}
+
+.point-shop .image-80-60Ar0F {
+  height: 22px;
+  left: 0px;
+  top: 0px;
+  width: 22px;
+}
+
+.point-shop .x5000-60Ar0F {
+  height: auto;
+  left: 29px;
+  position: absolute;
+  text-align: left;
+  top: 0px;
+  width: auto;
+}
+
+.point-shop .group-53-IB93EH {
+  background-color: transparent;
+  height: 386px;
+  left: 1120px;
+  position: absolute;
+  top: 423px;
+  width: 270px;
+}
+
+.point-shop .image-80-ruz8AQ {
+  height: 22px;
+  left: 0px;
+  top: 0px;
+  width: 22px;
+}
+
+.point-shop .x5000-ruz8AQ {
+  height: auto;
+  left: 29px;
+  position: absolute;
+  text-align: left;
+  top: 0px;
+  width: auto;
+}
+
+.point-shop .group-54-IB93EH {
+  background-color: transparent;
+  height: 386px;
+  left: 1434px;
+  position: absolute;
+  top: 423px;
+  width: 270px;
+}
+
+.point-shop .image-80-xuFBnE {
+  height: 22px;
+  left: 0px;
+  top: 0px;
+  width: 22px;
+}
+
+.point-shop .x5000-xuFBnE {
+  height: auto;
+  left: 29px;
+  position: absolute;
+  text-align: left;
+  top: 0px;
+  width: auto;
+}
+
+.point-shop .footer-IB93EH {
+  background-color: transparent;
+  height: 325px;
+  left: 0px;
+  position: absolute;
+  top: 2043px;
+  width: 1920px;
+}
+
+.point-shop .rectangle-118-frrHmA {
+  background-color: var(--backgroundhighlight);
+  height: 325px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.point-shop .image-125-frrHmA {
+  background-color: transparent;
+  height: 50px;
+  left: 266px;
+  object-fit: cover;
+  position: absolute;
+  top: 53px;
+  width: 176px;
+}
+
+.point-shop .x2023-valve-corporati-frrHmA {
+  background-color: transparent;
+  height: auto;
+  left: 266px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 132px;
+  width: 367px;
+}
+
+.point-shop .group-frrHmA {
+  background-color: transparent;
+  height: 50px;
+  left: 456px;
+  position: absolute;
+  top: 53px;
+  width: 210px;
+}
+
+.point-shop .frame-118-frrHmA {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 16px;
+  left: 1075px;
+  position: absolute;
+  top: 53px;
+}
+
+.point-shop .privacy-policy-PTLszc {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .legal-PTLszc {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .steam-subscriber-agreement-PTLszc {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .refunds-PTLszc {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .cookies-PTLszc {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .frame-119-frrHmA {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 16px;
+  left: 768px;
+  position: absolute;
+  top: 53px;
+}
+
+.point-shop .about-valve-0oW7rd {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .jobs-0oW7rd {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .steamworks-0oW7rd {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .steam-distribution-0oW7rd {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .support-0oW7rd {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .icon-box-frrHmA {
+  height: 47px;
+  left: 1547px;
+  top: 53px;
+  width: 47px;
+}
+
+.point-shop .rectangle-86-s0JxAe {
+  background-color: var(--slate-gray-2);
+  height: 47px;
+  width: 47px;
+}
+
+.point-shop .facebook-f-s0JxAe {
+  background-color: transparent;
+  height: 30px;
+  left: 9px;
+  position: absolute;
+  top: 9px;
+  width: 30px;
+}
+
+.point-shop .icon-box-7EexXd {
+  height: 47px;
+  left: 1607px;
+  top: 53px;
+  width: 47px;
+}
+
+.point-shop .rectangle-86-96dctV {
+  background-color: var(--slate-gray-2);
+  height: 47px;
+  width: 47px;
+}
+
+.point-shop .twitter-x-96dctV {
+  background-color: transparent;
+  height: 28px;
+  left: 10px;
+  position: absolute;
+  top: 10px;
+  width: 28px;
+}
+
+.point-shop .header-IB93EH {
+  background-color: transparent;
+  height: 57px;
+  left: 0px;
+  overflow: hidden;
+  position: fixed;
+  top: 59px;
+  width: 1920px;
+}
+
+.point-shop .rectangle-67-A71zeA {
+  background-color: var(--backgroundtertiary);
+  height: 57px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.point-shop .frame-15-A71zeA {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 7px;
+  left: 10px;
+  position: absolute;
+  top: 6px;
+}
+
+.point-shop .group-15-PwytYN {
+  align-items: center;
+  background-color: var(--colorsecondary);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.point-shop .group-18-PwytYN {
+  align-items: center;
+  background-color: var(--backgroundtertiary);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.point-shop .frame-16-A71zeA {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 7px;
+  left: 1628px;
+  position: absolute;
+  top: 6px;
+}
+
+.point-shop .search-A71zeA {
+  height: 44px;
+  left: 1016px;
+  top: 6px;
+  width: 507px;
+}
+
+.point-shop .rectangle-70-mh8P2n {
+  background-color: var(--backgroundmain20);
+  border-radius: 3px;
+  height: 44px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 507px;
+}
+
+.point-shop .search-mh8P2n {
+  height: auto;
+  left: 19px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+  top: 13px;
+  width: auto;
+}
+
+.point-shop .search-Pe0smX {
+  height: 20px;
+  left: 476px;
+  top: 12px;
+  width: 20px;
+}
+
+.point-shop .icon-box-A71zeA {
+  height: 40px;
+  left: 1870px;
+  top: 8px;
+  width: 40px;
+}
+
+.point-shop .rectangle-86-xjWhKC {
+  background-color: var(--slate-gray-3);
+  height: 40px;
+  width: 40px;
+}
+
+.point-shop .settings-xjWhKC {
+  background-color: transparent;
+  height: 26px;
+  left: 7px;
+  position: absolute;
+  top: 7px;
+  width: 26px;
+}
+
+.point-shop .client-IB93EH {
+  background-color: transparent;
+  height: 1080px;
+  left: 0px;
+  overflow: hidden;
+  position: fixed;
+  top: 0px;
+  width: 1920px;
+}
+
+.point-shop .rectangle-68-yOiI7x {
+  background-color: var(--backgroundmain);
+  height: 59px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.point-shop .frame-11-yOiI7x {
+  align-items: flex-end;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  left: 1658px;
+  position: absolute;
+  top: 17px;
+}
+
+.point-shop .frame-2-ZESF2u {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 18px;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.point-shop .frame-239-cBdfe0 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.point-shop .help-yufrx1 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .frame-240-cBdfe0 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.point-shop .view-JbiNRk {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -0.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .minimize-cBdfe0 {
+  background-color: transparent;
+  height: 25px;
+  position: relative;
+  width: 25px;
+}
+
+.point-shop .content-copy-cBdfe0 {
+  background-color: transparent;
+  height: 25px;
+  position: relative;
+  width: 25px;
+}
+
+.point-shop .close-cBdfe0 {
+  background-color: transparent;
+  height: 25px;
+  position: relative;
+  width: 25px;
+}
+
+.point-shop .frame-3-yOiI7x {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 66px;
+  left: 94px;
+  position: absolute;
+  top: 18px;
+}
+
+.point-shop .group-Mx5XaU {
+  background-color: transparent;
+  height: 20.98846435546875px;
+  position: relative;
+  width: 88.00003814697266px;
+}
+
+.point-shop .store-menu-Mx5XaU {
+  width: 60px;
+}
+
+.point-shop .store-dj7Ups {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.point-shop .store-menu-DCxAsl {
+  cursor: pointer;
+  width: 114px;
+}
+
+.point-shop .community-rOsrWJ {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.point-shop .store-menu-tAVrtO {
+  width: 131px;
+}
+
+.point-shop .juxtopposed-0D0jqI {
+  height: auto;
+  left: 0px;
+  position: absolute;
+  top: -1px;
+  width: auto;
+}
+
+.point-shop .store-menu-SxGxqg {
+  width: 77px;
+}
+
+.point-shop .library-g2xMqG {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.point-shop .frame-233-yOiI7x {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 4px;
+  left: 894px;
+  position: absolute;
+  top: 18px;
+}
+
+.point-shop .store-menu-9yJuZF {
+  cursor: pointer;
+  width: 118px;
+}
+
+.point-shop .downloads-rgxUYR {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.point-shop .view-list-yOiI7x {
+  background-color: transparent;
+  height: 24px;
+  left: 1873px;
+  position: absolute;
+  top: 349px;
+  width: 24px;
+}
+
+.point-shop .frame-330-yOiI7x {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 10px;
+  justify-content: flex-end;
+  left: 1259px;
+  position: absolute;
+  top: 10px;
+}
+
+.point-shop .friends-JMHxK3 {
+  background-color: transparent;
+  height: 37px;
+  position: relative;
+  width: 56px;
+}
+
+.point-shop .group-9-bZ4QiO {
+  background-color: transparent;
+  height: 37px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 56px;
+}
+
+.point-shop .rectangle-61-5aEctu {
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  height: 37px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 56px;
+}
+
+.point-shop .people-5aEctu {
+  background-color: transparent;
+  height: 25px;
+  left: 15px;
+  position: absolute;
+  top: 6px;
+  width: 25px;
+}
+
+.point-shop .notifications-JMHxK3 {
+  background-color: transparent;
+  height: 37px;
+  position: relative;
+  width: 56px;
+}
+
+.point-shop .group-135-jvPaCH {
+  background-color: transparent;
+  height: 37px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 56px;
+}
+
+.point-shop .group-8-Edd4Sr {
+  background-color: transparent;
+  height: 37px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 56px;
+}
+
+.point-shop .rectangle-60-55xYYl {
+  height: 37px;
+  width: 56px;
+}
+
+.point-shop .notifications-55xYYl {
+  background-color: transparent;
+  height: 25px;
+  left: 15px;
+  position: absolute;
+  top: 6px;
+  width: 25px;
+}
+
+.point-shop .group-12-jvPaCH {
+  background-color: transparent;
+  height: 16px;
+  left: 43px;
+  position: absolute;
+  top: -2px;
+  width: 18px;
+}
+
+.point-shop .ellipse-2-BJKGRP {
+  background-color: var(--colorprimary);
+  border-radius: 8px;
+  height: 16px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 16px;
+}
+
+.point-shop .x1-BJKGRP {
+  background-color: transparent;
+  height: auto;
+  left: 5px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 1px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.point-shop .component-2-JMHxK3 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 15px;
+  height: 39px;
+  position: relative;
+}
+
+.point-shop .group-7-YUYUAR {
+  background-color: transparent;
+  height: 39px;
+  position: relative;
+  width: 210px;
+}
+
+.point-shop .rectangle-60-159Klr {
+  height: 39px;
+  width: 210px;
+}
+
+.point-shop .frame-1-159Klr {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 8px;
+  height: 33px;
+  left: 3px;
+  position: absolute;
+  top: 3px;
+}
+
+.point-shop .sprite-0003-1-YbCRGa {
+  background-color: transparent;
+  height: 31px;
+  position: relative;
+  width: 31px;
+}
+
+.point-shop .juxtopposed-YbCRGa {
+  position: relative;
+  width: fit-content;
+}
+
+.point-shop .x525-YbCRGa {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.point-shop .frame-331-yOiI7x {
+  background-color: transparent;
+  height: 24px;
+  left: 22px;
+  position: absolute;
+  top: 17px;
+  width: 53px;
+}
+
+.point-shop .account-circle {
+  background-color: transparent;
+  height: 24px;
+  left: 14px;
+  position: absolute;
+  top: 303px;
+  width: 24px;
+}
+
+.point-shop .game-profile {
+  background-color: transparent;
+  height: auto;
+  left: 48px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 306px;
+  width: auto;
+}
+
+.point-shop .greenhouse-of-horror {
+  background-color: transparent;
+  height: auto;
+  left: 14px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 267px;
+  width: auto;
+}
+
+.point-shop .group-16 {
+  align-items: center;
+  background-color: var(--backgroundtertiary);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.point-shop .group-17 {
+  align-items: center;
+  background-color: var(--backgroundtertiary);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.point-shop .group-50 {
+  background-color: transparent;
+  height: 22px;
+  left: 14px;
+  position: absolute;
+  top: 344px;
+  width: 86px;
+}
+
+.point-shop .icon-box {
+  background-color: transparent;
+  position: absolute;
+}
+
+.point-shop .ignore {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .image-80 {
+  background-color: transparent;
+  object-fit: cover;
+  position: absolute;
+}
+
+.point-shop .image-83 {
+  background-color: transparent;
+  height: 243px;
+  left: 12px;
+  object-fit: cover;
+  position: absolute;
+  top: 12px;
+  width: 243px;
+}
+
+.point-shop .keyboard-arrow-down {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.point-shop .menu {
+  align-items: center;
+  background-color: var(--backgroundtertiary);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.point-shop .rectangle-86 {
+  border-radius: 3px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.point-shop .rectangle-94 {
+  background-color: var(--shark-5);
+  border-radius: 3px;
+  height: 386px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 266px;
+}
+
+.point-shop .souls-like {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.point-shop .tag {
+  align-items: center;
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  left: 0px;
+  overflow: hidden;
+  padding: 8px 13px;
+  position: absolute;
+}
+
+.point-shop .tertiary-button {
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid;
+  border-color: var(--backgroundtertiary);
+  border-radius: 3px;
+  display: inline-flex;
+  gap: 10px;
+  height: 58px;
+  justify-content: center;
+  padding: 17px 20px;
+  position: absolute;
+  top: 38px;
+}
+
+.point-shop .vector-3 {
+  background-color: transparent;
+  height: 1px;
+  left: 0px;
+  object-fit: cover;
+  position: absolute;
+  top: -0px;
+  width: 225px;
+}
+
+.point-shop .x5000 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+}
+</style><style id="action-links-styles">
+@import url('https://fonts.googleapis.com/css2?family=Mulish&display=swap');
+
+#anima-interface{
+  transition: all 0.5s ease-in-out;
+}
+
+#anima-watermark {
+  transition: all 0.5s ease-in-out;
+  display: none;
+}
+#anima-watermark-link{
+  position: fixed;
+  bottom:20px;
+  height:30px;
+  border-radius: 1000px;
+  background: #3B3B3B;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  user-select:none;
+  transition: width 0.25s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+  text-decoration:none;
+  color:#fff;
+  padding:8px 16px 8px 11px;
+  font-family:Mulish, sans-serif;
+  font-size:12px;
+}
+#anima-watermark-link .text {
+  margin-left: 6px;
+}
+
+.omniview-anima-action-links .link{
+  height: 30px;
+  width: 30px;
+  border-radius: 1000px;
+  background: #3B3B3B;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  user-select:none;
+  transition: width 0.25s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+  text-decoration:none;
+  color:#fff;
+}
+.omniview-anima-action-links #comment-link .text,.omniview-anima-action-links #code-link .text{
+  display:none;
+  font-size:12px;
+  margin-right:5px;
+}
+.omniview-anima-action-links #comment-link:hover,.omniview-anima-action-links #code-link:hover{
+  width:105px;
+}
+.omniview-anima-action-links #comment-link.pop-active,.omniview-anima-action-links #code-link.pop-active{
+  width:105px;
+  background: #FF6250;
+}
+.omniview-anima-action-links #comment-link.pop-active .text,.omniview-anima-action-links #code-link.pop-active .text{
+  display:block
+}
+.omniview-anima-action-links #comment-link:hover .text,.omniview-anima-action-links #code-link:hover .text{
+  display:block;
+}
+
+.link.navigation{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  width:auto;
+  height:32px;
+  color:#fff;
+  font-size:12px;
+  cursor:default;
+  padding:0 5px;
+}
+.link.navigation .icon{
+  margin:0 6px;
+  fill:none;
+  stroke:currentColor;
+  cursor:pointer;
+}
+.link.navigation .icon.disabled{
+  opacity:0.5;
+  cursor:default;
+}
+
+
+.link.navigation .home-icon{
+  margin-left:6px;
+  fill:currentColor;
+  stroke:currentColor;
+  cursor:pointer;
+}
+
+.omniview-anima-action-links .restart{
+  height: 30px;
+  padding:0 12px;
+  background: #3B3B3B;
+  border-radius: 1000px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  color:#f1f1f1;
+  font-size: 12px;
+}
+
+.omniview-anima-action-links{
+  display:flex;
+  align-items:center;
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  font-family:Mulish, sans-serif;
+  transition: all 0.5s ease-in-out;
+  opacity:1;
+}
+
+.omniview-anima-action-links > * + *{
+   margin-right: 0;
+   margin-left: 10px;
+}
+
+.idle{
+  opacity:0;
+  pointer-events:none;
+}
+
+#popoverOpener {
+  position: absolute;
+  left: 50%;
+  margin-left: -10vw;
+  text-align: center;
+  top: 45vh;
+  width: 20vw;
+}
+
+
+.popover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1060;
+  display: none;
+  font-family: "sans-serif";
+  font-size: 14px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+.popover.top {
+  margin-top: -12px
+}
+
+.popover.right {
+  margin-left: 10px
+}
+
+.popover.bottom {
+  margin-top: 10px
+}
+
+.popover.left {
+  margin-left: -10px
+}
+
+.popover-title {
+  padding: 8px 14px;
+  margin: 0;
+  font-size: 14px;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #ebebeb;
+  border-radius: 5px 5px 0 0
+}
+
+.popover-content {
+  height: 100%;
+  width: 100%;
+  display:flex;
+  overflow:hidden;
+  font-family:Mulish, sans-serif;
+}
+
+
+
+.popover>.arrow,.popover>.arrow:after {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid
+}
+
+.popover>.arrow {
+  border-width: 11px
+}
+
+.popover>.arrow:after {
+  content: "";
+  border-width: 10px
+}
+
+.popover.top>.arrow {
+  bottom: -11px;
+  left: 50%;
+  margin-left: -11px;
+  border-top-color: #999;
+  border-top-color: rgba(0,0,0,.25);
+  border-bottom-width: 0
+}
+
+.popover.top>.arrow:after {
+  bottom: 1px;
+  margin-left: -10px;
+  content: " ";
+  border-top-color: #fff;
+  border-bottom-width: 0
+}
+
+.popover.right>.arrow {
+  top: 50%;
+  left: -11px;
+  margin-top: -11px;
+  border-right-color: #999;
+  border-right-color: rgba(0,0,0,.25);
+  border-left-width: 0
+}
+
+.popover.right>.arrow:after {
+  bottom: -10px;
+  left: 1px;
+  content: " ";
+  border-right-color: #fff;
+  border-left-width: 0
+}
+
+.popover.bottom>.arrow {
+  top: -11px;
+  left: 50%;
+  margin-left: -11px;
+  border-top-width: 0;
+  border-bottom-color: #999;
+  border-bottom-color: rgba(0,0,0,.25)
+}
+
+.popover.bottom>.arrow:after {
+  top: 1px;
+  margin-left: -10px;
+  content: " ";
+  border-top-width: 0;
+  border-bottom-color: #fff
+}
+
+.popover.left>.arrow {
+  top: 50%;
+  right: -11px;
+  margin-top: -11px;
+  border-right-width: 0;
+  border-left-color: #999;
+  border-left-color: rgba(0,0,0,.25)
+}
+
+.popover.left>.arrow:after {
+  right: 1px;
+  bottom: -10px;
+  content: " ";
+  border-right-width: 0;
+  border-left-color: #fff
+}
+
+
+
+#anima-comment-popover,#anima-code-popover{
+  background:#333333;
+  color:#fff;
+}
+
+#anima-comment-popover.top>.arrow,#anima-comment-popover.top>.arrow:after,#anima-code-popover.top>.arrow:after,#anima-code-popover.top>.arrow {
+  border-top-color:#333;
+}
+
+#anima-comment-popover .btn,#anima-code-popover .btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 6px 20px;
+  background: #FF6250;
+  color:#fff;
+  border-radius: 100px;
+  width: max-content;
+  text-decoration:none;
+}
+
+@media screen and (max-width: 550px) {
+  #anima-watermark-link {
+    padding: 6px !important;
+  }
+  #anima-watermark-link .text {
+    display: none !important;
+  }
+}
+
+</style><script id="anime-js-script" src="https://cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js" integrity="sha256-98Q574VkbV+PkxXCKSgL6jVq9mrVbS7uCdA+vt0sLS8=" crossorigin="anonymous"></script><script id="imgloaded-js-script" src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script></head><body style="margin: 0px; overflow-x: hidden;" dark-scroll=""><input type="hidden" id="anPageName" name="page" value="point-shop"><div class="container-center-horizontal"><div class="point-shop screen " data-id="317:1001"><div class="rectangle-89-IB93EH" data-id="317:1002"></div><img class="image-81-IB93EH" data-id="324:1413" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-81.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-81.png" alt="image 81"><div class="filters-IB93EH" data-id="324:1475"><div class="rectangle-85-5PxK9f" data-id="324:1476"></div><div class="frame-36-5PxK9f" data-id="324:1486"><div class="group-24-JLuMkJ" data-id="324:1487"><div class="featured-8aKOxt motivasans-regular-normal-wild-sand-16px" data-id="324:1488">Featured</div><div class="tag-8aKOxt tag" data-id="324:1490"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I324:1490;280:207">Featured Home</div><div class="x5000-ixEWCr x5000 motivasans-regular-normal-slate-gray-12px" data-id="I324:1490;662:10842">5,000</div></div><div class="tag-PJA41C tag" data-id="324:1491"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I324:1491;280:205">From Your Games</div><div class="x5000-lSrtnt x5000 motivasans-regular-normal-slate-gray-12px" data-id="I324:1491;662:10883">5,000</div></div><div class="tag-iblRu2 tag" data-id="324:1492"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I324:1492;280:205">From Sales and Events</div><div class="x5000-W1xiN6 x5000 motivasans-regular-normal-slate-gray-12px" data-id="I324:1492;662:10883">5,000</div></div><div class="tag-pxdvyV tag" data-id="324:1493"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I324:1493;280:205">Bundles</div><div class="x5000-Hdzd5U x5000 motivasans-regular-normal-slate-gray-12px" data-id="I324:1493;662:10883">5,000</div></div></div><div class="group-25-JLuMkJ" data-id="324:1497"><div class="interface-HlFodH motivasans-regular-normal-wild-sand-16px" data-id="324:1498">Interface</div><img class="vector-3" data-id="324:1499" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-3-8.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-3-8.svg" alt="Vector 3"><div class="tag-HlFodH tag" data-id="324:1500"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I324:1500;280:205">Keyboards</div><div class="x5000-cYVvN4 x5000 motivasans-regular-normal-slate-gray-12px" data-id="I324:1500;662:10883">5,000</div></div><div class="tag-q2JxiQ tag" data-id="324:1501"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I324:1501;280:205">Startup Movies</div><div class="x5000-b66u1H x5000 motivasans-regular-normal-slate-gray-12px" data-id="I324:1501;662:10883">5,000</div></div></div><div class="group-26-JLuMkJ" data-id="324:1505"><div class="profile-NJ0hrk motivasans-regular-normal-wild-sand-16px" data-id="324:1506">Profile</div><img class="vector-3" data-id="324:1507" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-3-8.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-3-8.svg" alt="Vector 3"><div class="tag-NJ0hrk tag" data-id="324:1508"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I324:1508;280:205">Avatars</div><div class="x5000-1AZYKU x5000 motivasans-regular-normal-slate-gray-12px" data-id="I324:1508;662:10883">5,000</div></div><div class="tag-HwTvUR tag" data-id="324:1509"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I324:1509;280:205">Backgrounds</div><div class="x5000-u8TazU x5000 motivasans-regular-normal-slate-gray-12px" data-id="I324:1509;662:10883">5,000</div></div><div class="tag-JlExhA tag" data-id="324:1510"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I324:1510;280:205">Community Awards</div><div class="x5000-h5sMkO x5000 motivasans-regular-normal-slate-gray-12px" data-id="I324:1510;662:10883">5,000</div></div><div class="tag-dkDyWp tag" data-id="324:1583"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I324:1583;280:205">Seasonal Badge</div><div class="x5000-P9uSM0 x5000 motivasans-regular-normal-slate-gray-12px" data-id="I324:1583;662:10883">5,000</div></div><div class="tag-FgL586 tag" data-id="324:1585"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I324:1585;280:205">Game Profiles</div><div class="x5000-4h5qaf x5000 motivasans-regular-normal-slate-gray-12px" data-id="I324:1585;662:10883">5,000</div></div><div class="tag-RjOleU tag" data-id="324:1587"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I324:1587;280:205">Showcases</div><div class="x5000-KiJZVP x5000 motivasans-regular-normal-slate-gray-12px" data-id="I324:1587;662:10883">5,000</div></div></div><div class="group-27-JLuMkJ" data-id="324:1513"><div class="chat-4L02WW motivasans-regular-normal-wild-sand-16px" data-id="324:1514">Chat</div><img class="vector-3" data-id="324:1515" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-3-8.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-3-8.svg" alt="Vector 3"><div class="tag-4L02WW tag" data-id="324:1516"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I324:1516;280:205">Animated Stickers</div><div class="x5000-k5VBsx x5000 motivasans-regular-normal-slate-gray-12px" data-id="I324:1516;662:10883">5,000</div></div><div class="tag-Isxmr9 tag" data-id="324:1517"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I324:1517;280:205">Chat Effects</div><div class="x5000-ys7Pe6 x5000 motivasans-regular-normal-slate-gray-12px" data-id="I324:1517;662:10883">5,000</div></div><div class="tag-u15d21 tag" data-id="324:1518"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I324:1518;280:205">Emoticons</div><div class="x5000-5xIK17 x5000 motivasans-regular-normal-slate-gray-12px" data-id="I324:1518;662:10883">5,000</div></div></div></div></div><div class="frame-50-IB93EH" data-id="324:1594"><img class="rectangle-92-kGsJgs" data-id="324:1592" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-92.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-92.png" alt="Rectangle 92"><div class="rectangle-93-kGsJgs" data-id="324:1593"></div><div class="steam-scream-2023-items-kGsJgs motivasans-bold-wild-sand-22px" data-id="324:1595">Steam Scream 2023 Items</div></div><div class="group-49-IB93EH" data-id="324:1472"><div class="rectangle-91-87tjzG" data-id="324:1471"></div><h1 class="title-87tjzG motivasans-bold-wild-sand-26px" data-id="317:1003">Buy Games, Earn Points</h1><p class="customize-your-steam-87tjzG motivasans-regular-normal-wild-sand-14px" data-id="317:1218">Customize your Steam experience with Points Shop items.</p><div class="group-48-87tjzG" data-id="324:1425"><div class="rectangle-90-Nbuodg" data-id="324:1410"></div><img class="image-80-Nbuodg image-80" data-id="322:1409" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-80.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-80.png" alt="image 80"><div class="x2500-Nbuodg motivasans-bold-malibu-18px" data-id="324:1419">2,500</div></div><div class="tertiary-button-87tjzG tertiary-button" data-id="324:1456"><div class="motivasans-regular-normal-wild-sand-16px" data-id="I324:1456;324:1429">My Profile</div></div><div class="tertiary-button-6XM56y tertiary-button" data-id="324:1458"><div class="motivasans-regular-normal-wild-sand-16px" data-id="I324:1458;324:1429">History</div></div><div class="tertiary-button-okh3xd tertiary-button" data-id="324:1460"><div class="motivasans-regular-normal-wild-sand-16px" data-id="I324:1460;324:1429">How it works</div></div></div><div class="group-51-IB93EH" data-id="324:1618"><div class="rectangle-94" data-id="324:1597"></div><div class="greenhouse-of-horror motivasans-bold-malibu-18px" data-id="324:1600">Greenhouse of Horror</div><div class="game-profile motivasans-regular-normal-slate-gray-14px" data-id="324:1608">Game Profile</div><div class="group-50" data-id="324:1617"><img class="image-80-9PQcxa image-80" data-id="324:1615" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-80.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-80.png" alt="image 80"><div class="x5000-9PQcxa x5000 motivasans-bold-wild-sand-18px" data-id="324:1616">5,000</div></div><img class="account-circle" data-id="324:1605" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/account-circle.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/account-circle.svg" alt="Account circle"><img class="image-83" data-id="324:1599" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-83@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-83@2x.png" alt="image 83"></div><div class="group-52-IB93EH" data-id="324:1619"><div class="rectangle-94" data-id="324:1620"></div><div class="greenhouse-of-horror motivasans-bold-malibu-18px" data-id="324:1621">Greenhouse of Horror</div><div class="game-profile motivasans-regular-normal-slate-gray-14px" data-id="324:1622">Game Profile</div><div class="group-50" data-id="324:1623"><img class="image-80-60Ar0F image-80" data-id="324:1624" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-80.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-80.png" alt="image 80"><div class="x5000-60Ar0F x5000 motivasans-bold-wild-sand-18px" data-id="324:1625">5,000</div></div><img class="account-circle" data-id="324:1626" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/account-circle-1.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/account-circle-1.svg" alt="Account circle"><img class="image-83" data-id="324:1629" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-83@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-83@2x.png" alt="image 83"></div><div class="group-53-IB93EH" data-id="324:1630"><div class="rectangle-94" data-id="324:1631"></div><div class="greenhouse-of-horror motivasans-bold-malibu-18px" data-id="324:1632">Greenhouse of Horror</div><div class="game-profile motivasans-regular-normal-slate-gray-14px" data-id="324:1633">Game Profile</div><div class="group-50" data-id="324:1634"><img class="image-80-ruz8AQ image-80" data-id="324:1635" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-80.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-80.png" alt="image 80"><div class="x5000-ruz8AQ x5000 motivasans-bold-wild-sand-18px" data-id="324:1636">5,000</div></div><img class="account-circle" data-id="324:1637" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/account-circle-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/account-circle-2.svg" alt="Account circle"><img class="image-83" data-id="324:1640" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-83@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-83@2x.png" alt="image 83"></div><div class="group-54-IB93EH" data-id="324:1641"><div class="rectangle-94" data-id="324:1642"></div><div class="greenhouse-of-horror motivasans-bold-malibu-18px" data-id="324:1643">Greenhouse of Horror</div><div class="game-profile motivasans-regular-normal-slate-gray-14px" data-id="324:1644">Game Profile</div><div class="group-50" data-id="324:1645"><img class="image-80-xuFBnE image-80" data-id="324:1646" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-80.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-80.png" alt="image 80"><div class="x5000-xuFBnE x5000 motivasans-bold-wild-sand-18px" data-id="324:1647">5,000</div></div><img class="account-circle" data-id="324:1648" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/account-circle-3.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/account-circle-3.svg" alt="Account circle"><img class="image-83" data-id="324:1651" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-83@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-83@2x.png" alt="image 83"></div><footer class="footer-IB93EH" data-id="460:15796"><div class="rectangle-118-frrHmA" data-id="I460:15796;426:4049"></div><img class="image-125-frrHmA" data-id="I460:15796;426:4050" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-125@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-125@2x.png" alt="image 125"><p class="x2023-valve-corporati-frrHmA motivasans-regular-normal-slate-gray-16px" data-id="I460:15796;426:4051">© 2023 Valve Corporation. All rights reserved. All trademarks are property of their respective owners in the US and other countries.<br>VAT included in all prices where applicable.</p><img class="group-frrHmA" data-id="I460:15796;460:15636" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-13@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-13@2x.png" alt="Group"><div class="frame-118-frrHmA" data-id="I460:15796;426:4053"><div class="privacy-policy-PTLszc motivasans-regular-normal-wild-sand-16px" data-id="I460:15796;426:4054">Privacy Policy</div><div class="legal-PTLszc motivasans-regular-normal-wild-sand-16px" data-id="I460:15796;426:4055">Legal</div><div class="steam-subscriber-agreement-PTLszc motivasans-regular-normal-wild-sand-16px" data-id="I460:15796;426:4056">Steam Subscriber Agreement</div><div class="refunds-PTLszc motivasans-regular-normal-wild-sand-16px" data-id="I460:15796;426:4057">Refunds</div><div class="cookies-PTLszc motivasans-regular-normal-wild-sand-16px" data-id="I460:15796;426:4058">Cookies</div></div><div class="frame-119-frrHmA" data-id="I460:15796;426:4059"><div class="about-valve-0oW7rd motivasans-regular-normal-wild-sand-16px" data-id="I460:15796;426:4060">About Valve</div><div class="jobs-0oW7rd motivasans-regular-normal-wild-sand-16px" data-id="I460:15796;426:4061">Jobs</div><div class="steamworks-0oW7rd motivasans-regular-normal-wild-sand-16px" data-id="I460:15796;426:4062">Steamworks</div><div class="steam-distribution-0oW7rd motivasans-regular-normal-wild-sand-16px" data-id="I460:15796;426:4063">Steam Distribution</div><div class="support-0oW7rd motivasans-regular-normal-wild-sand-16px" data-id="I460:15796;426:4064">Support</div></div><div class="icon-box-frrHmA icon-box" data-id="I460:15796;426:4065"><div class="group-97" data-id="I460:15796;426:4066"><div class="rectangle-86-s0JxAe rectangle-86" data-id="I460:15796;426:4067"></div><img class="facebook-f-s0JxAe" data-id="I460:15796;426:4068" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/facebook-f.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/facebook-f.svg" alt="Facebook F"></div></div><div class="icon-box-7EexXd icon-box" data-id="I460:15796;426:4070"><div class="group-97" data-id="I460:15796;426:4071"><div class="rectangle-86-96dctV rectangle-86" data-id="I460:15796;426:4072"></div><img class="twitter-x-96dctV" data-id="I460:15796;426:4073" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/twitterx-5.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/twitterx-5.svg" alt="TwitterX"></div></div></footer><header class="header-IB93EH" data-id="317:1219"><div class="rectangle-67-A71zeA" data-id="I317:1219;302:975"></div><div class="frame-15-A71zeA" data-id="I317:1219;302:976"><article class="menu" data-id="I317:1219;302:977"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I317:1219;302:977;82:314">Home</div></article><article class="menu" data-id="I317:1219;302:978"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I317:1219;302:978;82:314">Browse</div></article><article class="menu" data-id="I317:1219;302:979"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I317:1219;302:979;82:314">Discover</div></article><article class="group-15-PwytYN" data-id="I317:1219;302:980"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I317:1219;302:980;82:341">Points Shop</div></article><article class="group-18-PwytYN" data-id="I317:1219;400:12370"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I317:1219;400:12370;82:314">Curators</div></article><article class="group-17" data-id="I317:1219;302:981"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I317:1219;302:981;82:314">Gift Cards</div></article><article class="group-16" data-id="I317:1219;302:982"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I317:1219;302:982;82:314">News</div></article></div><div class="frame-16-A71zeA" data-id="I317:1219;302:997"><article class="group-17" data-id="I317:1219;302:1002"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I317:1219;302:1002;82:314">Wishlist</div></article><article class="group-16" data-id="I317:1219;302:1003"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I317:1219;302:1003;82:314">Cart</div></article></div><div class="search-A71zeA search" data-id="I317:1219;302:985"><div class="rectangle-70-mh8P2n" data-id="I317:1219;302:985;280:52"></div><div class="search-mh8P2n search motivasans-regular-normal-kashmir-blue-14px" data-id="I317:1219;302:985;280:53">Search...</div><img class="search-Pe0smX search" data-id="I317:1219;302:985;280:54" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/search-6.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/search-6.svg" alt="Search"></div><div class="icon-box-A71zeA icon-box" data-id="I317:1219;400:11855"><div class="rectangle-86-xjWhKC rectangle-86" data-id="I317:1219;400:11856"></div><img class="settings-xjWhKC" data-id="I317:1219;400:11857" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/settings-3.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/settings-3.svg" alt="Settings"></div></header><div class="client-IB93EH" data-id="333:2674"><div class="rectangle-68-yOiI7x" data-id="I333:2674;333:2374"></div><div class="frame-11-yOiI7x" data-id="I333:2674;333:2375"><div class="frame-2-ZESF2u" data-id="I333:2674;333:2381"><div class="frame-239-cBdfe0" data-id="I333:2674;475:5954"><div class="help-yufrx1 motivasans-regular-normal-slate-gray-16px" data-id="I333:2674;475:4731">Help</div></div><div class="frame-240-cBdfe0" data-id="I333:2674;618:6950"><div class="view-JbiNRk motivasans-regular-normal-slate-gray-16px" data-id="I333:2674;618:6951">View</div><img class="keyboard-arrow-down" data-id="I333:2674;618:6952" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-31.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-31.svg" alt="Keyboard arrow down"></div><img class="minimize-cBdfe0" data-id="I333:2674;333:2384" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/minimize-5.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/minimize-5.svg" alt="Minimize"><img class="content-copy-cBdfe0" data-id="I333:2674;333:2387" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/content-copy-5.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/content-copy-5.svg" alt="Content copy"><img class="close-cBdfe0" data-id="I333:2674;333:2390" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/close-5.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/close-5.svg" alt="Close"></div></div><div class="frame-3-yOiI7x" data-id="I333:2674;333:2404"><img class="group-Mx5XaU" data-id="I333:2674;435:10471" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-10@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-10@2x.png" alt="Group"><div class="store-menu-Mx5XaU store-menu" data-id="I333:2674;333:2405"><div class="store-dj7Ups motivasans-bold-malibu-18px" data-id="I333:2674;333:2405;18:271">STORE</div></div><a href="community-home"><div class="store-menu-DCxAsl store-menu" data-id="I333:2674;333:2406" data-hotspot-id="hp-0"><div class="community-rOsrWJ motivasans-bold-wild-sand-18px" data-id="I333:2674;333:2406;18:782">COMMUNITY</div></div></a><div class="store-menu-tAVrtO store-menu" data-id="I333:2674;333:2407"><div class="juxtopposed-0D0jqI juxtopposed motivasans-bold-wild-sand-18px" data-id="I333:2674;333:2407;18:879">JUXTOPPOSED</div></div><div class="store-menu-SxGxqg store-menu" data-id="I333:2674;333:2408"><div class="library-g2xMqG motivasans-bold-wild-sand-18px" data-id="I333:2674;333:2408;18:832">LIBRARY</div></div></div><div class="frame-233-yOiI7x" data-id="I333:2674;460:23404"><a href="download"><div class="store-menu-9yJuZF store-menu" data-id="I333:2674;333:2409" data-hotspot-id="hp-1"><div class="downloads-rgxUYR motivasans-bold-wild-sand-18px" data-id="I333:2674;333:2410">DOWNLOADS</div></div></a></div><img class="view-list-yOiI7x" data-id="I333:2674;333:2418" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/view-list@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/view-list@2x.png" alt="View list"><div class="frame-330-yOiI7x" data-id="I333:2674;618:13985"><div class="friends-JMHxK3" data-id="I333:2674;447:7373"><div class="group-9-bZ4QiO" data-id="I333:2674;447:7373;447:3840"><div class="rectangle-61-5aEctu" data-id="I333:2674;447:7373;447:3841"></div><img class="people-5aEctu" data-id="I333:2674;447:7373;447:3842" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/people-7.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/people-7.svg" alt="People"></div></div><div class="notifications-JMHxK3" data-id="I333:2674;850:10413"><div class="group-135-jvPaCH" data-id="I333:2674;850:10413;766:10295"><div class="group-8-Edd4Sr" data-id="I333:2674;850:10413;766:10296"><div class="rectangle-60-55xYYl rectangle-60" data-id="I333:2674;850:10413;766:10297"></div><img class="notifications-55xYYl" data-id="I333:2674;850:10413;766:10298" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/notifications-5.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/notifications-5.svg" alt="Notifications"></div></div><div class="group-12-jvPaCH" data-id="I333:2674;850:10413;766:10166"><div class="ellipse-2-BJKGRP" data-id="I333:2674;850:10413;766:10167"></div><div class="x1-BJKGRP motivasans-regular-normal-vulcan-12px" data-id="I333:2674;850:10413;766:10168">1</div></div></div><div class="component-2-JMHxK3" data-id="I333:2674;333:2393"><div class="group-7-YUYUAR" data-id="I333:2674;333:2393;18:1014"><div class="rectangle-60-159Klr rectangle-60" data-id="I333:2674;333:2393;18:1015"></div><div class="frame-1-159Klr" data-id="I333:2674;333:2393;18:1016"><img class="sprite-0003-1-YbCRGa" data-id="I333:2674;333:2393;18:1017" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-16.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-16.svg" alt="Sprite-0003 1"><div class="juxtopposed-YbCRGa juxtopposed motivasans-regular-normal-wild-sand-14px" data-id="I333:2674;333:2393;18:1018">Juxtopposed</div><div class="x525-YbCRGa motivasans-regular-normal-slate-gray-14px" data-id="I333:2674;333:2393;18:1019">$5.25</div><img class="keyboard-arrow-down" data-id="I333:2674;333:2393;18:1020" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-32.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-32.svg" alt="Keyboard arrow down"></div></div></div></div><img class="frame-331-yOiI7x" data-id="I333:2674;628:10825" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-331-5.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-331-5.svg" alt="Frame 331"></div></div></div><script src="launchpad-js/launchpad-banner.js" async=""></script><script defer="" src="https://animaapp.s3.amazonaws.com/static/restart-btn.min.js"></script><div id="anima-interface" data-turbo-permanent="true" class="idle"><!---->
+        <div id="anima-comment-popover" class="popover top" role="tooltip" style="left: -205px; top: -220px;">
+          <div class="arrow" style="margin-left: 128px;"></div>
+          <div class="popover-content" style="align-items:center">
+            <div style="display:flex;flex-direction:column;height: 100%;padding: 20px;">
+              <h3 style="font-size:18px;margin-bottom:10px;font-weight:500;line-height: 26px;font-family: Roslindale;">
+                Leave feedback and collaborate
+              </h3>
+              <p style="font-size:12px;margin-bottom:20px;font-weight:400;line-height: 20px;">
+                Login to your account to leave comments. Don't have an account?
+                Sign up for free!
+              </p>
+              <a target="_blank" rel="noopener noreferrer" class="btn" href="https://projects.animaapp.com/p/undefined/s/undefined?mode=comments&amp;utm_campaign=add-comment&amp;utm_medium=add-comment&amp;utm_source=animaapp.io">Add comment</a>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:center;padding-right:20px">
+              <img src="https://animaapp.s3.amazonaws.com/static/comment-illustration.svg">
+            </div>
+          </div>
+        </div>
+        <div id="anima-code-popover" class="popover top" role="tooltip" style="left: -205px; top: -220px;">
+          <div class="arrow" style="margin-left: 168px;"></div>
+          <div class="popover-content" style="align-items:center">
+            <div style="display:flex;flex-direction:column;height: 100%;padding: 20px;">
+              <h3 style="font-size:18px;margin-bottom:10px;font-weight:500;line-height: 26px;font-family: Roslindale;">
+                Get clean code you’ll love with Anima
+              </h3>
+              <p style="font-size:12px;margin-bottom:20px;font-weight:400;line-height: 20px;">
+                Login and easily export HTML, React or Vue of this prototype.
+                Don’t have an account? Sign up for free!
+              </p>
+              <a target="_blank" rel="noopener noreferrer" class="btn" href="https://projects.animaapp.com/p/undefined/s/undefined?mode=code&amp;utm_campaign=get-code&amp;utm_medium=get-code&amp;utm_source=animaapp.io">
+                Get code
+              </a>
+            </div>
+
+            <img src="https://animaapp.s3.amazonaws.com/static/code-illustration.svg">
+          </div>
+        </div>
+        <div class="omniview-anima-action-links" id="actions-wrap">
+          <div class="omniview-anima-action-links">
+            <div id="page-nav" class="link navigation" style="display: none;">
+              <svg id="homepage-icon" class="home-icon" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.151 11a.25.25 0 01-.167-.436l4.349-3.913a.25.25 0 01.334 0l4.349 3.913a.25.25 0 01-.167.436H8.15zM16 12H9v4a1 1 0 001 1h5a1 1 0 001-1v-4z" fill="#fff"></path>
+              </svg>
+
+              <svg class="icon" id="arrow-left" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18l-6-6 6-6" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+
+              <span id="page-num"></span>
+
+              <svg class="icon" id="arrow-right" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+
+            <a class="link" id="comment-link" target="_blank" style="display: none;">
+              <span class="text">Comment</span>
+              <svg width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M4.301 15.137a.551.551 0 01.199-.55c.314-.23.554-.554.718-.965A6.015 6.015 0 014 10 6.006 6.006 0   0110.001 4 6.006 6.006 0 0116 10.001 6.006 6.006 0 019.999 16a5.98 5.98 0 01-3.095-.86 3.165 3.165 0 01-1.65.438 3.6  3.6 0 01-.57-.044c-.191-.03-.34-.186-.383-.397z" fill="#fff"></path>
+              </svg>
+            </a>
+
+            <a class="link" id="code-link" target="_blank" style="display: none;">
+              <span class="text">Get Code</span>
+              <svg width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 15.667a1 1 0 01-.707-1.708l3.626-3.625-3.626-3.626a1 1 0 111.415-1.415l4.333 4.333a1 1 0 010 1.414l-4.333 4.333a.993.993 0 01-.707.294zM7.333 5a1 1 0 01.707 1.708l-3.626 3.625 3.627 3.626a1 1 0 11-1.415 1.415L2.293 11.04a1 1 0 010-1.415l4.333-4.333A.992.992 0 017.333 5z" fill="#fff"></path>
+              </svg>
+            </a>
+
+            <div class="restart" id="restart-btn" style="display: none;">
+              <svg style="margin-right: 6px" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 11.817A5.017 5.017 0 01.994 6.811c0-.207.169-.375.375-.375s.375.168.375.375A4.265 4.265 0 006 11.067a4.265 4.265 0 004.256-4.256A4.265 4.265 0 006 2.555a.376.376 0 01-.375-.376c0-.206.169-.374.375-.374a5.017 5.017 0 015.006 5.006A5.017 5.017 0 016 11.817z" fill="#fff"></path>
+                <path d="M6.75 4.237a.37.37 0 01-.263-.112l-1.65-1.65a.363.363 0 010-.525L6.487.3c.15-.15.375-.15.525 0 .15.15.15.375 0 .525L5.625 2.212 7.012 3.6c.15.15.15.375 0 .525-.056.075-.15.112-.262.112z" fill="#fff"></path>
+              </svg>
+              Restart
+            </div>
+          </div>
+        </div>
+      <!----></div><div id="anima-watermark" style="display: none;" class="idle"><!----><a id="anima-watermark-link" target="_blank" href="https://www.animaapp.com?utm_campaign=public-link-banner&amp;utm_medium=public-link-banner&amp;utm_source=animaapp.io" style="right: 20px; left: auto; padding: 6px;">
+        <svg width="20" height="20" viewBox="0 0 20 20" id="anima-logo-icon" fill="none" xmlns="http://www.w3.org/2000/svg" data-hotspot-id="hp-2">
+          <path d="M4.09293 3.00001H16.5327C16.5484 2.99976 16.5638 3.00351 16.5776 3.01092C16.5913 3.01832 16.603 3.02913 16.6114 3.04231C16.6198 3.0555 16.6247 3.07061 16.6256 3.08622C16.6265 3.10182 16.6233 3.1174 16.6165 3.13146C15.5441 5.29706 13.9276 7.14699 11.9253 8.50009C8.69117 10.6822 5.43436 10.9075 4.09389 10.9196C4.08165 10.9198 4.06949 10.9176 4.05811 10.9131C4.04672 10.9086 4.03636 10.9019 4.02761 10.8933C4.01887 10.8848 4.01192 10.8745 4.00718 10.8633C4.00244 10.852 4 10.8399 4 10.8276V3.09198C4 3.07982 4.00241 3.06778 4.00709 3.05656C4.01177 3.04534 4.01863 3.03516 4.02728 3.02661C4.03592 3.01805 4.04617 3.0113 4.05744 3.00673C4.06871 3.00217 4.08077 2.99988 4.09293 3.00001Z" fill="#FF6250"></path>
+          <path d="M6.77772 17.4446C8.31182 17.4446 9.55545 16.201 9.55545 14.6669C9.55545 13.1328 8.31182 11.8892 6.77772 11.8892C5.24363 11.8892 4 13.1328 4 14.6669C4 16.201 5.24363 17.4446 6.77772 17.4446Z" fill="#FFDF90"></path>
+          <path d="M12.4559 17.2799C11.6701 16.9799 11.2522 16.1151 11.5185 15.3496L13.6153 9.3656C13.884 8.60003 14.7387 8.22302 15.5245 8.52299C16.3103 8.82344 16.7282 9.68772 16.4619 10.4538L14.365 16.4377C14.0964 17.2033 13.2417 17.5808 12.4559 17.2799Z" fill="#3366FF"></path>
+        </svg>
+        <span class="text" style="display: none;">Made with Anima</span>
+      </a><!----></div><div id="hotspots_wrapper"><div class="hotspot" id="hp-0" style="width: 114px; height: 22px; top: 18px; left: 374px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-1" style="width: 118px; height: 22px; top: 18px; left: 894px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-2" style="top: 0px; left: 0px; z-index: -1; opacity: 0;"></div></div><div id="t_preload_links"><link href="/game-community-hub-workshop" rel="prefetch"><link href="/game-community-hub-discussions" rel="prefetch"><link href="/library-home-detail-view-2" rel="prefetch"><link href="/forum" rel="prefetch"><link href="/library-home-grid-view-2" rel="prefetch"><link href="/library-home-ready-to-play-filter" rel="prefetch"><link href="/library-home-recent-filter" rel="prefetch"><link href="/library-home-grid-view-1" rel="prefetch"><link href="/library-home-filters" rel="prefetch"><link href="/games" rel="prefetch"><link href="/library-collections" rel="prefetch"><link href="/screenshots" rel="prefetch"><link href="/market" rel="prefetch"><link href="/profile-settings" rel="prefetch"><link href="/workshop" rel="prefetch"><link href="/discussions" rel="prefetch"><link href="/profile" rel="prefetch"><link href="/game-community-hub" rel="prefetch"><link href="/library-home-detail-view-1" rel="prefetch"><link href="/wishlist" rel="prefetch"><link href="/download" rel="prefetch"><link href="/discover" rel="prefetch"><link href="/point-shop" rel="prefetch"><link href="/library-home" rel="prefetch"><link href="/community-home" rel="prefetch"><link href="/game-community-hub-workshop-2" rel="prefetch"><link href="/store-page" rel="prefetch"><link href="/browse" rel="prefetch"><link href="/client-store-2" rel="prefetch"><link href="/discussion" rel="prefetch"><link href="/settings" rel="prefetch"></div></body></html>

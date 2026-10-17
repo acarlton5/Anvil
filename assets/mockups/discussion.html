@@ -1,0 +1,3674 @@
+<html><head><style type="text/css">.turbo-progress-bar {
+  position: fixed;
+  display: block;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: #0076ff;
+  z-index: 9999;
+  transition:
+    width 300ms ease-out,
+    opacity 150ms 150ms ease-in;
+  transform: translate3d(0, 0, 0);
+}
+</style><style id="st_globalStyles">
+/* MEDIA QUERIES */
+.anima-desktop-only {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+/* SCROLLBAR */
+
+[dark-scroll]::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+[dark-scroll]::-webkit-scrollbar-track-piece {
+  background-color: #2b2b2b;
+  border: 1px solid #1d1d1d;
+}
+
+[dark-scroll]::-webkit-scrollbar-thumb {
+  height: 10px;
+  background-color: #4d4d4d;
+}
+[dark-scroll]::-webkit-scrollbar-thumb:hover {
+  background-color: #5a5a5a;
+}
+
+/* LOAD PROGRESS */
+
+.turbolinks-progress-bar {
+  height: 3px;
+  background-color: #ff6250;
+}
+
+/* GROUPING */
+
+[data-id].ui-selecting {
+  box-shadow: inset 0 0 0 1px #4285f4 !important;
+}
+[data-id].ui-selected {
+  box-shadow: inset 0 0 0 1px #4285f4 !important;
+}
+
+/* CURSOR */
+
+body[mode='comments'] * {
+  cursor: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkxNjQ4IDIzLjQxMDlDNS40OTE1MyAyMi45ODg3IDUuOTMxNzkgMjIuMzkzNSA2LjIzMjggMjEuNjQwN0M0Ljc5MDY5IDE5LjczODMgNCAxNy4zOTMzIDQgMTQuOTk3NUM0IDguOTM0MSA4LjkzMjgyIDQgMTUuMDAyMiA0QzIxLjA3MTcgNCAyNiA4LjkzOTE5IDI2IDE1LjAwMjVDMjYgMjEuMDY1OSAyMS4wNjcyIDI2IDE0Ljk5NzggMjZDMTIuOTg5NiAyNiAxMS4wMzUzIDI1LjQ1NTcgOS4zMjM2NyAyNC40MjMxQzguNDI5NjUgMjQuOTU3MiA3LjQxNDM0IDI1LjIyNjggNi4zMDAxOCAyNS4yMjY4QzUuOTU0MjYgMjUuMjI2OCA1LjU5OTM1IDI1LjIwMTQgNS4yNTM0MiAyNS4xNDU0QzQuOTAzIDI1LjA4OTUgNC42Mjg5NiAyNC44MDQ2IDQuNTUyNTggMjQuNDE4QzQuNDc2MjEgMjQuMDI2NCA0LjYxOTk3IDIzLjYyOTYgNC45MTY0OCAyMy40MTA5WiIgZmlsbD0iI0ZGNjI1MCIvPgo8L3N2Zz4K')
+      0 24,
+    auto !important;
+}
+
+body[mode='code'] [data-id]:not(.hidden) {
+  cursor: default;
+}
+
+/* default node state */
+
+body[mode='code'] [data-id]:not(.hidden), body[mode='comments'] [data-id]:not(.hidden) {
+  pointer-events: all;
+}
+
+/* is_image */
+
+body[mode='code'] [data-id].is_image [data-id], body[mode='comments'] [data-id].is_image [data-id] {
+  pointer-events: none !important;
+}
+
+/* without a data-id or ignored */
+
+[data-id].ignore,body[mode='code'] *:not([data-id]) {
+  pointer-events: none !important;
+}
+/* disable transforms for ignored elements */
+
+
+body[mode='code'] [data-id]:hover{
+  transform: none !important;
+}
+
+/* ANIMA BUTTONS */
+.an-button {
+  position: relative;
+  height: 28px;
+  padding: 0 20px;
+  font-size: 14px;
+  border-radius: 4px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  transition-property: all;
+  transition-duration: 100ms;
+  appearance: none;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  border-width: 0;
+}
+
+.an-button > div {
+  width: 100%;
+}
+
+.an-button.primary {
+  background: #ff6250;
+  color: #ffffff;
+}
+
+.an-button.primary:hover:not(:disabled) {
+  background: #e2412e;
+}
+
+.an-button.secondary {
+  background: transparent;
+  border: 1px solid #ff6250;
+  color: #ff6250;
+}
+
+.an-button.secondary:hover:not(:disabled) {
+  color: #ffffff;
+  background: #ff6250;
+}
+
+.an-button.rounded {
+  border-radius: 100px;
+}
+
+.an-button:disabled {
+  opacity: 0.5;
+}
+
+.an-button:disabled {
+  cursor: default;
+}
+
+.an-button:active,
+.an-button:focus {
+  outline: none;
+}
+
+</style><meta charset="utf-8"><meta name="viewport" content="width=1920, maximum-scale=1.0"><link rel="shortcut icon" type="image/png" href="https://animaproject.s3.amazonaws.com/home/favicon.png"><meta name="og:type" content="website"><meta name="twitter:card" content="photo"><script id="anima-load-script" src="load.js"></script><script id="anima-hotspots-script" src="hotspots.js"></script><style id="hotspots-styles">
+    .hotspot {
+      position: absolute;
+      border: 1px solid #2a9fd8;
+      background: rgba(0, 173, 255, 0.54);
+      opacity: 0;
+      z-index: -1;
+      pointer-events:none;
+    }
+  </style><script id="s_turbo" src="https://animaapp.s3.amazonaws.com/static/turbo.es2017-umd.js"></script><script id="anima-overrides-script" src="overrides.js"></script><script src="https://animaapp.s3.amazonaws.com/js/timeline.js"></script><style>
+@import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
+
+@font-face {
+  font-family: "Motiva Sans-Bold";
+  font-style: normal;
+  font-weight: 700;
+  src: url('https://anima-uploads.s3.amazonaws.com/5c53487020495e000abca926/.35959.otf') format("opentype");
+}
+
+@font-face {
+  font-family: "Motiva Sans-Regular";
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://anima-uploads.s3.amazonaws.com/5c53487020495e000abca926/.35967.otf') format("opentype");
+}
+/* The following line is used to measure usage of this code. You can remove it if you want. */
+@import url("https://px.animaapp.com/65ae977d4ea7e6982e9805db.65ae977e4ea7e6982e9805de.XJaxSnm.hch.png");
+
+
+.screen textarea:focus,
+.screen input:focus {
+  outline: none;
+}
+
+.screen * {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+
+.screen div {
+  -webkit-text-size-adjust: none;
+}
+
+.component-wrapper a {
+  display: contents;
+  pointer-events: auto;
+  text-decoration: none;
+}
+
+.component-wrapper * {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.component-wrapper a *,
+.component-wrapper input,
+.component-wrapper video,
+.component-wrapper iframe {
+  pointer-events: auto;
+}
+
+.component-wrapper.not-ready,
+.component-wrapper.not-ready * {
+  visibility: hidden !important;
+}
+
+.screen a {
+  display: contents;
+  text-decoration: none;
+}
+
+.full-width-a {
+  width: 100%;
+}
+
+.full-height-a {
+  height: 100%;
+}
+
+.container-center-vertical {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  pointer-events: none;
+}
+
+.container-center-vertical > * {
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
+.container-center-horizontal {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  pointer-events: none;
+  width: 100%;
+}
+
+.container-center-horizontal > * {
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
+.auto-animated div {
+  --z-index: -1;
+  opacity: 0;
+  position: absolute;
+}
+
+.auto-animated input {
+  --z-index: -1;
+  opacity: 0;
+  position: absolute;
+}
+
+.auto-animated .container-center-vertical,
+.auto-animated .container-center-horizontal {
+  opacity: 1;
+}
+
+.overlay-base {
+  display: none;
+  height: 100%;
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.overlay-base.animate-appear {
+  align-items: center;
+  animation: reveal 0.3s ease-in-out 1 normal forwards;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0;
+}
+
+.overlay-base.animate-disappear {
+  animation: reveal 0.3s ease-in-out 1 reverse forwards;
+  display: block;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.overlay-base.animate-disappear * {
+  pointer-events: none;
+}
+
+@keyframes reveal {
+  from { opacity: 0 }
+ to { opacity: 1 }
+}
+
+.animate-nodelay {
+  animation-delay: 0s;
+}
+
+.align-self-flex-start {
+  align-self: flex-start;
+}
+
+.align-self-flex-end {
+  align-self: flex-end;
+}
+
+.align-self-flex-center {
+  align-self: flex-center;
+}
+
+.valign-text-middle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.valign-text-bottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+input:focus {
+  outline: none;
+}
+
+.listeners-active,
+.listeners-active * {
+  pointer-events: auto;
+}
+
+.hidden,
+.hidden * {
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.smart-layers-pointers,
+.smart-layers-pointers * {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.listeners-active-click,
+.listeners-active-click * {
+  cursor: pointer;
+}
+
+* {
+  box-sizing: border-box;
+}
+:root { 
+  --accentgreen: #a1cd44;
+  --accentred: #cd5444;
+  --accentyellow: #c0b05e;
+  --alto: #d9d9d903;
+  --backgroundhighlight: #1e2329;
+  --backgroundhover: #313843;
+  --backgroundmain: #0e141b;
+  --backgroundmain20: #0e141b33;
+  --backgroundmain50: #0e141b80;
+  --backgroundtertiary: #212b45;
+  --big-stone: #212b4533;
+  --black: #000000;
+  --colorprimary: #66c0f4;
+  --colorsecondary: #4b619b;
+  --emerald: #54c358;
+  --fuchsia-blue: #7054c3;
+  --fuchsia-pink: #c054c3;
+  --fuzzy-wuzzy-brown: #c35454;
+  --shark: #1e232905;
+  --shark-2: #1e232963;
+  --shark-3: #1e232940;
+  --shark-4: #1e232966;
+  --shark-5: #1e2329d1;
+  --slate-gray: #75808ccc;
+  --slate-gray-2: #75808c0d;
+  --slate-gray-3: #75808c1a;
+  --slate-gray-4: #75808c33;
+  --slate-gray-5: #76808c;
+  --textdim: #75808c;
+  --textmain: #f3f3f3;
+  --tuna: #31384380;
+  --tuna-2: #31384359;
+  --turmeric: #c3be54;
+  --white: #ffffff;
+  --white-2: #ffffff1a;
+  --wild-sand: #f3f3f380;
+ 
+  --font-size-l: 18px;
+  --font-size-m: 16px;
+  --font-size-s: 14px;
+  --font-size-xl: 19px;
+  --font-size-xs: 12px;
+  --font-size-xxl: 22px;
+  --font-size-xxxl: 26px;
+ 
+  --font-family-motiva_sans-bold: "Motiva Sans-Bold", Helvetica;
+  --font-family-motiva_sans-regular: "Motiva Sans-Regular", Helvetica;
+}
+.motivasans-regular-normal-wild-sand-16px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-14px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-wild-sand-14px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-16px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-12px {
+  color: var(--slate-gray);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-wild-sand-18px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-wild-sand-12px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-12px-2 {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-malibu-12px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-malibu-16px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-kashmir-blue-14px {
+  color: var(--colorsecondary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-wild-sand-22px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-malibu-18px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-vulcan-12px {
+  color: var(--backgroundmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-vulcan-18px {
+  color: var(--backgroundmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-wild-sand-26px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-malibu-14px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-white-12px {
+  color: var(--white);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-white-14px {
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-vulcan-19px {
+  color: var(--backgroundmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-tuna-18px {
+  color: var(--backgroundhover);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-jasper-12px {
+  color: var(--accentred);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-atlantis-18px {
+  color: var(--accentgreen);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-slate-gray-22px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-white-16px {
+  color: var(--white);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-14px-2 {
+  color: var(--slate-gray-5);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-slate-gray-18px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-slate-gray-16px-2 {
+  color: var(--slate-gray-5);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-white-16px-2 {
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-wild-sand-16px-2 {
+  color: var(--wild-sand);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-jasper-14px {
+  color: var(--accentred);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-wild-sand-16px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-jasper-16px {
+  color: var(--accentred);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-atlantis-16px {
+  color: var(--accentgreen);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-wild-sand-20-2px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: 20.2px;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-sundance-16px {
+  color: var(--accentyellow);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-sundance-12px {
+  color: var(--accentyellow);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-white-22px {
+  color: var(--white);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+:root {
+}
+
+
+.group-97 {
+  background-color: transparent;
+  height: 47px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 47px;
+}
+
+.info-outline {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.juxtopposed {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+}
+
+.rectangle-60 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.store-menu {
+  background-color: transparent;
+  height: 22px;
+  position: relative;
+}
+
+.arrow-forward-ios {
+  background-color: transparent;
+  position: relative;
+}
+
+.home {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.image-122 {
+  background-color: transparent;
+  height: 233px;
+  left: 0px;
+  object-fit: cover;
+  position: absolute;
+  top: 0px;
+  width: 240px;
+}
+
+.image-123 {
+  background-color: transparent;
+  height: 233px;
+  left: 0px;
+  object-fit: cover;
+  position: absolute;
+  top: 0px;
+  width: 240px;
+}
+
+.rectangle-115 {
+  -webkit-backdrop-filter: blur(2px) brightness(100%);
+  backdrop-filter: blur(2px) brightness(100%);
+  background-color: var(--alto);
+  border-radius: 5px;
+  height: 233px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 240px;
+}
+
+.rectangle-79 {
+  background-color: var(--colorsecondary);
+  border-radius: 40px;
+  height: 8px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.search {
+  background-color: transparent;
+  position: absolute;
+}
+
+.x2309 {
+  background-color: transparent;
+  height: auto;
+  left: 85px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 22px;
+  width: auto;
+}
+
+.frame-161 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 15px;
+  height: 20px;
+  padding: 3px 0px;
+  position: relative;
+}
+
+.image-191 {
+  background-color: transparent;
+  height: 25px;
+  margin-bottom: -11.00px;
+  margin-top: -11.00px;
+  object-fit: cover;
+  position: relative;
+  width: 25px;
+}
+
+.sprite-0003-1 {
+  background-color: transparent;
+  position: relative;
+}
+
+.x374 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x5 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.award {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.frame-162 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  height: 49px;
+  justify-content: space-between;
+  padding: 3px 0px;
+  position: relative;
+  width: 639px;
+}
+
+.frame-30 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 3px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.frame-31 {
+  align-items: center;
+  background-color: transparent;
+  display: flex;
+  gap: 3px;
+  justify-content: flex-end;
+  left: 106px;
+  position: absolute;
+  top: 0px;
+  width: 32px;
+}
+
+.frame-32 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  gap: 2px;
+  left: 0px;
+  position: absolute;
+  top: 19px;
+  width: 138px;
+}
+
+.funny {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.group-100 {
+  background-color: transparent;
+  height: 72px;
+  margin-right: -2.00px;
+  position: relative;
+  width: 74px;
+}
+
+.image-137 {
+  background-color: transparent;
+  height: 16px;
+  object-fit: cover;
+  position: relative;
+  width: 17px;
+}
+
+.insert-emoticon {
+  background-color: transparent;
+  height: 18px;
+  margin-bottom: -7.50px;
+  margin-top: -7.50px;
+  position: relative;
+  width: 18px;
+}
+
+.no {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.posted-on-12-sep-2023 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.recommended {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.rectangle-120 {
+  background-color: transparent;
+  height: 72px;
+  object-fit: cover;
+  position: relative;
+  width: 72px;
+}
+
+.rectangle-123 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  height: 72px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 72px;
+}
+
+.rectangle-88 {
+  background-color: var(--accentred);
+  border-radius: 2px;
+  flex: 1;
+  flex-grow: 1;
+  height: 4px;
+  opacity: 0.8;
+  position: relative;
+}
+
+.share {
+  background-color: transparent;
+  position: relative;
+}
+
+.was-this-review-helpful {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 9px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.x21302-hrs-on-record {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x3-reviews {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -0.50px;
+  margin-top: -2.50px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x6 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x90 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.yes {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.view-list {
+  background-color: transparent;
+  position: absolute;
+}
+
+.community {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+}
+
+.frame-214 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 9px;
+  position: relative;
+}
+
+.offline {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.frame-34 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 5px;
+  position: relative;
+}
+
+.drag-handle {
+  background-color: transparent;
+  height: 24px;
+  position: relative;
+  width: 24px;
+}
+
+.ellipse-3 {
+  background-color: transparent;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.frame-180 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  position: relative;
+}
+
+.frame-199 {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.frame-200 {
+  flex: 0 0 auto;
+  justify-content: space-between;
+  position: relative;
+}
+
+.frame-201 {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.frame-202 {
+  align-items: center;
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.group-123 {
+  background-color: transparent;
+  height: 30px;
+  margin-right: -2.00px;
+  position: relative;
+  width: 32px;
+}
+
+.group-125 {
+  background-color: transparent;
+  position: relative;
+}
+
+.image-141 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-142 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-143 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-144 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-146 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-147 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 2px;
+  height: 30px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 30px;
+}
+
+.profile-sections {
+  background-color: transparent;
+  position: relative;
+}
+
+.x32 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+}
+
+.construction {
+  background-color: transparent;
+  height: 40px;
+  position: relative;
+  width: 40px;
+}
+
+.frame-136 {
+  display: flex;
+  position: relative;
+}
+
+.frame-221 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  width: 100%;
+}
+
+.frame-311 {
+  align-items: flex-start;
+  align-self: stretch;
+  border-bottom-style: none;
+  border-left-style: solid;
+  border-left-width: 5px;
+  border-radius: 5px;
+  border-right-style: none;
+  border-top-style: none;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 7px;
+  padding: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.frame-407 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 10px;
+  position: relative;
+}
+
+.frame-51 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.icon-select {
+  background-color: transparent;
+  height: 40px;
+  position: relative;
+  width: 40px;
+}
+
+.people {
+  background-color: transparent;
+  position: absolute;
+  top: 6px;
+}
+
+.vector-5 {
+  align-self: stretch;
+  background-color: transparent;
+  height: 1px;
+  margin-bottom: -0.50px;
+  object-fit: cover;
+  position: relative;
+  width: 100%;
+}
+
+.disk-size {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.filter-list {
+  background-color: transparent;
+  height: 24px;
+  left: 1px;
+  position: absolute;
+  top: 1px;
+  width: 24px;
+}
+
+.frame-52 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 536px;
+  position: absolute;
+  top: 65px;
+}
+
+.frame-53 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 691px;
+  position: absolute;
+  top: 65px;
+}
+
+.frame-65 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.frame-85 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  left: 13px;
+  position: absolute;
+  width: 326px;
+}
+
+.frame-86 {
+  align-items: flex-start;
+  background-color: var(--shark-4);
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  left: 1px;
+  padding: 9px 12px;
+  position: absolute;
+  top: 0px;
+  width: 350px;
+}
+
+.frame-92 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 1007px;
+  position: absolute;
+  top: 65px;
+}
+
+.group-59 {
+  background-color: transparent;
+  height: 44px;
+  left: 826px;
+  position: absolute;
+  top: 65px;
+  width: 159px;
+}
+
+.group-61 {
+  background-color: transparent;
+  height: 126px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 1458px;
+}
+
+.image-94 {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.insert-drive-file {
+  background-color: transparent;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.last-played {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.play-time {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.rectangle-104 {
+  background-color: var(--shark-3);
+  border-radius: 5px;
+  height: 126px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1456px;
+}
+
+.x2065 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x50-gb {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.frame-292 {
+  background-color: transparent;
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.frame-269 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 13px;
+  justify-content: center;
+  position: relative;
+}
+
+.game-card {
+  background-color: transparent;
+  border-radius: 5px;
+  height: 282px;
+  overflow: hidden;
+  position: relative;
+  width: 191px;
+}
+
+.group-58 {
+  background-color: transparent;
+  height: 74px;
+  left: 0px;
+  position: absolute;
+  top: 290px;
+  width: 191px;
+}
+
+.rectangle-97 {
+  -webkit-backdrop-filter: blur(20px) brightness(100%);
+  backdrop-filter: blur(20px) brightness(100%);
+  background-color: var(--shark);
+  border-radius: 0px 0px 3px 3px;
+  height: 74px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 191px;
+}
+
+.text {
+  background-color: transparent;
+  height: 19px;
+  left: 9px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -22px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.cool-user {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.hi-newcomers {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x11-mins-ago {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x150000 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  width: fit-content;
+}
+
+.x2500700 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -7.00px;
+  margin-top: -9.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x5546 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -7.00px;
+  margin-top: -9.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+/* screen - discussion */
+
+.discussion {
+  background-color: var(--backgroundhighlight);
+  height: 2096px;
+  overflow: hidden;
+  overflow-x: hidden;
+  position: relative;
+  width: 1920px;
+}
+
+.discussion .rectangle-89-Pt4fOi {
+  background: linear-gradient(180deg, rgb(30.00000011175871, 35.00000171363354, 41.00000135600567) 0%, rgb(33.00000183284283, 43.00000123679638, 69.00000348687172) 100%);
+  background-color: transparent;
+  height: 2096px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.discussion .footer-Pt4fOi {
+  background-color: transparent;
+  height: 325px;
+  left: 0px;
+  position: absolute;
+  top: 1771px;
+  width: 1920px;
+}
+
+.discussion .rectangle-118-QVDjD0 {
+  background-color: var(--backgroundhighlight);
+  height: 325px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.discussion .image-125-QVDjD0 {
+  background-color: transparent;
+  height: 50px;
+  left: 266px;
+  object-fit: cover;
+  position: absolute;
+  top: 53px;
+  width: 176px;
+}
+
+.discussion .x2023-valve-corporati-QVDjD0 {
+  background-color: transparent;
+  height: auto;
+  left: 266px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 132px;
+  width: 367px;
+}
+
+.discussion .group-QVDjD0 {
+  background-color: transparent;
+  height: 50px;
+  left: 456px;
+  position: absolute;
+  top: 53px;
+  width: 210px;
+}
+
+.discussion .frame-118-QVDjD0 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 16px;
+  left: 1075px;
+  position: absolute;
+  top: 53px;
+}
+
+.discussion .privacy-policy-umKqNJ {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .legal-umKqNJ {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .steam-subscriber-agreement-umKqNJ {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .refunds-umKqNJ {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .cookies-umKqNJ {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .frame-119-QVDjD0 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 16px;
+  left: 768px;
+  position: absolute;
+  top: 53px;
+}
+
+.discussion .about-valve-xHlh7B {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .jobs-xHlh7B {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .steamworks-xHlh7B {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .steam-distribution-xHlh7B {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .support-xHlh7B {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .icon-box-QVDjD0 {
+  left: 1547px;
+}
+
+.discussion .facebook-f-tqfr7s {
+  background-color: transparent;
+  height: 30px;
+  left: 9px;
+  position: absolute;
+  top: 9px;
+  width: 30px;
+}
+
+.discussion .icon-box-g62vlR {
+  left: 1607px;
+}
+
+.discussion .twitter-x-1aqmEf {
+  background-color: transparent;
+  height: 28px;
+  left: 10px;
+  position: absolute;
+  top: 10px;
+  width: 28px;
+}
+
+.discussion .title-Pt4fOi {
+  background-color: transparent;
+  height: auto;
+  left: 178px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 180px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.discussion .secondary-button-Pt4fOi {
+  display: inline-flex;
+  left: 1556px;
+  position: absolute;
+  top: 181px;
+}
+
+.discussion .add-to-wishlist-rTpif7 {
+  margin-top: -1.00px;
+}
+
+.discussion .frame-286-Pt4fOi {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 18px;
+  left: 178px;
+  position: absolute;
+  top: 277px;
+}
+
+.discussion .frame-240-MxevqY {
+  background-color: var(--backgroundmain);
+  border-radius: 5px;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+}
+
+.discussion .tag-SxDTQw {
+  background-color: transparent;
+  height: 20px;
+}
+
+.discussion .related-discussions-NJjEwG {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  width: fit-content;
+}
+
+.discussion .comments-NJjEwG {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  width: fit-content;
+}
+
+.discussion .tag-DyJkXZ {
+  background-color: var(--backgroundhover);
+  height: 44px;
+  padding: 8px 13px;
+}
+
+.discussion .welcome-to-steam-erzi9w {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .x150000-erzi9w {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  width: fit-content;
+}
+
+.discussion .tag-ZKWFZt {
+  background-color: transparent;
+  height: 44px;
+  padding: 8px 13px;
+}
+
+.discussion .welcome-guys-xBsHGG {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .x50000-xBsHGG {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  width: fit-content;
+}
+
+.discussion .tag-gAlz5t {
+  background-color: transparent;
+  height: 44px;
+  padding: 8px 13px;
+}
+
+.discussion .new-to-steam-o7tJI7 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .x5000-o7tJI7 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  width: fit-content;
+}
+
+.discussion .frame-277-MxevqY {
+  align-items: flex-end;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  position: relative;
+  width: 1247px;
+}
+
+.discussion .frame-243-KxXJgm {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: var(--backgroundmain50);
+  border-radius: 5px;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 20px 30px;
+  position: relative;
+  width: 100%;
+}
+
+.discussion .frame-278-txvox6 {
+  align-items: center;
+  background-color: transparent;
+  display: flex;
+  gap: 20px;
+  position: relative;
+  width: 603px;
+}
+
+.discussion .image-189-QuaYkw {
+  background-color: transparent;
+  height: 40px;
+  object-fit: cover;
+  position: relative;
+  width: 40px;
+}
+
+.discussion .tacopunk-2x17Xl {
+  background-color: transparent;
+  cursor: pointer;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -1.50px;
+  margin-top: -3.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .posted-on-17-jul-2013-1107am-xKWlkN {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .image-190-qae0AR {
+  background-color: transparent;
+  height: 25px;
+  margin-bottom: -11.00px;
+  margin-top: -11.00px;
+  object-fit: cover;
+  position: relative;
+  width: 25px;
+}
+
+.discussion .image-192-xEqqOk {
+  background-color: transparent;
+  height: 25px;
+  margin-bottom: -11.00px;
+  margin-top: -11.00px;
+  object-fit: cover;
+  position: relative;
+  width: 25px;
+}
+
+.discussion .x3000-PpUbXy {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .steam-friend-train-T8Djrp {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .a-place-for-new-play-T8Djrp {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .frame-280-KxXJgm {
+  align-items: center;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  padding: 5px 0px 5px 5px;
+  position: relative;
+  width: 100%;
+}
+
+.discussion .showing-1-5-of-293321-comments-0MrDt4 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .secondary-button-sIxaOW {
+  display: flex;
+  height: 30px;
+  position: relative;
+  width: 70px;
+}
+
+.discussion .add-to-wishlist-1GHJEB {
+  margin-bottom: -10.50px;
+  margin-left: -37.50px;
+  margin-right: -37.50px;
+  margin-top: -12.50px;
+}
+
+.discussion .secondary-button-2ZjGDg {
+  display: flex;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.discussion .add-to-wishlist-iW2RIt {
+  margin-bottom: -10.50px;
+  margin-left: -46.00px;
+  margin-right: -46.00px;
+  margin-top: -12.50px;
+}
+
+.discussion .secondary-button-Cg0imP {
+  display: flex;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.discussion .add-to-wishlist-dsdfxh {
+  margin-bottom: -10.50px;
+  margin-left: -46.50px;
+  margin-right: -46.50px;
+  margin-top: -12.50px;
+}
+
+.discussion .secondary-button-ax8D3s {
+  display: flex;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.discussion .add-to-wishlist-KHzzZE {
+  margin-bottom: -10.50px;
+  margin-left: -46.00px;
+  margin-right: -46.00px;
+  margin-top: -12.50px;
+}
+
+.discussion .secondary-button-5OSmfC {
+  display: flex;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.discussion .add-to-wishlist-Ht3j1b {
+  margin-bottom: -10.50px;
+  margin-left: -46.50px;
+  margin-right: -46.50px;
+  margin-top: -12.50px;
+}
+
+.discussion .secondary-button-IcBqyh {
+  display: flex;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.discussion .add-to-wishlist-LhAec9 {
+  margin-bottom: -10.50px;
+  margin-left: -46.50px;
+  margin-right: -46.50px;
+  margin-top: -12.50px;
+}
+
+.discussion .secondary-button-nRBGLS {
+  display: flex;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.discussion .add-to-wishlist-n4ipg1 {
+  margin-bottom: -10.50px;
+  margin-left: -51.00px;
+  margin-right: -51.00px;
+  margin-top: -12.50px;
+}
+
+.discussion .secondary-button-qHhiQB {
+  display: flex;
+  height: 30px;
+  position: relative;
+  width: 70px;
+}
+
+.discussion .add-to-wishlist-hLOynb {
+  margin-bottom: -10.50px;
+  margin-left: -38.50px;
+  margin-right: -38.50px;
+  margin-top: -12.50px;
+}
+
+.discussion .frame-244-KxXJgm {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: var(--backgroundmain50);
+  border-radius: 5px;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 20px 30px;
+  position: relative;
+  width: 100%;
+}
+
+.discussion .sprite-0003-1-TZoCko {
+  height: 40px;
+  width: 40px;
+}
+
+.discussion .juxtopposed-b8LUj6 {
+  margin-bottom: -1.50px;
+  margin-top: -3.50px;
+  position: relative;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .frame-281-KxXJgm {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: var(--backgroundmain50);
+  border-radius: 5px;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 20px 30px;
+  position: relative;
+  width: 100%;
+}
+
+.discussion .sprite-0003-1-qqhPaY {
+  height: 40px;
+  width: 40px;
+}
+
+.discussion .juxtopposed-y7zWuF {
+  margin-bottom: -1.50px;
+  margin-top: -3.50px;
+  position: relative;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .frame-282-KxXJgm {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: var(--backgroundmain50);
+  border-radius: 5px;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 20px 30px;
+  position: relative;
+  width: 100%;
+}
+
+.discussion .sprite-0003-1-NwNSG1 {
+  height: 40px;
+  width: 40px;
+}
+
+.discussion .juxtopposed-HxWY7s {
+  margin-bottom: -1.50px;
+  margin-top: -3.50px;
+  position: relative;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .frame-283-KxXJgm {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: var(--backgroundmain50);
+  border-radius: 5px;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 20px 30px;
+  position: relative;
+  width: 100%;
+}
+
+.discussion .sprite-0003-1-iIBxPA {
+  height: 40px;
+  width: 40px;
+}
+
+.discussion .juxtopposed-sr4nLb {
+  margin-bottom: -1.50px;
+  margin-top: -3.50px;
+  position: relative;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .frame-284-KxXJgm {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: var(--backgroundmain50);
+  border-radius: 5px;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 20px 30px;
+  position: relative;
+  width: 100%;
+}
+
+.discussion .sprite-0003-1-SUMmzT {
+  height: 40px;
+  width: 40px;
+}
+
+.discussion .juxtopposed-SO5UwF {
+  margin-bottom: -1.50px;
+  margin-top: -3.50px;
+  position: relative;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .frame-285-KxXJgm {
+  align-items: center;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 17px;
+  justify-content: flex-end;
+  padding: 5px 0px 5px 5px;
+  position: relative;
+  width: 100%;
+}
+
+.discussion .secondary-button-weKeDg {
+  display: flex;
+  height: 30px;
+  position: relative;
+  width: 70px;
+}
+
+.discussion .add-to-wishlist-nR13fK {
+  margin-bottom: -10.50px;
+  margin-left: -37.50px;
+  margin-right: -37.50px;
+  margin-top: -12.50px;
+}
+
+.discussion .secondary-button-EETICX {
+  display: flex;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.discussion .add-to-wishlist-xutIqc {
+  margin-bottom: -10.50px;
+  margin-left: -46.00px;
+  margin-right: -46.00px;
+  margin-top: -12.50px;
+}
+
+.discussion .secondary-button-1l5OnF {
+  display: flex;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.discussion .add-to-wishlist-8BJfo9 {
+  margin-bottom: -10.50px;
+  margin-left: -46.50px;
+  margin-right: -46.50px;
+  margin-top: -12.50px;
+}
+
+.discussion .secondary-button-G5JszE {
+  display: flex;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.discussion .add-to-wishlist-Wx6Wfq {
+  margin-bottom: -10.50px;
+  margin-left: -46.00px;
+  margin-right: -46.00px;
+  margin-top: -12.50px;
+}
+
+.discussion .secondary-button-oQeL3x {
+  display: flex;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.discussion .add-to-wishlist-lLk6wa {
+  margin-bottom: -10.50px;
+  margin-left: -46.50px;
+  margin-right: -46.50px;
+  margin-top: -12.50px;
+}
+
+.discussion .secondary-button-Wb211l {
+  display: flex;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.discussion .add-to-wishlist-bxBxIm {
+  margin-bottom: -10.50px;
+  margin-left: -46.50px;
+  margin-right: -46.50px;
+  margin-top: -12.50px;
+}
+
+.discussion .secondary-button-JyzsVe {
+  display: flex;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.discussion .add-to-wishlist-5MDxkx {
+  margin-bottom: -10.50px;
+  margin-left: -51.00px;
+  margin-right: -51.00px;
+  margin-top: -12.50px;
+}
+
+.discussion .secondary-button-l3ZMqx {
+  display: flex;
+  height: 30px;
+  position: relative;
+  width: 70px;
+}
+
+.discussion .add-to-wishlist-214QpS {
+  margin-bottom: -10.50px;
+  margin-left: -38.50px;
+  margin-right: -38.50px;
+  margin-top: -12.50px;
+}
+
+.discussion .discussions-steam-fo-Pt4fOi {
+  background-color: transparent;
+  color: transparent;
+  cursor: pointer;
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+  height: auto;
+  left: 178px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 159px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.discussion .span0-xiyCyf {
+  font-style: normal;
+}
+
+.discussion .span1-xiyCyf {
+  font-style: normal;
+}
+
+.discussion .span2-xiyCyf {
+  font-style: normal;
+}
+
+.discussion .span3-xiyCyf {
+  font-style: normal;
+}
+
+.discussion .span4-xiyCyf {
+  font-style: normal;
+}
+
+.discussion .span5-xiyCyf {
+  font-style: normal;
+}
+
+.discussion .header-Pt4fOi {
+  background-color: transparent;
+  height: 57px;
+  left: 0px;
+  overflow: hidden;
+  position: fixed;
+  top: 59px;
+  width: 1920px;
+}
+
+.discussion .rectangle-67-Cio3gD {
+  background-color: var(--backgroundtertiary);
+  height: 57px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.discussion .frame-15-Cio3gD {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 7px;
+  left: 10px;
+  position: absolute;
+  top: 6px;
+}
+
+.discussion .menu-oMrJdG {
+  background-color: var(--backgroundtertiary);
+}
+
+.discussion .menu-AV17WP {
+  background-color: var(--colorsecondary);
+}
+
+.discussion .menu-4OB0Pk {
+  background-color: var(--backgroundtertiary);
+}
+
+.discussion .group-15-oMrJdG {
+  align-items: center;
+  background-color: var(--backgroundtertiary);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.discussion .group-18-oMrJdG {
+  align-items: center;
+  background-color: var(--backgroundtertiary);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.discussion .search-Cio3gD {
+  align-items: center;
+  background-color: var(--backgroundmain20);
+  border-radius: 3px;
+  display: flex;
+  gap: 364px;
+  left: 967px;
+  overflow: hidden;
+  padding: 11px;
+  position: absolute;
+  top: 8px;
+  width: 581px;
+}
+
+.discussion .search-0hwaHO {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.discussion .frame-262-0hwaHO {
+  align-items: center;
+  background-color: transparent;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  width: 134px;
+}
+
+.discussion .frame-261-J8WBJQ {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 7px;
+  position: relative;
+}
+
+.discussion .discussions-xyU4Cf {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: right;
+  width: fit-content;
+}
+
+.discussion .search-J8WBJQ {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.discussion .client-Pt4fOi {
+  background-color: transparent;
+  height: 1080px;
+  left: 0px;
+  overflow: hidden;
+  position: fixed;
+  top: 0px;
+  width: 1920px;
+}
+
+.discussion .rectangle-68-p3ex23 {
+  background-color: var(--backgroundmain);
+  height: 59px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.discussion .frame-11-p3ex23 {
+  align-items: flex-end;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  left: 1658px;
+  position: absolute;
+  top: 17px;
+}
+
+.discussion .frame-2-dEx4N6 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 18px;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.discussion .frame-239-4xwzTw {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.discussion .help-w8xVI1 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .frame-240-4xwzTw {
+  background-color: transparent;
+  justify-content: flex-end;
+}
+
+.discussion .view-yQlIQa {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -0.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .minimize-4xwzTw {
+  background-color: transparent;
+  height: 25px;
+  position: relative;
+  width: 25px;
+}
+
+.discussion .content-copy-4xwzTw {
+  background-color: transparent;
+  height: 25px;
+  position: relative;
+  width: 25px;
+}
+
+.discussion .close-4xwzTw {
+  background-color: transparent;
+  height: 25px;
+  position: relative;
+  width: 25px;
+}
+
+.discussion .frame-3-p3ex23 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 66px;
+  left: 94px;
+  position: absolute;
+  top: 18px;
+}
+
+.discussion .group-J7Gl04 {
+  background-color: transparent;
+  height: 20.98845863342285px;
+  position: relative;
+  width: 88.00003814697266px;
+}
+
+.discussion .store-menu-J7Gl04 {
+  width: 60px;
+}
+
+.discussion .store-qlVXtN {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.discussion .store-menu-wtEgJ9 {
+  cursor: pointer;
+  width: 114px;
+}
+
+.discussion .community-Lne2at {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.discussion .store-menu-Yx8KB7 {
+  width: 131px;
+}
+
+.discussion .juxtopposed-kpHrQw {
+  height: auto;
+  left: 0px;
+  position: absolute;
+  top: -1px;
+  width: auto;
+}
+
+.discussion .store-menu-HjG1ib {
+  width: 77px;
+}
+
+.discussion .library-qTyajr {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.discussion .frame-233-p3ex23 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 4px;
+  left: 894px;
+  position: absolute;
+  top: 18px;
+}
+
+.discussion .store-menu-waBueC {
+  cursor: pointer;
+  width: 118px;
+}
+
+.discussion .downloads-yTiPcX {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.discussion .view-list-p3ex23 {
+  background-color: transparent;
+  height: 24px;
+  left: 1873px;
+  position: absolute;
+  top: 349px;
+  width: 24px;
+}
+
+.discussion .frame-330-p3ex23 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 10px;
+  justify-content: flex-end;
+  left: 1259px;
+  position: absolute;
+  top: 10px;
+}
+
+.discussion .friends-JcmpB3 {
+  background-color: transparent;
+  height: 37px;
+  position: relative;
+  width: 56px;
+}
+
+.discussion .group-9-CmNSzt {
+  background-color: transparent;
+  height: 37px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 56px;
+}
+
+.discussion .rectangle-61-ncUO5M {
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  height: 37px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 56px;
+}
+
+.discussion .people-ncUO5M {
+  background-color: transparent;
+  height: 25px;
+  left: 15px;
+  position: absolute;
+  top: 6px;
+  width: 25px;
+}
+
+.discussion .notifications-JcmpB3 {
+  background-color: transparent;
+  height: 37px;
+  position: relative;
+  width: 56px;
+}
+
+.discussion .group-135-vTeOwX {
+  background-color: transparent;
+  height: 37px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 56px;
+}
+
+.discussion .group-8-jVByOx {
+  background-color: transparent;
+  height: 37px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 56px;
+}
+
+.discussion .rectangle-60-pKJ8Bm {
+  height: 37px;
+  width: 56px;
+}
+
+.discussion .notifications-pKJ8Bm {
+  background-color: transparent;
+  height: 25px;
+  left: 15px;
+  position: absolute;
+  top: 6px;
+  width: 25px;
+}
+
+.discussion .group-12-vTeOwX {
+  background-color: transparent;
+  height: 16px;
+  left: 43px;
+  position: absolute;
+  top: -2px;
+  width: 18px;
+}
+
+.discussion .ellipse-2-6beKIG {
+  background-color: var(--colorprimary);
+  border-radius: 8px;
+  height: 16px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 16px;
+}
+
+.discussion .x1-6beKIG {
+  background-color: transparent;
+  height: auto;
+  left: 5px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 1px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.discussion .component-2-JcmpB3 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 15px;
+  height: 39px;
+  position: relative;
+}
+
+.discussion .group-7-2HKdD2 {
+  background-color: transparent;
+  height: 39px;
+  position: relative;
+  width: 210px;
+}
+
+.discussion .rectangle-60-Oiq3Fa {
+  height: 39px;
+  width: 210px;
+}
+
+.discussion .frame-1-Oiq3Fa {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 8px;
+  height: 33px;
+  left: 3px;
+  position: absolute;
+  top: 3px;
+}
+
+.discussion .sprite-0003-1-urk5uC {
+  height: 31px;
+  width: 31px;
+}
+
+.discussion .juxtopposed-urk5uC {
+  position: relative;
+  width: fit-content;
+}
+
+.discussion .x525-urk5uC {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.discussion .frame-331-p3ex23 {
+  background-color: transparent;
+  height: 24px;
+  left: 22px;
+  position: absolute;
+  top: 17px;
+  width: 53px;
+}
+
+.discussion .add-to-wishlist {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .frame-164 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  position: relative;
+}
+
+.discussion .frame-165 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  position: relative;
+}
+
+.discussion .frame-166 {
+  align-items: center;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+}
+
+.discussion .frame-237 {
+  align-items: flex-end;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 5px;
+  justify-content: center;
+  position: relative;
+}
+
+.discussion .frame-238 {
+  align-items: center;
+  background-color: transparent;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  width: 418px;
+}
+
+.discussion .frame-240 {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.discussion .frame-254 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  width: 100%;
+}
+
+.discussion .frame-279 {
+  align-items: center;
+  background-color: transparent;
+  display: flex;
+  gap: 20px;
+  position: relative;
+  width: 712px;
+}
+
+.discussion .hi-there {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .icon-box {
+  background-color: transparent;
+  height: 47px;
+  position: absolute;
+  top: 53px;
+  width: 47px;
+}
+
+.discussion .keyboard-arrow-down {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.discussion .menu {
+  align-items: center;
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.discussion .military-tech {
+  background-color: transparent;
+  height: 20px;
+  margin-bottom: -8.50px;
+  margin-top: -8.50px;
+  position: relative;
+  width: 20px;
+}
+
+.discussion .posted-on-17-jul-2023-1107am {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.discussion .rectangle-86 {
+  background-color: var(--slate-gray-2);
+  border-radius: 3px;
+  height: 47px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 47px;
+}
+
+.discussion .secondary-button {
+  align-items: center;
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  gap: 10px;
+  justify-content: center;
+  padding: 17px 56px;
+}
+
+.discussion .tag {
+  align-items: center;
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
+  position: relative;
+  width: 269px;
+}
+
+.discussion .wishlist-page {
+  align-items: center;
+  background-color: var(--backgroundmain);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 5px;
+  height: 37px;
+  padding: 17px 10px;
+  position: relative;
+}
+
+.discussion .x {
+  background-color: transparent;
+  height: 23px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  width: 20px;
+}
+
+.discussion .x500 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+</style><style id="action-links-styles">
+@import url('https://fonts.googleapis.com/css2?family=Mulish&display=swap');
+
+#anima-interface{
+  transition: all 0.5s ease-in-out;
+}
+
+#anima-watermark {
+  transition: all 0.5s ease-in-out;
+  display: none;
+}
+#anima-watermark-link{
+  position: fixed;
+  bottom:20px;
+  height:30px;
+  border-radius: 1000px;
+  background: #3B3B3B;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  user-select:none;
+  transition: width 0.25s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+  text-decoration:none;
+  color:#fff;
+  padding:8px 16px 8px 11px;
+  font-family:Mulish, sans-serif;
+  font-size:12px;
+}
+#anima-watermark-link .text {
+  margin-left: 6px;
+}
+
+.omniview-anima-action-links .link{
+  height: 30px;
+  width: 30px;
+  border-radius: 1000px;
+  background: #3B3B3B;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  user-select:none;
+  transition: width 0.25s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+  text-decoration:none;
+  color:#fff;
+}
+.omniview-anima-action-links #comment-link .text,.omniview-anima-action-links #code-link .text{
+  display:none;
+  font-size:12px;
+  margin-right:5px;
+}
+.omniview-anima-action-links #comment-link:hover,.omniview-anima-action-links #code-link:hover{
+  width:105px;
+}
+.omniview-anima-action-links #comment-link.pop-active,.omniview-anima-action-links #code-link.pop-active{
+  width:105px;
+  background: #FF6250;
+}
+.omniview-anima-action-links #comment-link.pop-active .text,.omniview-anima-action-links #code-link.pop-active .text{
+  display:block
+}
+.omniview-anima-action-links #comment-link:hover .text,.omniview-anima-action-links #code-link:hover .text{
+  display:block;
+}
+
+.link.navigation{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  width:auto;
+  height:32px;
+  color:#fff;
+  font-size:12px;
+  cursor:default;
+  padding:0 5px;
+}
+.link.navigation .icon{
+  margin:0 6px;
+  fill:none;
+  stroke:currentColor;
+  cursor:pointer;
+}
+.link.navigation .icon.disabled{
+  opacity:0.5;
+  cursor:default;
+}
+
+
+.link.navigation .home-icon{
+  margin-left:6px;
+  fill:currentColor;
+  stroke:currentColor;
+  cursor:pointer;
+}
+
+.omniview-anima-action-links .restart{
+  height: 30px;
+  padding:0 12px;
+  background: #3B3B3B;
+  border-radius: 1000px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  color:#f1f1f1;
+  font-size: 12px;
+}
+
+.omniview-anima-action-links{
+  display:flex;
+  align-items:center;
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  font-family:Mulish, sans-serif;
+  transition: all 0.5s ease-in-out;
+  opacity:1;
+}
+
+.omniview-anima-action-links > * + *{
+   margin-right: 0;
+   margin-left: 10px;
+}
+
+.idle{
+  opacity:0;
+  pointer-events:none;
+}
+
+#popoverOpener {
+  position: absolute;
+  left: 50%;
+  margin-left: -10vw;
+  text-align: center;
+  top: 45vh;
+  width: 20vw;
+}
+
+
+.popover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1060;
+  display: none;
+  font-family: "sans-serif";
+  font-size: 14px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+.popover.top {
+  margin-top: -12px
+}
+
+.popover.right {
+  margin-left: 10px
+}
+
+.popover.bottom {
+  margin-top: 10px
+}
+
+.popover.left {
+  margin-left: -10px
+}
+
+.popover-title {
+  padding: 8px 14px;
+  margin: 0;
+  font-size: 14px;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #ebebeb;
+  border-radius: 5px 5px 0 0
+}
+
+.popover-content {
+  height: 100%;
+  width: 100%;
+  display:flex;
+  overflow:hidden;
+  font-family:Mulish, sans-serif;
+}
+
+
+
+.popover>.arrow,.popover>.arrow:after {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid
+}
+
+.popover>.arrow {
+  border-width: 11px
+}
+
+.popover>.arrow:after {
+  content: "";
+  border-width: 10px
+}
+
+.popover.top>.arrow {
+  bottom: -11px;
+  left: 50%;
+  margin-left: -11px;
+  border-top-color: #999;
+  border-top-color: rgba(0,0,0,.25);
+  border-bottom-width: 0
+}
+
+.popover.top>.arrow:after {
+  bottom: 1px;
+  margin-left: -10px;
+  content: " ";
+  border-top-color: #fff;
+  border-bottom-width: 0
+}
+
+.popover.right>.arrow {
+  top: 50%;
+  left: -11px;
+  margin-top: -11px;
+  border-right-color: #999;
+  border-right-color: rgba(0,0,0,.25);
+  border-left-width: 0
+}
+
+.popover.right>.arrow:after {
+  bottom: -10px;
+  left: 1px;
+  content: " ";
+  border-right-color: #fff;
+  border-left-width: 0
+}
+
+.popover.bottom>.arrow {
+  top: -11px;
+  left: 50%;
+  margin-left: -11px;
+  border-top-width: 0;
+  border-bottom-color: #999;
+  border-bottom-color: rgba(0,0,0,.25)
+}
+
+.popover.bottom>.arrow:after {
+  top: 1px;
+  margin-left: -10px;
+  content: " ";
+  border-top-width: 0;
+  border-bottom-color: #fff
+}
+
+.popover.left>.arrow {
+  top: 50%;
+  right: -11px;
+  margin-top: -11px;
+  border-right-width: 0;
+  border-left-color: #999;
+  border-left-color: rgba(0,0,0,.25)
+}
+
+.popover.left>.arrow:after {
+  right: 1px;
+  bottom: -10px;
+  content: " ";
+  border-right-width: 0;
+  border-left-color: #fff
+}
+
+
+
+#anima-comment-popover,#anima-code-popover{
+  background:#333333;
+  color:#fff;
+}
+
+#anima-comment-popover.top>.arrow,#anima-comment-popover.top>.arrow:after,#anima-code-popover.top>.arrow:after,#anima-code-popover.top>.arrow {
+  border-top-color:#333;
+}
+
+#anima-comment-popover .btn,#anima-code-popover .btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 6px 20px;
+  background: #FF6250;
+  color:#fff;
+  border-radius: 100px;
+  width: max-content;
+  text-decoration:none;
+}
+
+@media screen and (max-width: 550px) {
+  #anima-watermark-link {
+    padding: 6px !important;
+  }
+  #anima-watermark-link .text {
+    display: none !important;
+  }
+}
+
+</style><script id="anime-js-script" src="https://cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js" integrity="sha256-98Q574VkbV+PkxXCKSgL6jVq9mrVbS7uCdA+vt0sLS8=" crossorigin="anonymous"></script><script id="imgloaded-js-script" src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script></head><body style="margin: 0px; background: rgb(30, 35, 41); overflow-x: hidden;" dark-scroll=""><input type="hidden" id="anPageName" name="page" value="discussion"><div class="container-center-horizontal"><div class="discussion screen " data-id="504:7960"><div class="rectangle-89-Pt4fOi" data-id="504:7961"></div><footer class="footer-Pt4fOi" data-id="504:7962"><div class="rectangle-118-QVDjD0" data-id="I504:7962;426:4049"></div><img class="image-125-QVDjD0" data-id="I504:7962;426:4050" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-125@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-125@2x.png" alt="image 125"><p class="x2023-valve-corporati-QVDjD0 motivasans-regular-normal-slate-gray-16px" data-id="I504:7962;426:4051">© 2023 Valve Corporation. All rights reserved. All trademarks are property of their respective owners in the US and other countries.<br>VAT included in all prices where applicable.</p><img class="group-QVDjD0" data-id="I504:7962;460:15636" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-4@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-4@2x.png" alt="Group"><div class="frame-118-QVDjD0" data-id="I504:7962;426:4053"><div class="privacy-policy-umKqNJ motivasans-regular-normal-wild-sand-16px" data-id="I504:7962;426:4054">Privacy Policy</div><div class="legal-umKqNJ motivasans-regular-normal-wild-sand-16px" data-id="I504:7962;426:4055">Legal</div><div class="steam-subscriber-agreement-umKqNJ motivasans-regular-normal-wild-sand-16px" data-id="I504:7962;426:4056">Steam Subscriber Agreement</div><div class="refunds-umKqNJ motivasans-regular-normal-wild-sand-16px" data-id="I504:7962;426:4057">Refunds</div><div class="cookies-umKqNJ motivasans-regular-normal-wild-sand-16px" data-id="I504:7962;426:4058">Cookies</div></div><div class="frame-119-QVDjD0" data-id="I504:7962;426:4059"><div class="about-valve-xHlh7B motivasans-regular-normal-wild-sand-16px" data-id="I504:7962;426:4060">About Valve</div><div class="jobs-xHlh7B motivasans-regular-normal-wild-sand-16px" data-id="I504:7962;426:4061">Jobs</div><div class="steamworks-xHlh7B motivasans-regular-normal-wild-sand-16px" data-id="I504:7962;426:4062">Steamworks</div><div class="steam-distribution-xHlh7B motivasans-regular-normal-wild-sand-16px" data-id="I504:7962;426:4063">Steam Distribution</div><div class="support-xHlh7B motivasans-regular-normal-wild-sand-16px" data-id="I504:7962;426:4064">Support</div></div><div class="icon-box-QVDjD0 icon-box" data-id="I504:7962;426:4065"><div class="group-97" data-id="I504:7962;426:4066"><div class="rectangle-86" data-id="I504:7962;426:4067"></div><img class="facebook-f-tqfr7s" data-id="I504:7962;426:4068" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/facebook-f.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/facebook-f.svg" alt="Facebook F"></div></div><div class="icon-box-g62vlR icon-box" data-id="I504:7962;426:4070"><div class="group-97" data-id="I504:7962;426:4071"><div class="rectangle-86" data-id="I504:7962;426:4072"></div><img class="twitter-x-1aqmEf" data-id="I504:7962;426:4073" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/twitterx-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/twitterx-2.svg" alt="TwitterX"></div></div></footer><h1 class="title-Pt4fOi motivasans-bold-wild-sand-26px" data-id="504:7997">Steam Forums</h1><div class="secondary-button-Pt4fOi secondary-button" data-id="504:7998"><div class="add-to-wishlist-rTpif7 add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I504:7998;84:780">Subscribe</div></div><div class="frame-286-Pt4fOi" data-id="505:9567"><div class="frame-240-MxevqY frame-240" data-id="504:7963"><div class="tag-SxDTQw tag" data-id="504:7964"><div class="related-discussions-NJjEwG motivasans-regular-normal-slate-gray-14px" data-id="504:7965">Related Discussions</div><div class="comments-NJjEwG motivasans-regular-normal-slate-gray-14px" data-id="504:7966">Comments</div></div><div class="tag-DyJkXZ tag" data-id="504:7967"><div class="welcome-to-steam-erzi9w motivasans-regular-normal-wild-sand-16px" data-id="504:7968">Welcome to Steam</div><div class="x150000-erzi9w motivasans-regular-normal-slate-gray-14px" data-id="504:7969">150,000</div></div><div class="tag-ZKWFZt tag" data-id="504:7970"><div class="welcome-guys-xBsHGG motivasans-regular-normal-wild-sand-16px" data-id="504:7971">WELCOME GUYS</div><div class="x50000-xBsHGG motivasans-regular-normal-slate-gray-14px" data-id="504:7972">50,000</div></div><div class="tag-gAlz5t tag" data-id="504:7973"><div class="new-to-steam-o7tJI7 motivasans-regular-normal-wild-sand-16px" data-id="504:7974">New to Steam?</div><div class="x5000-o7tJI7 motivasans-regular-normal-slate-gray-14px" data-id="504:7975">5,000</div></div></div><div class="frame-277-MxevqY" data-id="504:7999"><div class="frame-243-KxXJgm" data-id="505:8296"><div class="frame-254" data-id="505:8297"><div class="frame-166" data-id="505:8310"><div class="frame-278-txvox6" data-id="505:8456"><div class="frame-164" data-id="505:8311"><img class="image-189-QuaYkw" data-id="505:8361" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-189@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-189@2x.png" alt="image 189"><div class="frame-161" data-id="505:8313"><a href="https://steamcommunity.com/id/thatkewldude" target="_blank"><div class="tacopunk-2x17Xl motivasans-regular-normal-malibu-16px" data-id="505:8314" data-hotspot-id="hp-0">tacopunk</div></a></div></div><p class="posted-on-17-jul-2013-1107am-xKWlkN motivasans-regular-normal-slate-gray-12px-2" data-id="505:8316">Posted on 17 Jul, 2013 @ 11:07am</p></div><div class="frame-165" data-id="505:8438"><div class="wishlist-page" data-id="505:8439"><img class="image-190-qae0AR" data-id="505:8440" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-190.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-190.png" alt="image 190"><div class="x374 motivasans-regular-normal-malibu-12px" data-id="505:8441">374</div></div><div class="wishlist-page" data-id="505:8442"><img class="image-191" data-id="505:8443" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" alt="image 191"><div class="x374 motivasans-regular-normal-malibu-12px" data-id="505:8444">374</div></div><div class="wishlist-page" data-id="505:8445"><img class="image-192-xEqqOk" data-id="505:8446" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-192.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-192.png" alt="image 192"><div class="x374 motivasans-regular-normal-malibu-12px" data-id="505:8447">374</div></div><div class="wishlist-page" data-id="505:8448"><img class="military-tech" data-id="505:8449" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-1.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-1.svg" alt="Military tech"><div class="x3000-PpUbXy motivasans-regular-normal-malibu-12px" data-id="505:8455">3,000</div></div></div></div><div class="steam-friend-train-T8Djrp motivasans-bold-wild-sand-26px" data-id="505:8323">Steam Friend Train</div><p class="a-place-for-new-play-T8Djrp motivasans-regular-normal-wild-sand-16px" data-id="505:8363">A place for new players to find friends to play games with, All are welcome. :)</p></div></div><div class="frame-280-KxXJgm" data-id="505:8491"><p class="showing-1-5-of-293321-comments-0MrDt4 motivasans-regular-normal-slate-gray-16px" data-id="505:8489">Showing 1-5 of 293,321 comments</p><div class="frame-238" data-id="504:8133"><div class="secondary-button-sIxaOW secondary-button" data-id="504:8134"><div class="add-to-wishlist-1GHJEB add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I504:8134;84:780">Prev</div></div><div class="frame-237" data-id="504:8135"><div class="secondary-button-2ZjGDg secondary-button" data-id="504:8136"><div class="add-to-wishlist-iW2RIt add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I504:8136;84:780">1</div></div><div class="secondary-button-Cg0imP secondary-button" data-id="504:8137"><div class="add-to-wishlist-dsdfxh add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I504:8137;84:780">2</div></div><div class="secondary-button-ax8D3s secondary-button" data-id="504:8138"><div class="add-to-wishlist-KHzzZE add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I504:8138;84:780">3</div></div><div class="secondary-button-5OSmfC secondary-button" data-id="504:8139"><div class="add-to-wishlist-Ht3j1b add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I504:8139;84:780">4</div></div><div class="secondary-button-IcBqyh secondary-button" data-id="504:8140"><div class="add-to-wishlist-LhAec9 add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I504:8140;84:780">5</div></div><div class="x valign-text-middle motivasans-regular-normal-slate-gray-16px-2" data-id="504:8141">...</div><div class="secondary-button-nRBGLS secondary-button" data-id="504:8142"><div class="add-to-wishlist-n4ipg1 add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I504:8142;84:780">10</div></div></div><div class="secondary-button-qHhiQB secondary-button" data-id="504:8143"><div class="add-to-wishlist-hLOynb add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I504:8143;84:780">Next</div></div></div></div><div class="frame-244-KxXJgm" data-id="505:8406"><div class="frame-254" data-id="505:8407"><div class="frame-166" data-id="505:8408"><div class="frame-279" data-id="505:8469"><div class="frame-164" data-id="505:8409"><img class="sprite-0003-1-TZoCko sprite-0003-1" data-id="505:8437" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-2.svg" alt="Sprite-0003 1"><div class="frame-161" data-id="505:8411"><div class="juxtopposed-b8LUj6 juxtopposed motivasans-regular-normal-malibu-16px" data-id="505:8412">Juxtopposed</div></div></div><p class="posted-on-17-jul-2023-1107am motivasans-regular-normal-slate-gray-12px-2" data-id="505:8413">Posted on 17 Jul, 2023 @ 11:07am</p></div><div class="frame-165" data-id="505:8457"><div class="wishlist-page" data-id="505:8458"><img class="image-191" data-id="505:8459" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" alt="image 191"><div class="x5 motivasans-regular-normal-malibu-12px" data-id="505:8460">5</div></div><div class="wishlist-page" data-id="505:8461"><img class="military-tech" data-id="505:8462" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech.svg" alt="Military tech"><div class="x500 motivasans-regular-normal-malibu-12px" data-id="505:8468">500</div></div></div></div><div class="hi-there motivasans-regular-normal-wild-sand-16px" data-id="505:8415">Hi there!</div></div></div><div class="frame-281-KxXJgm" data-id="505:8492"><div class="frame-254" data-id="505:8493"><div class="frame-166" data-id="505:8494"><div class="frame-279" data-id="505:8495"><div class="frame-164" data-id="505:8496"><img class="sprite-0003-1-qqhPaY sprite-0003-1" data-id="505:8497" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-3.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-3.svg" alt="Sprite-0003 1"><div class="frame-161" data-id="505:8498"><div class="juxtopposed-y7zWuF juxtopposed motivasans-regular-normal-malibu-16px" data-id="505:8499">Juxtopposed</div></div></div><p class="posted-on-17-jul-2023-1107am motivasans-regular-normal-slate-gray-12px-2" data-id="505:8500">Posted on 17 Jul, 2023 @ 11:07am</p></div><div class="frame-165" data-id="505:8501"><div class="wishlist-page" data-id="505:8502"><img class="image-191" data-id="505:8503" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" alt="image 191"><div class="x5 motivasans-regular-normal-malibu-12px" data-id="505:8504">5</div></div><div class="wishlist-page" data-id="505:8505"><img class="military-tech" data-id="505:8506" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-2.svg" alt="Military tech"><div class="x500 motivasans-regular-normal-malibu-12px" data-id="505:8512">500</div></div></div></div><div class="hi-there motivasans-regular-normal-wild-sand-16px" data-id="505:8513">Hi there!</div></div></div><div class="frame-282-KxXJgm" data-id="505:8514"><div class="frame-254" data-id="505:8515"><div class="frame-166" data-id="505:8516"><div class="frame-279" data-id="505:8517"><div class="frame-164" data-id="505:8518"><img class="sprite-0003-1-NwNSG1 sprite-0003-1" data-id="505:8519" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-4.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-4.svg" alt="Sprite-0003 1"><div class="frame-161" data-id="505:8520"><div class="juxtopposed-HxWY7s juxtopposed motivasans-regular-normal-malibu-16px" data-id="505:8521">Juxtopposed</div></div></div><p class="posted-on-17-jul-2023-1107am motivasans-regular-normal-slate-gray-12px-2" data-id="505:8522">Posted on 17 Jul, 2023 @ 11:07am</p></div><div class="frame-165" data-id="505:8523"><div class="wishlist-page" data-id="505:8524"><img class="image-191" data-id="505:8525" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" alt="image 191"><div class="x5 motivasans-regular-normal-malibu-12px" data-id="505:8526">5</div></div><div class="wishlist-page" data-id="505:8527"><img class="military-tech" data-id="505:8528" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-3.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-3.svg" alt="Military tech"><div class="x500 motivasans-regular-normal-malibu-12px" data-id="505:8534">500</div></div></div></div><div class="hi-there motivasans-regular-normal-wild-sand-16px" data-id="505:8535">Hi there!</div></div></div><div class="frame-283-KxXJgm" data-id="505:8536"><div class="frame-254" data-id="505:8537"><div class="frame-166" data-id="505:8538"><div class="frame-279" data-id="505:8539"><div class="frame-164" data-id="505:8540"><img class="sprite-0003-1-iIBxPA sprite-0003-1" data-id="505:8541" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-5.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-5.svg" alt="Sprite-0003 1"><div class="frame-161" data-id="505:8542"><div class="juxtopposed-sr4nLb juxtopposed motivasans-regular-normal-malibu-16px" data-id="505:8543">Juxtopposed</div></div></div><p class="posted-on-17-jul-2023-1107am motivasans-regular-normal-slate-gray-12px-2" data-id="505:8544">Posted on 17 Jul, 2023 @ 11:07am</p></div><div class="frame-165" data-id="505:8545"><div class="wishlist-page" data-id="505:8546"><img class="image-191" data-id="505:8547" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" alt="image 191"><div class="x5 motivasans-regular-normal-malibu-12px" data-id="505:8548">5</div></div><div class="wishlist-page" data-id="505:8549"><img class="military-tech" data-id="505:8550" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-4.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-4.svg" alt="Military tech"><div class="x500 motivasans-regular-normal-malibu-12px" data-id="505:8556">500</div></div></div></div><div class="hi-there motivasans-regular-normal-wild-sand-16px" data-id="505:8557">Hi there!</div></div></div><div class="frame-284-KxXJgm" data-id="505:8558"><div class="frame-254" data-id="505:8559"><div class="frame-166" data-id="505:8560"><div class="frame-279" data-id="505:8561"><div class="frame-164" data-id="505:8562"><img class="sprite-0003-1-SUMmzT sprite-0003-1" data-id="505:8563" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-6.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-6.svg" alt="Sprite-0003 1"><div class="frame-161" data-id="505:8564"><div class="juxtopposed-SO5UwF juxtopposed motivasans-regular-normal-malibu-16px" data-id="505:8565">Juxtopposed</div></div></div><p class="posted-on-17-jul-2023-1107am motivasans-regular-normal-slate-gray-12px-2" data-id="505:8566">Posted on 17 Jul, 2023 @ 11:07am</p></div><div class="frame-165" data-id="505:8567"><div class="wishlist-page" data-id="505:8568"><img class="image-191" data-id="505:8569" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" alt="image 191"><div class="x5 motivasans-regular-normal-malibu-12px" data-id="505:8570">5</div></div><div class="wishlist-page" data-id="505:8571"><img class="military-tech" data-id="505:8572" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-5.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-5.svg" alt="Military tech"><div class="x500 motivasans-regular-normal-malibu-12px" data-id="505:8578">500</div></div></div></div><div class="hi-there motivasans-regular-normal-wild-sand-16px" data-id="505:8579">Hi there!</div></div></div><div class="frame-285-KxXJgm" data-id="505:8624"><div class="frame-238" data-id="505:8626"><div class="secondary-button-weKeDg secondary-button" data-id="505:8627"><div class="add-to-wishlist-nR13fK add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I505:8627;84:780">Prev</div></div><div class="frame-237" data-id="505:8628"><div class="secondary-button-EETICX secondary-button" data-id="505:8629"><div class="add-to-wishlist-xutIqc add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I505:8629;84:780">1</div></div><div class="secondary-button-1l5OnF secondary-button" data-id="505:8630"><div class="add-to-wishlist-8BJfo9 add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I505:8630;84:780">2</div></div><div class="secondary-button-G5JszE secondary-button" data-id="505:8631"><div class="add-to-wishlist-Wx6Wfq add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I505:8631;84:780">3</div></div><div class="secondary-button-oQeL3x secondary-button" data-id="505:8632"><div class="add-to-wishlist-lLk6wa add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I505:8632;84:780">4</div></div><div class="secondary-button-Wb211l secondary-button" data-id="505:8633"><div class="add-to-wishlist-bxBxIm add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I505:8633;84:780">5</div></div><div class="x valign-text-middle motivasans-regular-normal-slate-gray-16px-2" data-id="505:8634">...</div><div class="secondary-button-JyzsVe secondary-button" data-id="505:8635"><div class="add-to-wishlist-5MDxkx add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I505:8635;84:780">10</div></div></div><div class="secondary-button-l3ZMqx secondary-button" data-id="505:8636"><div class="add-to-wishlist-214QpS add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I505:8636;84:780">Next</div></div></div></div></div></div><a href="forum"><p class="discussions-steam-fo-Pt4fOi" data-id="505:8294" data-hotspot-id="hp-1"><span class="span0-xiyCyf motivasans-regular-normal-malibu-12px">Discussions</span><span class="span1-xiyCyf motivasans-regular-normal-slate-gray-12px-2"> &gt; </span><span class="span2-xiyCyf motivasans-regular-normal-malibu-12px">Steam Forums</span><span class="span3-xiyCyf motivasans-regular-normal-slate-gray-12px-2"> &gt; </span><span class="span4-xiyCyf motivasans-regular-normal-malibu-12px">New to Steam</span><span class="span5-xiyCyf motivasans-regular-normal-slate-gray-12px-2"> &gt; Topic Details</span></p></a><header class="header-Pt4fOi" data-id="504:8144"><div class="rectangle-67-Cio3gD" data-id="504:8145"></div><div class="frame-15-Cio3gD" data-id="504:8146"><article class="menu-oMrJdG menu" data-id="504:8147"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I504:8147;82:314">Home</div></article><article class="menu-AV17WP menu" data-id="504:8148"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I504:8148;82:341">Discussion</div></article><article class="menu-4OB0Pk menu" data-id="504:8149"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I504:8149;82:314">Workshop</div></article><article class="group-15-oMrJdG" data-id="504:8150"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I504:8150;82:314">Market</div></article><article class="group-18-oMrJdG" data-id="504:8151"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I504:8151;82:314">Broadcasts</div></article></div><div class="search-Cio3gD" data-id="504:8152"><div class="search-0hwaHO motivasans-regular-normal-kashmir-blue-14px" data-id="504:8153">Search...</div><div class="frame-262-0hwaHO" data-id="504:8154"><div class="frame-261-J8WBJQ" data-id="504:8155"><div class="discussions-xyU4Cf motivasans-regular-normal-kashmir-blue-14px" data-id="504:8156">Discussions</div><img class="keyboard-arrow-down" data-id="504:8157" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-4.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-4.svg" alt="Keyboard arrow down"></div><img class="search-J8WBJQ" data-id="504:8159" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/search-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/search-2.svg" alt="Search"></div></div></header><div class="client-Pt4fOi" data-id="799:9426"><div class="rectangle-68-p3ex23" data-id="I799:9426;333:2374"></div><div class="frame-11-p3ex23" data-id="I799:9426;333:2375"><div class="frame-2-dEx4N6" data-id="I799:9426;333:2381"><div class="frame-239-4xwzTw" data-id="I799:9426;475:5954"><div class="help-w8xVI1 motivasans-regular-normal-slate-gray-16px" data-id="I799:9426;475:4731">Help</div></div><div class="frame-240-4xwzTw frame-240" data-id="I799:9426;618:6950"><div class="view-yQlIQa motivasans-regular-normal-slate-gray-16px" data-id="I799:9426;618:6951">View</div><img class="keyboard-arrow-down" data-id="I799:9426;618:6952" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-5.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-5.svg" alt="Keyboard arrow down"></div><img class="minimize-4xwzTw" data-id="I799:9426;333:2384" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/minimize-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/minimize-2.svg" alt="Minimize"><img class="content-copy-4xwzTw" data-id="I799:9426;333:2387" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/content-copy-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/content-copy-2.svg" alt="Content copy"><img class="close-4xwzTw" data-id="I799:9426;333:2390" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/close-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/close-2.svg" alt="Close"></div></div><div class="frame-3-p3ex23" data-id="I799:9426;333:2404"><img class="group-J7Gl04" data-id="I799:9426;435:10471" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-5@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-5@2x.png" alt="Group"><div class="store-menu-J7Gl04 store-menu" data-id="I799:9426;333:2405"><div class="store-qlVXtN motivasans-bold-wild-sand-18px" data-id="I799:9426;333:2405;18:271">STORE</div></div><a href="community-home"><div class="store-menu-wtEgJ9 store-menu" data-id="I799:9426;333:2406" data-hotspot-id="hp-2"><div class="community-Lne2at motivasans-bold-malibu-18px" data-id="I799:9426;333:2406;18:782">COMMUNITY</div></div></a><div class="store-menu-Yx8KB7 store-menu" data-id="I799:9426;333:2407"><div class="juxtopposed-kpHrQw juxtopposed motivasans-bold-wild-sand-18px" data-id="I799:9426;333:2407;18:879">JUXTOPPOSED</div></div><div class="store-menu-HjG1ib store-menu" data-id="I799:9426;333:2408"><div class="library-qTyajr motivasans-bold-wild-sand-18px" data-id="I799:9426;333:2408;18:832">LIBRARY</div></div></div><div class="frame-233-p3ex23" data-id="I799:9426;460:23404"><a href="download"><div class="store-menu-waBueC store-menu" data-id="I799:9426;333:2409" data-hotspot-id="hp-3"><div class="downloads-yTiPcX motivasans-bold-wild-sand-18px" data-id="I799:9426;333:2410">DOWNLOADS</div></div></a></div><img class="view-list-p3ex23" data-id="I799:9426;333:2418" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/view-list@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/view-list@2x.png" alt="View list"><div class="frame-330-p3ex23" data-id="I799:9426;618:13985"><div class="friends-JcmpB3" data-id="I799:9426;447:7373"><div class="group-9-CmNSzt" data-id="I799:9426;447:7373;447:3840"><div class="rectangle-61-ncUO5M" data-id="I799:9426;447:7373;447:3841"></div><img class="people-ncUO5M" data-id="I799:9426;447:7373;447:3842" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/people-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/people-2.svg" alt="People"></div></div><div class="notifications-JcmpB3" data-id="I799:9426;850:10413"><div class="group-135-vTeOwX" data-id="I799:9426;850:10413;766:10295"><div class="group-8-jVByOx" data-id="I799:9426;850:10413;766:10296"><div class="rectangle-60-pKJ8Bm rectangle-60" data-id="I799:9426;850:10413;766:10297"></div><img class="notifications-pKJ8Bm" data-id="I799:9426;850:10413;766:10298" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/notifications-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/notifications-2.svg" alt="Notifications"></div></div><div class="group-12-vTeOwX" data-id="I799:9426;850:10413;766:10166"><div class="ellipse-2-6beKIG" data-id="I799:9426;850:10413;766:10167"></div><div class="x1-6beKIG motivasans-regular-normal-vulcan-12px" data-id="I799:9426;850:10413;766:10168">1</div></div></div><div class="component-2-JcmpB3" data-id="I799:9426;333:2393"><div class="group-7-2HKdD2" data-id="I799:9426;333:2393;18:1014"><div class="rectangle-60-Oiq3Fa rectangle-60" data-id="I799:9426;333:2393;18:1015"></div><div class="frame-1-Oiq3Fa" data-id="I799:9426;333:2393;18:1016"><img class="sprite-0003-1-urk5uC sprite-0003-1" data-id="I799:9426;333:2393;18:1017" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-7.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-7.svg" alt="Sprite-0003 1"><div class="juxtopposed-urk5uC juxtopposed motivasans-regular-normal-wild-sand-14px" data-id="I799:9426;333:2393;18:1018">Juxtopposed</div><div class="x525-urk5uC motivasans-regular-normal-slate-gray-14px" data-id="I799:9426;333:2393;18:1019">$5.25</div><img class="keyboard-arrow-down" data-id="I799:9426;333:2393;18:1020" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-6.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-6.svg" alt="Keyboard arrow down"></div></div></div></div><img class="frame-331-p3ex23" data-id="I799:9426;628:10825" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-331-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-331-2.svg" alt="Frame 331"></div></div></div><script src="launchpad-js/launchpad-banner.js" async=""></script><script defer="" src="https://animaapp.s3.amazonaws.com/static/restart-btn.min.js"></script><div id="t_preload_links"><link href="/game-community-hub-workshop" rel="prefetch"><link href="/game-community-hub-discussions" rel="prefetch"><link href="/library-home-detail-view-2" rel="prefetch"><link href="/forum" rel="prefetch"><link href="/library-home-grid-view-2" rel="prefetch"><link href="/library-home-ready-to-play-filter" rel="prefetch"><link href="/library-home-recent-filter" rel="prefetch"><link href="/library-home-grid-view-1" rel="prefetch"><link href="/library-home-filters" rel="prefetch"><link href="/games" rel="prefetch"><link href="/library-collections" rel="prefetch"><link href="/screenshots" rel="prefetch"><link href="/market" rel="prefetch"><link href="/profile-settings" rel="prefetch"><link href="/workshop" rel="prefetch"><link href="/discussions" rel="prefetch"><link href="/profile" rel="prefetch"><link href="/game-community-hub" rel="prefetch"><link href="/library-home-detail-view-1" rel="prefetch"><link href="/wishlist" rel="prefetch"><link href="/download" rel="prefetch"><link href="/discover" rel="prefetch"><link href="/point-shop" rel="prefetch"><link href="/library-home" rel="prefetch"><link href="/community-home" rel="prefetch"><link href="/game-community-hub-workshop-2" rel="prefetch"><link href="/store-page" rel="prefetch"><link href="/browse" rel="prefetch"><link href="/client-store-2" rel="prefetch"><link href="/discussion" rel="prefetch"><link href="/settings" rel="prefetch"></div><div id="anima-interface" data-turbo-permanent="true" class="idle"><!---->
+        <div id="anima-comment-popover" class="popover top" role="tooltip" style="left: -205px; top: -220px;">
+          <div class="arrow" style="margin-left: 128px;"></div>
+          <div class="popover-content" style="align-items:center">
+            <div style="display:flex;flex-direction:column;height: 100%;padding: 20px;">
+              <h3 style="font-size:18px;margin-bottom:10px;font-weight:500;line-height: 26px;font-family: Roslindale;">
+                Leave feedback and collaborate
+              </h3>
+              <p style="font-size:12px;margin-bottom:20px;font-weight:400;line-height: 20px;">
+                Login to your account to leave comments. Don't have an account?
+                Sign up for free!
+              </p>
+              <a target="_blank" rel="noopener noreferrer" class="btn" href="https://projects.animaapp.com/p/undefined/s/undefined?mode=comments&amp;utm_campaign=add-comment&amp;utm_medium=add-comment&amp;utm_source=animaapp.io">Add comment</a>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:center;padding-right:20px">
+              <img src="https://animaapp.s3.amazonaws.com/static/comment-illustration.svg">
+            </div>
+          </div>
+        </div>
+        <div id="anima-code-popover" class="popover top" role="tooltip" style="left: -205px; top: -220px;">
+          <div class="arrow" style="margin-left: 168px;"></div>
+          <div class="popover-content" style="align-items:center">
+            <div style="display:flex;flex-direction:column;height: 100%;padding: 20px;">
+              <h3 style="font-size:18px;margin-bottom:10px;font-weight:500;line-height: 26px;font-family: Roslindale;">
+                Get clean code you’ll love with Anima
+              </h3>
+              <p style="font-size:12px;margin-bottom:20px;font-weight:400;line-height: 20px;">
+                Login and easily export HTML, React or Vue of this prototype.
+                Don’t have an account? Sign up for free!
+              </p>
+              <a target="_blank" rel="noopener noreferrer" class="btn" href="https://projects.animaapp.com/p/undefined/s/undefined?mode=code&amp;utm_campaign=get-code&amp;utm_medium=get-code&amp;utm_source=animaapp.io">
+                Get code
+              </a>
+            </div>
+
+            <img src="https://animaapp.s3.amazonaws.com/static/code-illustration.svg">
+          </div>
+        </div>
+        <div class="omniview-anima-action-links" id="actions-wrap">
+          <div class="omniview-anima-action-links">
+            <div id="page-nav" class="link navigation" style="display: none;">
+              <svg id="homepage-icon" class="home-icon" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.151 11a.25.25 0 01-.167-.436l4.349-3.913a.25.25 0 01.334 0l4.349 3.913a.25.25 0 01-.167.436H8.15zM16 12H9v4a1 1 0 001 1h5a1 1 0 001-1v-4z" fill="#fff"></path>
+              </svg>
+
+              <svg class="icon" id="arrow-left" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18l-6-6 6-6" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+
+              <span id="page-num"></span>
+
+              <svg class="icon" id="arrow-right" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+
+            <a class="link" id="comment-link" target="_blank" style="display: none;">
+              <span class="text">Comment</span>
+              <svg width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M4.301 15.137a.551.551 0 01.199-.55c.314-.23.554-.554.718-.965A6.015 6.015 0 014 10 6.006 6.006 0   0110.001 4 6.006 6.006 0 0116 10.001 6.006 6.006 0 019.999 16a5.98 5.98 0 01-3.095-.86 3.165 3.165 0 01-1.65.438 3.6  3.6 0 01-.57-.044c-.191-.03-.34-.186-.383-.397z" fill="#fff"></path>
+              </svg>
+            </a>
+
+            <a class="link" id="code-link" target="_blank" style="display: none;">
+              <span class="text">Get Code</span>
+              <svg width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 15.667a1 1 0 01-.707-1.708l3.626-3.625-3.626-3.626a1 1 0 111.415-1.415l4.333 4.333a1 1 0 010 1.414l-4.333 4.333a.993.993 0 01-.707.294zM7.333 5a1 1 0 01.707 1.708l-3.626 3.625 3.627 3.626a1 1 0 11-1.415 1.415L2.293 11.04a1 1 0 010-1.415l4.333-4.333A.992.992 0 017.333 5z" fill="#fff"></path>
+              </svg>
+            </a>
+
+            <div class="restart" id="restart-btn" style="display: none;">
+              <svg style="margin-right: 6px" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 11.817A5.017 5.017 0 01.994 6.811c0-.207.169-.375.375-.375s.375.168.375.375A4.265 4.265 0 006 11.067a4.265 4.265 0 004.256-4.256A4.265 4.265 0 006 2.555a.376.376 0 01-.375-.376c0-.206.169-.374.375-.374a5.017 5.017 0 015.006 5.006A5.017 5.017 0 016 11.817z" fill="#fff"></path>
+                <path d="M6.75 4.237a.37.37 0 01-.263-.112l-1.65-1.65a.363.363 0 010-.525L6.487.3c.15-.15.375-.15.525 0 .15.15.15.375 0 .525L5.625 2.212 7.012 3.6c.15.15.15.375 0 .525-.056.075-.15.112-.262.112z" fill="#fff"></path>
+              </svg>
+              Restart
+            </div>
+          </div>
+        </div>
+      <!----></div><div id="anima-watermark" style="display: none;" class="idle"><!----><a id="anima-watermark-link" target="_blank" href="https://www.animaapp.com?utm_campaign=public-link-banner&amp;utm_medium=public-link-banner&amp;utm_source=animaapp.io" style="right: 20px; left: auto; padding: 6px;">
+        <svg width="20" height="20" viewBox="0 0 20 20" id="anima-logo-icon" fill="none" xmlns="http://www.w3.org/2000/svg" data-hotspot-id="hp-4">
+          <path d="M4.09293 3.00001H16.5327C16.5484 2.99976 16.5638 3.00351 16.5776 3.01092C16.5913 3.01832 16.603 3.02913 16.6114 3.04231C16.6198 3.0555 16.6247 3.07061 16.6256 3.08622C16.6265 3.10182 16.6233 3.1174 16.6165 3.13146C15.5441 5.29706 13.9276 7.14699 11.9253 8.50009C8.69117 10.6822 5.43436 10.9075 4.09389 10.9196C4.08165 10.9198 4.06949 10.9176 4.05811 10.9131C4.04672 10.9086 4.03636 10.9019 4.02761 10.8933C4.01887 10.8848 4.01192 10.8745 4.00718 10.8633C4.00244 10.852 4 10.8399 4 10.8276V3.09198C4 3.07982 4.00241 3.06778 4.00709 3.05656C4.01177 3.04534 4.01863 3.03516 4.02728 3.02661C4.03592 3.01805 4.04617 3.0113 4.05744 3.00673C4.06871 3.00217 4.08077 2.99988 4.09293 3.00001Z" fill="#FF6250"></path>
+          <path d="M6.77772 17.4446C8.31182 17.4446 9.55545 16.201 9.55545 14.6669C9.55545 13.1328 8.31182 11.8892 6.77772 11.8892C5.24363 11.8892 4 13.1328 4 14.6669C4 16.201 5.24363 17.4446 6.77772 17.4446Z" fill="#FFDF90"></path>
+          <path d="M12.4559 17.2799C11.6701 16.9799 11.2522 16.1151 11.5185 15.3496L13.6153 9.3656C13.884 8.60003 14.7387 8.22302 15.5245 8.52299C16.3103 8.82344 16.7282 9.68772 16.4619 10.4538L14.365 16.4377C14.0964 17.2033 13.2417 17.5808 12.4559 17.2799Z" fill="#3366FF"></path>
+        </svg>
+        <span class="text" style="display: none;">Made with Anima</span>
+      </a><!----></div><div id="hotspots_wrapper"><div class="hotspot" id="hp-0" style="width: 70px; height: 20px; top: 306.25px; left: 565px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-1" style="width: 336px; height: 15px; top: 159px; left: 178px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-2" style="width: 114px; height: 22px; top: 18px; left: 374px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-3" style="width: 118px; height: 22px; top: 18px; left: 894px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-4" style="top: 0px; left: 0px; z-index: -1; opacity: 0;"></div></div></body></html>

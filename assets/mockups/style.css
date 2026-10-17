@@ -1,0 +1,426 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --accent-orange: #ff5722;
+    --accent-glow: rgba(255, 87, 34, 0.4);
+    
+    /* Premium Glassmorphism Colors */
+    --bg-panel-dark: rgba(20, 22, 26, 0.75);
+    --bg-panel-light: rgba(40, 44, 52, 0.6);
+    --bg-dock: rgba(15, 17, 20, 0.85);
+    
+    --text-main: #ffffff;
+    --text-muted: #a3a8b3;
+    --text-dim: #6c727f;
+    
+    --border-glass: rgba(255, 255, 255, 0.08);
+    --border-glass-highlight: rgba(255, 255, 255, 0.15);
+    
+    --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    
+    /* High-end stacked shadows */
+    --shadow-soft: 0 4px 24px -2px rgba(0,0,0,0.4);
+    --shadow-deep: 0 20px 40px -8px rgba(0,0,0,0.8), 0 0 0 1px rgba(0,0,0,0.2);
+    --shadow-glow: 0 8px 32px var(--accent-glow);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #050608;
+    color: var(--text-main);
+    font-family: var(--font-main);
+    overflow: hidden; 
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* 4K Cinematic Background */
+.bp-background {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 0;
+}
+
+.bp-background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.05); /* Prevent blur bleed */
+    animation: slowZoom 30s infinite alternate linear;
+}
+
+@keyframes slowZoom {
+    0% { transform: scale(1.02); }
+    100% { transform: scale(1.08); }
+}
+
+.bp-vignette {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    /* Premium rich vignette */
+    background: radial-gradient(circle at 50% 20%, transparent 20%, rgba(5,6,8,0.7) 80%),
+                linear-gradient(180deg, rgba(5,6,8,0.2) 0%, rgba(5,6,8,0.95) 90%);
+}
+
+/* UI Overlay */
+.bp-ui-layer {
+    position: relative;
+    z-index: 10;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top Bar (Ultra Premium) */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 48px 80px;
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--border-glass-highlight);
+    box-shadow: var(--shadow-soft);
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.username {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.wallet {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+.coin { color: var(--accent-orange); font-size: 14px;}
+
+.main-nav {
+    display: flex;
+    background: var(--bg-panel-dark);
+    backdrop-filter: blur(40px) saturate(150%);
+    -webkit-backdrop-filter: blur(40px) saturate(150%);
+    border-radius: 100px;
+    padding: 6px;
+    border: 1px solid var(--border-glass);
+    box-shadow: var(--shadow-soft);
+}
+
+.main-nav a {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 32px;
+    border-radius: 100px;
+    color: var(--text-muted);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    letter-spacing: 0.5px;
+}
+
+.main-nav a.active, .main-nav a:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+.system-status {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+/* Main Stage */
+.main-stage {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Push to bottom like Xbox */
+    padding-bottom: 24px;
+}
+
+.game-row-container {
+    padding-left: 80px;
+    width: 100vw;
+    overflow: visible;
+}
+
+.game-row {
+    display: flex;
+    gap: 24px;
+    padding: 40px 0;
+}
+
+/* Premium Game Card */
+.game-card {
+    position: relative;
+    flex: 0 0 180px;
+    height: 180px;
+    border-radius: 20px;
+    background: #111;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: var(--shadow-soft);
+}
+
+.game-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1); /* Subtle inner glass border */
+    pointer-events: none;
+    transition: all 0.4s;
+}
+
+.game-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+    transition: filter 0.4s;
+}
+
+.card-border {
+    position: absolute;
+    top: -4px; left: -4px; right: -4px; bottom: -4px;
+    border: 3px solid var(--accent-orange);
+    border-radius: 24px;
+    opacity: 0;
+    transition: all 0.4s;
+    pointer-events: none;
+    box-shadow: inset 0 0 20px var(--accent-glow), 0 0 20px var(--accent-glow);
+}
+
+.game-card.active, .game-card:hover {
+    transform: scale(1.15) translateY(-12px);
+    z-index: 20;
+    box-shadow: var(--shadow-deep);
+}
+
+.game-card.active .card-border {
+    opacity: 1;
+}
+.game-card.active::after {
+    border-color: transparent;
+}
+
+/* Active Game Info (Ultra Clean) */
+.active-game-info {
+    padding: 0 80px 40px 80px;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+.game-title {
+    font-size: 48px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 24px;
+    text-shadow: 0 8px 24px rgba(0,0,0,0.8);
+}
+
+.game-stats-grid {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stat .label {
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.stat .value {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+}
+
+.stat.achievement-hunt .value {
+    font-size: 16px;
+}
+
+.action-stat {
+    margin-left: 20px;
+}
+
+.btn-purchase {
+    background: var(--accent-orange);
+    color: #fff;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 100px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.2);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-purchase:hover { 
+    background: #ff784e; 
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+/* Floating Panels (Steam Overlay Style - High Quality) */
+.floating-panel {
+    position: absolute;
+    right: 80px;
+    top: 140px;
+    width: 320px;
+    background: var(--bg-panel-dark);
+    backdrop-filter: blur(40px) saturate(150%);
+    -webkit-backdrop-filter: blur(40px) saturate(150%);
+    border: 1px solid var(--border-glass);
+    border-radius: 16px;
+    box-shadow: var(--shadow-deep);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.floating-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+}
+
+.panel-header {
+    background: rgba(0,0,0,0.3);
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border-glass);
+}
+
+.close-btn {
+    background: none; border: none; color: var(--text-dim); font-size: 20px; cursor: pointer; transition: color 0.2s;
+}
+.close-btn:hover { color: #fff; }
+
+.panel-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.friend-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.friend-item img {
+    border-radius: 50%;
+    width: 36px; height: 36px;
+    border: 2px solid transparent;
+}
+.friend-item img.in-game { border-color: var(--accent-orange); }
+.friend-item img.online { border-color: #4caf50; }
+
+.f-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.f-name { font-size: 14px; font-weight: 600; letter-spacing: 0.2px; }
+.f-status { font-size: 12px; color: var(--accent-orange); font-weight: 500; }
+.f-status.online { color: #4caf50; }
+
+/* Bottom Dock (Ultra Premium) */
+.bottom-dock {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 40px;
+}
+
+.dock-container {
+    background: var(--bg-dock);
+    backdrop-filter: blur(40px) saturate(150%);
+    -webkit-backdrop-filter: blur(40px) saturate(150%);
+    border: 1px solid var(--border-glass);
+    border-radius: 100px;
+    padding: 10px 20px;
+    display: flex;
+    gap: 16px;
+    box-shadow: var(--shadow-deep);
+}
+
+.dock-btn {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dock-btn:hover {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    transform: translateY(-4px);
+    border-color: var(--border-glass-highlight);
+    box-shadow: var(--shadow-soft);
+}
+
+.dock-btn.active {
+    background: var(--accent-orange);
+    color: #fff;
+    box-shadow: 0 8px 24px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.3);
+}

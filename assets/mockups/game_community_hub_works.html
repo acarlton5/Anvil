@@ -1,0 +1,4021 @@
+<html><head><style type="text/css">.turbo-progress-bar {
+  position: fixed;
+  display: block;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: #0076ff;
+  z-index: 9999;
+  transition:
+    width 300ms ease-out,
+    opacity 150ms 150ms ease-in;
+  transform: translate3d(0, 0, 0);
+}
+</style><style id="st_globalStyles">
+/* MEDIA QUERIES */
+.anima-desktop-only {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+/* SCROLLBAR */
+
+[dark-scroll]::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+[dark-scroll]::-webkit-scrollbar-track-piece {
+  background-color: #2b2b2b;
+  border: 1px solid #1d1d1d;
+}
+
+[dark-scroll]::-webkit-scrollbar-thumb {
+  height: 10px;
+  background-color: #4d4d4d;
+}
+[dark-scroll]::-webkit-scrollbar-thumb:hover {
+  background-color: #5a5a5a;
+}
+
+/* LOAD PROGRESS */
+
+.turbolinks-progress-bar {
+  height: 3px;
+  background-color: #ff6250;
+}
+
+/* GROUPING */
+
+[data-id].ui-selecting {
+  box-shadow: inset 0 0 0 1px #4285f4 !important;
+}
+[data-id].ui-selected {
+  box-shadow: inset 0 0 0 1px #4285f4 !important;
+}
+
+/* CURSOR */
+
+body[mode='comments'] * {
+  cursor: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkxNjQ4IDIzLjQxMDlDNS40OTE1MyAyMi45ODg3IDUuOTMxNzkgMjIuMzkzNSA2LjIzMjggMjEuNjQwN0M0Ljc5MDY5IDE5LjczODMgNCAxNy4zOTMzIDQgMTQuOTk3NUM0IDguOTM0MSA4LjkzMjgyIDQgMTUuMDAyMiA0QzIxLjA3MTcgNCAyNiA4LjkzOTE5IDI2IDE1LjAwMjVDMjYgMjEuMDY1OSAyMS4wNjcyIDI2IDE0Ljk5NzggMjZDMTIuOTg5NiAyNiAxMS4wMzUzIDI1LjQ1NTcgOS4zMjM2NyAyNC40MjMxQzguNDI5NjUgMjQuOTU3MiA3LjQxNDM0IDI1LjIyNjggNi4zMDAxOCAyNS4yMjY4QzUuOTU0MjYgMjUuMjI2OCA1LjU5OTM1IDI1LjIwMTQgNS4yNTM0MiAyNS4xNDU0QzQuOTAzIDI1LjA4OTUgNC42Mjg5NiAyNC44MDQ2IDQuNTUyNTggMjQuNDE4QzQuNDc2MjEgMjQuMDI2NCA0LjYxOTk3IDIzLjYyOTYgNC45MTY0OCAyMy40MTA5WiIgZmlsbD0iI0ZGNjI1MCIvPgo8L3N2Zz4K')
+      0 24,
+    auto !important;
+}
+
+body[mode='code'] [data-id]:not(.hidden) {
+  cursor: default;
+}
+
+/* default node state */
+
+body[mode='code'] [data-id]:not(.hidden), body[mode='comments'] [data-id]:not(.hidden) {
+  pointer-events: all;
+}
+
+/* is_image */
+
+body[mode='code'] [data-id].is_image [data-id], body[mode='comments'] [data-id].is_image [data-id] {
+  pointer-events: none !important;
+}
+
+/* without a data-id or ignored */
+
+[data-id].ignore,body[mode='code'] *:not([data-id]) {
+  pointer-events: none !important;
+}
+/* disable transforms for ignored elements */
+
+
+body[mode='code'] [data-id]:hover{
+  transform: none !important;
+}
+
+/* ANIMA BUTTONS */
+.an-button {
+  position: relative;
+  height: 28px;
+  padding: 0 20px;
+  font-size: 14px;
+  border-radius: 4px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  transition-property: all;
+  transition-duration: 100ms;
+  appearance: none;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  border-width: 0;
+}
+
+.an-button > div {
+  width: 100%;
+}
+
+.an-button.primary {
+  background: #ff6250;
+  color: #ffffff;
+}
+
+.an-button.primary:hover:not(:disabled) {
+  background: #e2412e;
+}
+
+.an-button.secondary {
+  background: transparent;
+  border: 1px solid #ff6250;
+  color: #ff6250;
+}
+
+.an-button.secondary:hover:not(:disabled) {
+  color: #ffffff;
+  background: #ff6250;
+}
+
+.an-button.rounded {
+  border-radius: 100px;
+}
+
+.an-button:disabled {
+  opacity: 0.5;
+}
+
+.an-button:disabled {
+  cursor: default;
+}
+
+.an-button:active,
+.an-button:focus {
+  outline: none;
+}
+
+</style><meta charset="utf-8"><meta name="viewport" content="width=1920, maximum-scale=1.0"><link rel="shortcut icon" type="image/png" href="https://animaproject.s3.amazonaws.com/home/favicon.png"><meta name="og:type" content="website"><meta name="twitter:card" content="photo"><script id="anima-load-script" src="load.js"></script><script id="anima-hotspots-script" src="hotspots.js"></script><style id="hotspots-styles">
+    .hotspot {
+      position: absolute;
+      border: 1px solid #2a9fd8;
+      background: rgba(0, 173, 255, 0.54);
+      opacity: 0;
+      z-index: -1;
+      pointer-events:none;
+    }
+  </style><script id="s_turbo" src="https://animaapp.s3.amazonaws.com/static/turbo.es2017-umd.js"></script><script id="anima-overrides-script" src="overrides.js"></script><script src="https://animaapp.s3.amazonaws.com/js/timeline.js"></script><style>
+@import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
+
+@font-face {
+  font-family: "Motiva Sans-Bold";
+  font-style: normal;
+  font-weight: 700;
+  src: url('https://anima-uploads.s3.amazonaws.com/5c53487020495e000abca926/.35959.otf') format("opentype");
+}
+
+@font-face {
+  font-family: "Motiva Sans-Regular";
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://anima-uploads.s3.amazonaws.com/5c53487020495e000abca926/.35967.otf') format("opentype");
+}
+/* The following line is used to measure usage of this code. You can remove it if you want. */
+@import url("https://px.animaapp.com/65ae977d4ea7e6982e9805db.65ae977e4ea7e6982e9805de.XJaxSnm.hch.png");
+
+
+.screen textarea:focus,
+.screen input:focus {
+  outline: none;
+}
+
+.screen * {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+
+.screen div {
+  -webkit-text-size-adjust: none;
+}
+
+.component-wrapper a {
+  display: contents;
+  pointer-events: auto;
+  text-decoration: none;
+}
+
+.component-wrapper * {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.component-wrapper a *,
+.component-wrapper input,
+.component-wrapper video,
+.component-wrapper iframe {
+  pointer-events: auto;
+}
+
+.component-wrapper.not-ready,
+.component-wrapper.not-ready * {
+  visibility: hidden !important;
+}
+
+.screen a {
+  display: contents;
+  text-decoration: none;
+}
+
+.full-width-a {
+  width: 100%;
+}
+
+.full-height-a {
+  height: 100%;
+}
+
+.container-center-vertical {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  pointer-events: none;
+}
+
+.container-center-vertical > * {
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
+.container-center-horizontal {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  pointer-events: none;
+  width: 100%;
+}
+
+.container-center-horizontal > * {
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
+.auto-animated div {
+  --z-index: -1;
+  opacity: 0;
+  position: absolute;
+}
+
+.auto-animated input {
+  --z-index: -1;
+  opacity: 0;
+  position: absolute;
+}
+
+.auto-animated .container-center-vertical,
+.auto-animated .container-center-horizontal {
+  opacity: 1;
+}
+
+.overlay-base {
+  display: none;
+  height: 100%;
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.overlay-base.animate-appear {
+  align-items: center;
+  animation: reveal 0.3s ease-in-out 1 normal forwards;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0;
+}
+
+.overlay-base.animate-disappear {
+  animation: reveal 0.3s ease-in-out 1 reverse forwards;
+  display: block;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.overlay-base.animate-disappear * {
+  pointer-events: none;
+}
+
+@keyframes reveal {
+  from { opacity: 0 }
+ to { opacity: 1 }
+}
+
+.animate-nodelay {
+  animation-delay: 0s;
+}
+
+.align-self-flex-start {
+  align-self: flex-start;
+}
+
+.align-self-flex-end {
+  align-self: flex-end;
+}
+
+.align-self-flex-center {
+  align-self: flex-center;
+}
+
+.valign-text-middle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.valign-text-bottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+input:focus {
+  outline: none;
+}
+
+.listeners-active,
+.listeners-active * {
+  pointer-events: auto;
+}
+
+.hidden,
+.hidden * {
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.smart-layers-pointers,
+.smart-layers-pointers * {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.listeners-active-click,
+.listeners-active-click * {
+  cursor: pointer;
+}
+
+* {
+  box-sizing: border-box;
+}
+:root { 
+  --accentgreen: #a1cd44;
+  --accentred: #cd5444;
+  --accentyellow: #c0b05e;
+  --alto: #d9d9d903;
+  --backgroundhighlight: #1e2329;
+  --backgroundhover: #313843;
+  --backgroundmain: #0e141b;
+  --backgroundmain20: #0e141b33;
+  --backgroundmain50: #0e141b80;
+  --backgroundtertiary: #212b45;
+  --big-stone: #212b4533;
+  --black: #000000;
+  --colorprimary: #66c0f4;
+  --colorsecondary: #4b619b;
+  --emerald: #54c358;
+  --fuchsia-blue: #7054c3;
+  --fuchsia-pink: #c054c3;
+  --fuzzy-wuzzy-brown: #c35454;
+  --shark: #1e232905;
+  --shark-2: #1e232963;
+  --shark-3: #1e232940;
+  --shark-4: #1e232966;
+  --shark-5: #1e2329d1;
+  --slate-gray: #75808ccc;
+  --slate-gray-2: #75808c0d;
+  --slate-gray-3: #75808c1a;
+  --slate-gray-4: #75808c33;
+  --slate-gray-5: #76808c;
+  --textdim: #75808c;
+  --textmain: #f3f3f3;
+  --tuna: #31384380;
+  --tuna-2: #31384359;
+  --turmeric: #c3be54;
+  --white: #ffffff;
+  --white-2: #ffffff1a;
+  --wild-sand: #f3f3f380;
+ 
+  --font-size-l: 18px;
+  --font-size-m: 16px;
+  --font-size-s: 14px;
+  --font-size-xl: 19px;
+  --font-size-xs: 12px;
+  --font-size-xxl: 22px;
+  --font-size-xxxl: 26px;
+ 
+  --font-family-motiva_sans-bold: "Motiva Sans-Bold", Helvetica;
+  --font-family-motiva_sans-regular: "Motiva Sans-Regular", Helvetica;
+}
+.motivasans-regular-normal-wild-sand-16px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-14px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-wild-sand-14px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-16px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-12px {
+  color: var(--slate-gray);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-wild-sand-18px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-wild-sand-12px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-12px-2 {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-malibu-12px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-malibu-16px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-kashmir-blue-14px {
+  color: var(--colorsecondary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-wild-sand-22px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-malibu-18px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-vulcan-12px {
+  color: var(--backgroundmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-vulcan-18px {
+  color: var(--backgroundmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-wild-sand-26px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-malibu-14px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-white-12px {
+  color: var(--white);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-white-14px {
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-vulcan-19px {
+  color: var(--backgroundmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-tuna-18px {
+  color: var(--backgroundhover);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-jasper-12px {
+  color: var(--accentred);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-atlantis-18px {
+  color: var(--accentgreen);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-slate-gray-22px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-white-16px {
+  color: var(--white);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-14px-2 {
+  color: var(--slate-gray-5);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-slate-gray-18px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-slate-gray-16px-2 {
+  color: var(--slate-gray-5);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-white-16px-2 {
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-wild-sand-16px-2 {
+  color: var(--wild-sand);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-jasper-14px {
+  color: var(--accentred);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-wild-sand-16px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-jasper-16px {
+  color: var(--accentred);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-atlantis-16px {
+  color: var(--accentgreen);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-wild-sand-20-2px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: 20.2px;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-sundance-16px {
+  color: var(--accentyellow);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-sundance-12px {
+  color: var(--accentyellow);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-white-22px {
+  color: var(--white);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+:root {
+}
+
+
+.group-97 {
+  background-color: transparent;
+  height: 47px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 47px;
+}
+
+.info-outline {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.juxtopposed {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+}
+
+.rectangle-60 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.store-menu {
+  background-color: transparent;
+  height: 22px;
+  position: relative;
+}
+
+.arrow-forward-ios {
+  background-color: transparent;
+  position: relative;
+}
+
+.home {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.image-122 {
+  background-color: transparent;
+  height: 233px;
+  left: 0px;
+  object-fit: cover;
+  position: absolute;
+  top: 0px;
+  width: 240px;
+}
+
+.image-123 {
+  background-color: transparent;
+  height: 233px;
+  left: 0px;
+  object-fit: cover;
+  position: absolute;
+  top: 0px;
+  width: 240px;
+}
+
+.rectangle-115 {
+  -webkit-backdrop-filter: blur(2px) brightness(100%);
+  backdrop-filter: blur(2px) brightness(100%);
+  background-color: var(--alto);
+  border-radius: 5px;
+  height: 233px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 240px;
+}
+
+.rectangle-79 {
+  background-color: var(--colorsecondary);
+  border-radius: 40px;
+  height: 8px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.search {
+  background-color: transparent;
+  position: absolute;
+}
+
+.x2309 {
+  background-color: transparent;
+  height: auto;
+  left: 85px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 22px;
+  width: auto;
+}
+
+.frame-161 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 15px;
+  height: 20px;
+  padding: 3px 0px;
+  position: relative;
+}
+
+.image-191 {
+  background-color: transparent;
+  height: 25px;
+  margin-bottom: -11.00px;
+  margin-top: -11.00px;
+  object-fit: cover;
+  position: relative;
+  width: 25px;
+}
+
+.sprite-0003-1 {
+  background-color: transparent;
+  position: relative;
+}
+
+.x374 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x5 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.award {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.frame-162 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  height: 49px;
+  justify-content: space-between;
+  padding: 3px 0px;
+  position: relative;
+  width: 639px;
+}
+
+.frame-30 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 3px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.frame-31 {
+  align-items: center;
+  background-color: transparent;
+  display: flex;
+  gap: 3px;
+  justify-content: flex-end;
+  left: 106px;
+  position: absolute;
+  top: 0px;
+  width: 32px;
+}
+
+.frame-32 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  gap: 2px;
+  left: 0px;
+  position: absolute;
+  top: 19px;
+  width: 138px;
+}
+
+.funny {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.group-100 {
+  background-color: transparent;
+  height: 72px;
+  margin-right: -2.00px;
+  position: relative;
+  width: 74px;
+}
+
+.image-137 {
+  background-color: transparent;
+  height: 16px;
+  object-fit: cover;
+  position: relative;
+  width: 17px;
+}
+
+.insert-emoticon {
+  background-color: transparent;
+  height: 18px;
+  margin-bottom: -7.50px;
+  margin-top: -7.50px;
+  position: relative;
+  width: 18px;
+}
+
+.no {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.posted-on-12-sep-2023 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.recommended {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.rectangle-120 {
+  background-color: transparent;
+  height: 72px;
+  object-fit: cover;
+  position: relative;
+  width: 72px;
+}
+
+.rectangle-123 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  height: 72px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 72px;
+}
+
+.rectangle-88 {
+  background-color: var(--accentred);
+  border-radius: 2px;
+  flex: 1;
+  flex-grow: 1;
+  height: 4px;
+  opacity: 0.8;
+  position: relative;
+}
+
+.share {
+  background-color: transparent;
+  position: relative;
+}
+
+.was-this-review-helpful {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 9px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.x21302-hrs-on-record {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x3-reviews {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -0.50px;
+  margin-top: -2.50px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x6 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x90 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.yes {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.view-list {
+  background-color: transparent;
+  position: absolute;
+}
+
+.community {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+}
+
+.frame-214 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 9px;
+  position: relative;
+}
+
+.offline {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.frame-34 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 5px;
+  position: relative;
+}
+
+.drag-handle {
+  background-color: transparent;
+  height: 24px;
+  position: relative;
+  width: 24px;
+}
+
+.ellipse-3 {
+  background-color: transparent;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.frame-180 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  position: relative;
+}
+
+.frame-199 {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.frame-200 {
+  flex: 0 0 auto;
+  justify-content: space-between;
+  position: relative;
+}
+
+.frame-201 {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.frame-202 {
+  align-items: center;
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.group-123 {
+  background-color: transparent;
+  height: 30px;
+  margin-right: -2.00px;
+  position: relative;
+  width: 32px;
+}
+
+.group-125 {
+  background-color: transparent;
+  position: relative;
+}
+
+.image-141 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-142 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-143 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-144 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-146 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-147 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 2px;
+  height: 30px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 30px;
+}
+
+.profile-sections {
+  background-color: transparent;
+  position: relative;
+}
+
+.x32 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+}
+
+.construction {
+  background-color: transparent;
+  height: 40px;
+  position: relative;
+  width: 40px;
+}
+
+.frame-136 {
+  display: flex;
+  position: relative;
+}
+
+.frame-221 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  width: 100%;
+}
+
+.frame-311 {
+  align-items: flex-start;
+  align-self: stretch;
+  border-bottom-style: none;
+  border-left-style: solid;
+  border-left-width: 5px;
+  border-radius: 5px;
+  border-right-style: none;
+  border-top-style: none;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 7px;
+  padding: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.frame-407 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 10px;
+  position: relative;
+}
+
+.frame-51 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.icon-select {
+  background-color: transparent;
+  height: 40px;
+  position: relative;
+  width: 40px;
+}
+
+.people {
+  background-color: transparent;
+  position: absolute;
+  top: 6px;
+}
+
+.vector-5 {
+  align-self: stretch;
+  background-color: transparent;
+  height: 1px;
+  margin-bottom: -0.50px;
+  object-fit: cover;
+  position: relative;
+  width: 100%;
+}
+
+.disk-size {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.filter-list {
+  background-color: transparent;
+  height: 24px;
+  left: 1px;
+  position: absolute;
+  top: 1px;
+  width: 24px;
+}
+
+.frame-52 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 536px;
+  position: absolute;
+  top: 65px;
+}
+
+.frame-53 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 691px;
+  position: absolute;
+  top: 65px;
+}
+
+.frame-65 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.frame-85 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  left: 13px;
+  position: absolute;
+  width: 326px;
+}
+
+.frame-86 {
+  align-items: flex-start;
+  background-color: var(--shark-4);
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  left: 1px;
+  padding: 9px 12px;
+  position: absolute;
+  top: 0px;
+  width: 350px;
+}
+
+.frame-92 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 1007px;
+  position: absolute;
+  top: 65px;
+}
+
+.group-59 {
+  background-color: transparent;
+  height: 44px;
+  left: 826px;
+  position: absolute;
+  top: 65px;
+  width: 159px;
+}
+
+.group-61 {
+  background-color: transparent;
+  height: 126px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 1458px;
+}
+
+.image-94 {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.insert-drive-file {
+  background-color: transparent;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.last-played {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.play-time {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.rectangle-104 {
+  background-color: var(--shark-3);
+  border-radius: 5px;
+  height: 126px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1456px;
+}
+
+.x2065 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x50-gb {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.frame-292 {
+  background-color: transparent;
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.frame-269 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 13px;
+  justify-content: center;
+  position: relative;
+}
+
+.game-card {
+  background-color: transparent;
+  border-radius: 5px;
+  height: 282px;
+  overflow: hidden;
+  position: relative;
+  width: 191px;
+}
+
+.group-58 {
+  background-color: transparent;
+  height: 74px;
+  left: 0px;
+  position: absolute;
+  top: 290px;
+  width: 191px;
+}
+
+.rectangle-97 {
+  -webkit-backdrop-filter: blur(20px) brightness(100%);
+  backdrop-filter: blur(20px) brightness(100%);
+  background-color: var(--shark);
+  border-radius: 0px 0px 3px 3px;
+  height: 74px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 191px;
+}
+
+.text {
+  background-color: transparent;
+  height: 19px;
+  left: 9px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -22px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.cool-user {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.hi-newcomers {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x11-mins-ago {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x150000 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  width: fit-content;
+}
+
+.x2500700 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -7.00px;
+  margin-top: -9.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x5546 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -7.00px;
+  margin-top: -9.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+/* screen - game-community-hub-workshop */
+
+.game-community-hub-workshop {
+  background-color: var(--backgroundhighlight);
+  height: 2096px;
+  overflow: hidden;
+  overflow-x: hidden;
+  position: relative;
+  width: 1920px;
+}
+
+.game-community-hub-workshop .rectangle-89-besIZR {
+  background: radial-gradient(50% 50% at 50% 50%, rgba(14.000000115484, 20.000000707805157, 27.000000290572643, 0.800000011920929) 0%, rgba(33.00000183284283, 43.00000123679638, 69.00000348687172, 0.800000011920929) 100%);
+  background-color: transparent;
+  height: 2096px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.game-community-hub-workshop .image-52-besIZR {
+  background-color: transparent;
+  height: 927px;
+  left: 0px;
+  mix-blend-mode: lighten;
+  object-fit: cover;
+  position: absolute;
+  top: 116px;
+  width: 1920px;
+}
+
+.game-community-hub-workshop .footer-besIZR {
+  background-color: transparent;
+  height: 325px;
+  left: 0px;
+  position: absolute;
+  top: 1771px;
+  width: 1920px;
+}
+
+.game-community-hub-workshop .rectangle-118-DiJOuI {
+  background-color: var(--backgroundhighlight);
+  height: 325px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.game-community-hub-workshop .image-125-DiJOuI {
+  background-color: transparent;
+  height: 50px;
+  left: 266px;
+  object-fit: cover;
+  position: absolute;
+  top: 53px;
+  width: 176px;
+}
+
+.game-community-hub-workshop .x2023-valve-corporati-DiJOuI {
+  background-color: transparent;
+  height: auto;
+  left: 266px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 132px;
+  width: 367px;
+}
+
+.game-community-hub-workshop .group-DiJOuI {
+  background-color: transparent;
+  height: 50px;
+  left: 456px;
+  position: absolute;
+  top: 53px;
+  width: 210px;
+}
+
+.game-community-hub-workshop .frame-118-DiJOuI {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 16px;
+  left: 1075px;
+  position: absolute;
+  top: 53px;
+}
+
+.game-community-hub-workshop .privacy-policy-R2osii {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .legal-R2osii {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .steam-subscriber-agreement-R2osii {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .refunds-R2osii {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .cookies-R2osii {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .frame-119-DiJOuI {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 16px;
+  left: 768px;
+  position: absolute;
+  top: 53px;
+}
+
+.game-community-hub-workshop .about-valve-3FTVfB {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .jobs-3FTVfB {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .steamworks-3FTVfB {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .steam-distribution-3FTVfB {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .support-3FTVfB {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .icon-box-DiJOuI {
+  background-color: transparent;
+  height: 47px;
+  left: 1547px;
+  position: absolute;
+  top: 53px;
+  width: 47px;
+}
+
+.game-community-hub-workshop .facebook-f-vi8DtJ {
+  background-color: transparent;
+  height: 30px;
+  left: 9px;
+  position: absolute;
+  top: 9px;
+  width: 30px;
+}
+
+.game-community-hub-workshop .icon-box-kEnuep {
+  background-color: transparent;
+  height: 47px;
+  left: 1607px;
+  position: absolute;
+  top: 53px;
+  width: 47px;
+}
+
+.game-community-hub-workshop .twitter-x-lvjW3Z {
+  background-color: transparent;
+  height: 28px;
+  left: 10px;
+  position: absolute;
+  top: 10px;
+  width: 28px;
+}
+
+.game-community-hub-workshop .frame-268-besIZR {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 25px;
+  left: 180px;
+  position: absolute;
+  top: 161px;
+}
+
+.game-community-hub-workshop .frame-266-o6zgmj {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.game-community-hub-workshop .frame-144-DVFKcx {
+  align-items: flex-start;
+  background-color: var(--backgroundmain);
+  border-radius: 5px;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 20px;
+  padding: 15px 15px 15px 25px;
+  position: relative;
+  width: 1567px;
+}
+
+.game-community-hub-workshop .frame-303-KRuGQx {
+  align-items: center;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  position: relative;
+  width: 1527px;
+}
+
+.game-community-hub-workshop .title-oPb7YF {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .frame-263-oPb7YF {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.game-community-hub-workshop .tertiary-button-2-mCIjdK {
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid;
+  border-color: var(--slate-gray-4);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  padding: 17px 20px;
+  position: relative;
+}
+
+.game-community-hub-workshop .tertiary-button-3-mCIjdK {
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid;
+  border-color: var(--slate-gray-4);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  padding: 17px 20px;
+  position: relative;
+}
+
+.game-community-hub-workshop .secondary-button-mCIjdK {
+  width: 167px;
+}
+
+.game-community-hub-workshop .add-to-wishlist-cyolPe {
+  margin-left: -13.50px;
+  margin-right: -13.50px;
+  margin-top: -1.00px;
+}
+
+.game-community-hub-workshop .sort-filter-PjYbml {
+  background-color: var(--backgroundmain);
+}
+
+.game-community-hub-workshop .sort-filter-lqSEs7 {
+  background-color: var(--backgroundmain);
+}
+
+.game-community-hub-workshop .sort-filter-U9qmch {
+  background-color: var(--backgroundmain);
+}
+
+.game-community-hub-workshop .sort-filter-n5wZgN {
+  background-color: var(--backgroundmain);
+}
+
+.game-community-hub-workshop .sort-filter-ADkB4E {
+  background-color: var(--backgroundhover);
+}
+
+.game-community-hub-workshop .sort-filter-kj7DRm {
+  background-color: var(--backgroundmain);
+}
+
+.game-community-hub-workshop .sort-filter-ALK7L1 {
+  background-color: var(--backgroundmain);
+}
+
+.game-community-hub-workshop .sort-filter-KCxZdD {
+  background-color: var(--backgroundmain);
+}
+
+.game-community-hub-workshop .sort-filter-BGcWVj {
+  background-color: var(--backgroundmain);
+}
+
+.game-community-hub-workshop .sort-filter-9MaYEE {
+  background-color: var(--backgroundmain);
+}
+
+.game-community-hub-workshop .frame-267-o6zgmj {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+}
+
+.game-community-hub-workshop .sorting-kmzm6A {
+  align-items: center;
+  align-self: stretch;
+  background-color: var(--backgroundmain);
+  border-radius: 5px;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  padding: 10px 10px 10px 15px;
+  position: relative;
+  width: 100%;
+}
+
+.game-community-hub-workshop .sort-by-iMnvA6 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .sort-filter-aQdcMK {
+  background-color: var(--backgroundhover);
+}
+
+.game-community-hub-workshop .sort-filter-H3BcVg {
+  background-color: var(--backgroundmain);
+}
+
+.game-community-hub-workshop .sort-filter-MnEhj0 {
+  background-color: var(--backgroundmain);
+}
+
+.game-community-hub-workshop .sort-filter-IH7zRN {
+  background-color: var(--backgroundmain);
+}
+
+.game-community-hub-workshop .sort-filter-UoVTpS {
+  background-color: var(--backgroundmain);
+}
+
+.game-community-hub-workshop .sort-filter-EsO6q0 {
+  background-color: var(--backgroundmain);
+}
+
+.game-community-hub-workshop .sort-filter-1zPlrh {
+  background-color: var(--backgroundmain);
+}
+
+.game-community-hub-workshop .search-TIUUyF {
+  background-color: transparent;
+  height: 44px;
+  position: relative;
+  width: 400px;
+}
+
+.game-community-hub-workshop .rectangle-70-Dyqkv3 {
+  width: 400px;
+}
+
+.game-community-hub-workshop .search-Dyqkv3 {
+  background-color: transparent;
+  height: auto;
+  left: 19px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 13px;
+  width: auto;
+}
+
+.game-community-hub-workshop .search-OUklGM {
+  background-color: transparent;
+  height: 20px;
+  left: 369px;
+  position: absolute;
+  top: 12px;
+  width: 20px;
+}
+
+.game-community-hub-workshop .frame-287-kmzm6A {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 18px;
+  position: relative;
+}
+
+.game-community-hub-workshop .frame-302-rEWPdT {
+  align-items: center;
+  background-color: var(--backgroundmain);
+  border-radius: 5px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 15px;
+  padding: 15px;
+  position: relative;
+}
+
+.game-community-hub-workshop .frame-301-xE4xAu {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 189px;
+  position: relative;
+}
+
+.game-community-hub-workshop .filters-ATQ4FM {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .icon-box-ATQ4FM {
+  background-color: transparent;
+  height: 27px;
+  position: relative;
+  width: 27px;
+}
+
+.game-community-hub-workshop .search-xE4xAu {
+  background-color: transparent;
+  height: 44px;
+  position: relative;
+  width: 269px;
+}
+
+.game-community-hub-workshop .rectangle-70-mmbyer {
+  width: 269px;
+}
+
+.game-community-hub-workshop .search-mmbyer {
+  background-color: transparent;
+  height: auto;
+  left: 19px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 13px;
+  width: auto;
+}
+
+.game-community-hub-workshop .search-Igby6g {
+  background-color: transparent;
+  height: 20px;
+  left: 238px;
+  position: absolute;
+  top: 12px;
+  width: 20px;
+}
+
+.game-community-hub-workshop .group-24-xE4xAu {
+  background-color: transparent;
+  height: 310px;
+  margin-right: -1.50px;
+  position: relative;
+  width: 270px;
+}
+
+.game-community-hub-workshop .browse-by-tag-uHkV78 {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 15px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.game-community-hub-workshop .tag-ZObzKx {
+  background-color: var(--backgroundhover);
+  display: flex;
+  justify-content: space-between;
+  width: 265px;
+}
+
+.game-community-hub-workshop .tag-A0sTlf {
+  background-color: transparent;
+  display: flex;
+  justify-content: space-between;
+  width: 265px;
+}
+
+.game-community-hub-workshop .tag-FGGCLw {
+  background-color: transparent;
+  display: flex;
+  justify-content: space-between;
+  width: 265px;
+}
+
+.game-community-hub-workshop .tag-COJZJR {
+  background-color: transparent;
+  display: flex;
+  justify-content: space-between;
+  width: 265px;
+}
+
+.game-community-hub-workshop .tag-xZ4FpY {
+  background-color: transparent;
+  display: flex;
+  justify-content: space-between;
+  width: 265px;
+}
+
+.game-community-hub-workshop .tag-E78Xth {
+  background-color: transparent;
+  display: flex;
+  justify-content: space-between;
+  width: 265px;
+}
+
+.game-community-hub-workshop .frame-135-ZObzKx {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  padding: 8px 13px;
+  position: relative;
+}
+
+.game-community-hub-workshop .see-more-JTMXRQ {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .keyboard-arrow-down-uHkV78 {
+  background-color: transparent;
+  height: 24px;
+  left: 241px;
+  position: absolute;
+  top: 15px;
+  width: 24px;
+}
+
+.game-community-hub-workshop .group-37-xE4xAu {
+  background-color: transparent;
+  height: 115px;
+  margin-right: -1.50px;
+  position: relative;
+  width: 270px;
+}
+
+.game-community-hub-workshop .type-yYf75H {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 15px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.game-community-hub-workshop .tag-C0PEuJ {
+  background-color: var(--backgroundhover);
+  display: flex;
+  justify-content: space-between;
+  width: 265px;
+}
+
+.game-community-hub-workshop .tag-nlvk0n {
+  background-color: transparent;
+  display: flex;
+  justify-content: space-between;
+  width: 265px;
+}
+
+.game-community-hub-workshop .keyboard-arrow-down-yYf75H {
+  background-color: transparent;
+  height: 24px;
+  left: 241px;
+  position: absolute;
+  top: 15px;
+  width: 24px;
+}
+
+.game-community-hub-workshop .group-26-xE4xAu {
+  background-color: transparent;
+  height: 39px;
+  margin-right: -1.50px;
+  position: relative;
+  width: 270px;
+}
+
+.game-community-hub-workshop .date-G2x5ax {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 15px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.game-community-hub-workshop .vector-4-G2x5ax {
+  background-color: transparent;
+  height: 1px;
+  left: 0px;
+  object-fit: cover;
+  position: absolute;
+  top: -0px;
+  width: 268px;
+}
+
+.game-community-hub-workshop .keyboard-arrow-down-G2x5ax {
+  background-color: transparent;
+  height: 24px;
+  left: 241px;
+  position: absolute;
+  top: 15px;
+  width: 24px;
+}
+
+.game-community-hub-workshop .frame-277-rEWPdT {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 17px;
+  position: relative;
+}
+
+.game-community-hub-workshop .frame-270-AOyHw8 {
+  align-items: center;
+  background-color: var(--backgroundmain50);
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  gap: 219px;
+  height: 164px;
+  justify-content: space-around;
+  padding: 20px;
+  position: relative;
+  width: 1247px;
+}
+
+.game-community-hub-workshop .image-159-y7617m {
+  object-fit: cover;
+}
+
+.game-community-hub-workshop .st-new-horizons-3XvxXN {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .tag-4YhhqT {
+  background-color: var(--backgroundhighlight);
+  display: inline-flex;
+  gap: 10px;
+}
+
+.game-community-hub-workshop .tag-OpJXL1 {
+  background-color: var(--backgroundhighlight);
+  display: inline-flex;
+  gap: 10px;
+}
+
+.game-community-hub-workshop .tag-ZTm1YQ {
+  background-color: var(--backgroundhighlight);
+  display: inline-flex;
+  gap: 10px;
+}
+
+.game-community-hub-workshop .frame-281-AOyHw8 {
+  align-items: center;
+  background-color: var(--backgroundmain50);
+  border-radius: 5px;
+  display: flex;
+  gap: 219px;
+  height: 164px;
+  justify-content: space-around;
+  padding: 20px;
+  position: relative;
+  width: 1247px;
+}
+
+.game-community-hub-workshop .image-159-xCCLdE {
+  object-fit: cover;
+}
+
+.game-community-hub-workshop .planetary-diversity-yZdGMq {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .tag-fFEWgk {
+  background-color: var(--backgroundhighlight);
+  display: inline-flex;
+  gap: 10px;
+}
+
+.game-community-hub-workshop .tag-czadYW {
+  background-color: var(--backgroundhighlight);
+  display: inline-flex;
+  gap: 10px;
+}
+
+.game-community-hub-workshop .tag-quW5nN {
+  background-color: var(--backgroundhighlight);
+  display: inline-flex;
+  gap: 10px;
+}
+
+.game-community-hub-workshop .frame-282-AOyHw8 {
+  align-items: center;
+  background-color: var(--backgroundmain50);
+  border-radius: 5px;
+  display: flex;
+  gap: 219px;
+  height: 164px;
+  justify-content: space-around;
+  padding: 20px;
+  position: relative;
+  width: 1247px;
+}
+
+.game-community-hub-workshop .image-159-o0zFPX {
+  object-fit: cover;
+}
+
+.game-community-hub-workshop .ui-overhaul-dynamic-ElSjim {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .tag-067OfJ {
+  background-color: var(--backgroundhighlight);
+  display: inline-flex;
+  gap: 10px;
+}
+
+.game-community-hub-workshop .tag-sMw9C5 {
+  background-color: var(--backgroundhighlight);
+  display: inline-flex;
+  gap: 10px;
+}
+
+.game-community-hub-workshop .tag-WjtHdm {
+  background-color: var(--backgroundhighlight);
+  display: inline-flex;
+  gap: 10px;
+}
+
+.game-community-hub-workshop .frame-283-AOyHw8 {
+  align-items: center;
+  background-color: var(--backgroundmain50);
+  border-radius: 5px;
+  display: flex;
+  gap: 219px;
+  height: 164px;
+  justify-content: space-around;
+  padding: 20px;
+  position: relative;
+  width: 1247px;
+}
+
+.game-community-hub-workshop .image-159-3YaFb7 {
+  object-fit: cover;
+}
+
+.game-community-hub-workshop .more-events-mod-xxEdnn {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .tag-emulfv {
+  background-color: var(--backgroundhighlight);
+  display: inline-flex;
+  gap: 10px;
+}
+
+.game-community-hub-workshop .tag-23yy9T {
+  background-color: var(--backgroundhighlight);
+  display: inline-flex;
+  gap: 10px;
+}
+
+.game-community-hub-workshop .tag-1EK846 {
+  background-color: var(--backgroundhighlight);
+  display: inline-flex;
+  gap: 10px;
+}
+
+.game-community-hub-workshop .frame-284-AOyHw8 {
+  align-items: center;
+  background-color: var(--backgroundmain50);
+  border-radius: 5px;
+  display: flex;
+  gap: 219px;
+  height: 164px;
+  justify-content: space-around;
+  padding: 20px;
+  position: relative;
+  width: 1247px;
+}
+
+.game-community-hub-workshop .mass-effect-civilizations-885R4l {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .tag-xj3EkO {
+  background-color: var(--backgroundhighlight);
+  display: inline-flex;
+  gap: 10px;
+}
+
+.game-community-hub-workshop .tag-hSCGPA {
+  background-color: var(--backgroundhighlight);
+  display: inline-flex;
+  gap: 10px;
+}
+
+.game-community-hub-workshop .tag-6WJa7L {
+  background-color: var(--backgroundhighlight);
+  display: inline-flex;
+  gap: 10px;
+}
+
+.game-community-hub-workshop .frame-280-AOyHw8 {
+  align-items: center;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 17px;
+  justify-content: flex-end;
+  padding: 5px 0px 5px 5px;
+  position: relative;
+  width: 100%;
+}
+
+.game-community-hub-workshop .frame-238-i3dH1n {
+  align-items: center;
+  background-color: transparent;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  width: 418px;
+}
+
+.game-community-hub-workshop .secondary-button-kJDY5N {
+  height: 30px;
+  width: 70px;
+}
+
+.game-community-hub-workshop .add-to-wishlist-g2QYDA {
+  margin-bottom: -10.50px;
+  margin-left: -37.50px;
+  margin-right: -37.50px;
+  margin-top: -12.50px;
+}
+
+.game-community-hub-workshop .frame-237-kJDY5N {
+  align-items: flex-end;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 5px;
+  justify-content: center;
+  position: relative;
+}
+
+.game-community-hub-workshop .secondary-button-IvMusx {
+  height: 30px;
+  width: 30px;
+}
+
+.game-community-hub-workshop .add-to-wishlist-f2rnl1 {
+  margin-bottom: -10.50px;
+  margin-left: -46.00px;
+  margin-right: -46.00px;
+  margin-top: -12.50px;
+}
+
+.game-community-hub-workshop .secondary-button-Nr1kdx {
+  height: 30px;
+  width: 30px;
+}
+
+.game-community-hub-workshop .add-to-wishlist-SCIXZh {
+  margin-bottom: -10.50px;
+  margin-left: -46.50px;
+  margin-right: -46.50px;
+  margin-top: -12.50px;
+}
+
+.game-community-hub-workshop .secondary-button-KDbo73 {
+  height: 30px;
+  width: 30px;
+}
+
+.game-community-hub-workshop .add-to-wishlist-GoAehV {
+  margin-bottom: -10.50px;
+  margin-left: -46.00px;
+  margin-right: -46.00px;
+  margin-top: -12.50px;
+}
+
+.game-community-hub-workshop .secondary-button-ZwTs1G {
+  height: 30px;
+  width: 30px;
+}
+
+.game-community-hub-workshop .add-to-wishlist-xKW7fI {
+  margin-bottom: -10.50px;
+  margin-left: -46.50px;
+  margin-right: -46.50px;
+  margin-top: -12.50px;
+}
+
+.game-community-hub-workshop .secondary-button-ncX66w {
+  height: 30px;
+  width: 30px;
+}
+
+.game-community-hub-workshop .add-to-wishlist-9E893Y {
+  margin-bottom: -10.50px;
+  margin-left: -46.50px;
+  margin-right: -46.50px;
+  margin-top: -12.50px;
+}
+
+.game-community-hub-workshop .x-IvMusx {
+  background-color: transparent;
+  height: 23px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  width: 20px;
+}
+
+.game-community-hub-workshop .secondary-button-jcbMDU {
+  height: 30px;
+  width: 30px;
+}
+
+.game-community-hub-workshop .add-to-wishlist-jsx40M {
+  margin-bottom: -10.50px;
+  margin-left: -51.00px;
+  margin-right: -51.00px;
+  margin-top: -12.50px;
+}
+
+.game-community-hub-workshop .secondary-button-8CXzgR {
+  height: 30px;
+  width: 70px;
+}
+
+.game-community-hub-workshop .add-to-wishlist-LLmmwb {
+  margin-bottom: -10.50px;
+  margin-left: -38.50px;
+  margin-right: -38.50px;
+  margin-top: -12.50px;
+}
+
+.game-community-hub-workshop .header-besIZR {
+  background-color: transparent;
+  height: 57px;
+  left: 0px;
+  overflow: hidden;
+  position: fixed;
+  top: 59px;
+  width: 1920px;
+}
+
+.game-community-hub-workshop .rectangle-67-RKZVlI {
+  background-color: var(--backgroundtertiary);
+  height: 57px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.game-community-hub-workshop .frame-15-RKZVlI {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 7px;
+  left: 10px;
+  position: absolute;
+  top: 6px;
+}
+
+.game-community-hub-workshop .group-15-vK222O {
+  align-items: center;
+  background-color: var(--backgroundtertiary);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.game-community-hub-workshop .group-18-vK222O {
+  align-items: center;
+  background-color: var(--backgroundtertiary);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.game-community-hub-workshop .search-RKZVlI {
+  align-items: center;
+  background-color: var(--backgroundmain20);
+  border-radius: 3px;
+  display: flex;
+  gap: 364px;
+  left: 967px;
+  overflow: hidden;
+  padding: 11px;
+  position: absolute;
+  top: 8px;
+  width: 581px;
+}
+
+.game-community-hub-workshop .search-U9ZdUJ {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .frame-262-U9ZdUJ {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.game-community-hub-workshop .frame-261-HAlhqJ {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 7px;
+  position: relative;
+}
+
+.game-community-hub-workshop .community-7LLg66 {
+  position: relative;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .keyboard-arrow-down-7LLg66 {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.game-community-hub-workshop .search-HAlhqJ {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.game-community-hub-workshop .client-besIZR {
+  background-color: transparent;
+  height: 1080px;
+  left: 0px;
+  overflow: hidden;
+  position: fixed;
+  top: 0px;
+  width: 1920px;
+}
+
+.game-community-hub-workshop .rectangle-68-k2NVkO {
+  background-color: var(--backgroundmain);
+  height: 59px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.game-community-hub-workshop .frame-11-k2NVkO {
+  align-items: flex-end;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  left: 1658px;
+  position: absolute;
+  top: 17px;
+}
+
+.game-community-hub-workshop .frame-2-KJV4KW {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 18px;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.game-community-hub-workshop .frame-239-ooeVVR {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.game-community-hub-workshop .help-31xyLB {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .frame-240-ooeVVR {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.game-community-hub-workshop .view-8coLCZ {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -0.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .keyboard-arrow-down-8coLCZ {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.game-community-hub-workshop .minimize-ooeVVR {
+  background-color: transparent;
+  height: 25px;
+  position: relative;
+  width: 25px;
+}
+
+.game-community-hub-workshop .content-copy-ooeVVR {
+  background-color: transparent;
+  height: 25px;
+  position: relative;
+  width: 25px;
+}
+
+.game-community-hub-workshop .close-ooeVVR {
+  background-color: transparent;
+  height: 25px;
+  position: relative;
+  width: 25px;
+}
+
+.game-community-hub-workshop .frame-3-k2NVkO {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 66px;
+  left: 94px;
+  position: absolute;
+  top: 18px;
+}
+
+.game-community-hub-workshop .group-SQWFUr {
+  background-color: transparent;
+  height: 20.98845863342285px;
+  position: relative;
+  width: 88.00006103515625px;
+}
+
+.game-community-hub-workshop .store-menu-SQWFUr {
+  width: 60px;
+}
+
+.game-community-hub-workshop .store-OK6I1n {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.game-community-hub-workshop .store-menu-kYDThZ {
+  cursor: pointer;
+  width: 114px;
+}
+
+.game-community-hub-workshop .community-0sEMmx {
+  height: auto;
+  left: 0px;
+  position: absolute;
+  top: -1px;
+  width: auto;
+}
+
+.game-community-hub-workshop .store-menu-A6JM28 {
+  width: 131px;
+}
+
+.game-community-hub-workshop .juxtopposed-KZ51p3 {
+  height: auto;
+  left: 0px;
+  position: absolute;
+  top: -1px;
+  width: auto;
+}
+
+.game-community-hub-workshop .store-menu-bp3JoM {
+  width: 77px;
+}
+
+.game-community-hub-workshop .library-okMg9T {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.game-community-hub-workshop .frame-233-k2NVkO {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 4px;
+  left: 894px;
+  position: absolute;
+  top: 18px;
+}
+
+.game-community-hub-workshop .store-menu-a3s192 {
+  cursor: pointer;
+  width: 118px;
+}
+
+.game-community-hub-workshop .downloads-MhDfKx {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.game-community-hub-workshop .view-list-k2NVkO {
+  background-color: transparent;
+  height: 24px;
+  left: 1873px;
+  position: absolute;
+  top: 349px;
+  width: 24px;
+}
+
+.game-community-hub-workshop .frame-330-k2NVkO {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 10px;
+  justify-content: flex-end;
+  left: 1259px;
+  position: absolute;
+  top: 10px;
+}
+
+.game-community-hub-workshop .friends-x78TxD {
+  background-color: transparent;
+  height: 37px;
+  position: relative;
+  width: 56px;
+}
+
+.game-community-hub-workshop .group-9-9ZNAtN {
+  background-color: transparent;
+  height: 37px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 56px;
+}
+
+.game-community-hub-workshop .rectangle-61-4UTM8R {
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  height: 37px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 56px;
+}
+
+.game-community-hub-workshop .people-4UTM8R {
+  background-color: transparent;
+  height: 25px;
+  left: 15px;
+  position: absolute;
+  top: 6px;
+  width: 25px;
+}
+
+.game-community-hub-workshop .notifications-x78TxD {
+  background-color: transparent;
+  height: 37px;
+  position: relative;
+  width: 56px;
+}
+
+.game-community-hub-workshop .group-135-Tiinag {
+  background-color: transparent;
+  height: 37px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 56px;
+}
+
+.game-community-hub-workshop .group-8-xfdLer {
+  background-color: transparent;
+  height: 37px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 56px;
+}
+
+.game-community-hub-workshop .rectangle-60-NKIwGG {
+  height: 37px;
+  width: 56px;
+}
+
+.game-community-hub-workshop .notifications-NKIwGG {
+  background-color: transparent;
+  height: 25px;
+  left: 15px;
+  position: absolute;
+  top: 6px;
+  width: 25px;
+}
+
+.game-community-hub-workshop .group-12-Tiinag {
+  background-color: transparent;
+  height: 16px;
+  left: 43px;
+  position: absolute;
+  top: -2px;
+  width: 18px;
+}
+
+.game-community-hub-workshop .ellipse-2-n0vuwL {
+  background-color: var(--colorprimary);
+  border-radius: 8px;
+  height: 16px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 16px;
+}
+
+.game-community-hub-workshop .x1-n0vuwL {
+  background-color: transparent;
+  height: auto;
+  left: 5px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 1px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.game-community-hub-workshop .component-2-x78TxD {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 15px;
+  height: 39px;
+  position: relative;
+}
+
+.game-community-hub-workshop .group-7-zLQmX3 {
+  background-color: transparent;
+  height: 39px;
+  position: relative;
+  width: 210px;
+}
+
+.game-community-hub-workshop .rectangle-60-eG0sEY {
+  height: 39px;
+  width: 210px;
+}
+
+.game-community-hub-workshop .frame-1-eG0sEY {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 8px;
+  height: 33px;
+  left: 3px;
+  position: absolute;
+  top: 3px;
+}
+
+.game-community-hub-workshop .sprite-0003-1-zIlLUt {
+  background-color: transparent;
+  height: 31px;
+  position: relative;
+  width: 31px;
+}
+
+.game-community-hub-workshop .juxtopposed-zIlLUt {
+  position: relative;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .x525-zIlLUt {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .keyboard-arrow-down-zIlLUt {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.game-community-hub-workshop .frame-331-k2NVkO {
+  background-color: transparent;
+  height: 24px;
+  left: 22px;
+  position: absolute;
+  top: 17px;
+  width: 53px;
+}
+
+.game-community-hub-workshop .add-to-cart {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -2.50px;
+  margin-left: -42.00px;
+  margin-right: -42.00px;
+  margin-top: -4.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .add-to-wishlist {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .favorite-border {
+  background-color: transparent;
+  height: 24px;
+  margin-bottom: -7.00px;
+  margin-left: -46.00px;
+  margin-right: -46.00px;
+  margin-top: -7.00px;
+  position: relative;
+  width: 24px;
+}
+
+.game-community-hub-workshop .frame-165 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  position: relative;
+}
+
+.game-community-hub-workshop .frame-18 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 4px;
+  position: relative;
+}
+
+.game-community-hub-workshop .frame-211 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  position: relative;
+}
+
+.game-community-hub-workshop .frame-216 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+
+.game-community-hub-workshop .frame-264 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 40px;
+  position: relative;
+}
+
+.game-community-hub-workshop .frame-288 {
+  align-items: flex-end;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 1;
+  flex-grow: 1;
+  justify-content: space-between;
+  position: relative;
+}
+
+.game-community-hub-workshop .frame-289 {
+  align-items: center;
+  align-self: stretch;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 20px;
+  position: relative;
+}
+
+.game-community-hub-workshop .frame-304 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 9px;
+  left: 0px;
+  position: absolute;
+  top: 46px;
+}
+
+.game-community-hub-workshop .frame-305 {
+  align-items: flex-end;
+  background-color: transparent;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-left: -79.5px;
+  position: relative;
+  width: 430.5px;
+}
+
+.game-community-hub-workshop .frame-306 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  position: relative;
+}
+
+.game-community-hub-workshop .ignore {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .image-159 {
+  background-color: transparent;
+  height: 130px;
+  margin-bottom: -3.00px;
+  margin-top: -3.00px;
+  position: relative;
+  width: 276px;
+}
+
+.game-community-hub-workshop .image-190 {
+  background-color: transparent;
+  height: 25px;
+  margin-bottom: -11.00px;
+  margin-top: -11.00px;
+  object-fit: cover;
+  position: relative;
+  width: 25px;
+}
+
+.game-community-hub-workshop .image-192 {
+  background-color: transparent;
+  height: 25px;
+  margin-bottom: -11.00px;
+  margin-top: -11.00px;
+  object-fit: cover;
+  position: relative;
+  width: 25px;
+}
+
+.game-community-hub-workshop .main-cta {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 13px;
+  position: relative;
+}
+
+.game-community-hub-workshop .menu {
+  align-items: center;
+  background-color: var(--backgroundtertiary);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.game-community-hub-workshop .military-tech {
+  background-color: transparent;
+  height: 20px;
+  margin-bottom: -8.50px;
+  margin-top: -8.50px;
+  position: relative;
+  width: 20px;
+}
+
+.game-community-hub-workshop .new-and-trending {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .primary-button {
+  align-items: center;
+  background-color: var(--colorsecondary);
+  border-radius: 3px;
+  display: flex;
+  gap: 10px;
+  height: 44px;
+  justify-content: center;
+  padding: 16px 66px;
+  position: relative;
+  width: 122px;
+}
+
+.game-community-hub-workshop .rectangle-70 {
+  background-color: var(--big-stone);
+  border-radius: 3px;
+  height: 44px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.game-community-hub-workshop .rectangle-86 {
+  background-color: var(--slate-gray-2);
+  border-radius: 3px;
+  height: 47px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 47px;
+}
+
+.game-community-hub-workshop .secondary-button {
+  align-items: center;
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 17px 56px;
+  position: relative;
+}
+
+.game-community-hub-workshop .sort-filter {
+  align-items: center;
+  border-radius: 3.33px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  height: 39px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 7px 20px;
+  position: relative;
+}
+
+.game-community-hub-workshop .souls-like {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .tag {
+  align-items: center;
+  border-radius: 3px;
+  flex: 0 0 auto;
+  overflow: hidden;
+  padding: 8px 13px;
+  position: relative;
+}
+
+.game-community-hub-workshop .vector-2 {
+  background-color: transparent;
+  height: 1px;
+  left: 0px;
+  object-fit: cover;
+  position: absolute;
+  top: -0px;
+  width: 268px;
+}
+
+.game-community-hub-workshop .wishlist-1 {
+  align-items: center;
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  display: flex;
+  height: 44px;
+  justify-content: space-between;
+  padding: 17px 56px;
+  position: relative;
+  width: 44px;
+}
+
+.game-community-hub-workshop .wishlist-page {
+  align-items: center;
+  background-color: var(--backgroundmain);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 5px;
+  height: 37px;
+  padding: 17px 10px;
+  position: relative;
+}
+
+.game-community-hub-workshop .x3000 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .x5000 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.game-community-hub-workshop .x5000-ratings {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+</style><style id="action-links-styles">
+@import url('https://fonts.googleapis.com/css2?family=Mulish&display=swap');
+
+#anima-interface{
+  transition: all 0.5s ease-in-out;
+}
+
+#anima-watermark {
+  transition: all 0.5s ease-in-out;
+  display: none;
+}
+#anima-watermark-link{
+  position: fixed;
+  bottom:20px;
+  height:30px;
+  border-radius: 1000px;
+  background: #3B3B3B;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  user-select:none;
+  transition: width 0.25s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+  text-decoration:none;
+  color:#fff;
+  padding:8px 16px 8px 11px;
+  font-family:Mulish, sans-serif;
+  font-size:12px;
+}
+#anima-watermark-link .text {
+  margin-left: 6px;
+}
+
+.omniview-anima-action-links .link{
+  height: 30px;
+  width: 30px;
+  border-radius: 1000px;
+  background: #3B3B3B;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  user-select:none;
+  transition: width 0.25s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+  text-decoration:none;
+  color:#fff;
+}
+.omniview-anima-action-links #comment-link .text,.omniview-anima-action-links #code-link .text{
+  display:none;
+  font-size:12px;
+  margin-right:5px;
+}
+.omniview-anima-action-links #comment-link:hover,.omniview-anima-action-links #code-link:hover{
+  width:105px;
+}
+.omniview-anima-action-links #comment-link.pop-active,.omniview-anima-action-links #code-link.pop-active{
+  width:105px;
+  background: #FF6250;
+}
+.omniview-anima-action-links #comment-link.pop-active .text,.omniview-anima-action-links #code-link.pop-active .text{
+  display:block
+}
+.omniview-anima-action-links #comment-link:hover .text,.omniview-anima-action-links #code-link:hover .text{
+  display:block;
+}
+
+.link.navigation{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  width:auto;
+  height:32px;
+  color:#fff;
+  font-size:12px;
+  cursor:default;
+  padding:0 5px;
+}
+.link.navigation .icon{
+  margin:0 6px;
+  fill:none;
+  stroke:currentColor;
+  cursor:pointer;
+}
+.link.navigation .icon.disabled{
+  opacity:0.5;
+  cursor:default;
+}
+
+
+.link.navigation .home-icon{
+  margin-left:6px;
+  fill:currentColor;
+  stroke:currentColor;
+  cursor:pointer;
+}
+
+.omniview-anima-action-links .restart{
+  height: 30px;
+  padding:0 12px;
+  background: #3B3B3B;
+  border-radius: 1000px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  color:#f1f1f1;
+  font-size: 12px;
+}
+
+.omniview-anima-action-links{
+  display:flex;
+  align-items:center;
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  font-family:Mulish, sans-serif;
+  transition: all 0.5s ease-in-out;
+  opacity:1;
+}
+
+.omniview-anima-action-links > * + *{
+   margin-right: 0;
+   margin-left: 10px;
+}
+
+.idle{
+  opacity:0;
+  pointer-events:none;
+}
+
+#popoverOpener {
+  position: absolute;
+  left: 50%;
+  margin-left: -10vw;
+  text-align: center;
+  top: 45vh;
+  width: 20vw;
+}
+
+
+.popover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1060;
+  display: none;
+  font-family: "sans-serif";
+  font-size: 14px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+.popover.top {
+  margin-top: -12px
+}
+
+.popover.right {
+  margin-left: 10px
+}
+
+.popover.bottom {
+  margin-top: 10px
+}
+
+.popover.left {
+  margin-left: -10px
+}
+
+.popover-title {
+  padding: 8px 14px;
+  margin: 0;
+  font-size: 14px;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #ebebeb;
+  border-radius: 5px 5px 0 0
+}
+
+.popover-content {
+  height: 100%;
+  width: 100%;
+  display:flex;
+  overflow:hidden;
+  font-family:Mulish, sans-serif;
+}
+
+
+
+.popover>.arrow,.popover>.arrow:after {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid
+}
+
+.popover>.arrow {
+  border-width: 11px
+}
+
+.popover>.arrow:after {
+  content: "";
+  border-width: 10px
+}
+
+.popover.top>.arrow {
+  bottom: -11px;
+  left: 50%;
+  margin-left: -11px;
+  border-top-color: #999;
+  border-top-color: rgba(0,0,0,.25);
+  border-bottom-width: 0
+}
+
+.popover.top>.arrow:after {
+  bottom: 1px;
+  margin-left: -10px;
+  content: " ";
+  border-top-color: #fff;
+  border-bottom-width: 0
+}
+
+.popover.right>.arrow {
+  top: 50%;
+  left: -11px;
+  margin-top: -11px;
+  border-right-color: #999;
+  border-right-color: rgba(0,0,0,.25);
+  border-left-width: 0
+}
+
+.popover.right>.arrow:after {
+  bottom: -10px;
+  left: 1px;
+  content: " ";
+  border-right-color: #fff;
+  border-left-width: 0
+}
+
+.popover.bottom>.arrow {
+  top: -11px;
+  left: 50%;
+  margin-left: -11px;
+  border-top-width: 0;
+  border-bottom-color: #999;
+  border-bottom-color: rgba(0,0,0,.25)
+}
+
+.popover.bottom>.arrow:after {
+  top: 1px;
+  margin-left: -10px;
+  content: " ";
+  border-top-width: 0;
+  border-bottom-color: #fff
+}
+
+.popover.left>.arrow {
+  top: 50%;
+  right: -11px;
+  margin-top: -11px;
+  border-right-width: 0;
+  border-left-color: #999;
+  border-left-color: rgba(0,0,0,.25)
+}
+
+.popover.left>.arrow:after {
+  right: 1px;
+  bottom: -10px;
+  content: " ";
+  border-right-width: 0;
+  border-left-color: #fff
+}
+
+
+
+#anima-comment-popover,#anima-code-popover{
+  background:#333333;
+  color:#fff;
+}
+
+#anima-comment-popover.top>.arrow,#anima-comment-popover.top>.arrow:after,#anima-code-popover.top>.arrow:after,#anima-code-popover.top>.arrow {
+  border-top-color:#333;
+}
+
+#anima-comment-popover .btn,#anima-code-popover .btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 6px 20px;
+  background: #FF6250;
+  color:#fff;
+  border-radius: 100px;
+  width: max-content;
+  text-decoration:none;
+}
+
+@media screen and (max-width: 550px) {
+  #anima-watermark-link {
+    padding: 6px !important;
+  }
+  #anima-watermark-link .text {
+    display: none !important;
+  }
+}
+
+</style><script id="anime-js-script" src="https://cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js" integrity="sha256-98Q574VkbV+PkxXCKSgL6jVq9mrVbS7uCdA+vt0sLS8=" crossorigin="anonymous"></script><script id="imgloaded-js-script" src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script></head><body style="margin: 0px; background: rgb(30, 35, 41); overflow-x: hidden;" dark-scroll=""><input type="hidden" id="anPageName" name="page" value="game-community-hub-workshop"><div class="container-center-horizontal"><div class="game-community-hub-workshop screen " data-id="512:11944"><div class="rectangle-89-besIZR" data-id="512:11945"></div><img class="image-52-besIZR" data-id="803:11882" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-51-1.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-51-1.png" alt="image 52"><footer class="footer-besIZR" data-id="512:11947"><div class="rectangle-118-DiJOuI" data-id="I512:11947;426:4049"></div><img class="image-125-DiJOuI" data-id="I512:11947;426:4050" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-125@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-125@2x.png" alt="image 125"><p class="x2023-valve-corporati-DiJOuI motivasans-regular-normal-slate-gray-16px" data-id="I512:11947;426:4051">© 2023 Valve Corporation. All rights reserved. All trademarks are property of their respective owners in the US and other countries.<br>VAT included in all prices where applicable.</p><img class="group-DiJOuI" data-id="I512:11947;460:15636" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-4@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-4@2x.png" alt="Group"><div class="frame-118-DiJOuI" data-id="I512:11947;426:4053"><div class="privacy-policy-R2osii motivasans-regular-normal-wild-sand-16px" data-id="I512:11947;426:4054">Privacy Policy</div><div class="legal-R2osii motivasans-regular-normal-wild-sand-16px" data-id="I512:11947;426:4055">Legal</div><div class="steam-subscriber-agreement-R2osii motivasans-regular-normal-wild-sand-16px" data-id="I512:11947;426:4056">Steam Subscriber Agreement</div><div class="refunds-R2osii motivasans-regular-normal-wild-sand-16px" data-id="I512:11947;426:4057">Refunds</div><div class="cookies-R2osii motivasans-regular-normal-wild-sand-16px" data-id="I512:11947;426:4058">Cookies</div></div><div class="frame-119-DiJOuI" data-id="I512:11947;426:4059"><div class="about-valve-3FTVfB motivasans-regular-normal-wild-sand-16px" data-id="I512:11947;426:4060">About Valve</div><div class="jobs-3FTVfB motivasans-regular-normal-wild-sand-16px" data-id="I512:11947;426:4061">Jobs</div><div class="steamworks-3FTVfB motivasans-regular-normal-wild-sand-16px" data-id="I512:11947;426:4062">Steamworks</div><div class="steam-distribution-3FTVfB motivasans-regular-normal-wild-sand-16px" data-id="I512:11947;426:4063">Steam Distribution</div><div class="support-3FTVfB motivasans-regular-normal-wild-sand-16px" data-id="I512:11947;426:4064">Support</div></div><div class="icon-box-DiJOuI" data-id="I512:11947;426:4065"><div class="group-97" data-id="I512:11947;426:4066"><div class="rectangle-86" data-id="I512:11947;426:4067"></div><img class="facebook-f-vi8DtJ" data-id="I512:11947;426:4068" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/facebook-f.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/facebook-f.svg" alt="Facebook F"></div></div><div class="icon-box-kEnuep" data-id="I512:11947;426:4070"><div class="group-97" data-id="I512:11947;426:4071"><div class="rectangle-86" data-id="I512:11947;426:4072"></div><img class="twitter-x-lvjW3Z" data-id="I512:11947;426:4073" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/twitterx.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/twitterx.svg" alt="TwitterX"></div></div></footer><div class="frame-268-besIZR" data-id="512:11948"><div class="frame-266-o6zgmj" data-id="512:11949"><div class="frame-144-DVFKcx" data-id="512:11950"><div class="frame-303-KRuGQx" data-id="512:13270"><h1 class="title-oPb7YF motivasans-bold-wild-sand-26px" data-id="512:11951">Stellaris</h1><div class="frame-263-oPb7YF" data-id="512:11952"><div class="tertiary-button-2-mCIjdK" data-id="512:11953"><div class="motivasans-regular-normal-slate-gray-16px" data-id="I512:11953;400:13120">View Stats</div></div><div class="tertiary-button-3-mCIjdK" data-id="512:11954"><div class="motivasans-regular-normal-slate-gray-16px" data-id="I512:11954;400:13120">Follow</div></div><div class="secondary-button-mCIjdK secondary-button" data-id="512:11955"><div class="add-to-wishlist-cyolPe add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I512:11955;84:780">Store Page</div></div></div></div><div class="frame-211" data-id="512:13208"><div class="frame-34" data-id="512:13209"><article class="sort-filter-PjYbml sort-filter" data-id="512:13210"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="I512:13210;296:577">All</div></article><article class="sort-filter-lqSEs7 sort-filter" data-id="512:13211"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="I512:13211;296:577">Discussions</div></article><article class="sort-filter-U9qmch sort-filter" data-id="512:13212"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="I512:13212;296:577">Screenshots</div></article><article class="sort-filter-n5wZgN sort-filter" data-id="512:13213"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="I512:13213;296:577">Artworks</div></article><article class="sort-filter-ADkB4E sort-filter" data-id="512:13214"><div class="new-and-trending valign-text-middle motivasans-regular-normal-wild-sand-16px" data-id="I512:13214;296:583">Workshop</div></article><article class="sort-filter-kj7DRm sort-filter" data-id="512:13215"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="I512:13215;296:577">Broadcasts</div></article><article class="sort-filter-ALK7L1 sort-filter" data-id="512:13216"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="I512:13216;296:577">Videos</div></article><article class="sort-filter-KCxZdD sort-filter" data-id="512:13217"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="I512:13217;296:577">News</div></article><article class="sort-filter-BGcWVj sort-filter" data-id="512:13218"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="I512:13218;296:577">Guides</div></article><article class="sort-filter-9MaYEE sort-filter" data-id="512:13219"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="I512:13219;296:577">Reviews</div></article></div></div></div></div><div class="frame-267-o6zgmj" data-id="512:11974"><div class="sorting-kmzm6A" data-id="512:13612"><div class="frame-211" data-id="512:13625"><div class="sort-by-iMnvA6 motivasans-regular-normal-slate-gray-14px" data-id="512:13626">Sort by</div><div class="frame-34" data-id="512:13627"><article class="sort-filter-aQdcMK sort-filter" data-id="512:13628"><div class="new-and-trending valign-text-middle motivasans-regular-normal-wild-sand-16px" data-id="I512:13628;296:583">Most Popular</div></article><article class="sort-filter-H3BcVg sort-filter" data-id="512:13630"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="I512:13630;296:577">Most Recent</div></article><article class="sort-filter-MnEhj0 sort-filter" data-id="512:13684"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="I512:13684;296:577">Most Subscribed</div></article><article class="sort-filter-IH7zRN sort-filter" data-id="512:13629"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="I512:13629;296:577">Top Rated All Time</div></article><article class="sort-filter-UoVTpS sort-filter" data-id="512:13631"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="I512:13631;296:577">Last Updated</div></article><article class="sort-filter-EsO6q0 sort-filter" data-id="512:13632"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="I512:13632;296:577">Favorites</div></article><article class="sort-filter-1zPlrh sort-filter" data-id="512:13633"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="I512:13633;296:577">Subscribed</div></article></div></div><div class="search-TIUUyF" data-id="517:15165"><div class="rectangle-70-Dyqkv3 rectangle-70" data-id="I517:15165;280:52"></div><div class="search-Dyqkv3 motivasans-regular-normal-kashmir-blue-14px" data-id="I517:15165;280:53">Search...</div><img class="search-OUklGM" data-id="I517:15165;280:54" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/search-37.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/search-37.svg" alt="Search"></div></div><div class="frame-287-kmzm6A" data-id="512:11988"><div class="frame-302-rEWPdT" data-id="512:12953"><div class="frame-301-xE4xAu" data-id="512:12954"><div class="filters-ATQ4FM motivasans-regular-normal-wild-sand-14px" data-id="512:12955">FILTERS</div><img class="icon-box-ATQ4FM" data-id="512:12956" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-box-4.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-box-4.svg" alt="icon box"></div><div class="search-xE4xAu" data-id="512:12957"><div class="rectangle-70-mmbyer rectangle-70" data-id="I512:12957;280:52"></div><div class="search-mmbyer motivasans-regular-normal-kashmir-blue-14px" data-id="I512:12957;280:53">Search for a tag...</div><img class="search-Igby6g" data-id="I512:12957;280:54" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/search-38.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/search-38.svg" alt="Search"></div><div class="group-24-xE4xAu" data-id="512:12964"><div class="browse-by-tag-uHkV78 motivasans-regular-normal-wild-sand-16px" data-id="512:12965">Browse by Tag</div><img class="vector-2" data-id="512:12966" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-2-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-2-2.svg" alt="Vector 2"><div class="frame-304" data-id="512:13505"><div class="tag-ZObzKx tag" data-id="512:12967"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I512:12967;280:207">All</div><div class="x5000 motivasans-regular-normal-slate-gray-12px" data-id="I512:12967;662:10842">5,000</div></div><div class="tag-A0sTlf tag" data-id="512:13506"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I512:13506;280:205">Balance</div><div class="x5000 motivasans-regular-normal-slate-gray-12px" data-id="I512:13506;662:10883">5,000</div></div><div class="tag-FGGCLw tag" data-id="512:12968"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I512:12968;280:205">Buildings</div><div class="x5000 motivasans-regular-normal-slate-gray-12px" data-id="I512:12968;662:10883">5,000</div></div><div class="tag-COJZJR tag" data-id="512:12969"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I512:12969;280:205">Diplomacy</div><div class="x5000 motivasans-regular-normal-slate-gray-12px" data-id="I512:12969;662:10883">5,000</div></div><div class="tag-xZ4FpY tag" data-id="512:12970"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I512:12970;280:205">Economy</div><div class="x5000 motivasans-regular-normal-slate-gray-12px" data-id="I512:12970;662:10883">5,000</div></div><div class="tag-E78Xth tag" data-id="512:12971"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I512:12971;280:205">Events</div><div class="x5000 motivasans-regular-normal-slate-gray-12px" data-id="I512:12971;662:10883">5,000</div></div><div class="frame-135-ZObzKx" data-id="512:13508"><div class="see-more-JTMXRQ motivasans-regular-normal-slate-gray-12px-2" data-id="512:12972">See more</div></div></div><img class="keyboard-arrow-down-uHkV78" data-id="512:12973" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-115.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-115.svg" alt="Keyboard arrow down"></div><div class="group-37-xE4xAu" data-id="512:13553"><div class="type-yYf75H motivasans-regular-normal-wild-sand-16px" data-id="512:13554">Type</div><img class="vector-2" data-id="512:13555" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-2-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-2-2.svg" alt="Vector 2"><div class="frame-304" data-id="512:13556"><article class="tag-C0PEuJ tag" data-id="512:13557"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I512:13557;280:207">Items</div><div class="x5000 motivasans-regular-normal-slate-gray-12px" data-id="I512:13557;662:10842">5,000</div></article><article class="tag-nlvk0n tag" data-id="512:13558"><div class="souls-like motivasans-regular-normal-wild-sand-12px" data-id="I512:13558;280:205">Collections</div><div class="x5000 motivasans-regular-normal-slate-gray-12px" data-id="I512:13558;662:10883">5,000</div></article></div><img class="keyboard-arrow-down-yYf75H" data-id="512:13565" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-115.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-115.svg" alt="Keyboard arrow down"></div><div class="group-26-xE4xAu" data-id="512:12986"><div class="date-G2x5ax motivasans-regular-normal-wild-sand-16px" data-id="512:12987">Date</div><img class="vector-4-G2x5ax" data-id="512:12988" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-2-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-2-2.svg" alt="Vector 4"><img class="keyboard-arrow-down-G2x5ax" data-id="512:12989" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-117.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-117.svg" alt="Keyboard arrow down"></div></div><div class="frame-277-rEWPdT" data-id="512:12023"><a href="game-community-hub-workshop-2"><div class="frame-270-AOyHw8" data-id="512:12024" data-hotspot-id="hp-0"><div class="frame-288" data-id="517:13690"><div class="frame-289" data-id="517:13691"><img class="image-159-y7617m image-159" data-id="517:13704" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-13@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-13@2x.png" alt="image 159"><div class="frame-216" data-id="517:13705"><div class="st-new-horizons-3XvxXN motivasans-bold-malibu-18px" data-id="517:13706">ST: New Horizons</div><div class="frame-306" data-id="517:13789"><div class="frame-165" data-id="517:13771"><div class="wishlist-page" data-id="517:13772"><img class="image-190" data-id="517:13773" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-190.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-190.png" alt="image 190"><div class="x374 motivasans-regular-normal-malibu-12px" data-id="517:13774">374</div></div><div class="wishlist-page" data-id="517:13775"><img class="image-191" data-id="517:13776" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" alt="image 191"><div class="x374 motivasans-regular-normal-malibu-12px" data-id="517:13777">374</div></div><div class="wishlist-page" data-id="517:13778"><img class="image-192" data-id="517:13779" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-192.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-192.png" alt="image 192"><div class="x374 motivasans-regular-normal-malibu-12px" data-id="517:13780">374</div></div><div class="wishlist-page" data-id="517:13781"><img class="military-tech" data-id="517:13782" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-31.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-31.svg" alt="Military tech"><div class="x3000 motivasans-regular-normal-malibu-12px" data-id="517:13788">3,000</div></div></div><img class="frame-292" data-id="517:13707" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-292-7.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-292-7.svg" alt="Frame 292"><div class="x5000-ratings motivasans-regular-normal-kashmir-blue-14px" data-id="517:13790">5,000 ratings</div></div><div class="frame-264" data-id="517:13727"><div class="frame-18" data-id="517:13728"><article class="tag-4YhhqT tag" data-id="517:13729"><div class="souls-like motivasans-regular-normal-slate-gray-12px-2" data-id="I517:13729;280:181">Fixes</div></article><article class="tag-OpJXL1 tag" data-id="517:13730"><div class="souls-like motivasans-regular-normal-slate-gray-12px-2" data-id="I517:13730;280:181">Graphics</div></article><article class="tag-ZTm1YQ tag" data-id="517:13731"><div class="souls-like motivasans-regular-normal-slate-gray-12px-2" data-id="I517:13731;280:181">Overhaul</div></article></div></div></div></div><div class="frame-305" data-id="517:13752"><div class="wishlist-1" data-id="517:13747"><img class="favorite-border" data-id="I517:13747;280:350" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/favorite-border-29.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/favorite-border-29.svg" alt="Favorite border"></div><div class="main-cta" data-id="517:13741"><div class="primary-button" data-id="I517:13741;426:4352"><div class="add-to-cart motivasans-regular-normal-wild-sand-16px" data-id="I517:13741;426:4352;84:781">Subscribe</div></div></div></div></div></div></a><div class="frame-281-AOyHw8" data-id="517:13793"><div class="frame-288" data-id="517:13794"><div class="frame-289" data-id="517:13795"><img class="image-159-xCCLdE image-159" data-id="517:13796" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-14@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-14@2x.png" alt="image 159"><div class="frame-216" data-id="517:13797"><div class="planetary-diversity-yZdGMq motivasans-bold-malibu-18px" data-id="517:13798">Planetary Diversity</div><div class="frame-306" data-id="517:13799"><div class="frame-165" data-id="517:13800"><div class="wishlist-page" data-id="517:13801"><img class="image-190" data-id="517:13802" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-190.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-190.png" alt="image 190"><div class="x374 motivasans-regular-normal-malibu-12px" data-id="517:13803">374</div></div><div class="wishlist-page" data-id="517:13804"><img class="image-191" data-id="517:13805" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" alt="image 191"><div class="x374 motivasans-regular-normal-malibu-12px" data-id="517:13806">374</div></div><div class="wishlist-page" data-id="517:13807"><img class="image-192" data-id="517:13808" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-192.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-192.png" alt="image 192"><div class="x374 motivasans-regular-normal-malibu-12px" data-id="517:13809">374</div></div><div class="wishlist-page" data-id="517:13810"><img class="military-tech" data-id="517:13811" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-32.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-32.svg" alt="Military tech"><div class="x3000 motivasans-regular-normal-malibu-12px" data-id="517:13817">3,000</div></div></div><img class="frame-292" data-id="517:13818" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-292-8.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-292-8.svg" alt="Frame 292"><div class="x5000-ratings motivasans-regular-normal-kashmir-blue-14px" data-id="517:13838">5,000 ratings</div></div><div class="frame-264" data-id="517:13839"><div class="frame-18" data-id="517:13840"><article class="tag-fFEWgk tag" data-id="517:13841"><div class="souls-like motivasans-regular-normal-slate-gray-12px-2" data-id="I517:13841;280:181">Fixes</div></article><article class="tag-czadYW tag" data-id="517:13842"><div class="souls-like motivasans-regular-normal-slate-gray-12px-2" data-id="I517:13842;280:181">Graphics</div></article><article class="tag-quW5nN tag" data-id="517:13843"><div class="souls-like motivasans-regular-normal-slate-gray-12px-2" data-id="I517:13843;280:181">Overhaul</div></article></div></div></div></div><div class="frame-305" data-id="517:13844"><div class="wishlist-1" data-id="517:13845"><img class="favorite-border" data-id="I517:13845;280:350" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/favorite-border-30.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/favorite-border-30.svg" alt="Favorite border"></div><div class="main-cta" data-id="517:13846"><div class="primary-button" data-id="I517:13846;426:4352"><div class="add-to-cart motivasans-regular-normal-wild-sand-16px" data-id="I517:13846;426:4352;84:781">Subscribe</div></div></div></div></div></div><div class="frame-282-AOyHw8" data-id="517:13859"><div class="frame-288" data-id="517:13860"><div class="frame-289" data-id="517:13861"><img class="image-159-o0zFPX image-159" data-id="517:13862" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-15@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-15@2x.png" alt="image 159"><div class="frame-216" data-id="517:13863"><div class="ui-overhaul-dynamic-ElSjim motivasans-bold-malibu-18px" data-id="517:13864">UI Overhaul Dynamic</div><div class="frame-306" data-id="517:13865"><div class="frame-165" data-id="517:13866"><div class="wishlist-page" data-id="517:13867"><img class="image-190" data-id="517:13868" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-190.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-190.png" alt="image 190"><div class="x374 motivasans-regular-normal-malibu-12px" data-id="517:13869">374</div></div><div class="wishlist-page" data-id="517:13870"><img class="image-191" data-id="517:13871" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" alt="image 191"><div class="x374 motivasans-regular-normal-malibu-12px" data-id="517:13872">374</div></div><div class="wishlist-page" data-id="517:13873"><img class="image-192" data-id="517:13874" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-192.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-192.png" alt="image 192"><div class="x374 motivasans-regular-normal-malibu-12px" data-id="517:13875">374</div></div><div class="wishlist-page" data-id="517:13876"><img class="military-tech" data-id="517:13877" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-33.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-33.svg" alt="Military tech"><div class="x3000 motivasans-regular-normal-malibu-12px" data-id="517:13883">3,000</div></div></div><img class="frame-292" data-id="517:13884" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-292-9.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-292-9.svg" alt="Frame 292"><div class="x5000-ratings motivasans-regular-normal-kashmir-blue-14px" data-id="517:13904">5,000 ratings</div></div><div class="frame-264" data-id="517:13905"><div class="frame-18" data-id="517:13906"><article class="tag-067OfJ tag" data-id="517:13907"><div class="souls-like motivasans-regular-normal-slate-gray-12px-2" data-id="I517:13907;280:181">Fixes</div></article><article class="tag-sMw9C5 tag" data-id="517:13908"><div class="souls-like motivasans-regular-normal-slate-gray-12px-2" data-id="I517:13908;280:181">Graphics</div></article><article class="tag-WjtHdm tag" data-id="517:13909"><div class="souls-like motivasans-regular-normal-slate-gray-12px-2" data-id="I517:13909;280:181">Overhaul</div></article></div></div></div></div><div class="frame-305" data-id="517:13910"><div class="wishlist-1" data-id="517:13911"><img class="favorite-border" data-id="I517:13911;280:350" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/favorite-border-31.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/favorite-border-31.svg" alt="Favorite border"></div><div class="main-cta" data-id="517:13912"><div class="primary-button" data-id="I517:13912;426:4352"><div class="add-to-cart motivasans-regular-normal-wild-sand-16px" data-id="I517:13912;426:4352;84:781">Subscribe</div></div></div></div></div></div><div class="frame-283-AOyHw8" data-id="517:13925"><div class="frame-288" data-id="517:13926"><div class="frame-289" data-id="517:13927"><img class="image-159-3YaFb7 image-159" data-id="517:13928" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-16@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-16@2x.png" alt="image 159"><div class="frame-216" data-id="517:13929"><div class="more-events-mod-xxEdnn motivasans-bold-malibu-18px" data-id="517:13930">More Events Mod</div><div class="frame-306" data-id="517:13931"><div class="frame-165" data-id="517:13932"><div class="wishlist-page" data-id="517:13933"><img class="image-190" data-id="517:13934" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-190.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-190.png" alt="image 190"><div class="x374 motivasans-regular-normal-malibu-12px" data-id="517:13935">374</div></div><div class="wishlist-page" data-id="517:13936"><img class="image-191" data-id="517:13937" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" alt="image 191"><div class="x374 motivasans-regular-normal-malibu-12px" data-id="517:13938">374</div></div><div class="wishlist-page" data-id="517:13939"><img class="image-192" data-id="517:13940" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-192.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-192.png" alt="image 192"><div class="x374 motivasans-regular-normal-malibu-12px" data-id="517:13941">374</div></div><div class="wishlist-page" data-id="517:13942"><img class="military-tech" data-id="517:13943" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-34.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-34.svg" alt="Military tech"><div class="x3000 motivasans-regular-normal-malibu-12px" data-id="517:13949">3,000</div></div></div><img class="frame-292" data-id="517:13950" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-292-10.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-292-10.svg" alt="Frame 292"><div class="x5000-ratings motivasans-regular-normal-kashmir-blue-14px" data-id="517:13970">5,000 ratings</div></div><div class="frame-264" data-id="517:13971"><div class="frame-18" data-id="517:13972"><article class="tag-emulfv tag" data-id="517:13973"><div class="souls-like motivasans-regular-normal-slate-gray-12px-2" data-id="I517:13973;280:181">Fixes</div></article><article class="tag-23yy9T tag" data-id="517:13974"><div class="souls-like motivasans-regular-normal-slate-gray-12px-2" data-id="I517:13974;280:181">Graphics</div></article><article class="tag-1EK846 tag" data-id="517:13975"><div class="souls-like motivasans-regular-normal-slate-gray-12px-2" data-id="I517:13975;280:181">Overhaul</div></article></div></div></div></div><div class="frame-305" data-id="517:13976"><div class="wishlist-1" data-id="517:13977"><img class="favorite-border" data-id="I517:13977;280:350" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/favorite-border-32.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/favorite-border-32.svg" alt="Favorite border"></div><div class="main-cta" data-id="517:13978"><div class="primary-button" data-id="I517:13978;426:4352"><div class="add-to-cart motivasans-regular-normal-wild-sand-16px" data-id="I517:13978;426:4352;84:781">Subscribe</div></div></div></div></div></div><div class="frame-284-AOyHw8" data-id="517:13991"><div class="frame-288" data-id="517:13992"><div class="frame-289" data-id="517:13993"><img class="image-159" data-id="517:13994" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-17@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-17@2x.png" alt="image 159"><div class="frame-216" data-id="517:13995"><div class="mass-effect-civilizations-885R4l motivasans-bold-malibu-18px" data-id="517:13996">Mass Effect Civilizations</div><div class="frame-306" data-id="517:13997"><div class="frame-165" data-id="517:13998"><div class="wishlist-page" data-id="517:13999"><img class="image-190" data-id="517:14000" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-190.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-190.png" alt="image 190"><div class="x374 motivasans-regular-normal-malibu-12px" data-id="517:14001">374</div></div><div class="wishlist-page" data-id="517:14002"><img class="image-191" data-id="517:14003" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-191.png" alt="image 191"><div class="x374 motivasans-regular-normal-malibu-12px" data-id="517:14004">374</div></div><div class="wishlist-page" data-id="517:14005"><img class="image-192" data-id="517:14006" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-192.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-192.png" alt="image 192"><div class="x374 motivasans-regular-normal-malibu-12px" data-id="517:14007">374</div></div><div class="wishlist-page" data-id="517:14008"><img class="military-tech" data-id="517:14009" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-35.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/military-tech-35.svg" alt="Military tech"><div class="x3000 motivasans-regular-normal-malibu-12px" data-id="517:14015">3,000</div></div></div><img class="frame-292" data-id="517:14016" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-292-11.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-292-11.svg" alt="Frame 292"><div class="x5000-ratings motivasans-regular-normal-kashmir-blue-14px" data-id="517:14036">5,000 ratings</div></div><div class="frame-264" data-id="517:14037"><div class="frame-18" data-id="517:14038"><article class="tag-xj3EkO tag" data-id="517:14039"><div class="souls-like motivasans-regular-normal-slate-gray-12px-2" data-id="I517:14039;280:181">Fixes</div></article><article class="tag-hSCGPA tag" data-id="517:14040"><div class="souls-like motivasans-regular-normal-slate-gray-12px-2" data-id="I517:14040;280:181">Graphics</div></article><article class="tag-6WJa7L tag" data-id="517:14041"><div class="souls-like motivasans-regular-normal-slate-gray-12px-2" data-id="I517:14041;280:181">Overhaul</div></article></div></div></div></div><div class="frame-305" data-id="517:14042"><div class="wishlist-1" data-id="517:14043"><img class="favorite-border" data-id="I517:14043;280:350" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/favorite-border-33.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/favorite-border-33.svg" alt="Favorite border"></div><div class="main-cta" data-id="517:14044"><div class="primary-button" data-id="I517:14044;426:4352"><div class="add-to-cart motivasans-regular-normal-wild-sand-16px" data-id="I517:14044;426:4352;84:781">Subscribe</div></div></div></div></div></div><div class="frame-280-AOyHw8" data-id="512:12157"><div class="frame-238-i3dH1n" data-id="512:12158"><div class="secondary-button-kJDY5N secondary-button" data-id="512:12159"><div class="add-to-wishlist-g2QYDA add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I512:12159;84:780">Prev</div></div><div class="frame-237-kJDY5N" data-id="512:12160"><div class="secondary-button-IvMusx secondary-button" data-id="512:12161"><div class="add-to-wishlist-f2rnl1 add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I512:12161;84:780">1</div></div><div class="secondary-button-Nr1kdx secondary-button" data-id="512:12162"><div class="add-to-wishlist-SCIXZh add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I512:12162;84:780">2</div></div><div class="secondary-button-KDbo73 secondary-button" data-id="512:12163"><div class="add-to-wishlist-GoAehV add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I512:12163;84:780">3</div></div><div class="secondary-button-ZwTs1G secondary-button" data-id="512:12164"><div class="add-to-wishlist-xKW7fI add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I512:12164;84:780">4</div></div><div class="secondary-button-ncX66w secondary-button" data-id="512:12165"><div class="add-to-wishlist-9E893Y add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I512:12165;84:780">5</div></div><div class="x-IvMusx valign-text-middle motivasans-regular-normal-slate-gray-16px-2" data-id="512:12166">...</div><div class="secondary-button-jcbMDU secondary-button" data-id="512:12167"><div class="add-to-wishlist-jsx40M add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I512:12167;84:780">10</div></div></div><div class="secondary-button-8CXzgR secondary-button" data-id="512:12168"><div class="add-to-wishlist-LLmmwb add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I512:12168;84:780">Next</div></div></div></div></div></div></div></div><header class="header-besIZR" data-id="512:12170"><div class="rectangle-67-RKZVlI" data-id="512:12171"></div><div class="frame-15-RKZVlI" data-id="512:12172"><article class="menu" data-id="512:12173"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I512:12173;82:314">Home</div></article><article class="menu" data-id="512:12174"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I512:12174;82:314">Discussion</div></article><article class="menu" data-id="512:12175"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I512:12175;82:314">Workshop</div></article><article class="group-15-vK222O" data-id="512:12176"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I512:12176;82:314">Market</div></article><article class="group-18-vK222O" data-id="512:12177"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I512:12177;82:314">Broadcasts</div></article></div><div class="search-RKZVlI" data-id="512:12178"><div class="search-U9ZdUJ motivasans-regular-normal-kashmir-blue-14px" data-id="512:12179">Search...</div><div class="frame-262-U9ZdUJ" data-id="512:12180"><div class="frame-261-HAlhqJ" data-id="512:12181"><div class="community-7LLg66 community motivasans-regular-normal-kashmir-blue-14px" data-id="512:12182">Community</div><img class="keyboard-arrow-down-7LLg66" data-id="512:12183" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-42.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-42.svg" alt="Keyboard arrow down"></div><img class="search-HAlhqJ" data-id="512:12185" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/search-39.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/search-39.svg" alt="Search"></div></div></header><div class="client-besIZR" data-id="512:12169"><div class="rectangle-68-k2NVkO" data-id="I512:12169;333:2374"></div><div class="frame-11-k2NVkO" data-id="I512:12169;333:2375"><div class="frame-2-KJV4KW" data-id="I512:12169;333:2381"><div class="frame-239-ooeVVR" data-id="I512:12169;475:5954"><div class="help-31xyLB motivasans-regular-normal-slate-gray-16px" data-id="I512:12169;475:4731">Help</div></div><div class="frame-240-ooeVVR" data-id="I512:12169;618:6950"><div class="view-8coLCZ motivasans-regular-normal-slate-gray-16px" data-id="I512:12169;618:6951">View</div><img class="keyboard-arrow-down-8coLCZ" data-id="I512:12169;618:6952" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-40.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-40.svg" alt="Keyboard arrow down"></div><img class="minimize-ooeVVR" data-id="I512:12169;333:2384" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/minimize-31.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/minimize-31.svg" alt="Minimize"><img class="content-copy-ooeVVR" data-id="I512:12169;333:2387" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/content-copy-31.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/content-copy-31.svg" alt="Content copy"><img class="close-ooeVVR" data-id="I512:12169;333:2390" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/close-31.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/close-31.svg" alt="Close"></div></div><div class="frame-3-k2NVkO" data-id="I512:12169;333:2404"><img class="group-SQWFUr" data-id="I512:12169;435:10471" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-5@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-5@2x.png" alt="Group"><div class="store-menu-SQWFUr store-menu" data-id="I512:12169;333:2405"><div class="store-OK6I1n motivasans-bold-wild-sand-18px" data-id="I512:12169;333:2405;18:271">STORE</div></div><a href="community-home"><div class="store-menu-kYDThZ store-menu" data-id="I512:12169;333:2406" data-hotspot-id="hp-1"><div class="community-0sEMmx community motivasans-bold-malibu-18px" data-id="I512:12169;333:2406;18:782">COMMUNITY</div></div></a><div class="store-menu-A6JM28 store-menu" data-id="I512:12169;333:2407"><div class="juxtopposed-KZ51p3 juxtopposed motivasans-bold-wild-sand-18px" data-id="I512:12169;333:2407;18:879">JUXTOPPOSED</div></div><div class="store-menu-bp3JoM store-menu" data-id="I512:12169;333:2408"><div class="library-okMg9T motivasans-bold-wild-sand-18px" data-id="I512:12169;333:2408;18:832">LIBRARY</div></div></div><div class="frame-233-k2NVkO" data-id="I512:12169;460:23404"><a href="download"><div class="store-menu-a3s192 store-menu" data-id="I512:12169;333:2409" data-hotspot-id="hp-2"><div class="downloads-MhDfKx motivasans-bold-wild-sand-18px" data-id="I512:12169;333:2410">DOWNLOADS</div></div></a></div><img class="view-list-k2NVkO" data-id="I512:12169;333:2418" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/view-list@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/view-list@2x.png" alt="View list"><div class="frame-330-k2NVkO" data-id="I512:12169;618:13985"><div class="friends-x78TxD" data-id="I512:12169;447:7373"><div class="group-9-9ZNAtN" data-id="I512:12169;447:7373;447:3840"><div class="rectangle-61-4UTM8R" data-id="I512:12169;447:7373;447:3841"></div><img class="people-4UTM8R" data-id="I512:12169;447:7373;447:3842" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/people-38.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/people-38.svg" alt="People"></div></div><div class="notifications-x78TxD" data-id="I512:12169;850:10413"><div class="group-135-Tiinag" data-id="I512:12169;850:10413;766:10295"><div class="group-8-xfdLer" data-id="I512:12169;850:10413;766:10296"><div class="rectangle-60-NKIwGG rectangle-60" data-id="I512:12169;850:10413;766:10297"></div><img class="notifications-NKIwGG" data-id="I512:12169;850:10413;766:10298" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/notifications-31.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/notifications-31.svg" alt="Notifications"></div></div><div class="group-12-Tiinag" data-id="I512:12169;850:10413;766:10166"><div class="ellipse-2-n0vuwL" data-id="I512:12169;850:10413;766:10167"></div><div class="x1-n0vuwL motivasans-regular-normal-vulcan-12px" data-id="I512:12169;850:10413;766:10168">1</div></div></div><div class="component-2-x78TxD" data-id="I512:12169;333:2393"><div class="group-7-zLQmX3" data-id="I512:12169;333:2393;18:1014"><div class="rectangle-60-eG0sEY rectangle-60" data-id="I512:12169;333:2393;18:1015"></div><div class="frame-1-eG0sEY" data-id="I512:12169;333:2393;18:1016"><img class="sprite-0003-1-zIlLUt" data-id="I512:12169;333:2393;18:1017" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-53.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-53.svg" alt="Sprite-0003 1"><div class="juxtopposed-zIlLUt juxtopposed motivasans-regular-normal-wild-sand-14px" data-id="I512:12169;333:2393;18:1018">Juxtopposed</div><div class="x525-zIlLUt motivasans-regular-normal-slate-gray-14px" data-id="I512:12169;333:2393;18:1019">$5.25</div><img class="keyboard-arrow-down-zIlLUt" data-id="I512:12169;333:2393;18:1020" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-41.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-41.svg" alt="Keyboard arrow down"></div></div></div></div><img class="frame-331-k2NVkO" data-id="I512:12169;628:10825" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-331-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-331-2.svg" alt="Frame 331"></div></div></div><script src="launchpad-js/launchpad-banner.js" async=""></script><script defer="" src="https://animaapp.s3.amazonaws.com/static/restart-btn.min.js"></script><div id="anima-interface" data-turbo-permanent="true" class="idle"><!---->
+        <div id="anima-comment-popover" class="popover top" role="tooltip" style="left: -205px; top: -220px;">
+          <div class="arrow" style="margin-left: 128px;"></div>
+          <div class="popover-content" style="align-items:center">
+            <div style="display:flex;flex-direction:column;height: 100%;padding: 20px;">
+              <h3 style="font-size:18px;margin-bottom:10px;font-weight:500;line-height: 26px;font-family: Roslindale;">
+                Leave feedback and collaborate
+              </h3>
+              <p style="font-size:12px;margin-bottom:20px;font-weight:400;line-height: 20px;">
+                Login to your account to leave comments. Don't have an account?
+                Sign up for free!
+              </p>
+              <a target="_blank" rel="noopener noreferrer" class="btn" href="https://projects.animaapp.com/p/undefined/s/undefined?mode=comments&amp;utm_campaign=add-comment&amp;utm_medium=add-comment&amp;utm_source=animaapp.io">Add comment</a>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:center;padding-right:20px">
+              <img src="https://animaapp.s3.amazonaws.com/static/comment-illustration.svg">
+            </div>
+          </div>
+        </div>
+        <div id="anima-code-popover" class="popover top" role="tooltip" style="left: -205px; top: -220px;">
+          <div class="arrow" style="margin-left: 168px;"></div>
+          <div class="popover-content" style="align-items:center">
+            <div style="display:flex;flex-direction:column;height: 100%;padding: 20px;">
+              <h3 style="font-size:18px;margin-bottom:10px;font-weight:500;line-height: 26px;font-family: Roslindale;">
+                Get clean code you’ll love with Anima
+              </h3>
+              <p style="font-size:12px;margin-bottom:20px;font-weight:400;line-height: 20px;">
+                Login and easily export HTML, React or Vue of this prototype.
+                Don’t have an account? Sign up for free!
+              </p>
+              <a target="_blank" rel="noopener noreferrer" class="btn" href="https://projects.animaapp.com/p/undefined/s/undefined?mode=code&amp;utm_campaign=get-code&amp;utm_medium=get-code&amp;utm_source=animaapp.io">
+                Get code
+              </a>
+            </div>
+
+            <img src="https://animaapp.s3.amazonaws.com/static/code-illustration.svg">
+          </div>
+        </div>
+        <div class="omniview-anima-action-links" id="actions-wrap">
+          <div class="omniview-anima-action-links">
+            <div id="page-nav" class="link navigation" style="display: none;">
+              <svg id="homepage-icon" class="home-icon" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.151 11a.25.25 0 01-.167-.436l4.349-3.913a.25.25 0 01.334 0l4.349 3.913a.25.25 0 01-.167.436H8.15zM16 12H9v4a1 1 0 001 1h5a1 1 0 001-1v-4z" fill="#fff"></path>
+              </svg>
+
+              <svg class="icon" id="arrow-left" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18l-6-6 6-6" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+
+              <span id="page-num"></span>
+
+              <svg class="icon" id="arrow-right" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+
+            <a class="link" id="comment-link" target="_blank" style="display: none;">
+              <span class="text">Comment</span>
+              <svg width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M4.301 15.137a.551.551 0 01.199-.55c.314-.23.554-.554.718-.965A6.015 6.015 0 014 10 6.006 6.006 0   0110.001 4 6.006 6.006 0 0116 10.001 6.006 6.006 0 019.999 16a5.98 5.98 0 01-3.095-.86 3.165 3.165 0 01-1.65.438 3.6  3.6 0 01-.57-.044c-.191-.03-.34-.186-.383-.397z" fill="#fff"></path>
+              </svg>
+            </a>
+
+            <a class="link" id="code-link" target="_blank" style="display: none;">
+              <span class="text">Get Code</span>
+              <svg width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 15.667a1 1 0 01-.707-1.708l3.626-3.625-3.626-3.626a1 1 0 111.415-1.415l4.333 4.333a1 1 0 010 1.414l-4.333 4.333a.993.993 0 01-.707.294zM7.333 5a1 1 0 01.707 1.708l-3.626 3.625 3.627 3.626a1 1 0 11-1.415 1.415L2.293 11.04a1 1 0 010-1.415l4.333-4.333A.992.992 0 017.333 5z" fill="#fff"></path>
+              </svg>
+            </a>
+
+            <div class="restart" id="restart-btn" style="display: none;">
+              <svg style="margin-right: 6px" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 11.817A5.017 5.017 0 01.994 6.811c0-.207.169-.375.375-.375s.375.168.375.375A4.265 4.265 0 006 11.067a4.265 4.265 0 004.256-4.256A4.265 4.265 0 006 2.555a.376.376 0 01-.375-.376c0-.206.169-.374.375-.374a5.017 5.017 0 015.006 5.006A5.017 5.017 0 016 11.817z" fill="#fff"></path>
+                <path d="M6.75 4.237a.37.37 0 01-.263-.112l-1.65-1.65a.363.363 0 010-.525L6.487.3c.15-.15.375-.15.525 0 .15.15.15.375 0 .525L5.625 2.212 7.012 3.6c.15.15.15.375 0 .525-.056.075-.15.112-.262.112z" fill="#fff"></path>
+              </svg>
+              Restart
+            </div>
+          </div>
+        </div>
+      <!----></div><div id="anima-watermark" style="display: none;" class="idle"><!----><a id="anima-watermark-link" target="_blank" href="https://www.animaapp.com?utm_campaign=public-link-banner&amp;utm_medium=public-link-banner&amp;utm_source=animaapp.io" style="right: 20px; left: auto; padding: 6px;">
+        <svg width="20" height="20" viewBox="0 0 20 20" id="anima-logo-icon" fill="none" xmlns="http://www.w3.org/2000/svg" data-hotspot-id="hp-3">
+          <path d="M4.09293 3.00001H16.5327C16.5484 2.99976 16.5638 3.00351 16.5776 3.01092C16.5913 3.01832 16.603 3.02913 16.6114 3.04231C16.6198 3.0555 16.6247 3.07061 16.6256 3.08622C16.6265 3.10182 16.6233 3.1174 16.6165 3.13146C15.5441 5.29706 13.9276 7.14699 11.9253 8.50009C8.69117 10.6822 5.43436 10.9075 4.09389 10.9196C4.08165 10.9198 4.06949 10.9176 4.05811 10.9131C4.04672 10.9086 4.03636 10.9019 4.02761 10.8933C4.01887 10.8848 4.01192 10.8745 4.00718 10.8633C4.00244 10.852 4 10.8399 4 10.8276V3.09198C4 3.07982 4.00241 3.06778 4.00709 3.05656C4.01177 3.04534 4.01863 3.03516 4.02728 3.02661C4.03592 3.01805 4.04617 3.0113 4.05744 3.00673C4.06871 3.00217 4.08077 2.99988 4.09293 3.00001Z" fill="#FF6250"></path>
+          <path d="M6.77772 17.4446C8.31182 17.4446 9.55545 16.201 9.55545 14.6669C9.55545 13.1328 8.31182 11.8892 6.77772 11.8892C5.24363 11.8892 4 13.1328 4 14.6669C4 16.201 5.24363 17.4446 6.77772 17.4446Z" fill="#FFDF90"></path>
+          <path d="M12.4559 17.2799C11.6701 16.9799 11.2522 16.1151 11.5185 15.3496L13.6153 9.3656C13.884 8.60003 14.7387 8.22302 15.5245 8.52299C16.3103 8.82344 16.7282 9.68772 16.4619 10.4538L14.365 16.4377C14.0964 17.2033 13.2417 17.5808 12.4559 17.2799Z" fill="#3366FF"></path>
+        </svg>
+        <span class="text" style="display: none;">Made with Anima</span>
+      </a><!----></div><div id="hotspots_wrapper"><div class="hotspot" id="hp-0" style="width: 1247px; height: 164px; top: 412px; left: 497px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-1" style="width: 114px; height: 22px; top: 18px; left: 374px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-2" style="width: 118px; height: 22px; top: 18px; left: 894px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-3" style="top: 0px; left: 0px; z-index: -1; opacity: 0;"></div></div><div id="t_preload_links"><link href="/game-community-hub-workshop" rel="prefetch"><link href="/game-community-hub-discussions" rel="prefetch"><link href="/library-home-detail-view-2" rel="prefetch"><link href="/forum" rel="prefetch"><link href="/library-home-grid-view-2" rel="prefetch"><link href="/library-home-ready-to-play-filter" rel="prefetch"></div></body></html>

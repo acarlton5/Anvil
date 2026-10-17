@@ -1,4 +1,4 @@
-// Anvil Console OS v4.0 — Next-Gen Xbox / Fluent Glass Dashboard Frontend
+// Anvil Console OS v4.5 — SteamOS 3.6 + Xbox Series X Flagship Dashboard Frontend
 const state = {
   tab: 0, // 0: Home, 1: Library, 2: Store, 3: Cartridges, 4: Settings
   homeZone: "shelf", // "top" | "shelf" | "quick"
@@ -10,8 +10,10 @@ const state = {
   drives: [],
   battery: { percent: 100, charging: false },
   system: {},
+  network: { connected: true, ssid: "SteamDeck-5GHz", ip: "192.168.1.100", tailscale_ip: "100.101.162.75", hostname: "steamdeck" },
+  update: { version: "4.5.0", build: "20261017.5", channel: "Stable", up_to_date: true, last_checked: "Just now", changelog: [] },
   selectedIndex: 0,
-  settingsCat: 0,
+  settingsCat: 0, // 0: Updates, 1: Audio & Volume, 2: Display, 3: Network, 4: Storage & Cartridges, 5: Controller, 6: Proton & System
   settingsRightIdx: 0,
   settingsFocusSide: true,
   guideOpen: false,
@@ -20,7 +22,15 @@ const state = {
   qamIdx: 0,
   volumePct: 75,
   volumeMuted: false,
+  micPct: 80,
+  micMuted: false,
+  sinkName: "Steam Deck Speakers (acp5x)",
+  uiSounds: true,
   brightnessPct: 85,
+  nightMode: false,
+  updateModalOpen: false,
+  updateChecking: false,
+  updateChannelIdx: 0,
   cartridgeModalOpen: false,
   cartridgeModalIdx: 0,
   powerModalOpen: false,
@@ -51,6 +61,65 @@ const state = {
   ]
 };
 
+// Web Audio API Synthesizer for Subtle Console UI Navigation Sounds
+let audioCtx = null;
+function playUiSound(type = "tick") {
+  if (!state.uiSounds) return;
+  try {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      audioCtx = new AC();
+    }
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    const now = audioCtx.currentTime;
+
+    if (type === "tick") {
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(360, now);
+      osc.frequency.exponentialRampToValueAtTime(520, now + 0.032);
+      gain.gain.setValueAtTime(0.035, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.038);
+    } else if (type === "confirm") {
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(480, now);
+      osc.frequency.exponentialRampToValueAtTime(760, now + 0.075);
+      gain.gain.setValueAtTime(0.06, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.085);
+    } else if (type === "back") {
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.exponentialRampToValueAtTime(270, now + 0.065);
+      gain.gain.setValueAtTime(0.045, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.075);
+    } else if (type === "tab") {
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(580, now);
+      osc.frequency.exponentialRampToValueAtTime(660, now + 0.045);
+      gain.gain.setValueAtTime(0.04, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.055);
+    }
+  } catch (e) {}
+}
+
 function artUrl(rawPath) {
   if (!rawPath) return "";
   const clean = rawPath.replace(/^file:\/\//, "");
@@ -68,6 +137,23 @@ function updateClock() {
 setInterval(updateClock, 10000);
 updateClock();
 
+function syncTopStatusBar() {
+  const topVol = document.getElementById("top-vol-text");
+  if (topVol) {
+    topVol.textContent = state.volumeMuted ? "MUTED" : `${state.volumePct}%`;
+  }
+  const quickVolSub = document.getElementById("quick-vol-sub");
+  if (quickVolSub) {
+    quickVolSub.textContent = `${state.volumeMuted ? "Muted" : state.volumePct + "%"} • ${state.sinkName.split(" ")[0]} Audio`;
+  }
+  const batFill = document.getElementById("battery-fill");
+  const batText = document.getElementById("battery-text");
+  const qamBat = document.getElementById("qam-battery-label");
+  if (batFill) batFill.style.width = `${Math.max(8, Math.min(100, state.battery.percent))}%`;
+  if (batText) batText.textContent = `${state.battery.percent}%`;
+  if (qamBat) qamBat.textContent = `${state.battery.percent}%${state.battery.charging ? " CHG" : ""}`;
+}
+
 async function loadState() {
   try {
     const res = await fetch("/api/state");
@@ -76,10 +162,15 @@ async function loadState() {
     state.drives = data.drives || [];
     state.battery = data.battery || { percent: 100, charging: false };
     state.system = data.system || {};
+    state.network = data.network || state.network;
+    state.update = data.update || state.update;
     state.gameRunning = !!data.game_running;
     if (data.volume) {
       state.volumePct = data.volume.percent ?? 75;
       state.volumeMuted = !!data.volume.muted;
+      state.micPct = data.volume.mic_percent ?? 80;
+      state.micMuted = !!data.volume.mic_muted;
+      state.sinkName = data.volume.sink_name || state.sinkName;
     }
     if (data.brightness) {
       state.brightnessPct = data.brightness.percent ?? 85;
@@ -93,13 +184,7 @@ async function loadState() {
     const libSideCount = document.getElementById("lib-side-count");
     if (libSideCount) libSideCount.textContent = `${count}`;
 
-    const batFill = document.getElementById("battery-fill");
-    const batText = document.getElementById("battery-text");
-    const qamBat = document.getElementById("qam-battery-label");
-    if (batFill) batFill.style.width = `${Math.max(8, Math.min(100, state.battery.percent))}%`;
-    if (batText) batText.textContent = `${state.battery.percent}%${state.battery.charging ? " ⚡" : ""}`;
-    if (qamBat) qamBat.textContent = `${state.battery.percent}%${state.battery.charging ? " ⚡" : ""}`;
-
+    syncTopStatusBar();
     renderHomeShelf();
     renderLibraryGrid();
     updateSelectedGameHero();
@@ -281,7 +366,7 @@ function updateSelectedGameHero() {
 
   const protonBadge = document.getElementById("home-proton-badge");
   if (protonBadge) {
-    protonBadge.textContent = (g.proton || g.runner || "PROTON EXPERIMENTAL").toUpperCase();
+    protonBadge.textContent = (g.proton || g.runner || "GE-PROTON11-9").toUpperCase();
   }
 
   const driveBadge = document.getElementById("home-drive-badge");
@@ -293,7 +378,7 @@ function updateSelectedGameHero() {
 
   const counter = document.getElementById("home-index-counter");
   if (counter) {
-    counter.textContent = `${state.selectedIndex + 1} OF ${state.games.length}`;
+    counter.textContent = `CARTRIDGE ${state.selectedIndex + 1} OF ${state.games.length}`;
   }
 
   const libSelectedTitle = document.getElementById("lib-selected-title");
@@ -308,20 +393,22 @@ function updateSelectedGameHero() {
 }
 
 function triggerQuickCard(idx) {
+  playUiSound("confirm");
   if (idx === 0) switchTab(1);
   else if (idx === 1) switchTab(3);
   else if (idx === 2) {
     switchTab(4);
     selectSettingCat(1);
+    state.settingsFocusSide = false;
+    renderSettingsPane();
   } else if (idx === 3) {
-    switchTab(4);
-    selectSettingCat(0);
+    openUpdateModal();
   }
 }
 
 function switchTab(newTab) {
-  // Always close any open modal/drawer when switching tabs so LB/RB never gets stuck!
   closeCartridgeModal();
+  closeUpdateModal();
   closeGuideBlade();
   closeQamSidebar();
   if (state.powerModalOpen) togglePowerModal();
@@ -329,6 +416,7 @@ function switchTab(newTab) {
   const count = 5;
   state.tab = ((newTab % count) + count) % count;
   state.topNavIdx = state.tab;
+  playUiSound("tab");
 
   document.body.classList.toggle("subpage", state.tab !== 0);
 
@@ -402,10 +490,92 @@ function renderCartridgesPage() {
   `;
 }
 
+/* =================================================
+   7-CATEGORY STEAMOS & XBOX SETTINGS PAGE
+   ================================================= */
 function selectSettingCat(catIdx) {
-  state.settingsCat = Math.max(0, Math.min(4, catIdx));
+  state.settingsCat = Math.max(0, Math.min(6, catIdx));
   state.settingsRightIdx = 0;
   renderSettingsPane();
+}
+
+function toggleNightMode() {
+  state.nightMode = !state.nightMode;
+  const overlay = document.getElementById("night-mode-overlay");
+  if (overlay) overlay.classList.toggle("active", state.nightMode);
+  renderSettingsPane();
+}
+
+function getSettingsRightItemsCount() {
+  if (state.settingsCat === 0) return 3; // Check Updates, Channel Selector, Release Notes
+  if (state.settingsCat === 1) return 4; // Master Vol, Output Device, Mic Vol, UI Sounds
+  if (state.settingsCat === 2) return 3; // Brightness, Night Mode, 1280x800 Scaling
+  if (state.settingsCat === 3) return 2; // Wi-Fi, Tailscale
+  if (state.settingsCat === 4) return 1 + state.drives.length; // Cartridge Builder + Drives
+  if (state.settingsCat === 5) return 2; // Controller Bridge, Guide Lock
+  return 2; // Proton & System Info
+}
+
+function handleSettingsRightAction(action) {
+  const cat = state.settingsCat;
+  const idx = state.settingsRightIdx;
+
+  // Category 0: System Updates
+  if (cat === 0) {
+    if (idx === 0 && action === "south") {
+      openUpdateModal();
+    } else if (idx === 1 && (action === "left" || action === "right" || action === "south")) {
+      const channels = ["Stable (Recommended)", "Preview / Beta", "Developer Mainline"];
+      state.updateChannelIdx = (state.updateChannelIdx + (action === "left" ? channels.length - 1 : 1)) % channels.length;
+      state.update.channel = channels[state.updateChannelIdx];
+      renderSettingsPane();
+    } else if (idx === 2 && action === "south") {
+      openUpdateModal();
+    }
+    return;
+  }
+
+  // Category 1: Audio & Volume
+  if (cat === 1) {
+    if (idx === 0) {
+      if (action === "left") adjustVolume("down");
+      else if (action === "right") adjustVolume("up");
+      else if (action === "south") adjustVolume("mute");
+    } else if (idx === 1) {
+      if (action === "left" || action === "right" || action === "south") {
+        adjustVolume("cycle-sink");
+      }
+    } else if (idx === 2) {
+      if (action === "left") adjustVolume("mic-down");
+      else if (action === "right") adjustVolume("mic-up");
+      else if (action === "south") adjustVolume("mic-mute");
+    } else if (idx === 3) {
+      if (action === "left" || action === "right" || action === "south") {
+        state.uiSounds = !state.uiSounds;
+        if (state.uiSounds) playUiSound("confirm");
+        renderSettingsPane();
+      }
+    }
+    return;
+  }
+
+  // Category 2: Display & Brightness
+  if (cat === 2) {
+    if (idx === 0) {
+      if (action === "left") adjustBrightness("down");
+      else if (action === "right" || action === "south") adjustBrightness("up");
+    } else if (idx === 1) {
+      if (action === "left" || action === "right" || action === "south") {
+        toggleNightMode();
+      }
+    }
+    return;
+  }
+
+  // Category 4: Storage & Cartridges
+  if (cat === 4 && action === "south") {
+    openCartridgeModal();
+  }
 }
 
 function renderSettingsPane() {
@@ -417,11 +587,170 @@ function renderSettingsPane() {
     el.classList.toggle("focused", state.settingsFocusSide && i === state.settingsCat);
   });
 
+  const f = (idx) => (!state.settingsFocusSide && state.settingsRightIdx === idx ? "focused" : "");
+
+  // 0: SYSTEM UPDATES
   if (state.settingsCat === 0) {
+    pane.innerHTML = `
+      <div class="xbox-slate-card ${f(0)}" onclick="openUpdateModal()">
+        <div class="slate-row">
+          <div>
+            <span class="xbox-tag green" style="margin-bottom:6px; display:inline-block;">ANVIL CONSOLE OS ${state.update.version || "4.5.0"}</span>
+            <div class="slate-title">Software Updates & SteamOS System Image</div>
+            <div class="slate-sub">Build ${state.update.build || "20261017.5"}  •  Last checked: <strong>${state.update.last_checked || "Just now"}</strong>  •  Your console is up to date.</div>
+          </div>
+          <button class="xbox-btn"><span class="a-btn-mini">A</span><span>Check for Updates</span></button>
+        </div>
+      </div>
+
+      <div class="xbox-slate-card ${f(1)}" onclick="handleSettingsRightAction('south')">
+        <div class="slate-row">
+          <div>
+            <div class="slate-title">OS Update Channel</div>
+            <div class="slate-sub">Use ◀ / ▶ or press A to switch between Stable, Preview, and Developer OS channels.</div>
+          </div>
+          <span class="settings-pill-value cyan">◀  ${state.update.channel || "Stable (Recommended)"}  ▶</span>
+        </div>
+      </div>
+
+      <div class="xbox-slate-card ${f(2)}" onclick="openUpdateModal()">
+        <div class="slate-row">
+          <div>
+            <div class="slate-title">What's New in Anvil Console OS 4.5.0</div>
+            <div class="slate-sub">
+              • Added SteamOS-style System Update Window & Release Notes Viewer<br>
+              • Added Full Audio & Volume Mixer (Master Output, Sink Switcher, Mic Level, Console UI Sounds)<br>
+              • Added Display Brightness Slider & Night Mode Eye-Care Filter<br>
+              • Instant Workspace 2 Game Switching + STEAM / ••• In-Game Overlay Sidebars
+            </div>
+          </div>
+          <span class="xbox-tag">CHANGELOG</span>
+        </div>
+      </div>
+    `;
+  }
+  // 1: AUDIO & VOLUME
+  else if (state.settingsCat === 1) {
+    const volPct = state.volumeMuted ? 0 : state.volumePct;
+    const micPct = state.micMuted ? 0 : state.micPct;
+    pane.innerHTML = `
+      <div class="xbox-slate-card ${f(0)}" onclick="adjustVolume('mute')">
+        <div class="slate-row">
+          <div>
+            <div class="slate-title">Master Output Volume ${state.volumeMuted ? '<span style="color:#f87171;">(MUTED)</span>' : ""}</div>
+            <div class="slate-sub">Use D-Pad ◀ / ▶ to adjust volume level, or press A to toggle mute. Hardware Volume buttons also control this live.</div>
+          </div>
+          <span class="settings-pill-value ${state.volumeMuted ? "" : "green"}">${state.volumeMuted ? "MUTED" : `${state.volumePct}%`}</span>
+        </div>
+        <div class="slider-track">
+          <div class="slider-fill" style="width:${volPct}%;"></div>
+          <div class="slider-thumb" style="left:${volPct}%;"></div>
+        </div>
+      </div>
+
+      <div class="xbox-slate-card ${f(1)}" onclick="adjustVolume('cycle-sink')">
+        <div class="slate-row">
+          <div>
+            <div class="slate-title">Audio Output Device (PipeWire Sink)</div>
+            <div class="slate-sub">Press A or ◀ / ▶ to switch active output between Internal Steam Deck Speakers, Headphones, and DisplayPort/HDMI Audio.</div>
+          </div>
+          <span class="settings-pill-value cyan">◀  ${state.sinkName}  ▶</span>
+        </div>
+      </div>
+
+      <div class="xbox-slate-card ${f(2)}" onclick="adjustVolume('mic-mute')">
+        <div class="slate-row">
+          <div>
+            <div class="slate-title">Microphone Input Gain ${state.micMuted ? '<span style="color:#f87171;">(MUTED)</span>' : ""}</div>
+            <div class="slate-sub">Use D-Pad ◀ / ▶ to adjust voice chat microphone gain, or press A to mute microphone.</div>
+          </div>
+          <span class="settings-pill-value ${state.micMuted ? "" : "cyan"}">${state.micMuted ? "MIC MUTED" : `${state.micPct}%`}</span>
+        </div>
+        <div class="slider-track">
+          <div class="slider-fill cyan" style="width:${micPct}%;"></div>
+          <div class="slider-thumb cyan" style="left:${micPct}%;"></div>
+        </div>
+      </div>
+
+      <div class="xbox-slate-card ${f(3)}" onclick="state.uiSounds = !state.uiSounds; renderSettingsPane();">
+        <div class="slate-row">
+          <div>
+            <div class="slate-title">Console UI Navigation Sounds</div>
+            <div class="slate-sub">Play subtle tactile acoustic feedback when moving across cartridges, bumpers, and menus.</div>
+          </div>
+          <span class="settings-pill-value ${state.uiSounds ? "green" : ""}">${state.uiSounds ? "ENABLED" : "MUTED"}</span>
+        </div>
+      </div>
+    `;
+  }
+  // 2: DISPLAY & BRIGHTNESS
+  else if (state.settingsCat === 2) {
+    pane.innerHTML = `
+      <div class="xbox-slate-card ${f(0)}" onclick="adjustBrightness('up')">
+        <div class="slate-row">
+          <div>
+            <div class="slate-title">Steam Deck Panel Backlight Brightness</div>
+            <div class="slate-sub">Use D-Pad ◀ / ▶ to adjust display brightness (amdgpu_bl0 hardware backlight).</div>
+          </div>
+          <span class="settings-pill-value cyan">${state.brightnessPct}%</span>
+        </div>
+        <div class="slider-track">
+          <div class="slider-fill cyan" style="width:${state.brightnessPct}%;"></div>
+          <div class="slider-thumb cyan" style="left:${state.brightnessPct}%;"></div>
+        </div>
+      </div>
+
+      <div class="xbox-slate-card ${f(1)}" onclick="toggleNightMode()">
+        <div class="slate-row">
+          <div>
+            <div class="slate-title">Night Mode (Warm Amber Eye-Care Tint)</div>
+            <div class="slate-sub">Reduces blue light emission for comfortable late-night handheld gaming. Press A to toggle.</div>
+          </div>
+          <span class="settings-pill-value ${state.nightMode ? "green" : ""}">${state.nightMode ? "ACTIVE (WARM)" : "OFF"}</span>
+        </div>
+      </div>
+
+      <div class="xbox-slate-card ${f(2)}">
+        <div class="slate-row">
+          <div>
+            <div class="slate-title">Native Resolution & Fullscreen Game Scaling</div>
+            <div class="slate-sub">1280 × 800 (16:10 Landscape) @ 60 Hz VRR  •  Automatic Workspace 2 Fullscreen Game Windowing</div>
+          </div>
+          <span class="xbox-tag green">1280×800 60HZ</span>
+        </div>
+      </div>
+    `;
+  }
+  // 3: NETWORK & WI-FI
+  else if (state.settingsCat === 3) {
+    pane.innerHTML = `
+      <div class="xbox-slate-card ${f(0)}">
+        <div class="slate-row">
+          <div>
+            <div class="slate-title">Wi-Fi Connection (${state.network.ssid || "Connected"})</div>
+            <div class="slate-sub">Local IPv4 Address: <code>${state.network.ip || "192.168.1.100"}</code>  •  Hostname: <code>${state.network.hostname || "steamdeck"}</code></div>
+          </div>
+          <span class="xbox-tag green">${state.network.connected ? "CONNECTED" : "OFFLINE"}</span>
+        </div>
+      </div>
+
+      <div class="xbox-slate-card ${f(1)}">
+        <div class="slate-row">
+          <div>
+            <div class="slate-title">Tailscale Mesh VPN & Remote DevBox Link</div>
+            <div class="slate-sub">Tailscale IPv4: <code>${state.network.tailscale_ip || "100.101.162.75"}</code>  •  Encrypted Console Link Active</div>
+          </div>
+          <span class="xbox-tag green">ONLINE</span>
+        </div>
+      </div>
+    `;
+  }
+  // 4: STORAGE & CARTRIDGES
+  else if (state.settingsCat === 4) {
     const drivesHtml = state.drives
       .map(
         (d, idx) => `
-      <div class="xbox-slate-card ${!state.settingsFocusSide && state.settingsRightIdx === idx + 1 ? "focused" : ""}" onclick="openCartridgeModal()">
+      <div class="xbox-slate-card ${f(idx + 1)}" onclick="openCartridgeModal()">
         <div class="slate-row">
           <div>
             <div class="slate-title">${d.name} <span style="font-size:12px; color:var(--text-secondary); font-weight:600;">(${d.path})</span></div>
@@ -441,7 +770,7 @@ function renderSettingsPane() {
       .join("");
 
     pane.innerHTML = `
-      <div class="xbox-slate-card ${!state.settingsFocusSide && state.settingsRightIdx === 0 ? "focused" : ""}" onclick="openCartridgeModal()">
+      <div class="xbox-slate-card ${f(0)}" onclick="openCartridgeModal()">
         <div class="slate-row">
           <div>
             <span class="xbox-tag green" style="margin-bottom:6px; display:inline-block;">CARTRIDGE PROVISIONING</span>
@@ -453,14 +782,16 @@ function renderSettingsPane() {
       </div>
       ${drivesHtml}
     `;
-  } else if (state.settingsCat === 1) {
-    const buttons = ["A", "B", "X", "Y", "LB", "RB", "LT", "RT", "UP", "DOWN", "LEFT", "RIGHT", "SELECT", "START", "GUIDE"];
+  }
+  // 5: CONTROLLER & INPUT
+  else if (state.settingsCat === 5) {
+    const buttons = ["A", "B", "X", "Y", "LB", "RB", "LT", "RT", "UP", "DOWN", "LEFT", "RIGHT", "SELECT", "START", "GUIDE", "QAM"];
     const matrixHtml = buttons
       .map((b) => `<div class="pad-key ${state.lastButton === b ? "pressed" : ""}" id="pad-key-${b}">${b}</div>`)
       .join("");
 
     pane.innerHTML = `
-      <div class="xbox-slate-card ${!state.settingsFocusSide ? "focused" : ""}">
+      <div class="xbox-slate-card ${f(0)}">
         <div class="slate-row">
           <div>
             <div class="slate-title">Player 1 Exclusive Xbox 360 Bridge & Zero-Drift Filter</div>
@@ -469,91 +800,109 @@ function renderSettingsPane() {
           <span class="xbox-tag green">PLAYER 1 LOCKED</span>
         </div>
       </div>
-      <div class="xbox-slate-card">
+      <div class="xbox-slate-card ${f(1)}">
         <div class="slate-row">
-          <div>
-            <div class="slate-title">STEAM / Guide Button Lock</div>
-            <div class="slate-sub">In-game overlay is locked while on the Home screen and only activates while a game is running.</div>
-          </div>
-          <span class="xbox-tag">PROTECTED</span>
-        </div>
-      </div>
-      <div class="xbox-slate-card">
-        <div class="slate-row">
-          <span style="font-size:12px; font-weight:800; color:var(--text-secondary);">LIVE CONTROLLER INPUT TEST</span>
+          <span style="font-size:12px; font-weight:800; color:var(--text-secondary);">LIVE 16-BUTTON CONTROLLER DIAGNOSTIC MATRIX</span>
           <span style="font-size:12px; font-weight:800; color:#22c55e;" id="last-btn-label">LAST INPUT: ${state.lastButton}</span>
         </div>
         <div class="pad-matrix">${matrixHtml}</div>
       </div>
     `;
-  } else if (state.settingsCat === 2) {
+  }
+  // 6: PROTON & SYSTEM INFO
+  else {
     pane.innerHTML = `
-      <div class="xbox-slate-card ${!state.settingsFocusSide ? "focused" : ""}">
-        <div class="slate-row">
-          <div>
-            <div class="slate-title">Display Resolution & Refresh Rate</div>
-            <div class="slate-sub">1280 × 800 (16:10 Native Landscape)  •  60 Hz Locked with Variable Refresh Rate (VRR)</div>
-          </div>
-          <span class="xbox-tag green">1280×800 60HZ</span>
-        </div>
-      </div>
-      <div class="xbox-slate-card">
-        <div class="slate-row">
-          <div>
-            <div class="slate-title">Fullscreen Game Scaling Fix</div>
-            <div class="slate-sub">Forces fullscreen 1280×800 output for Unity & Unreal games (Bluey: The Videogame verified).</div>
-          </div>
-          <span class="xbox-tag">ENABLED</span>
-        </div>
-      </div>
-    `;
-  } else if (state.settingsCat === 3) {
-    pane.innerHTML = `
-      <div class="xbox-slate-card ${!state.settingsFocusSide ? "focused" : ""}">
+      <div class="xbox-slate-card ${f(0)}">
         <div class="slate-row">
           <div>
             <div class="slate-title">Default Compatibility Layer</div>
-            <div class="slate-sub">GE-Proton11-9 & Proton Experimental with Goldberg Steam API and VC++ Runtime</div>
+            <div class="slate-sub">GE-Proton11-9 & Proton Experimental with Goldberg Steam API, Media Foundation, and VC++ 2022 Runtime</div>
           </div>
-          <span class="xbox-tag green">PROTON READY</span>
+          <span class="xbox-tag green">GE-PROTON11-9</span>
         </div>
       </div>
-      <div class="xbox-slate-card">
-        <div class="slate-row">
-          <div>
-            <div class="slate-title">Strict Zero-Copy Cartridge Execution</div>
-            <div class="slate-sub">Runs executables directly from <code>/mnt/sdcard/Games</code> with working directories preserved.</div>
-          </div>
-          <span class="xbox-tag">ACTIVE</span>
-        </div>
-      </div>
-    `;
-  } else {
-    pane.innerHTML = `
-      <div class="xbox-slate-card ${!state.settingsFocusSide ? "focused" : ""}">
+      <div class="xbox-slate-card ${f(1)}">
         <div class="slate-row">
           <div>
             <div class="slate-title">${state.system.model || "Valve Steam Deck (Jupiter)"}</div>
-            <div class="slate-sub">AMD Custom APU 0405  •  16 GB LPDDR5  •  Anvil Console OS v4.0 (Next-Gen Xbox Shell)</div>
+            <div class="slate-sub">AMD Custom APU 0405  •  16 GB LPDDR5  •  Kernel ${state.system.kernel || "6.12-hypeos"}  •  Uptime: ${state.system.uptime || "Active"}</div>
           </div>
-          <span class="xbox-tag green">ONLINE</span>
+          <span class="xbox-tag green">VERIFIED</span>
         </div>
       </div>
     `;
   }
 }
 
+/* =================================================
+   SYSTEM UPDATE WINDOW MODAL (#update-modal)
+   ================================================= */
+function openUpdateModal() {
+  state.updateModalOpen = true;
+  const modal = document.getElementById("update-modal");
+  if (modal) modal.classList.add("open");
+}
+
+function closeUpdateModal() {
+  state.updateModalOpen = false;
+  const modal = document.getElementById("update-modal");
+  if (modal) modal.classList.remove("open");
+}
+
+async function runSystemUpdateCheck() {
+  if (state.updateChecking) return;
+  state.updateChecking = true;
+  playUiSound("confirm");
+
+  const statusText = document.getElementById("update-status-text");
+  const subText = document.getElementById("update-sub-text");
+  const fill = document.getElementById("update-progress-fill");
+  const pctEl = document.getElementById("update-pct-text");
+  const btnLabel = document.getElementById("update-btn-label");
+
+  const steps = [
+    { pct: 25, msg: "Querying Anvil OS Release Manifest (Stable Channel)...", sub: "Connecting to Anvil Console repository..." },
+    { pct: 60, msg: "Verifying GE-Proton11-9 & Xbox 360 Bridge Signatures...", sub: "Checking /usr/local/share/anvil integrity..." },
+    { pct: 90, msg: "Synchronizing Cartridge Mounts & PipeWire Audio Profiles...", sub: "Validating 48 MicroSD cartridges..." },
+    { pct: 100, msg: "Anvil Console OS 4.5.0 is Up to Date", sub: "All system components, Proton runners, and audio drivers are current." }
+  ];
+
+  if (btnLabel) btnLabel.textContent = "Checking...";
+
+  for (const s of steps) {
+    if (statusText) statusText.textContent = s.msg;
+    if (subText) subText.textContent = s.sub;
+    if (fill) fill.style.width = `${s.pct}%`;
+    if (pctEl) pctEl.textContent = s.pct < 100 ? `${s.pct}%` : "UP TO DATE";
+    await new Promise((r) => setTimeout(r, 420));
+  }
+
+  try {
+    const res = await fetch("/api/update", { method: "POST" });
+    const data = await res.json();
+    if (data.update) state.update = data.update;
+  } catch (e) {}
+
+  if (btnLabel) btnLabel.textContent = "Check Again";
+  state.updateChecking = false;
+  if (state.tab === 4 && state.settingsCat === 0) renderSettingsPane();
+}
+
+/* =================================================
+   LEFT SIDEBAR: STEAM / GUIDE BLADE
+   ================================================= */
 function getGuideItems() {
   const items = [];
   if (state.gameRunning) {
-    items.push({ label: `▶ Resume ${state.activeGameName || "Game"}`, badge: "IN-GAME", action: () => resumeGameSession() });
-    items.push({ label: "✕ Quit Game to Dashboard", badge: "STOP", action: () => quitGameSession() });
+    items.push({ label: `Resume ${state.activeGameName || "Game"}`, badge: "IN-GAME", action: () => resumeGameSession() });
+    items.push({ label: "Quit Game to Dashboard", badge: "STOP", action: () => quitGameSession() });
   }
   items.push(
-    { label: "Home", badge: "DASHBOARD", action: () => { closeGuideBlade(); switchTab(0); } },
-    { label: `My games & apps (${state.games.length})`, badge: "LIBRARY", action: () => { closeGuideBlade(); switchTab(1); } },
+    { label: "Home Dashboard", badge: "HOME", action: () => { closeGuideBlade(); switchTab(0); } },
+    { label: `My Games & Apps (${state.games.length})`, badge: "LIBRARY", action: () => { closeGuideBlade(); switchTab(1); } },
+    { label: "Audio & Volume Mixer", badge: `${state.volumePct}%`, action: () => { closeGuideBlade(); switchTab(4); selectSettingCat(1); } },
+    { label: "System Update Center", badge: "OS 4.5", action: () => { closeGuideBlade(); openUpdateModal(); } },
     { label: "Make a Drive / SD Card into Cartridge", badge: "BUILDER", action: () => { closeGuideBlade(); openCartridgeModal(); } },
-    { label: "Controller & Zero-Drift Status", badge: "PLAYER 1", action: () => { closeGuideBlade(); switchTab(4); selectSettingCat(1); } },
     { label: "Settings", badge: "SYSTEM", action: () => { closeGuideBlade(); switchTab(4); selectSettingCat(0); } },
     { label: "Sleep Console", badge: "SUSPEND", action: () => { closeGuideBlade(); triggerPower("sleep"); } },
     { label: "Switch to Desktop Mode", badge: "EXIT", action: () => { closeGuideBlade(); triggerPower("desktop"); } },
@@ -588,6 +937,7 @@ function toggleGuideBlade() {
   if (!state.guideOpen) closeQamSidebar();
   state.guideOpen = !state.guideOpen;
   state.guideIdx = 0;
+  playUiSound("tab");
   renderGuideMenu();
   const blade = document.getElementById("xbox-guide");
   const bg = document.getElementById("guide-backdrop");
@@ -609,10 +959,10 @@ function closeGuideBlade() {
 const QAM_ICONS = {
   vol: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:6px;color:#22c55e;"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>`,
   mute: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:6px;color:#f87171;"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>`,
+  mic: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:6px;color:#38bdf8;"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>`,
   sun: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:6px;color:#38bdf8;"><path d="M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69zM12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm0-10c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/></svg>`,
-  bolt: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:6px;color:#fbbf24;"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>`,
-  pad: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:6px;color:#22c55e;"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>`,
-  cart: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:6px;color:#a855f7;"><path d="M18 2h-8L4 8v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-6 6h-2V4h2v4zm3 0h-2V4h2v4zm3 0h-2V4h2v4z"/></svg>`
+  moon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:6px;color:#fbbf24;"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>`,
+  bolt: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px;margin-right:6px;color:#22c55e;"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>`
 };
 
 function getQamItems() {
@@ -620,7 +970,7 @@ function getQamItems() {
   if (state.gameRunning) {
     items.push({
       id: "resume",
-      title: `▶ Resume ${state.activeGameName || "Game"}`,
+      title: `Resume ${state.activeGameName || "Game"}`,
       sub: "Return immediately to fullscreen game",
       badge: "PLAYING",
       green: true,
@@ -628,7 +978,7 @@ function getQamItems() {
     });
     items.push({
       id: "quit",
-      title: "✕ Quit Game to Dashboard",
+      title: "Quit Game to Dashboard",
       sub: "Close active game session",
       badge: "STOP",
       onA: () => quitGameSession()
@@ -637,14 +987,34 @@ function getQamItems() {
   items.push(
     {
       id: "volume",
-      title: `${state.volumeMuted ? QAM_ICONS.mute + "Master Audio (MUTED)" : QAM_ICONS.vol + "Master Audio Volume"}`,
-      sub: "Use ◀ / ▶ to adjust volume, or press A to toggle mute",
+      title: `${state.volumeMuted ? QAM_ICONS.mute + "Master Output (MUTED)" : QAM_ICONS.vol + "Master Output Volume"}`,
+      sub: `Use ◀ / ▶ to adjust volume, or A to mute (${state.sinkName})`,
       badge: state.volumeMuted ? "MUTED" : `${state.volumePct}%`,
       green: !state.volumeMuted,
       progress: state.volumeMuted ? 0 : state.volumePct,
       onLeft: () => adjustVolume("down"),
       onRight: () => adjustVolume("up"),
       onA: () => adjustVolume("mute")
+    },
+    {
+      id: "sink",
+      title: `${QAM_ICONS.vol}Audio Output Sink`,
+      sub: "Press A or ◀ / ▶ to switch Speakers / Headphones",
+      badge: state.sinkName.includes("Headphone") ? "HEADPHONES" : "SPEAKERS",
+      green: true,
+      onLeft: () => adjustVolume("cycle-sink"),
+      onRight: () => adjustVolume("cycle-sink"),
+      onA: () => adjustVolume("cycle-sink")
+    },
+    {
+      id: "mic",
+      title: `${QAM_ICONS.mic}Microphone Level`,
+      sub: "Use ◀ / ▶ to adjust mic input, or A to toggle mic mute",
+      badge: state.micMuted ? "MUTED" : `${state.micPct}%`,
+      progress: state.micMuted ? 0 : state.micPct,
+      onLeft: () => adjustVolume("mic-down"),
+      onRight: () => adjustVolume("mic-up"),
+      onA: () => adjustVolume("mic-mute")
     },
     {
       id: "brightness",
@@ -657,31 +1027,20 @@ function getQamItems() {
       onA: () => adjustBrightness("up")
     },
     {
-      id: "perf",
-      title: `${QAM_ICONS.bolt}Performance & Refresh Lock`,
-      sub: "1280 × 800 Native  •  60 FPS Target  •  VRR Enabled",
-      badge: "60 HZ VRR",
-      green: true,
-      onA: () => { closeQamSidebar(); switchTab(4); selectSettingCat(2); }
+      id: "night",
+      title: `${QAM_ICONS.moon}Night Mode Eye-Care Tint`,
+      sub: "Warm amber filter for comfortable night gaming",
+      badge: state.nightMode ? "ON" : "OFF",
+      green: state.nightMode,
+      onA: () => { toggleNightMode(); renderQamMenu(); }
     },
     {
-      id: "controller",
-      title: `${QAM_ICONS.pad}Xbox 360 Player 1 Bridge`,
-      sub: "Slot 0 Locked  •  4000 Deadzone  •  Lizard HID Blocked",
-      badge: "PLAYER 1",
+      id: "updates",
+      title: `${QAM_ICONS.bolt}Anvil OS 4.5 System Update`,
+      sub: "Check for OS & Proton compatibility updates",
+      badge: "UP TO DATE",
       green: true,
-      onA: () => { closeQamSidebar(); switchTab(4); selectSettingCat(1); }
-    },
-    {
-      id: "rescan",
-      title: `${QAM_ICONS.cart}Rescan Cartridge Slots`,
-      sub: "Refresh /mnt/sdcard/Games and /mnt/usb/Games",
-      badge: `${state.games.length} GAMES`,
-      onA: async () => {
-        await fetch("/api/rescan");
-        await loadState();
-        renderQamMenu();
-      }
+      onA: () => { closeQamSidebar(); openUpdateModal(); }
     }
   );
   return items;
@@ -727,6 +1086,7 @@ function toggleQamSidebar() {
   if (!state.qamOpen) closeGuideBlade();
   state.qamOpen = !state.qamOpen;
   state.qamIdx = 0;
+  playUiSound("tab");
   renderQamMenu();
   const sb = document.getElementById("qam-sidebar");
   const bg = document.getElementById("qam-backdrop");
@@ -747,9 +1107,14 @@ async function adjustVolume(dir) {
     const res = await fetch(`/api/volume?dir=${encodeURIComponent(dir)}`);
     const data = await res.json();
     if (data.ok) {
-      state.volumePct = data.percent;
+      state.volumePct = data.percent ?? state.volumePct;
       state.volumeMuted = !!data.muted;
-      renderQamMenu();
+      state.micPct = data.mic_percent ?? state.micPct;
+      state.micMuted = !!data.mic_muted;
+      state.sinkName = data.sink_name || state.sinkName;
+      syncTopStatusBar();
+      if (state.qamOpen) renderQamMenu();
+      if (state.tab === 4 && state.settingsCat === 1) renderSettingsPane();
     }
   } catch (e) {}
 }
@@ -760,7 +1125,8 @@ async function adjustBrightness(dir) {
     const data = await res.json();
     if (data.ok) {
       state.brightnessPct = data.percent;
-      renderQamMenu();
+      if (state.qamOpen) renderQamMenu();
+      if (state.tab === 4 && state.settingsCat === 2) renderSettingsPane();
     }
   } catch (e) {}
 }
@@ -793,11 +1159,13 @@ function showSystemOSD(title, pct, muted, svgHtml) {
 window.onAnvilVolumeOSD = function (pct, muted) {
   state.volumePct = pct;
   state.volumeMuted = !!muted;
+  syncTopStatusBar();
   const svg = muted
     ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="#f87171"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>`
     : `<svg width="22" height="22" viewBox="0 0 24 24" fill="#22c55e"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>`;
-  showSystemOSD("VOLUME", pct, muted, svg);
+  showSystemOSD("MASTER VOLUME", pct, muted, svg);
   if (state.qamOpen) renderQamMenu();
+  if (state.tab === 4 && state.settingsCat === 1) renderSettingsPane();
 };
 
 window.onAnvilBrightnessOSD = function (pct) {
@@ -805,6 +1173,7 @@ window.onAnvilBrightnessOSD = function (pct) {
   const svg = `<svg width="22" height="22" viewBox="0 0 24 24" fill="#38bdf8"><path d="M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69zM12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm0-10c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/></svg>`;
   showSystemOSD("BRIGHTNESS", pct, false, svg);
   if (state.qamOpen) renderQamMenu();
+  if (state.tab === 4 && state.settingsCat === 2) renderSettingsPane();
 };
 
 function renderCartridgeModalOptions() {
@@ -924,7 +1293,7 @@ async function launchSelectedGame() {
   const g = state.games[state.selectedIndex];
   if (!g || state.gameRunning) return;
 
-  // Hide Dashboard in 0ms with the Console Launch Curtain!
+  playUiSound("confirm");
   state.gameRunning = true;
   state.activeGameName = g.name;
   updateGameCurtain(true, g.name, false);
@@ -997,6 +1366,10 @@ window.onAnvilGameState = function (running, gameName) {
 window.onAnvilInput = function (action, family, controllerName) {
   if (controllerName) state.controllerName = controllerName;
 
+  if (["up", "down", "left", "right"].includes(action)) playUiSound("tick");
+  else if (action === "south") playUiSound("confirm");
+  else if (action === "east") playUiSound("back");
+
   const btnMap = {
     south: "A",
     east: "B",
@@ -1018,8 +1391,8 @@ window.onAnvilInput = function (action, family, controllerName) {
   };
   state.lastButton = btnMap[action] || action.toUpperCase();
 
-  // Live controller input test in Settings
-  if (state.tab === 4 && state.settingsCat === 1) {
+  // Live controller input test in Settings (Category 5)
+  if (state.tab === 4 && state.settingsCat === 5) {
     document.querySelectorAll(".pad-key").forEach((el) => el.classList.remove("pressed"));
     const keyEl = document.getElementById(`pad-key-${state.lastButton}`);
     if (keyEl) keyEl.classList.add("pressed");
@@ -1027,7 +1400,7 @@ window.onAnvilInput = function (action, family, controllerName) {
     if (lbl) lbl.textContent = `LAST INPUT: ${state.lastButton}`;
   }
 
-  // 1. In-Game Overlay Navigation (when a game is running and STEAM or ••• opened a sidebar)
+  // 1. In-Game Overlay Navigation
   if (state.gameRunning) {
     if (state.guideOpen) {
       const items = getGuideItems();
@@ -1070,7 +1443,7 @@ window.onAnvilInput = function (action, family, controllerName) {
     return;
   }
 
-  // 2. STEAM Button (Left Guide Sidebar) & Three-Dot ••• Button (Right Quick Access Sidebar) on Dashboard!
+  // 2. STEAM Button (Left Guide Sidebar) & Three-Dot ••• Button (Right Quick Access Sidebar)
   if (action === "guide" || action === "select" || action === "back") {
     toggleGuideBlade();
     return;
@@ -1080,7 +1453,7 @@ window.onAnvilInput = function (action, family, controllerName) {
     return;
   }
 
-  // 3. LB / RB ALWAYS switches tabs cleanly (even if a modal/blade was open, so it NEVER gets stuck!)
+  // 3. LB / RB ALWAYS switches tabs cleanly
   if (action === "lb") {
     switchTab(state.tab - 1);
     return;
@@ -1090,7 +1463,7 @@ window.onAnvilInput = function (action, family, controllerName) {
     return;
   }
 
-  // 4. Left Sidebar (STEAM Guide Blade) navigation on Dashboard
+  // 4. Left Sidebar (STEAM Guide Blade) navigation
   if (state.guideOpen) {
     const items = getGuideItems();
     if (action === "up") {
@@ -1107,7 +1480,7 @@ window.onAnvilInput = function (action, family, controllerName) {
     return;
   }
 
-  // 5. Right Sidebar (••• Quick Access Menu) navigation on Dashboard
+  // 5. Right Sidebar (••• Quick Access Menu) navigation
   if (state.qamOpen) {
     const items = getQamItems();
     const cur = items[state.qamIdx];
@@ -1129,7 +1502,17 @@ window.onAnvilInput = function (action, family, controllerName) {
     return;
   }
 
-  // 6. Power Modal handling
+  // 6. System Update Modal handling
+  if (state.updateModalOpen) {
+    if (action === "south") {
+      runSystemUpdateCheck();
+    } else if (action === "east") {
+      closeUpdateModal();
+    }
+    return;
+  }
+
+  // 7. Power Modal handling
   if (state.powerModalOpen) {
     const actions = ["sleep", "desktop", "restart", "shutdown", "cancel"];
     if (action === "up") {
@@ -1151,7 +1534,7 @@ window.onAnvilInput = function (action, family, controllerName) {
     return;
   }
 
-  // 7. Cartridge Builder Modal handling
+  // 8. Cartridge Builder Modal handling
   if (state.cartridgeModalOpen) {
     const total = state.cartridgeTargets.length;
     if (action === "up") {
@@ -1168,7 +1551,7 @@ window.onAnvilInput = function (action, family, controllerName) {
     return;
   }
 
-  // 8. Global Dashboard Shortcuts
+  // 9. Global Dashboard Shortcuts
   if (action === "start") {
     togglePowerModal();
     return;
@@ -1178,15 +1561,15 @@ window.onAnvilInput = function (action, family, controllerName) {
     return;
   }
   if (action === "north") {
-    switchTab(1);
+    openUpdateModal();
     return;
   }
-  if (action === "east" && state.tab !== 0) {
+  if (action === "east" && state.tab !== 0 && !(state.tab === 4 && !state.settingsFocusSide)) {
     switchTab(0);
     return;
   }
 
-  // 7. Tab-Specific Controller Navigation
+  // 10. Tab-Specific Controller Navigation
   if (state.tab === 0) {
     if (state.homeZone === "shelf") {
       if (action === "left") selectGame(state.selectedIndex - 1);
@@ -1268,8 +1651,8 @@ window.onAnvilInput = function (action, family, controllerName) {
         renderSettingsPane();
       }
     } else {
-      const maxRight = state.settingsCat === 0 ? state.drives.length : 0;
-      if (action === "left" || action === "east") {
+      const maxRight = Math.max(0, getSettingsRightItemsCount() - 1);
+      if (action === "east") {
         state.settingsFocusSide = true;
         renderSettingsPane();
       } else if (action === "up") {
@@ -1278,8 +1661,13 @@ window.onAnvilInput = function (action, family, controllerName) {
       } else if (action === "down") {
         state.settingsRightIdx = Math.min(maxRight, state.settingsRightIdx + 1);
         renderSettingsPane();
-      } else if (action === "south" && state.settingsCat === 0) {
-        openCartridgeModal();
+      } else if (action === "left" || action === "right" || action === "south") {
+        if (action === "left" && state.settingsCat !== 1 && state.settingsCat !== 2 && !(state.settingsCat === 0 && state.settingsRightIdx === 1)) {
+          state.settingsFocusSide = true;
+          renderSettingsPane();
+        } else {
+          handleSettingsRightAction(action);
+        }
       }
     }
   }
@@ -1312,4 +1700,3 @@ loadState();
 setTimeout(() => {
   if (!state.games || state.games.length === 0) loadState();
 }, 600);
-

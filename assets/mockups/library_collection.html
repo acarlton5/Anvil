@@ -1,0 +1,3962 @@
+<html><head><style type="text/css">.turbo-progress-bar {
+  position: fixed;
+  display: block;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: #0076ff;
+  z-index: 9999;
+  transition:
+    width 300ms ease-out,
+    opacity 150ms 150ms ease-in;
+  transform: translate3d(0, 0, 0);
+}
+</style><style id="st_globalStyles">
+/* MEDIA QUERIES */
+.anima-desktop-only {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+/* SCROLLBAR */
+
+[dark-scroll]::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+[dark-scroll]::-webkit-scrollbar-track-piece {
+  background-color: #2b2b2b;
+  border: 1px solid #1d1d1d;
+}
+
+[dark-scroll]::-webkit-scrollbar-thumb {
+  height: 10px;
+  background-color: #4d4d4d;
+}
+[dark-scroll]::-webkit-scrollbar-thumb:hover {
+  background-color: #5a5a5a;
+}
+
+/* LOAD PROGRESS */
+
+.turbolinks-progress-bar {
+  height: 3px;
+  background-color: #ff6250;
+}
+
+/* GROUPING */
+
+[data-id].ui-selecting {
+  box-shadow: inset 0 0 0 1px #4285f4 !important;
+}
+[data-id].ui-selected {
+  box-shadow: inset 0 0 0 1px #4285f4 !important;
+}
+
+/* CURSOR */
+
+body[mode='comments'] * {
+  cursor: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkxNjQ4IDIzLjQxMDlDNS40OTE1MyAyMi45ODg3IDUuOTMxNzkgMjIuMzkzNSA2LjIzMjggMjEuNjQwN0M0Ljc5MDY5IDE5LjczODMgNCAxNy4zOTMzIDQgMTQuOTk3NUM0IDguOTM0MSA4LjkzMjgyIDQgMTUuMDAyMiA0QzIxLjA3MTcgNCAyNiA4LjkzOTE5IDI2IDE1LjAwMjVDMjYgMjEuMDY1OSAyMS4wNjcyIDI2IDE0Ljk5NzggMjZDMTIuOTg5NiAyNiAxMS4wMzUzIDI1LjQ1NTcgOS4zMjM2NyAyNC40MjMxQzguNDI5NjUgMjQuOTU3MiA3LjQxNDM0IDI1LjIyNjggNi4zMDAxOCAyNS4yMjY4QzUuOTU0MjYgMjUuMjI2OCA1LjU5OTM1IDI1LjIwMTQgNS4yNTM0MiAyNS4xNDU0QzQuOTAzIDI1LjA4OTUgNC42Mjg5NiAyNC44MDQ2IDQuNTUyNTggMjQuNDE4QzQuNDc2MjEgMjQuMDI2NCA0LjYxOTk3IDIzLjYyOTYgNC45MTY0OCAyMy40MTA5WiIgZmlsbD0iI0ZGNjI1MCIvPgo8L3N2Zz4K')
+      0 24,
+    auto !important;
+}
+
+body[mode='code'] [data-id]:not(.hidden) {
+  cursor: default;
+}
+
+/* default node state */
+
+body[mode='code'] [data-id]:not(.hidden), body[mode='comments'] [data-id]:not(.hidden) {
+  pointer-events: all;
+}
+
+/* is_image */
+
+body[mode='code'] [data-id].is_image [data-id], body[mode='comments'] [data-id].is_image [data-id] {
+  pointer-events: none !important;
+}
+
+/* without a data-id or ignored */
+
+[data-id].ignore,body[mode='code'] *:not([data-id]) {
+  pointer-events: none !important;
+}
+/* disable transforms for ignored elements */
+
+
+body[mode='code'] [data-id]:hover{
+  transform: none !important;
+}
+
+/* ANIMA BUTTONS */
+.an-button {
+  position: relative;
+  height: 28px;
+  padding: 0 20px;
+  font-size: 14px;
+  border-radius: 4px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  transition-property: all;
+  transition-duration: 100ms;
+  appearance: none;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  border-width: 0;
+}
+
+.an-button > div {
+  width: 100%;
+}
+
+.an-button.primary {
+  background: #ff6250;
+  color: #ffffff;
+}
+
+.an-button.primary:hover:not(:disabled) {
+  background: #e2412e;
+}
+
+.an-button.secondary {
+  background: transparent;
+  border: 1px solid #ff6250;
+  color: #ff6250;
+}
+
+.an-button.secondary:hover:not(:disabled) {
+  color: #ffffff;
+  background: #ff6250;
+}
+
+.an-button.rounded {
+  border-radius: 100px;
+}
+
+.an-button:disabled {
+  opacity: 0.5;
+}
+
+.an-button:disabled {
+  cursor: default;
+}
+
+.an-button:active,
+.an-button:focus {
+  outline: none;
+}
+
+</style><meta charset="utf-8"><meta name="viewport" content="width=1920, maximum-scale=1.0"><link rel="shortcut icon" type="image/png" href="https://animaproject.s3.amazonaws.com/home/favicon.png"><meta name="og:type" content="website"><meta name="twitter:card" content="photo"><script id="anima-load-script" src="load.js"></script><script id="anima-hotspots-script" src="hotspots.js"></script><style id="hotspots-styles">
+    .hotspot {
+      position: absolute;
+      border: 1px solid #2a9fd8;
+      background: rgba(0, 173, 255, 0.54);
+      opacity: 0;
+      z-index: -1;
+      pointer-events:none;
+    }
+  </style><script id="s_turbo" src="https://animaapp.s3.amazonaws.com/static/turbo.es2017-umd.js"></script><script id="anima-overrides-script" src="overrides.js"></script><script src="https://animaapp.s3.amazonaws.com/js/timeline.js"></script><style>
+@import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
+
+@font-face {
+  font-family: "Motiva Sans-Bold";
+  font-style: normal;
+  font-weight: 700;
+  src: url('https://anima-uploads.s3.amazonaws.com/5c53487020495e000abca926/.35959.otf') format("opentype");
+}
+
+@font-face {
+  font-family: "Motiva Sans-Regular";
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://anima-uploads.s3.amazonaws.com/5c53487020495e000abca926/.35967.otf') format("opentype");
+}
+/* The following line is used to measure usage of this code. You can remove it if you want. */
+@import url("https://px.animaapp.com/65ae977d4ea7e6982e9805db.65ae977e4ea7e6982e9805de.XJaxSnm.hch.png");
+
+
+.screen textarea:focus,
+.screen input:focus {
+  outline: none;
+}
+
+.screen * {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+
+.screen div {
+  -webkit-text-size-adjust: none;
+}
+
+.component-wrapper a {
+  display: contents;
+  pointer-events: auto;
+  text-decoration: none;
+}
+
+.component-wrapper * {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.component-wrapper a *,
+.component-wrapper input,
+.component-wrapper video,
+.component-wrapper iframe {
+  pointer-events: auto;
+}
+
+.component-wrapper.not-ready,
+.component-wrapper.not-ready * {
+  visibility: hidden !important;
+}
+
+.screen a {
+  display: contents;
+  text-decoration: none;
+}
+
+.full-width-a {
+  width: 100%;
+}
+
+.full-height-a {
+  height: 100%;
+}
+
+.container-center-vertical {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  pointer-events: none;
+}
+
+.container-center-vertical > * {
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
+.container-center-horizontal {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  pointer-events: none;
+  width: 100%;
+}
+
+.container-center-horizontal > * {
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
+.auto-animated div {
+  --z-index: -1;
+  opacity: 0;
+  position: absolute;
+}
+
+.auto-animated input {
+  --z-index: -1;
+  opacity: 0;
+  position: absolute;
+}
+
+.auto-animated .container-center-vertical,
+.auto-animated .container-center-horizontal {
+  opacity: 1;
+}
+
+.overlay-base {
+  display: none;
+  height: 100%;
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.overlay-base.animate-appear {
+  align-items: center;
+  animation: reveal 0.3s ease-in-out 1 normal forwards;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0;
+}
+
+.overlay-base.animate-disappear {
+  animation: reveal 0.3s ease-in-out 1 reverse forwards;
+  display: block;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.overlay-base.animate-disappear * {
+  pointer-events: none;
+}
+
+@keyframes reveal {
+  from { opacity: 0 }
+ to { opacity: 1 }
+}
+
+.animate-nodelay {
+  animation-delay: 0s;
+}
+
+.align-self-flex-start {
+  align-self: flex-start;
+}
+
+.align-self-flex-end {
+  align-self: flex-end;
+}
+
+.align-self-flex-center {
+  align-self: flex-center;
+}
+
+.valign-text-middle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.valign-text-bottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+input:focus {
+  outline: none;
+}
+
+.listeners-active,
+.listeners-active * {
+  pointer-events: auto;
+}
+
+.hidden,
+.hidden * {
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.smart-layers-pointers,
+.smart-layers-pointers * {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.listeners-active-click,
+.listeners-active-click * {
+  cursor: pointer;
+}
+
+* {
+  box-sizing: border-box;
+}
+:root { 
+  --accentgreen: #a1cd44;
+  --accentred: #cd5444;
+  --accentyellow: #c0b05e;
+  --alto: #d9d9d903;
+  --backgroundhighlight: #1e2329;
+  --backgroundhover: #313843;
+  --backgroundmain: #0e141b;
+  --backgroundmain20: #0e141b33;
+  --backgroundmain50: #0e141b80;
+  --backgroundtertiary: #212b45;
+  --big-stone: #212b4533;
+  --black: #000000;
+  --colorprimary: #66c0f4;
+  --colorsecondary: #4b619b;
+  --emerald: #54c358;
+  --fuchsia-blue: #7054c3;
+  --fuchsia-pink: #c054c3;
+  --fuzzy-wuzzy-brown: #c35454;
+  --shark: #1e232905;
+  --shark-2: #1e232963;
+  --shark-3: #1e232940;
+  --shark-4: #1e232966;
+  --shark-5: #1e2329d1;
+  --slate-gray: #75808ccc;
+  --slate-gray-2: #75808c0d;
+  --slate-gray-3: #75808c1a;
+  --slate-gray-4: #75808c33;
+  --slate-gray-5: #76808c;
+  --textdim: #75808c;
+  --textmain: #f3f3f3;
+  --tuna: #31384380;
+  --tuna-2: #31384359;
+  --turmeric: #c3be54;
+  --white: #ffffff;
+  --white-2: #ffffff1a;
+  --wild-sand: #f3f3f380;
+ 
+  --font-size-l: 18px;
+  --font-size-m: 16px;
+  --font-size-s: 14px;
+  --font-size-xl: 19px;
+  --font-size-xs: 12px;
+  --font-size-xxl: 22px;
+  --font-size-xxxl: 26px;
+ 
+  --font-family-motiva_sans-bold: "Motiva Sans-Bold", Helvetica;
+  --font-family-motiva_sans-regular: "Motiva Sans-Regular", Helvetica;
+}
+.motivasans-regular-normal-wild-sand-16px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-14px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-wild-sand-14px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-16px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-12px {
+  color: var(--slate-gray);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-wild-sand-18px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-wild-sand-12px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-12px-2 {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-malibu-12px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-malibu-16px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-kashmir-blue-14px {
+  color: var(--colorsecondary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-wild-sand-22px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-malibu-18px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-vulcan-12px {
+  color: var(--backgroundmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-vulcan-18px {
+  color: var(--backgroundmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-wild-sand-26px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-malibu-14px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-white-12px {
+  color: var(--white);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-white-14px {
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-vulcan-19px {
+  color: var(--backgroundmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-tuna-18px {
+  color: var(--backgroundhover);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-jasper-12px {
+  color: var(--accentred);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-atlantis-18px {
+  color: var(--accentgreen);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-slate-gray-22px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-white-16px {
+  color: var(--white);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-14px-2 {
+  color: var(--slate-gray-5);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-slate-gray-18px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-slate-gray-16px-2 {
+  color: var(--slate-gray-5);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-white-16px-2 {
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-wild-sand-16px-2 {
+  color: var(--wild-sand);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-jasper-14px {
+  color: var(--accentred);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-wild-sand-16px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-jasper-16px {
+  color: var(--accentred);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-atlantis-16px {
+  color: var(--accentgreen);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-wild-sand-20-2px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: 20.2px;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-sundance-16px {
+  color: var(--accentyellow);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-sundance-12px {
+  color: var(--accentyellow);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-white-22px {
+  color: var(--white);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+:root {
+}
+
+
+.group-97 {
+  background-color: transparent;
+  height: 47px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 47px;
+}
+
+.info-outline {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.juxtopposed {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+}
+
+.rectangle-60 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.store-menu {
+  background-color: transparent;
+  height: 22px;
+  position: relative;
+}
+
+.arrow-forward-ios {
+  background-color: transparent;
+  position: relative;
+}
+
+.home {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.image-122 {
+  background-color: transparent;
+  height: 233px;
+  left: 0px;
+  object-fit: cover;
+  position: absolute;
+  top: 0px;
+  width: 240px;
+}
+
+.image-123 {
+  background-color: transparent;
+  height: 233px;
+  left: 0px;
+  object-fit: cover;
+  position: absolute;
+  top: 0px;
+  width: 240px;
+}
+
+.rectangle-115 {
+  -webkit-backdrop-filter: blur(2px) brightness(100%);
+  backdrop-filter: blur(2px) brightness(100%);
+  background-color: var(--alto);
+  border-radius: 5px;
+  height: 233px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 240px;
+}
+
+.rectangle-79 {
+  background-color: var(--colorsecondary);
+  border-radius: 40px;
+  height: 8px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.search {
+  background-color: transparent;
+  position: absolute;
+}
+
+.x2309 {
+  background-color: transparent;
+  height: auto;
+  left: 85px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 22px;
+  width: auto;
+}
+
+.frame-161 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 15px;
+  height: 20px;
+  padding: 3px 0px;
+  position: relative;
+}
+
+.image-191 {
+  background-color: transparent;
+  height: 25px;
+  margin-bottom: -11.00px;
+  margin-top: -11.00px;
+  object-fit: cover;
+  position: relative;
+  width: 25px;
+}
+
+.sprite-0003-1 {
+  background-color: transparent;
+  position: relative;
+}
+
+.x374 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x5 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.award {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.frame-162 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  height: 49px;
+  justify-content: space-between;
+  padding: 3px 0px;
+  position: relative;
+  width: 639px;
+}
+
+.frame-30 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 3px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.frame-31 {
+  align-items: center;
+  background-color: transparent;
+  display: flex;
+  gap: 3px;
+  justify-content: flex-end;
+  left: 106px;
+  position: absolute;
+  top: 0px;
+  width: 32px;
+}
+
+.frame-32 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  gap: 2px;
+  left: 0px;
+  position: absolute;
+  top: 19px;
+  width: 138px;
+}
+
+.funny {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.group-100 {
+  background-color: transparent;
+  height: 72px;
+  margin-right: -2.00px;
+  position: relative;
+  width: 74px;
+}
+
+.image-137 {
+  background-color: transparent;
+  height: 16px;
+  object-fit: cover;
+  position: relative;
+  width: 17px;
+}
+
+.insert-emoticon {
+  background-color: transparent;
+  height: 18px;
+  margin-bottom: -7.50px;
+  margin-top: -7.50px;
+  position: relative;
+  width: 18px;
+}
+
+.no {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.posted-on-12-sep-2023 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.recommended {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.rectangle-120 {
+  background-color: transparent;
+  height: 72px;
+  object-fit: cover;
+  position: relative;
+  width: 72px;
+}
+
+.rectangle-123 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  height: 72px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 72px;
+}
+
+.rectangle-88 {
+  background-color: var(--accentred);
+  border-radius: 2px;
+  flex: 1;
+  flex-grow: 1;
+  height: 4px;
+  opacity: 0.8;
+  position: relative;
+}
+
+.share {
+  background-color: transparent;
+  position: relative;
+}
+
+.was-this-review-helpful {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 9px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.x21302-hrs-on-record {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x3-reviews {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -0.50px;
+  margin-top: -2.50px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x6 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x90 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.yes {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.view-list {
+  background-color: transparent;
+  position: absolute;
+}
+
+.community {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+}
+
+.frame-214 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 9px;
+  position: relative;
+}
+
+.offline {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.frame-34 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 5px;
+  position: relative;
+}
+
+.drag-handle {
+  background-color: transparent;
+  height: 24px;
+  position: relative;
+  width: 24px;
+}
+
+.ellipse-3 {
+  background-color: transparent;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.frame-180 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  position: relative;
+}
+
+.frame-199 {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.frame-200 {
+  flex: 0 0 auto;
+  justify-content: space-between;
+  position: relative;
+}
+
+.frame-201 {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.frame-202 {
+  align-items: center;
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.group-123 {
+  background-color: transparent;
+  height: 30px;
+  margin-right: -2.00px;
+  position: relative;
+  width: 32px;
+}
+
+.group-125 {
+  background-color: transparent;
+  position: relative;
+}
+
+.image-141 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-142 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-143 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-144 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-146 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-147 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 2px;
+  height: 30px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 30px;
+}
+
+.profile-sections {
+  background-color: transparent;
+  position: relative;
+}
+
+.x32 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+}
+
+.construction {
+  background-color: transparent;
+  height: 40px;
+  position: relative;
+  width: 40px;
+}
+
+.frame-136 {
+  display: flex;
+  position: relative;
+}
+
+.frame-221 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  width: 100%;
+}
+
+.frame-311 {
+  align-items: flex-start;
+  align-self: stretch;
+  border-bottom-style: none;
+  border-left-style: solid;
+  border-left-width: 5px;
+  border-radius: 5px;
+  border-right-style: none;
+  border-top-style: none;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 7px;
+  padding: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.frame-407 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 10px;
+  position: relative;
+}
+
+.frame-51 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.icon-select {
+  background-color: transparent;
+  height: 40px;
+  position: relative;
+  width: 40px;
+}
+
+.people {
+  background-color: transparent;
+  position: absolute;
+  top: 6px;
+}
+
+.vector-5 {
+  align-self: stretch;
+  background-color: transparent;
+  height: 1px;
+  margin-bottom: -0.50px;
+  object-fit: cover;
+  position: relative;
+  width: 100%;
+}
+
+.disk-size {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.filter-list {
+  background-color: transparent;
+  height: 24px;
+  left: 1px;
+  position: absolute;
+  top: 1px;
+  width: 24px;
+}
+
+.frame-52 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 536px;
+  position: absolute;
+  top: 65px;
+}
+
+.frame-53 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 691px;
+  position: absolute;
+  top: 65px;
+}
+
+.frame-65 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.frame-85 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  left: 13px;
+  position: absolute;
+  width: 326px;
+}
+
+.frame-86 {
+  align-items: flex-start;
+  background-color: var(--shark-4);
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  left: 1px;
+  padding: 9px 12px;
+  position: absolute;
+  top: 0px;
+  width: 350px;
+}
+
+.frame-92 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 1007px;
+  position: absolute;
+  top: 65px;
+}
+
+.group-59 {
+  background-color: transparent;
+  height: 44px;
+  left: 826px;
+  position: absolute;
+  top: 65px;
+  width: 159px;
+}
+
+.group-61 {
+  background-color: transparent;
+  height: 126px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 1458px;
+}
+
+.image-94 {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.insert-drive-file {
+  background-color: transparent;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.last-played {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.play-time {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.rectangle-104 {
+  background-color: var(--shark-3);
+  border-radius: 5px;
+  height: 126px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1456px;
+}
+
+.x2065 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x50-gb {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.frame-292 {
+  background-color: transparent;
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.frame-269 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 13px;
+  justify-content: center;
+  position: relative;
+}
+
+.game-card {
+  background-color: transparent;
+  border-radius: 5px;
+  height: 282px;
+  overflow: hidden;
+  position: relative;
+  width: 191px;
+}
+
+.group-58 {
+  background-color: transparent;
+  height: 74px;
+  left: 0px;
+  position: absolute;
+  top: 290px;
+  width: 191px;
+}
+
+.rectangle-97 {
+  -webkit-backdrop-filter: blur(20px) brightness(100%);
+  backdrop-filter: blur(20px) brightness(100%);
+  background-color: var(--shark);
+  border-radius: 0px 0px 3px 3px;
+  height: 74px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 191px;
+}
+
+.text {
+  background-color: transparent;
+  height: 19px;
+  left: 9px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -22px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.cool-user {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.hi-newcomers {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x11-mins-ago {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x150000 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  width: fit-content;
+}
+
+.x2500700 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -7.00px;
+  margin-top: -9.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x5546 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -7.00px;
+  margin-top: -9.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+/* screen - library-collections */
+
+.library-collections {
+  background-color: transparent;
+  height: 1080px;
+  overflow: hidden;
+  overflow-x: hidden;
+  position: relative;
+  width: 1920px;
+}
+
+.library-collections .rectangle-89-syReVe {
+  background: linear-gradient(180deg, rgb(49.00000087916851, 56.000000461936, 67.00000360608101) 0%, rgb(30.00000011175871, 35.00000171363354, 41.00000135600567) 100%);
+  background-color: transparent;
+  height: 1080px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.library-collections .rectangle-95-syReVe {
+  background: linear-gradient(180deg, rgb(30.00000011175871, 35.00000171363354, 41.00000135600567) 0%, rgba(37.311159297823906, 43.22505556046963, 51.052844524383545, 0.2800000011920929) 99.98999834060669%, rgba(38.0000015348196, 44.000001177191734, 52.000000700354576, 0) 100%);
+  background-color: transparent;
+  height: 964px;
+  left: 0px;
+  position: absolute;
+  top: 116px;
+  width: 390px;
+}
+
+.library-collections .rectangle-96-syReVe {
+  background-color: var(--backgroundhover);
+  height: 336px;
+  left: 371px;
+  position: absolute;
+  top: 126px;
+  width: 9px;
+}
+
+.library-collections .image-107-syReVe {
+  background-color: transparent;
+  height: 964px;
+  left: 390px;
+  mix-blend-mode: color-dodge;
+  position: absolute;
+  top: 116px;
+  width: 1530px;
+}
+
+.library-collections .rectangle-97-syReVe {
+  -webkit-backdrop-filter: blur(40px) brightness(100%);
+  backdrop-filter: blur(40px) brightness(100%);
+  background-color: var(--shark);
+  height: 653px;
+  left: 390px;
+  position: absolute;
+  top: 427px;
+  width: 1530px;
+}
+
+.library-collections .frame-320-syReVe {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 10px;
+  left: 10px;
+  position: absolute;
+  top: 163px;
+}
+
+.library-collections .component-4-ryl3ri {
+  background-color: transparent;
+  border-radius: 5px;
+  height: 223px;
+  position: relative;
+  width: 351px;
+}
+
+.library-collections .frame-86-bU1804 {
+  height: 222px;
+}
+
+.library-collections .cool-games-gQBGAJ {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.library-collections .keyboard-arrow-down-gQBGAJ {
+  height: 24px;
+  width: 24px;
+}
+
+.library-collections .frame-85-bU1804 {
+  top: 44px;
+}
+
+.library-collections .frame-59-kOe1jB {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-collections .tag-FjLLzZ {
+  background-color: var(--backgroundhover);
+}
+
+.library-collections .image-88-FjLLzZ {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-collections .frame-69-kOe1jB {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-collections .tag-o1t7Wd {
+  background-color: transparent;
+}
+
+.library-collections .image-98-o1t7Wd {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-collections .frame-75-kOe1jB {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-collections .tag-VFyxJp {
+  background-color: transparent;
+}
+
+.library-collections .x5000-xd28wt {
+  margin-left: -20px;
+}
+
+.library-collections .image-104-VFyxJp {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-collections .frame-76-kOe1jB {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-collections .tag-I6yaci {
+  background-color: transparent;
+}
+
+.library-collections .image-105-I6yaci {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-collections .component-3-ryl3ri {
+  background-color: transparent;
+  border-radius: 5px;
+  height: 401px;
+  position: relative;
+  width: 351px;
+}
+
+.library-collections .frame-86-D0sxyD {
+  height: 401px;
+}
+
+.library-collections .favorites-a6gBcl {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.library-collections .keyboard-arrow-down-a6gBcl {
+  height: 24px;
+  width: 24px;
+}
+
+.library-collections .frame-85-D0sxyD {
+  top: 50px;
+}
+
+.library-collections .frame-57-Tu2e5I {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-collections .tag-jvgonV {
+  background-color: transparent;
+}
+
+.library-collections .image-86-jvgonV {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-collections .frame-58-Tu2e5I {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-collections .tag-mi5nD3 {
+  background-color: transparent;
+}
+
+.library-collections .image-87-mi5nD3 {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-collections .frame-60-Tu2e5I {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-collections .tag-89VxtN {
+  background-color: transparent;
+}
+
+.library-collections .image-89-89VxtN {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-collections .frame-61-Tu2e5I {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-collections .tag-gfCPh0 {
+  background-color: transparent;
+}
+
+.library-collections .image-90-gfCPh0 {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-collections .frame-62-Tu2e5I {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-collections .tag-p1JWxy {
+  background-color: transparent;
+}
+
+.library-collections .image-91-p1JWxy {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-collections .frame-63-Tu2e5I {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-collections .tag-bptiQT {
+  background-color: transparent;
+}
+
+.library-collections .image-92-bptiQT {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-collections .frame-64-Tu2e5I {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-collections .tag-seSTqm {
+  background-color: transparent;
+}
+
+.library-collections .image-93-seSTqm {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-collections .tag-cGHxYd {
+  background-color: transparent;
+}
+
+.library-collections .frame-67-Tu2e5I {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-collections .tag-hOhvNx {
+  background-color: transparent;
+}
+
+.library-collections .image-96-hOhvNx {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  object-fit: cover;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.library-collections .library-header-syReVe {
+  background-color: transparent;
+  height: 57px;
+  left: 0px;
+  overflow: hidden;
+  position: absolute;
+  top: 59px;
+  width: 1920px;
+}
+
+.library-collections .rectangle-67-UjaJyi {
+  background-color: var(--backgroundtertiary);
+  height: 57px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.library-collections .frame-15-UjaJyi {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 7px;
+  left: 10px;
+  position: absolute;
+  top: 6px;
+}
+
+.library-collections .menu-EICb0m {
+  background-color: var(--backgroundtertiary);
+}
+
+.library-collections .menu-lhzQKD {
+  background-color: var(--colorsecondary);
+}
+
+.library-collections .group-15-EICb0m {
+  align-items: center;
+  background-color: var(--backgroundtertiary);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.library-collections .frame-79-UjaJyi {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 6px;
+  left: 501px;
+  position: absolute;
+  top: 8px;
+}
+
+.library-collections .search-ABzmyz {
+  background-color: transparent;
+  height: 41px;
+  position: relative;
+  width: 374px;
+}
+
+.library-collections .rectangle-70-l1PfIP {
+  background-color: var(--backgroundmain20);
+  border-radius: 3px;
+  height: 41px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 374px;
+}
+
+.library-collections .search-l1PfIP {
+  background-color: transparent;
+  height: auto;
+  left: 19px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 12px;
+  width: auto;
+}
+
+.library-collections .search-hLxG2R {
+  background-color: transparent;
+  height: 20px;
+  left: 343px;
+  position: absolute;
+  top: 11px;
+  width: 20px;
+}
+
+.library-collections .rectangle-86-nNGS0E {
+  background-color: var(--slate-gray-2);
+}
+
+.library-collections .filter-alt-nNGS0E {
+  background-color: transparent;
+  height: 30px;
+  left: 6px;
+  position: absolute;
+  top: 5px;
+  width: 30px;
+}
+
+.library-collections .frame-78-UjaJyi {
+  -webkit-backdrop-filter: blur(10px) brightness(100%);
+  align-items: center;
+  backdrop-filter: blur(10px) brightness(100%);
+  background-color: transparent;
+  border-radius: 3px;
+  display: inline-flex;
+  gap: 7px;
+  height: 43px;
+  left: 1067px;
+  overflow: hidden;
+  padding: 0px 0px 0px 10px;
+  position: absolute;
+  top: 7px;
+}
+
+.library-collections .icon-select-PSRW7f {
+  cursor: pointer;
+}
+
+.library-collections .icon-select-MJwS9b {
+  cursor: pointer;
+}
+
+.library-collections .frame-80-UjaJyi {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 7px;
+  justify-content: flex-end;
+  left: 1466px;
+  position: absolute;
+  top: 6px;
+}
+
+.library-collections .group-16-OPYWz5 {
+  align-items: center;
+  background-color: var(--backgroundtertiary);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.library-collections .group-17-OPYWz5 {
+  align-items: center;
+  background-color: var(--backgroundtertiary);
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.library-collections .group-60-syReVe {
+  background-color: transparent;
+  height: 53px;
+  left: 414px;
+  position: absolute;
+  top: 445px;
+  width: 1477px;
+}
+
+.library-collections .play-button-a8goqi {
+  align-items: center;
+  background-color: var(--accentgreen);
+  border-radius: 3px;
+  display: flex;
+  gap: 10px;
+  height: 53px;
+  justify-content: center;
+  left: 257px;
+  padding: 16px 66px 16px 53px;
+  position: absolute;
+  top: 0px;
+  width: 113px;
+}
+
+.library-collections .play-arrow-btGShJ {
+  background-color: transparent;
+  height: 24px;
+  margin-bottom: -1.50px;
+  margin-left: -38.50px;
+  margin-top: -1.50px;
+  position: relative;
+  width: 24px;
+}
+
+.library-collections .play-btGShJ {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-left: -4.50px;
+  margin-right: -38.50px;
+  margin-top: -1.50px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-collections .bioshock-remastered-a8goqi {
+  background-color: transparent;
+  height: 26px;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 14px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.library-collections .frame-52-a8goqi {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 397px;
+  position: absolute;
+  top: 5px;
+}
+
+.library-collections .date-range-11wous {
+  background-color: transparent;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.library-collections .last-played-2zqBaj {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-collections .x21-aug-2022-2zqBaj {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-collections .frame-53-a8goqi {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 557px;
+  position: absolute;
+  top: 5px;
+}
+
+.library-collections .timelapse-kugNWN {
+  background-color: transparent;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.library-collections .play-time-vxQggy {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-collections .x92-hours-vxQggy {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-collections .frame-54-a8goqi {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 697px;
+  position: absolute;
+  top: 5px;
+}
+
+.library-collections .cloud-WIsRGj {
+  background-color: transparent;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.library-collections .cloud-status-IMXwgx {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-collections .up-to-date-IMXwgx {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-collections .group-59-a8goqi {
+  background-color: transparent;
+  height: 44px;
+  left: 868px;
+  position: absolute;
+  top: 5px;
+  width: 159px;
+}
+
+.library-collections .frame-56-OfofJS {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.library-collections .stars-03RZa5 {
+  background-color: transparent;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.library-collections .achievements-bWGSBl {
+  width: fit-content;
+}
+
+.library-collections .x2065-bWGSBl {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-collections .vector-15-OfofJS {
+  background-color: transparent;
+  height: 5px;
+  left: 92px;
+  position: absolute;
+  top: 34px;
+  width: 70px;
+}
+
+.library-collections .vector-16-OfofJS {
+  background-color: transparent;
+  height: 3px;
+  left: 92px;
+  position: absolute;
+  top: 36px;
+  width: 25px;
+}
+
+.library-collections .frame-91-a8goqi {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 11px;
+  justify-content: flex-end;
+  left: 1231px;
+  position: absolute;
+  top: 7px;
+}
+
+.library-collections .sports-esports-2idv3D {
+  background-color: transparent;
+  height: 28px;
+  left: 6px;
+  position: absolute;
+  top: 6px;
+  width: 28px;
+}
+
+.library-collections .people-tRmY2d {
+  height: 28px;
+  left: 6px;
+  width: 28px;
+}
+
+.library-collections .rectangle-86-6L0TN0 {
+  background-color: var(--slate-gray-3);
+}
+
+.library-collections .star-border-6L0TN0 {
+  background-color: transparent;
+  height: 30px;
+  left: 5px;
+  position: absolute;
+  top: 5px;
+  width: 30px;
+}
+
+.library-collections .rectangle-86-qIJ3eY {
+  background-color: var(--slate-gray-3);
+}
+
+.library-collections .settings-qIJ3eY {
+  background-color: transparent;
+  height: 26px;
+  left: 7px;
+  position: absolute;
+  top: 7px;
+  width: 26px;
+}
+
+.library-collections .rectangle-86-xJ8Q24 {
+  background-color: var(--slate-gray-3);
+}
+
+.library-collections .info-xJ8Q24 {
+  background-color: transparent;
+  height: 26px;
+  left: 7px;
+  position: absolute;
+  top: 7px;
+  width: 26px;
+}
+
+.library-collections .secondary-button-syReVe {
+  align-items: center;
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  display: flex;
+  gap: 10px;
+  height: 31px;
+  justify-content: center;
+  left: 12px;
+  padding: 17px 56px;
+  position: absolute;
+  top: 124px;
+  width: 350px;
+}
+
+.library-collections .add-to-wishlist-WDdiHR {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -9.00px;
+  margin-top: -11.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-collections .frame-319-syReVe {
+  align-items: flex-end;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 27px;
+  left: 405px;
+  position: absolute;
+  top: 525px;
+}
+
+.library-collections .sorting-YY7h4y {
+  align-items: center;
+  background-color: var(--tuna);
+  border-radius: 5px;
+  display: flex;
+  gap: 172px;
+  height: 45px;
+  padding: 10px 5px;
+  position: relative;
+  width: 1484px;
+}
+
+.library-collections .frame-211-2pneCi {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  margin-bottom: -7.00px;
+  margin-top: -7.00px;
+  position: relative;
+}
+
+.library-collections .frame-34-D4YFcB {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 5px;
+  position: relative;
+}
+
+.library-collections .frame-316-YY7h4y {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 21px;
+  position: relative;
+}
+
+.library-collections .frame-315-0EC7Kb {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  width: 909px;
+}
+
+.library-collections .frame-134-8mQdQO {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: var(--tuna);
+  border-radius: 5px;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 7px;
+  padding: 25px;
+  position: relative;
+  width: 100%;
+}
+
+.library-collections .friends-who-play-this-game-pCewAe {
+  align-self: stretch;
+  background-color: transparent;
+  height: 30px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+}
+
+.library-collections .frame-135-pCewAe {
+  background-color: transparent;
+  flex: 0 0 auto;
+  gap: 15px;
+  width: 402px;
+}
+
+.library-collections .friend4-TxMLmb {
+  background-color: transparent;
+  height: 53px;
+  margin-bottom: -2.00px;
+  margin-left: -2.00px;
+  margin-top: -2.00px;
+  object-fit: cover;
+  position: relative;
+  width: 53px;
+}
+
+.library-collections .friend1-TxMLmb {
+  background-color: transparent;
+  height: 53px;
+  margin-bottom: -2.00px;
+  margin-top: -2.00px;
+  object-fit: cover;
+  position: relative;
+  width: 53px;
+}
+
+.library-collections .friend3-TxMLmb {
+  background-color: transparent;
+  height: 53px;
+  margin-bottom: -2.00px;
+  margin-top: -2.00px;
+  object-fit: cover;
+  position: relative;
+  width: 53px;
+}
+
+.library-collections .frame-136-8mQdQO {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: var(--tuna);
+  border-radius: 5px;
+  flex: 0 0 auto;
+  gap: 7px;
+  padding: 25px;
+  width: 100%;
+}
+
+.library-collections .achievements-Wn0DHc {
+  align-self: stretch;
+  height: 25px;
+}
+
+.library-collections .frame-135-Wn0DHc {
+  background-color: transparent;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  width: 402px;
+}
+
+.library-collections .x16-OXaP5w {
+  background-color: transparent;
+  height: auto;
+  left: 20px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 27px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.library-collections .frame-406-FHDgH6 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 10px;
+  position: relative;
+}
+
+.library-collections .locked-achievements-aIVb8u {
+  align-self: stretch;
+  background-color: transparent;
+  flex: 1;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+}
+
+.library-collections .frame-136-aIVb8u {
+  align-items: flex-start;
+  background-color: transparent;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  width: 402px;
+}
+
+.library-collections .rectangle-119-G1bAJw {
+  mix-blend-mode: luminosity;
+}
+
+.library-collections .rectangle-120-G1bAJw {
+  mix-blend-mode: luminosity;
+}
+
+.library-collections .rectangle-121-G1bAJw {
+  mix-blend-mode: luminosity;
+}
+
+.library-collections .rectangle-122-G1bAJw {
+  mix-blend-mode: luminosity;
+}
+
+.library-collections .x41-DYbJp8 {
+  background-color: transparent;
+  height: auto;
+  left: 20px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 27px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.library-collections .frame-135-8mQdQO {
+  align-self: stretch;
+  background-color: var(--tuna);
+  border-radius: 5px;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  padding: 25px;
+  width: 100%;
+}
+
+.library-collections .screenshots-X3xFk1 {
+  align-self: stretch;
+  background-color: transparent;
+  height: 25px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+}
+
+.library-collections .frame-310-X3xFk1 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 7px;
+  width: 859px;
+}
+
+.library-collections .frame-135-ekxVko {
+  background-color: transparent;
+  border-radius: 5px;
+  flex: 1;
+  flex-grow: 1;
+  gap: 8px;
+  height: 110px;
+  justify-content: space-around;
+}
+
+.library-collections .frame-136-ekxVko {
+  align-items: flex-start;
+  background-color: transparent;
+  border-radius: 5px;
+  flex: 1;
+  flex-grow: 1;
+  gap: 8px;
+  height: 110px;
+  justify-content: space-around;
+}
+
+.library-collections .frame-137-ekxVko {
+  align-items: flex-start;
+  background-color: transparent;
+  border-radius: 5px;
+  display: flex;
+  flex: 1;
+  flex-grow: 1;
+  gap: 8px;
+  height: 110px;
+  justify-content: space-around;
+  position: relative;
+}
+
+.library-collections .frame-138-ekxVko {
+  align-items: flex-start;
+  background-color: transparent;
+  border-radius: 5px;
+  display: flex;
+  flex: 1;
+  flex-grow: 1;
+  gap: 8px;
+  height: 110px;
+  justify-content: space-around;
+  position: relative;
+}
+
+.library-collections .frame-136-0EC7Kb {
+  align-items: center;
+  background-color: var(--tuna);
+  border-radius: 5px;
+  flex-direction: column;
+  gap: 7px;
+  height: 467px;
+  padding: 25px;
+  width: 553px;
+}
+
+.library-collections .activity-CTY5yC {
+  align-self: stretch;
+  background-color: transparent;
+  height: 42px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+}
+
+.library-collections .frame-314-CTY5yC {
+  align-items: center;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  width: 100%;
+}
+
+.library-collections .frame-312-xGI5PI {
+  align-items: center;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-collections .oct-13-yo04mP {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.library-collections .frame-311-qIOLa8 {
+  background-color: var(--backgroundhighlight);
+  border-color: var(--colorsecondary);
+}
+
+.library-collections .frame-310-BQ9I9N {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.library-collections .small-update-kmnLaN {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-collections .its-just-a-small-but-noteworthy-update-kmnLaN {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.library-collections .frame-313-xGI5PI {
+  align-items: center;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.library-collections .oct-12-sTK0Ft {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.library-collections .frame-311-S4xgut {
+  background-color: var(--white-2);
+  border-color: var(--colorprimary);
+}
+
+.library-collections .frame-310-vg5eOQ {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.library-collections .big-update-5Jxrx6 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-collections .wow-heres-a-big-update-5Jxrx6 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.library-collections .client-syReVe {
+  background-color: transparent;
+  height: 1080px;
+  left: 0px;
+  overflow: hidden;
+  position: fixed;
+  top: 0px;
+  width: 1920px;
+}
+
+.library-collections .rectangle-68-HMas8Y {
+  background-color: var(--backgroundmain);
+  height: 59px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.library-collections .frame-11-HMas8Y {
+  align-items: flex-end;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  left: 1658px;
+  position: absolute;
+  top: 17px;
+}
+
+.library-collections .frame-2-xkMdCO {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 18px;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.library-collections .frame-239-JsULiL {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.library-collections .help-0nJrzH {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.library-collections .frame-240-JsULiL {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.library-collections .view-xTPvGx {
+  margin-top: -0.50px;
+  white-space: nowrap;
+}
+
+.library-collections .keyboard-arrow-down-xTPvGx {
+  height: 20px;
+  width: 20px;
+}
+
+.library-collections .minimize-JsULiL {
+  background-color: transparent;
+  height: 25px;
+  position: relative;
+  width: 25px;
+}
+
+.library-collections .content-copy-JsULiL {
+  background-color: transparent;
+  height: 25px;
+  position: relative;
+  width: 25px;
+}
+
+.library-collections .close-JsULiL {
+  background-color: transparent;
+  height: 25px;
+  position: relative;
+  width: 25px;
+}
+
+.library-collections .frame-3-HMas8Y {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 66px;
+  left: 94px;
+  position: absolute;
+  top: 18px;
+}
+
+.library-collections .group-X8VODr {
+  background-color: transparent;
+  height: 20.98845863342285px;
+  position: relative;
+  width: 88.00003814697266px;
+}
+
+.library-collections .store-menu-X8VODr {
+  width: 60px;
+}
+
+.library-collections .store-Qnidbp {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.library-collections .store-menu-wc2IDw {
+  cursor: pointer;
+  width: 114px;
+}
+
+.library-collections .community-xlbAC3 {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.library-collections .store-menu-xatMwP {
+  width: 131px;
+}
+
+.library-collections .juxtopposed-HLMoh5 {
+  height: auto;
+  left: 0px;
+  position: absolute;
+  top: -1px;
+  width: auto;
+}
+
+.library-collections .store-menu-mxENIF {
+  width: 77px;
+}
+
+.library-collections .library-e9gJOM {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.library-collections .frame-233-HMas8Y {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 4px;
+  left: 894px;
+  position: absolute;
+  top: 18px;
+}
+
+.library-collections .store-menu-eGC24K {
+  cursor: pointer;
+  width: 118px;
+}
+
+.library-collections .downloads-xFboJG {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.library-collections .frame-330-HMas8Y {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 10px;
+  justify-content: flex-end;
+  left: 1259px;
+  position: absolute;
+  top: 10px;
+}
+
+.library-collections .friends-2VSu7Z {
+  background-color: transparent;
+  height: 37px;
+  position: relative;
+  width: 56px;
+}
+
+.library-collections .group-9-cn1DlD {
+  background-color: transparent;
+  height: 37px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 56px;
+}
+
+.library-collections .rectangle-61-6AQJLV {
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  height: 37px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 56px;
+}
+
+.library-collections .people-6AQJLV {
+  height: 25px;
+  left: 15px;
+  width: 25px;
+}
+
+.library-collections .notifications-2VSu7Z {
+  background-color: transparent;
+  height: 37px;
+  position: relative;
+  width: 56px;
+}
+
+.library-collections .group-135-GCDq9t {
+  background-color: transparent;
+  height: 37px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 56px;
+}
+
+.library-collections .group-8-9Eh8wQ {
+  background-color: transparent;
+  height: 37px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 56px;
+}
+
+.library-collections .rectangle-60-gMwRXa {
+  height: 37px;
+  width: 56px;
+}
+
+.library-collections .notifications-gMwRXa {
+  background-color: transparent;
+  height: 25px;
+  left: 15px;
+  position: absolute;
+  top: 6px;
+  width: 25px;
+}
+
+.library-collections .group-12-GCDq9t {
+  background-color: transparent;
+  height: 16px;
+  left: 43px;
+  position: absolute;
+  top: -2px;
+  width: 18px;
+}
+
+.library-collections .ellipse-2-eHarF0 {
+  background-color: var(--colorprimary);
+  border-radius: 8px;
+  height: 16px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 16px;
+}
+
+.library-collections .x1-eHarF0 {
+  background-color: transparent;
+  height: auto;
+  left: 5px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 1px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.library-collections .component-2-2VSu7Z {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 15px;
+  height: 39px;
+  position: relative;
+}
+
+.library-collections .group-7-E1nXZn {
+  background-color: transparent;
+  height: 39px;
+  position: relative;
+  width: 210px;
+}
+
+.library-collections .rectangle-60-Ludxgw {
+  height: 39px;
+  width: 210px;
+}
+
+.library-collections .frame-1-Ludxgw {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 8px;
+  height: 33px;
+  left: 3px;
+  position: absolute;
+  top: 3px;
+}
+
+.library-collections .sprite-0003-1-X9zx0s {
+  background-color: transparent;
+  height: 31px;
+  position: relative;
+  width: 31px;
+}
+
+.library-collections .juxtopposed-X9zx0s {
+  position: relative;
+  width: fit-content;
+}
+
+.library-collections .x525-X9zx0s {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-collections .keyboard-arrow-down-X9zx0s {
+  height: 20px;
+  width: 20px;
+}
+
+.library-collections .frame-331-HMas8Y {
+  background-color: transparent;
+  height: 24px;
+  left: 22px;
+  position: absolute;
+  top: 17px;
+  width: 53px;
+}
+
+.library-collections .achievements {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+}
+
+.library-collections .frame-135 {
+  align-items: flex-start;
+  display: flex;
+  position: relative;
+}
+
+.library-collections .frame-310 {
+  align-items: flex-start;
+  background-color: transparent;
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.library-collections .icon-box {
+  background-color: transparent;
+  height: 40px;
+  position: relative;
+  width: 40px;
+}
+
+.library-collections .image-159 {
+  align-self: stretch;
+  background-color: transparent;
+  flex: 1;
+  flex-grow: 1;
+  object-fit: cover;
+  position: relative;
+}
+
+.library-collections .keyboard-arrow-down {
+  background-color: transparent;
+  position: relative;
+}
+
+.library-collections .menu {
+  align-items: center;
+  border-radius: 3px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 13px 29px;
+  position: relative;
+}
+
+.library-collections .new-and-trending {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  width: fit-content;
+}
+
+.library-collections .rectangle-119 {
+  background-color: transparent;
+  height: 72px;
+  object-fit: cover;
+  position: relative;
+  width: 72px;
+}
+
+.library-collections .rectangle-121 {
+  background-color: transparent;
+  height: 72px;
+  object-fit: cover;
+  position: relative;
+  width: 72px;
+}
+
+.library-collections .rectangle-122 {
+  background-color: transparent;
+  height: 72px;
+  object-fit: cover;
+  position: relative;
+  width: 72px;
+}
+
+.library-collections .rectangle-86 {
+  border-radius: 3px;
+  height: 40px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 40px;
+}
+
+.library-collections .sort-filter {
+  align-items: center;
+  background-color: transparent;
+  border-radius: 3.33px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  height: 39px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 7px 20px;
+  position: relative;
+}
+
+.library-collections .souls-like {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  width: fit-content;
+}
+
+.library-collections .tag {
+  align-items: center;
+  align-self: stretch;
+  border-radius: 3px;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  overflow: hidden;
+  padding: 8px 44px;
+  position: relative;
+  width: 100%;
+}
+
+.library-collections .view {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.library-collections .x5000 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  opacity: 0;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+</style><script id="anime-js-script" src="https://cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js" integrity="sha256-98Q574VkbV+PkxXCKSgL6jVq9mrVbS7uCdA+vt0sLS8=" crossorigin="anonymous"></script><script id="imgloaded-js-script" src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script><style id="action-links-styles">
+@import url('https://fonts.googleapis.com/css2?family=Mulish&display=swap');
+
+#anima-interface{
+  transition: all 0.5s ease-in-out;
+}
+
+#anima-watermark {
+  transition: all 0.5s ease-in-out;
+  display: none;
+}
+#anima-watermark-link{
+  position: fixed;
+  bottom:20px;
+  height:30px;
+  border-radius: 1000px;
+  background: #3B3B3B;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  user-select:none;
+  transition: width 0.25s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+  text-decoration:none;
+  color:#fff;
+  padding:8px 16px 8px 11px;
+  font-family:Mulish, sans-serif;
+  font-size:12px;
+}
+#anima-watermark-link .text {
+  margin-left: 6px;
+}
+
+.omniview-anima-action-links .link{
+  height: 30px;
+  width: 30px;
+  border-radius: 1000px;
+  background: #3B3B3B;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  user-select:none;
+  transition: width 0.25s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+  text-decoration:none;
+  color:#fff;
+}
+.omniview-anima-action-links #comment-link .text,.omniview-anima-action-links #code-link .text{
+  display:none;
+  font-size:12px;
+  margin-right:5px;
+}
+.omniview-anima-action-links #comment-link:hover,.omniview-anima-action-links #code-link:hover{
+  width:105px;
+}
+.omniview-anima-action-links #comment-link.pop-active,.omniview-anima-action-links #code-link.pop-active{
+  width:105px;
+  background: #FF6250;
+}
+.omniview-anima-action-links #comment-link.pop-active .text,.omniview-anima-action-links #code-link.pop-active .text{
+  display:block
+}
+.omniview-anima-action-links #comment-link:hover .text,.omniview-anima-action-links #code-link:hover .text{
+  display:block;
+}
+
+.link.navigation{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  width:auto;
+  height:32px;
+  color:#fff;
+  font-size:12px;
+  cursor:default;
+  padding:0 5px;
+}
+.link.navigation .icon{
+  margin:0 6px;
+  fill:none;
+  stroke:currentColor;
+  cursor:pointer;
+}
+.link.navigation .icon.disabled{
+  opacity:0.5;
+  cursor:default;
+}
+
+
+.link.navigation .home-icon{
+  margin-left:6px;
+  fill:currentColor;
+  stroke:currentColor;
+  cursor:pointer;
+}
+
+.omniview-anima-action-links .restart{
+  height: 30px;
+  padding:0 12px;
+  background: #3B3B3B;
+  border-radius: 1000px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  color:#f1f1f1;
+  font-size: 12px;
+}
+
+.omniview-anima-action-links{
+  display:flex;
+  align-items:center;
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  font-family:Mulish, sans-serif;
+  transition: all 0.5s ease-in-out;
+  opacity:1;
+}
+
+.omniview-anima-action-links > * + *{
+   margin-right: 0;
+   margin-left: 10px;
+}
+
+.idle{
+  opacity:0;
+  pointer-events:none;
+}
+
+#popoverOpener {
+  position: absolute;
+  left: 50%;
+  margin-left: -10vw;
+  text-align: center;
+  top: 45vh;
+  width: 20vw;
+}
+
+
+.popover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1060;
+  display: none;
+  font-family: "sans-serif";
+  font-size: 14px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+.popover.top {
+  margin-top: -12px
+}
+
+.popover.right {
+  margin-left: 10px
+}
+
+.popover.bottom {
+  margin-top: 10px
+}
+
+.popover.left {
+  margin-left: -10px
+}
+
+.popover-title {
+  padding: 8px 14px;
+  margin: 0;
+  font-size: 14px;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #ebebeb;
+  border-radius: 5px 5px 0 0
+}
+
+.popover-content {
+  height: 100%;
+  width: 100%;
+  display:flex;
+  overflow:hidden;
+  font-family:Mulish, sans-serif;
+}
+
+
+
+.popover>.arrow,.popover>.arrow:after {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid
+}
+
+.popover>.arrow {
+  border-width: 11px
+}
+
+.popover>.arrow:after {
+  content: "";
+  border-width: 10px
+}
+
+.popover.top>.arrow {
+  bottom: -11px;
+  left: 50%;
+  margin-left: -11px;
+  border-top-color: #999;
+  border-top-color: rgba(0,0,0,.25);
+  border-bottom-width: 0
+}
+
+.popover.top>.arrow:after {
+  bottom: 1px;
+  margin-left: -10px;
+  content: " ";
+  border-top-color: #fff;
+  border-bottom-width: 0
+}
+
+.popover.right>.arrow {
+  top: 50%;
+  left: -11px;
+  margin-top: -11px;
+  border-right-color: #999;
+  border-right-color: rgba(0,0,0,.25);
+  border-left-width: 0
+}
+
+.popover.right>.arrow:after {
+  bottom: -10px;
+  left: 1px;
+  content: " ";
+  border-right-color: #fff;
+  border-left-width: 0
+}
+
+.popover.bottom>.arrow {
+  top: -11px;
+  left: 50%;
+  margin-left: -11px;
+  border-top-width: 0;
+  border-bottom-color: #999;
+  border-bottom-color: rgba(0,0,0,.25)
+}
+
+.popover.bottom>.arrow:after {
+  top: 1px;
+  margin-left: -10px;
+  content: " ";
+  border-top-width: 0;
+  border-bottom-color: #fff
+}
+
+.popover.left>.arrow {
+  top: 50%;
+  right: -11px;
+  margin-top: -11px;
+  border-right-width: 0;
+  border-left-color: #999;
+  border-left-color: rgba(0,0,0,.25)
+}
+
+.popover.left>.arrow:after {
+  right: 1px;
+  bottom: -10px;
+  content: " ";
+  border-right-width: 0;
+  border-left-color: #fff
+}
+
+
+
+#anima-comment-popover,#anima-code-popover{
+  background:#333333;
+  color:#fff;
+}
+
+#anima-comment-popover.top>.arrow,#anima-comment-popover.top>.arrow:after,#anima-code-popover.top>.arrow:after,#anima-code-popover.top>.arrow {
+  border-top-color:#333;
+}
+
+#anima-comment-popover .btn,#anima-code-popover .btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 6px 20px;
+  background: #FF6250;
+  color:#fff;
+  border-radius: 100px;
+  width: max-content;
+  text-decoration:none;
+}
+
+@media screen and (max-width: 550px) {
+  #anima-watermark-link {
+    padding: 6px !important;
+  }
+  #anima-watermark-link .text {
+    display: none !important;
+  }
+}
+
+</style></head><body style="margin: 0px; overflow-x: hidden;" dark-scroll=""><input type="hidden" id="anPageName" name="page" value="library-collections"><div class="container-center-horizontal"><div class="library-collections screen " data-id="360:4997"><div class="rectangle-89-syReVe" data-id="360:4998"></div><div class="rectangle-95-syReVe" data-id="360:5000"></div><div class="rectangle-96-syReVe" data-id="360:5001"></div><img class="image-107-syReVe" data-id="360:5072" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-107-1.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-107-1.png" alt="image 107"><div class="rectangle-97-syReVe" data-id="360:5073"></div><div class="frame-320-syReVe" data-id="719:33139"><div class="component-4-ryl3ri" data-id="719:33140"><div class="frame-86-bU1804 frame-86" data-id="719:33141"><div class="cool-games-gQBGAJ valign-text-middle motivasans-regular-normal-wild-sand-16px" data-id="719:33142">COOL GAMES</div><img class="keyboard-arrow-down-gQBGAJ keyboard-arrow-down" data-id="719:33143" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-89.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-89.svg" alt="Keyboard arrow down"></div><div class="frame-85-bU1804 frame-85" data-id="719:33145"><div class="frame-65" data-id="719:33146"><img class="image-94" data-id="719:33147" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-94-3.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-94-3.svg" alt="image 94"><div class="frame-59-kOe1jB" data-id="743:43850"><div class="tag-FjLLzZ tag" data-id="743:43851"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I743:43851;280:207">Bioshock</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I743:43851;662:10842">5,000</div></div><img class="image-88-FjLLzZ" data-id="743:43852" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-88@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-88@2x.png" alt="image 88"></div><div class="frame-69-kOe1jB" data-id="719:33148"><div class="tag-o1t7Wd tag" data-id="719:33149"><div class="souls-like motivasans-regular-normal-slate-gray-14px" data-id="I719:33149;280:205">DOOM Eternal</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I719:33149;662:10883">5,000</div></div><img class="image-98-o1t7Wd" data-id="719:33150" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-98@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-98@2x.png" alt="image 98"></div><div class="frame-75-kOe1jB" data-id="719:33151"><div class="tag-VFyxJp tag" data-id="719:33152"><p class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I719:33152;280:205">Halo: The Master Chief Collection</p><div class="x5000-xd28wt x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I719:33152;662:10883">5,000</div></div><img class="image-104-VFyxJp" data-id="719:33153" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-104@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-104@2x.png" alt="image 104"></div><div class="frame-76-kOe1jB" data-id="719:33154"><div class="tag-I6yaci tag" data-id="719:33155"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I719:33155;280:205">Mass Effect 2</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I719:33155;662:10883">5,000</div></div><img class="image-105-I6yaci" data-id="719:33156" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-105@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-105@2x.png" alt="image 105"></div></div></div></div><div class="component-3-ryl3ri" data-id="719:33157"><div class="frame-86-D0sxyD frame-86" data-id="I719:33157;368:14765"><div class="favorites-a6gBcl valign-text-middle motivasans-regular-normal-wild-sand-16px" data-id="I719:33157;368:14766">FAVORITES</div><img class="keyboard-arrow-down-a6gBcl keyboard-arrow-down" data-id="I719:33157;368:14767" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-90.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-90.svg" alt="Keyboard arrow down"></div><div class="frame-85-D0sxyD frame-85" data-id="I719:33157;368:14737"><div class="frame-57-Tu2e5I" data-id="I719:33157;368:14738"><div class="tag-jvgonV tag" data-id="I719:33157;368:14739"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I719:33157;368:14739;280:205">Batman: Arkham Knight</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I719:33157;368:14739;662:10883">5,000</div></div><img class="image-86-jvgonV" data-id="I719:33157;368:14740" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-86@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-86@2x.png" alt="image 86"></div><div class="frame-58-Tu2e5I" data-id="I719:33157;368:14741"><div class="tag-mi5nD3 tag" data-id="I719:33157;368:14742"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I719:33157;368:14742;280:205">Beneath a Steel Sky</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I719:33157;368:14742;662:10883">5,000</div></div><img class="image-87-mi5nD3" data-id="I719:33157;368:14743" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-87@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-87@2x.png" alt="image 87"></div><div class="frame-60-Tu2e5I" data-id="I719:33157;368:14747"><div class="tag-89VxtN tag" data-id="I719:33157;368:14748"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I719:33157;368:14748;280:205">Bioshock 2</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I719:33157;368:14748;662:10883">5,000</div></div><img class="image-89-89VxtN" data-id="I719:33157;368:14749" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-89@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-89@2x.png" alt="image 89"></div><div class="frame-61-Tu2e5I" data-id="I719:33157;368:14750"><div class="tag-gfCPh0 tag" data-id="I719:33157;368:14751"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I719:33157;368:14751;280:205">Bioshock Infinite</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I719:33157;368:14751;662:10883">5,000</div></div><img class="image-90-gfCPh0" data-id="I719:33157;368:14752" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-90@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-90@2x.png" alt="image 90"></div><div class="frame-62-Tu2e5I" data-id="I719:33157;368:14753"><div class="tag-p1JWxy tag" data-id="I719:33157;368:14754"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I719:33157;368:14754;280:205">Black Mesa</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I719:33157;368:14754;662:10883">5,000</div></div><img class="image-91-p1JWxy" data-id="I719:33157;368:14755" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-91@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-91@2x.png" alt="image 91"></div><div class="frame-63-Tu2e5I" data-id="I719:33157;368:14756"><div class="tag-bptiQT tag" data-id="I719:33157;368:14757"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I719:33157;368:14757;280:205">Borderlands</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I719:33157;368:14757;662:10883">5,000</div></div><img class="image-92-bptiQT" data-id="I719:33157;368:14758" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-92@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-92@2x.png" alt="image 92"></div><div class="frame-64-Tu2e5I" data-id="I719:33157;368:14759"><div class="tag-seSTqm tag" data-id="I719:33157;368:14760"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I719:33157;368:14760;280:205">Borderlands 2</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I719:33157;368:14760;662:10883">5,000</div></div><img class="image-93-seSTqm" data-id="I719:33157;368:14761" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-93@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-93@2x.png" alt="image 93"></div><div class="frame-65" data-id="I719:33157;368:14762"><div class="tag-cGHxYd tag" data-id="I719:33157;368:14763"><div class="souls-like motivasans-regular-normal-wild-sand-14px" data-id="I719:33157;368:14763;280:205">Borderlands 3</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I719:33157;368:14763;662:10883">5,000</div></div><img class="image-94" data-id="I719:33157;368:14764" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-94-4.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-94-4.svg" alt="image 94"></div><div class="frame-67-Tu2e5I" data-id="I719:33157;743:44432"><div class="tag-hOhvNx tag" data-id="I719:33157;743:44433"><div class="souls-like motivasans-regular-normal-slate-gray-14px" data-id="I719:33157;743:44433;280:205">Deus Ex: GOTY Edition</div><div class="x5000 motivasans-regular-normal-slate-gray-12px hidden " data-id="I719:33157;743:44433;662:10883">5,000</div></div><img class="image-96-hOhvNx" data-id="I719:33157;743:44434" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-96@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-96@2x.png" alt="image 96"></div></div></div></div><div class="library-header-syReVe" data-id="369:14887"><div class="rectangle-67-UjaJyi" data-id="369:14888"></div><div class="frame-15-UjaJyi" data-id="369:14889"><article class="menu-EICb0m menu" data-id="369:14890"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I369:14890;82:314">Home</div></article><article class="menu-lhzQKD menu" data-id="369:14891"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I369:14891;82:341">Collections</div></article><article class="group-15-EICb0m" data-id="369:14892"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I369:14892;82:314">News and Updates</div></article></div><div class="frame-79-UjaJyi" data-id="369:14893"><div class="search-ABzmyz" data-id="369:14894"><div class="rectangle-70-l1PfIP" data-id="I369:14894;280:52"></div><div class="search-l1PfIP motivasans-regular-normal-kashmir-blue-14px" data-id="I369:14894;280:53">Search...</div><img class="search-hLxG2R" data-id="I369:14894;280:54" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/search-25.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/search-25.svg" alt="Search"></div><div class="icon-box" data-id="369:14895"><div class="rectangle-86-nNGS0E rectangle-86" data-id="369:14896"></div><img class="filter-alt-nNGS0E" data-id="369:14897" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/filter-alt-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/filter-alt-2.svg" alt="Filter alt"></div><img class="icon-select" data-id="369:14902" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-10.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-10.svg" alt="icon select"><img class="icon-select" data-id="369:14903" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-1.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-1.svg" alt="icon select"></div><div class="frame-78-UjaJyi" data-id="369:14904"><div class="view valign-text-middle motivasans-regular-normal-wild-sand-14px" data-id="369:14905">View</div><img class="icon-select" data-id="375:2725" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-12.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-12.svg" alt="icon select"><a href="library-home-grid-view-1"><img class="icon-select-PSRW7f icon-select" data-id="375:2738" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-13.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-13.svg" alt="icon select" data-hotspot-id="hp-0"></a><a href="library-home-detail-view-1"><img class="icon-select-MJwS9b icon-select" data-id="375:2751" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-14.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/icon-select-14.svg" alt="icon select" data-hotspot-id="hp-1"></a></div><div class="frame-80-UjaJyi" data-id="369:14932"><article class="group-16-OPYWz5" data-id="369:14933"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I369:14933;82:314">Activate a Product</div></article><article class="group-17-OPYWz5" data-id="369:14934"><div class="home motivasans-regular-normal-wild-sand-16px" data-id="I369:14934;82:314">Add a non-Steam Game</div></article></div></div><div class="group-60-syReVe" data-id="370:15516"><div class="play-button-a8goqi" data-id="370:15517"><img class="play-arrow-btGShJ" data-id="I370:15517;335:1188" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/play-arrow-4.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/play-arrow-4.svg" alt="Play arrow"><div class="play-btGShJ motivasans-bold-vulcan-18px" data-id="I370:15517;335:1185">Play</div></div><div class="bioshock-remastered-a8goqi valign-text-middle motivasans-bold-wild-sand-22px" data-id="370:15518">Bioshock Remastered</div><div class="frame-52-a8goqi" data-id="370:15519"><img class="date-range-11wous" data-id="370:15520" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/date-range-19.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/date-range-19.svg" alt="Date range"><div class="frame-51" data-id="370:15523"><div class="last-played-2zqBaj motivasans-regular-normal-slate-gray-14px" data-id="370:15524">LAST PLAYED</div><div class="x21-aug-2022-2zqBaj motivasans-regular-normal-wild-sand-14px" data-id="370:15525">21 Aug 2022</div></div></div><div class="frame-53-a8goqi" data-id="370:15526"><img class="timelapse-kugNWN" data-id="370:15527" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/timelapse-19.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/timelapse-19.svg" alt="Timelapse"><div class="frame-51" data-id="370:15530"><div class="play-time-vxQggy motivasans-regular-normal-slate-gray-14px" data-id="370:15531">PLAY TIME</div><div class="x92-hours-vxQggy motivasans-regular-normal-wild-sand-14px" data-id="370:15532">92 hours</div></div></div><div class="frame-54-a8goqi" data-id="370:15533"><img class="cloud-WIsRGj" data-id="370:15534" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/cloud-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/cloud-2.svg" alt="Cloud"><div class="frame-51" data-id="370:15537"><div class="cloud-status-IMXwgx motivasans-regular-normal-slate-gray-14px" data-id="370:15538">CLOUD STATUS</div><div class="up-to-date-IMXwgx motivasans-regular-normal-wild-sand-14px" data-id="370:15539">Up to date</div></div></div><div class="group-59-a8goqi" data-id="370:15540"><div class="frame-56-OfofJS" data-id="370:15541"><img class="stars-03RZa5" data-id="370:15542" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/stars-20.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/stars-20.svg" alt="Stars"><div class="frame-51" data-id="370:15545"><div class="achievements-bWGSBl achievements motivasans-regular-normal-slate-gray-14px" data-id="370:15546">ACHIEVEMENTS</div><div class="x2065-bWGSBl motivasans-regular-normal-wild-sand-14px" data-id="370:15547">20/65</div></div></div><img class="vector-15-OfofJS" data-id="370:15548" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-15.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-15.svg" alt="Vector 15"><img class="vector-16-OfofJS" data-id="374:2255" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-16.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-16.svg" alt="Vector 16"></div><div class="frame-91-a8goqi" data-id="370:15549"><div class="icon-box" data-id="370:15550"><img class="sports-esports-2idv3D" data-id="370:15552" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sports-esports-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sports-esports-2.svg" alt="Sports esports"></div><div class="icon-box" data-id="370:15559"><img class="people-tRmY2d people" data-id="370:15561" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/people-25.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/people-25.svg" alt="People"></div><div class="icon-box" data-id="370:15564"><div class="rectangle-86-6L0TN0 rectangle-86" data-id="370:15565"></div><img class="star-border-6L0TN0" data-id="370:15566" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/star-border-11.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/star-border-11.svg" alt="Star border"></div><div class="icon-box" data-id="370:15569"><div class="rectangle-86-qIJ3eY rectangle-86" data-id="370:15570"></div><img class="settings-qIJ3eY" data-id="370:15571" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/settings-19.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/settings-19.svg" alt="Settings"></div><div class="icon-box" data-id="370:15574"><div class="rectangle-86-xJ8Q24 rectangle-86" data-id="370:15575"></div><img class="info-xJ8Q24" data-id="370:15576" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/info-1.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/info-1.svg" alt="Info"></div></div></div><div class="secondary-button-syReVe" data-id="375:2265"><div class="add-to-wishlist-WDdiHR motivasans-regular-normal-wild-sand-14px" data-id="I375:2265;84:780">+ New Collection</div></div><div class="frame-319-syReVe" data-id="713:7817"><div class="sorting-YY7h4y" data-id="713:7818"><div class="frame-211-2pneCi" data-id="I713:7818;457:12111"><div class="frame-34-D4YFcB" data-id="I713:7818;302:1483"><article class="sort-filter" data-id="I713:7818;302:1484"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-14px" data-id="I713:7818;302:1484;296:577">Store Page</div></article><article class="sort-filter" data-id="I713:7818;302:1485"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-14px" data-id="I713:7818;302:1485;296:577">DLCs</div></article><article class="sort-filter" data-id="I713:7818;302:1486"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-14px" data-id="I713:7818;302:1486;296:577">Community</div></article><article class="sort-filter" data-id="I713:7818;302:1487"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-14px" data-id="I713:7818;302:1487;296:577">Discussions</div></article><article class="sort-filter" data-id="I713:7818;302:1488"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-14px" data-id="I713:7818;302:1488;296:577">Workshop</div></article><article class="sort-filter" data-id="I713:7818;302:1489"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-14px" data-id="I713:7818;302:1489;296:577">Guides</div></article><article class="sort-filter" data-id="I713:7818;302:1490"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-14px" data-id="I713:7818;302:1490;296:577">Support</div></article></div></div></div><div class="frame-316-YY7h4y" data-id="713:7819"><div class="frame-315-0EC7Kb" data-id="713:7820"><div class="frame-134-8mQdQO" data-id="713:7821"><div class="frame-407" data-id="713:7822"><p class="friends-who-play-this-game-pCewAe motivasans-regular-normal-wild-sand-16px" data-id="713:7823">Friends who play this game</p><div class="frame-135-pCewAe frame-135" data-id="713:7824"><img class="friend4-TxMLmb" data-id="722:33597" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend4-1@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend4-1@2x.png" alt="friend4"><img class="friend1-TxMLmb" data-id="722:33598" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend1-1@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend1-1@2x.png" alt="friend1"><img class="friend3-TxMLmb" data-id="722:33599" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend3-1@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend3-1@2x.png" alt="friend3"></div></div></div><div class="frame-136-8mQdQO frame-136" data-id="713:7828"><div class="frame-407" data-id="713:7829"><div class="achievements-Wn0DHc achievements motivasans-regular-normal-wild-sand-16px" data-id="713:7830">Achievements</div><div class="frame-135-Wn0DHc frame-135" data-id="713:7831"><img class="rectangle-119" data-id="713:7832" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-119@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-119@2x.png" alt="Rectangle 119"><img class="rectangle-120" data-id="713:7833" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-120@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-120@2x.png" alt="Rectangle 120"><img class="rectangle-121" data-id="713:7834" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-121@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-121@2x.png" alt="Rectangle 121"><img class="rectangle-122" data-id="713:7835" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-122@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-122@2x.png" alt="Rectangle 122"><div class="group-100" data-id="713:7836"><div class="rectangle-123" data-id="713:7837"></div><div class="x16-OXaP5w motivasans-regular-normal-wild-sand-16px" data-id="713:7838">+16</div></div></div></div><div class="frame-406-FHDgH6" data-id="713:7839"><div class="locked-achievements-aIVb8u valign-text-middle motivasans-regular-normal-slate-gray-14px" data-id="713:7840">Locked Achievements</div><div class="frame-136-aIVb8u frame-136" data-id="713:7841"><img class="rectangle-119-G1bAJw rectangle-119" data-id="713:7842" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-119@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-119@2x.png" alt="Rectangle 119"><img class="rectangle-120-G1bAJw rectangle-120" data-id="713:7843" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-120@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-120@2x.png" alt="Rectangle 120"><img class="rectangle-121-G1bAJw rectangle-121" data-id="713:7844" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-121@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-121@2x.png" alt="Rectangle 121"><img class="rectangle-122-G1bAJw rectangle-122" data-id="713:7845" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-122@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/rectangle-122@2x.png" alt="Rectangle 122"><div class="group-100" data-id="713:7846"><div class="rectangle-123" data-id="713:7847"></div><div class="x41-DYbJp8 motivasans-regular-normal-wild-sand-16px" data-id="713:7848">+41</div></div></div></div></div><div class="frame-135-8mQdQO frame-135" data-id="713:7849"><div class="screenshots-X3xFk1 motivasans-regular-normal-wild-sand-16px" data-id="713:7850">Screenshots</div><div class="frame-310-X3xFk1 frame-310" data-id="727:41790"><div class="frame-135-ekxVko frame-135" data-id="727:41791"><img class="image-159" data-id="727:41792" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-1.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-1.png" alt="image 159"></div><div class="frame-136-ekxVko frame-136" data-id="727:41793"><img class="image-159" data-id="727:41794" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-2.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-2.png" alt="image 159"></div><div class="frame-137-ekxVko" data-id="727:41795"><img class="image-159" data-id="727:41796" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-3.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-3.png" alt="image 159"></div><div class="frame-138-ekxVko" data-id="727:41797"><img class="image-159" data-id="727:41798" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-4.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-159-4.png" alt="image 159"></div></div></div></div><div class="frame-136-0EC7Kb frame-136" data-id="713:7860"><div class="activity-CTY5yC motivasans-regular-normal-slate-gray-16px" data-id="713:7861">Activity</div><div class="frame-314-CTY5yC" data-id="713:7862"><div class="frame-312-xGI5PI" data-id="713:7863"><div class="frame-221" data-id="713:7864"><div class="oct-13-yo04mP motivasans-regular-normal-malibu-16px" data-id="713:7865">Oct 13</div><img class="vector-5" data-id="713:7866" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-5-1.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-5-1.svg" alt="Vector 5"></div><div class="frame-311-qIOLa8 frame-311" data-id="713:7867"><img class="construction" data-id="713:7868" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/construction-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/construction-2.svg" alt="Construction"><div class="frame-310-BQ9I9N frame-310" data-id="713:7876"><div class="small-update-kmnLaN motivasans-regular-normal-slate-gray-14px" data-id="713:7877">Small Update</div><p class="its-just-a-small-but-noteworthy-update-kmnLaN motivasans-regular-normal-wild-sand-16px" data-id="713:7878">It’s just a small but noteworthy update~</p></div></div></div><div class="frame-313-xGI5PI" data-id="713:7879"><div class="frame-221" data-id="713:7880"><div class="oct-12-sTK0Ft motivasans-regular-normal-malibu-16px" data-id="713:7881">Oct 12</div><img class="vector-5" data-id="713:7882" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-5-1.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/vector-5-1.svg" alt="Vector 5"></div><div class="frame-311-S4xgut frame-311" data-id="713:7883"><img class="construction" data-id="713:7884" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/construction-3.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/construction-3.svg" alt="Construction"><div class="frame-310-vg5eOQ frame-310" data-id="713:7892"><div class="big-update-5Jxrx6 motivasans-regular-normal-slate-gray-14px" data-id="713:7893">Big Update</div><p class="wow-heres-a-big-update-5Jxrx6 motivasans-regular-normal-wild-sand-16px" data-id="713:7894">Wow here’s a BIG update!</p></div></div></div></div></div></div></div><div class="client-syReVe" data-id="360:5098"><div class="rectangle-68-HMas8Y" data-id="I360:5098;333:2374"></div><div class="frame-11-HMas8Y" data-id="I360:5098;333:2375"><div class="frame-2-xkMdCO" data-id="I360:5098;333:2381"><div class="frame-239-JsULiL" data-id="I360:5098;475:5954"><div class="help-0nJrzH motivasans-regular-normal-slate-gray-16px" data-id="I360:5098;475:4731">Help</div></div><div class="frame-240-JsULiL" data-id="I360:5098;618:6950"><div class="view-xTPvGx view motivasans-regular-normal-slate-gray-16px" data-id="I360:5098;618:6951">View</div><img class="keyboard-arrow-down-xTPvGx keyboard-arrow-down" data-id="I360:5098;618:6952" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down.svg" alt="Keyboard arrow down"></div><img class="minimize-JsULiL" data-id="I360:5098;333:2384" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/minimize-22.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/minimize-22.svg" alt="Minimize"><img class="content-copy-JsULiL" data-id="I360:5098;333:2387" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/content-copy-22.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/content-copy-22.svg" alt="Content copy"><img class="close-JsULiL" data-id="I360:5098;333:2390" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/close-22.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/close-22.svg" alt="Close"></div></div><div class="frame-3-HMas8Y" data-id="I360:5098;333:2404"><img class="group-X8VODr" data-id="I360:5098;435:10471" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-1@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-1@2x.png" alt="Group"><div class="store-menu-X8VODr store-menu" data-id="I360:5098;333:2405"><div class="store-Qnidbp motivasans-bold-wild-sand-18px" data-id="I360:5098;333:2405;18:271">STORE</div></div><a href="community-home"><div class="store-menu-wc2IDw store-menu" data-id="I360:5098;333:2406" data-hotspot-id="hp-2"><div class="community-xlbAC3 motivasans-bold-wild-sand-18px" data-id="I360:5098;333:2406;18:782">COMMUNITY</div></div></a><div class="store-menu-xatMwP store-menu" data-id="I360:5098;333:2407"><div class="juxtopposed-HLMoh5 juxtopposed motivasans-bold-wild-sand-18px" data-id="I360:5098;333:2407;18:879">JUXTOPPOSED</div></div><div class="store-menu-mxENIF store-menu" data-id="I360:5098;333:2408"><div class="library-e9gJOM motivasans-bold-malibu-18px" data-id="I360:5098;333:2408;18:832">LIBRARY</div></div></div><div class="frame-233-HMas8Y" data-id="I360:5098;460:23404"><a href="download"><div class="store-menu-eGC24K store-menu" data-id="I360:5098;333:2409" data-hotspot-id="hp-3"><div class="downloads-xFboJG motivasans-bold-wild-sand-18px" data-id="I360:5098;333:2410">DOWNLOADS</div></div></a></div><div class="frame-330-HMas8Y" data-id="I360:5098;618:13985"><div class="friends-2VSu7Z" data-id="I360:5098;447:7373"><div class="group-9-cn1DlD" data-id="I360:5098;447:7373;447:3840"><div class="rectangle-61-6AQJLV" data-id="I360:5098;447:7373;447:3841"></div><img class="people-6AQJLV people" data-id="I360:5098;447:7373;447:3842" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/people-26.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/people-26.svg" alt="People"></div></div><div class="notifications-2VSu7Z" data-id="I360:5098;850:10413"><div class="group-135-GCDq9t" data-id="I360:5098;850:10413;766:10295"><div class="group-8-9Eh8wQ" data-id="I360:5098;850:10413;766:10296"><div class="rectangle-60-gMwRXa rectangle-60" data-id="I360:5098;850:10413;766:10297"></div><img class="notifications-gMwRXa" data-id="I360:5098;850:10413;766:10298" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/notifications-22.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/notifications-22.svg" alt="Notifications"></div></div><div class="group-12-GCDq9t" data-id="I360:5098;850:10413;766:10166"><div class="ellipse-2-eHarF0" data-id="I360:5098;850:10413;766:10167"></div><div class="x1-eHarF0 motivasans-regular-normal-vulcan-12px" data-id="I360:5098;850:10413;766:10168">1</div></div></div><div class="component-2-2VSu7Z" data-id="I360:5098;333:2393"><div class="group-7-E1nXZn" data-id="I360:5098;333:2393;18:1014"><div class="rectangle-60-Ludxgw rectangle-60" data-id="I360:5098;333:2393;18:1015"></div><div class="frame-1-Ludxgw" data-id="I360:5098;333:2393;18:1016"><img class="sprite-0003-1-X9zx0s" data-id="I360:5098;333:2393;18:1017" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-44.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-44.svg" alt="Sprite-0003 1"><div class="juxtopposed-X9zx0s juxtopposed motivasans-regular-normal-wild-sand-14px" data-id="I360:5098;333:2393;18:1018">Juxtopposed</div><div class="x525-X9zx0s motivasans-regular-normal-slate-gray-14px" data-id="I360:5098;333:2393;18:1019">$5.25</div><img class="keyboard-arrow-down-X9zx0s keyboard-arrow-down" data-id="I360:5098;333:2393;18:1020" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-1.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-1.svg" alt="Keyboard arrow down"></div></div></div></div><img class="frame-331-HMas8Y" data-id="I360:5098;628:10825" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-331-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-331-2.svg" alt="Frame 331"></div></div></div><script src="launchpad-js/launchpad-banner.js" async=""></script><script defer="" src="https://animaapp.s3.amazonaws.com/static/restart-btn.min.js"></script><div id="hotspots_wrapper"><div class="hotspot" id="hp-0" style="width: 40px; height: 40px; top: 67.5px; left: 1163.35px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-1" style="width: 40px; height: 40px; top: 67.5px; left: 1210.35px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-2" style="width: 114px; height: 22px; top: 18px; left: 374px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-3" style="width: 118px; height: 22px; top: 18px; left: 894px; z-index: -1; opacity: 0;"></div></div><div id="t_preload_links"><link href="/game-community-hub-workshop" rel="prefetch"><link href="/game-community-hub-discussions" rel="prefetch"><link href="/library-home-detail-view-2" rel="prefetch"><link href="/forum" rel="prefetch"><link href="/library-home-grid-view-2" rel="prefetch"><link href="/library-home-ready-to-play-filter" rel="prefetch"><link href="/library-home-recent-filter" rel="prefetch"><link href="/library-home-grid-view-1" rel="prefetch"><link href="/library-home-filters" rel="prefetch"><link href="/library-collections" rel="prefetch"><link href="/screenshots" rel="prefetch"></div><div id="anima-interface" data-turbo-permanent="true" class="idle"><!---->
+        <div id="anima-comment-popover" class="popover top" role="tooltip" style="left: -205px; top: -220px;">
+          <div class="arrow" style="margin-left: 128px;"></div>
+          <div class="popover-content" style="align-items:center">
+            <div style="display:flex;flex-direction:column;height: 100%;padding: 20px;">
+              <h3 style="font-size:18px;margin-bottom:10px;font-weight:500;line-height: 26px;font-family: Roslindale;">
+                Leave feedback and collaborate
+              </h3>
+              <p style="font-size:12px;margin-bottom:20px;font-weight:400;line-height: 20px;">
+                Login to your account to leave comments. Don't have an account?
+                Sign up for free!
+              </p>
+              <a target="_blank" rel="noopener noreferrer" class="btn" href="https://projects.animaapp.com/p/undefined/s/undefined?mode=comments&amp;utm_campaign=add-comment&amp;utm_medium=add-comment&amp;utm_source=animaapp.io">Add comment</a>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:center;padding-right:20px">
+              <img src="https://animaapp.s3.amazonaws.com/static/comment-illustration.svg">
+            </div>
+          </div>
+        </div>
+        <div id="anima-code-popover" class="popover top" role="tooltip" style="left: -205px; top: -220px;">
+          <div class="arrow" style="margin-left: 168px;"></div>
+          <div class="popover-content" style="align-items:center">
+            <div style="display:flex;flex-direction:column;height: 100%;padding: 20px;">
+              <h3 style="font-size:18px;margin-bottom:10px;font-weight:500;line-height: 26px;font-family: Roslindale;">
+                Get clean code you’ll love with Anima
+              </h3>
+              <p style="font-size:12px;margin-bottom:20px;font-weight:400;line-height: 20px;">
+                Login and easily export HTML, React or Vue of this prototype.
+                Don’t have an account? Sign up for free!
+              </p>
+              <a target="_blank" rel="noopener noreferrer" class="btn" href="https://projects.animaapp.com/p/undefined/s/undefined?mode=code&amp;utm_campaign=get-code&amp;utm_medium=get-code&amp;utm_source=animaapp.io">
+                Get code
+              </a>
+            </div>
+
+            <img src="https://animaapp.s3.amazonaws.com/static/code-illustration.svg">
+          </div>
+        </div>
+        <div class="omniview-anima-action-links" id="actions-wrap">
+          <div class="omniview-anima-action-links">
+            <div id="page-nav" class="link navigation" style="display: none;">
+              <svg id="homepage-icon" class="home-icon" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.151 11a.25.25 0 01-.167-.436l4.349-3.913a.25.25 0 01.334 0l4.349 3.913a.25.25 0 01-.167.436H8.15zM16 12H9v4a1 1 0 001 1h5a1 1 0 001-1v-4z" fill="#fff"></path>
+              </svg>
+
+              <svg class="icon" id="arrow-left" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18l-6-6 6-6" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+
+              <span id="page-num"></span>
+
+              <svg class="icon" id="arrow-right" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+
+            <a class="link" id="comment-link" target="_blank" style="display: none;">
+              <span class="text">Comment</span>
+              <svg width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M4.301 15.137a.551.551 0 01.199-.55c.314-.23.554-.554.718-.965A6.015 6.015 0 014 10 6.006 6.006 0   0110.001 4 6.006 6.006 0 0116 10.001 6.006 6.006 0 019.999 16a5.98 5.98 0 01-3.095-.86 3.165 3.165 0 01-1.65.438 3.6  3.6 0 01-.57-.044c-.191-.03-.34-.186-.383-.397z" fill="#fff"></path>
+              </svg>
+            </a>
+
+            <a class="link" id="code-link" target="_blank" style="display: none;">
+              <span class="text">Get Code</span>
+              <svg width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 15.667a1 1 0 01-.707-1.708l3.626-3.625-3.626-3.626a1 1 0 111.415-1.415l4.333 4.333a1 1 0 010 1.414l-4.333 4.333a.993.993 0 01-.707.294zM7.333 5a1 1 0 01.707 1.708l-3.626 3.625 3.627 3.626a1 1 0 11-1.415 1.415L2.293 11.04a1 1 0 010-1.415l4.333-4.333A.992.992 0 017.333 5z" fill="#fff"></path>
+              </svg>
+            </a>
+
+            <div class="restart" id="restart-btn" style="display: none;">
+              <svg style="margin-right: 6px" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 11.817A5.017 5.017 0 01.994 6.811c0-.207.169-.375.375-.375s.375.168.375.375A4.265 4.265 0 006 11.067a4.265 4.265 0 004.256-4.256A4.265 4.265 0 006 2.555a.376.376 0 01-.375-.376c0-.206.169-.374.375-.374a5.017 5.017 0 015.006 5.006A5.017 5.017 0 016 11.817z" fill="#fff"></path>
+                <path d="M6.75 4.237a.37.37 0 01-.263-.112l-1.65-1.65a.363.363 0 010-.525L6.487.3c.15-.15.375-.15.525 0 .15.15.15.375 0 .525L5.625 2.212 7.012 3.6c.15.15.15.375 0 .525-.056.075-.15.112-.262.112z" fill="#fff"></path>
+              </svg>
+              Restart
+            </div>
+          </div>
+        </div>
+      <!----></div><div id="anima-watermark" style="display: none;" class="idle"><!----><a id="anima-watermark-link" target="_blank" href="https://www.animaapp.com?utm_campaign=public-link-banner&amp;utm_medium=public-link-banner&amp;utm_source=animaapp.io" style="right: 20px; left: auto; padding: 6px;">
+        <svg width="20" height="20" viewBox="0 0 20 20" id="anima-logo-icon" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4.09293 3.00001H16.5327C16.5484 2.99976 16.5638 3.00351 16.5776 3.01092C16.5913 3.01832 16.603 3.02913 16.6114 3.04231C16.6198 3.0555 16.6247 3.07061 16.6256 3.08622C16.6265 3.10182 16.6233 3.1174 16.6165 3.13146C15.5441 5.29706 13.9276 7.14699 11.9253 8.50009C8.69117 10.6822 5.43436 10.9075 4.09389 10.9196C4.08165 10.9198 4.06949 10.9176 4.05811 10.9131C4.04672 10.9086 4.03636 10.9019 4.02761 10.8933C4.01887 10.8848 4.01192 10.8745 4.00718 10.8633C4.00244 10.852 4 10.8399 4 10.8276V3.09198C4 3.07982 4.00241 3.06778 4.00709 3.05656C4.01177 3.04534 4.01863 3.03516 4.02728 3.02661C4.03592 3.01805 4.04617 3.0113 4.05744 3.00673C4.06871 3.00217 4.08077 2.99988 4.09293 3.00001Z" fill="#FF6250"></path>
+          <path d="M6.77772 17.4446C8.31182 17.4446 9.55545 16.201 9.55545 14.6669C9.55545 13.1328 8.31182 11.8892 6.77772 11.8892C5.24363 11.8892 4 13.1328 4 14.6669C4 16.201 5.24363 17.4446 6.77772 17.4446Z" fill="#FFDF90"></path>
+          <path d="M12.4559 17.2799C11.6701 16.9799 11.2522 16.1151 11.5185 15.3496L13.6153 9.3656C13.884 8.60003 14.7387 8.22302 15.5245 8.52299C16.3103 8.82344 16.7282 9.68772 16.4619 10.4538L14.365 16.4377C14.0964 17.2033 13.2417 17.5808 12.4559 17.2799Z" fill="#3366FF"></path>
+        </svg>
+        <span class="text" style="display: none;">Made with Anima</span>
+      </a><!----></div></body></html>

@@ -1,0 +1,4576 @@
+<html><head><style type="text/css">.turbo-progress-bar {
+  position: fixed;
+  display: block;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: #0076ff;
+  z-index: 9999;
+  transition:
+    width 300ms ease-out,
+    opacity 150ms 150ms ease-in;
+  transform: translate3d(0, 0, 0);
+}
+</style><style id="st_globalStyles">
+/* MEDIA QUERIES */
+.anima-desktop-only {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+/* SCROLLBAR */
+
+[dark-scroll]::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+[dark-scroll]::-webkit-scrollbar-track-piece {
+  background-color: #2b2b2b;
+  border: 1px solid #1d1d1d;
+}
+
+[dark-scroll]::-webkit-scrollbar-thumb {
+  height: 10px;
+  background-color: #4d4d4d;
+}
+[dark-scroll]::-webkit-scrollbar-thumb:hover {
+  background-color: #5a5a5a;
+}
+
+/* LOAD PROGRESS */
+
+.turbolinks-progress-bar {
+  height: 3px;
+  background-color: #ff6250;
+}
+
+/* GROUPING */
+
+[data-id].ui-selecting {
+  box-shadow: inset 0 0 0 1px #4285f4 !important;
+}
+[data-id].ui-selected {
+  box-shadow: inset 0 0 0 1px #4285f4 !important;
+}
+
+/* CURSOR */
+
+body[mode='comments'] * {
+  cursor: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkxNjQ4IDIzLjQxMDlDNS40OTE1MyAyMi45ODg3IDUuOTMxNzkgMjIuMzkzNSA2LjIzMjggMjEuNjQwN0M0Ljc5MDY5IDE5LjczODMgNCAxNy4zOTMzIDQgMTQuOTk3NUM0IDguOTM0MSA4LjkzMjgyIDQgMTUuMDAyMiA0QzIxLjA3MTcgNCAyNiA4LjkzOTE5IDI2IDE1LjAwMjVDMjYgMjEuMDY1OSAyMS4wNjcyIDI2IDE0Ljk5NzggMjZDMTIuOTg5NiAyNiAxMS4wMzUzIDI1LjQ1NTcgOS4zMjM2NyAyNC40MjMxQzguNDI5NjUgMjQuOTU3MiA3LjQxNDM0IDI1LjIyNjggNi4zMDAxOCAyNS4yMjY4QzUuOTU0MjYgMjUuMjI2OCA1LjU5OTM1IDI1LjIwMTQgNS4yNTM0MiAyNS4xNDU0QzQuOTAzIDI1LjA4OTUgNC42Mjg5NiAyNC44MDQ2IDQuNTUyNTggMjQuNDE4QzQuNDc2MjEgMjQuMDI2NCA0LjYxOTk3IDIzLjYyOTYgNC45MTY0OCAyMy40MTA5WiIgZmlsbD0iI0ZGNjI1MCIvPgo8L3N2Zz4K')
+      0 24,
+    auto !important;
+}
+
+body[mode='code'] [data-id]:not(.hidden) {
+  cursor: default;
+}
+
+/* default node state */
+
+body[mode='code'] [data-id]:not(.hidden), body[mode='comments'] [data-id]:not(.hidden) {
+  pointer-events: all;
+}
+
+/* is_image */
+
+body[mode='code'] [data-id].is_image [data-id], body[mode='comments'] [data-id].is_image [data-id] {
+  pointer-events: none !important;
+}
+
+/* without a data-id or ignored */
+
+[data-id].ignore,body[mode='code'] *:not([data-id]) {
+  pointer-events: none !important;
+}
+/* disable transforms for ignored elements */
+
+
+body[mode='code'] [data-id]:hover{
+  transform: none !important;
+}
+
+/* ANIMA BUTTONS */
+.an-button {
+  position: relative;
+  height: 28px;
+  padding: 0 20px;
+  font-size: 14px;
+  border-radius: 4px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  transition-property: all;
+  transition-duration: 100ms;
+  appearance: none;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  border-width: 0;
+}
+
+.an-button > div {
+  width: 100%;
+}
+
+.an-button.primary {
+  background: #ff6250;
+  color: #ffffff;
+}
+
+.an-button.primary:hover:not(:disabled) {
+  background: #e2412e;
+}
+
+.an-button.secondary {
+  background: transparent;
+  border: 1px solid #ff6250;
+  color: #ff6250;
+}
+
+.an-button.secondary:hover:not(:disabled) {
+  color: #ffffff;
+  background: #ff6250;
+}
+
+.an-button.rounded {
+  border-radius: 100px;
+}
+
+.an-button:disabled {
+  opacity: 0.5;
+}
+
+.an-button:disabled {
+  cursor: default;
+}
+
+.an-button:active,
+.an-button:focus {
+  outline: none;
+}
+
+</style><meta charset="utf-8"><meta name="viewport" content="width=1920, maximum-scale=1.0"><link rel="shortcut icon" type="image/png" href="https://animaproject.s3.amazonaws.com/home/favicon.png"><meta name="og:type" content="website"><meta name="twitter:card" content="photo"><script id="anima-load-script" src="load.js"></script><script id="anima-hotspots-script" src="hotspots.js"></script><style id="hotspots-styles">
+    .hotspot {
+      position: absolute;
+      border: 1px solid #2a9fd8;
+      background: rgba(0, 173, 255, 0.54);
+      opacity: 0;
+      z-index: -1;
+      pointer-events:none;
+    }
+  </style><script id="s_turbo" src="https://animaapp.s3.amazonaws.com/static/turbo.es2017-umd.js"></script><script id="anima-overrides-script" src="overrides.js"></script><script src="https://animaapp.s3.amazonaws.com/js/timeline.js"></script><style>
+@import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
+
+@font-face {
+  font-family: "Motiva Sans-Bold";
+  font-style: normal;
+  font-weight: 700;
+  src: url('https://anima-uploads.s3.amazonaws.com/5c53487020495e000abca926/.35959.otf') format("opentype");
+}
+
+@font-face {
+  font-family: "Motiva Sans-Regular";
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://anima-uploads.s3.amazonaws.com/5c53487020495e000abca926/.35967.otf') format("opentype");
+}
+/* The following line is used to measure usage of this code. You can remove it if you want. */
+@import url("https://px.animaapp.com/65ae977d4ea7e6982e9805db.65ae977e4ea7e6982e9805de.XJaxSnm.hch.png");
+
+
+.screen textarea:focus,
+.screen input:focus {
+  outline: none;
+}
+
+.screen * {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+
+.screen div {
+  -webkit-text-size-adjust: none;
+}
+
+.component-wrapper a {
+  display: contents;
+  pointer-events: auto;
+  text-decoration: none;
+}
+
+.component-wrapper * {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.component-wrapper a *,
+.component-wrapper input,
+.component-wrapper video,
+.component-wrapper iframe {
+  pointer-events: auto;
+}
+
+.component-wrapper.not-ready,
+.component-wrapper.not-ready * {
+  visibility: hidden !important;
+}
+
+.screen a {
+  display: contents;
+  text-decoration: none;
+}
+
+.full-width-a {
+  width: 100%;
+}
+
+.full-height-a {
+  height: 100%;
+}
+
+.container-center-vertical {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  pointer-events: none;
+}
+
+.container-center-vertical > * {
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
+.container-center-horizontal {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  pointer-events: none;
+  width: 100%;
+}
+
+.container-center-horizontal > * {
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
+.auto-animated div {
+  --z-index: -1;
+  opacity: 0;
+  position: absolute;
+}
+
+.auto-animated input {
+  --z-index: -1;
+  opacity: 0;
+  position: absolute;
+}
+
+.auto-animated .container-center-vertical,
+.auto-animated .container-center-horizontal {
+  opacity: 1;
+}
+
+.overlay-base {
+  display: none;
+  height: 100%;
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.overlay-base.animate-appear {
+  align-items: center;
+  animation: reveal 0.3s ease-in-out 1 normal forwards;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0;
+}
+
+.overlay-base.animate-disappear {
+  animation: reveal 0.3s ease-in-out 1 reverse forwards;
+  display: block;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.overlay-base.animate-disappear * {
+  pointer-events: none;
+}
+
+@keyframes reveal {
+  from { opacity: 0 }
+ to { opacity: 1 }
+}
+
+.animate-nodelay {
+  animation-delay: 0s;
+}
+
+.align-self-flex-start {
+  align-self: flex-start;
+}
+
+.align-self-flex-end {
+  align-self: flex-end;
+}
+
+.align-self-flex-center {
+  align-self: flex-center;
+}
+
+.valign-text-middle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.valign-text-bottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+input:focus {
+  outline: none;
+}
+
+.listeners-active,
+.listeners-active * {
+  pointer-events: auto;
+}
+
+.hidden,
+.hidden * {
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.smart-layers-pointers,
+.smart-layers-pointers * {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.listeners-active-click,
+.listeners-active-click * {
+  cursor: pointer;
+}
+
+* {
+  box-sizing: border-box;
+}
+:root { 
+  --accentgreen: #a1cd44;
+  --accentred: #cd5444;
+  --accentyellow: #c0b05e;
+  --alto: #d9d9d903;
+  --backgroundhighlight: #1e2329;
+  --backgroundhover: #313843;
+  --backgroundmain: #0e141b;
+  --backgroundmain20: #0e141b33;
+  --backgroundmain50: #0e141b80;
+  --backgroundtertiary: #212b45;
+  --big-stone: #212b4533;
+  --black: #000000;
+  --colorprimary: #66c0f4;
+  --colorsecondary: #4b619b;
+  --emerald: #54c358;
+  --fuchsia-blue: #7054c3;
+  --fuchsia-pink: #c054c3;
+  --fuzzy-wuzzy-brown: #c35454;
+  --shark: #1e232905;
+  --shark-2: #1e232963;
+  --shark-3: #1e232940;
+  --shark-4: #1e232966;
+  --shark-5: #1e2329d1;
+  --slate-gray: #75808ccc;
+  --slate-gray-2: #75808c0d;
+  --slate-gray-3: #75808c1a;
+  --slate-gray-4: #75808c33;
+  --slate-gray-5: #76808c;
+  --textdim: #75808c;
+  --textmain: #f3f3f3;
+  --tuna: #31384380;
+  --tuna-2: #31384359;
+  --turmeric: #c3be54;
+  --white: #ffffff;
+  --white-2: #ffffff1a;
+  --wild-sand: #f3f3f380;
+ 
+  --font-size-l: 18px;
+  --font-size-m: 16px;
+  --font-size-s: 14px;
+  --font-size-xl: 19px;
+  --font-size-xs: 12px;
+  --font-size-xxl: 22px;
+  --font-size-xxxl: 26px;
+ 
+  --font-family-motiva_sans-bold: "Motiva Sans-Bold", Helvetica;
+  --font-family-motiva_sans-regular: "Motiva Sans-Regular", Helvetica;
+}
+.motivasans-regular-normal-wild-sand-16px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-14px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-wild-sand-14px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-16px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-12px {
+  color: var(--slate-gray);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-wild-sand-18px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-wild-sand-12px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-12px-2 {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-malibu-12px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-malibu-16px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-kashmir-blue-14px {
+  color: var(--colorsecondary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-wild-sand-22px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-malibu-18px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-vulcan-12px {
+  color: var(--backgroundmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-vulcan-18px {
+  color: var(--backgroundmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-wild-sand-26px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-malibu-14px {
+  color: var(--colorprimary);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-white-12px {
+  color: var(--white);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-white-14px {
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-vulcan-19px {
+  color: var(--backgroundmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-tuna-18px {
+  color: var(--backgroundhover);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-jasper-12px {
+  color: var(--accentred);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-atlantis-18px {
+  color: var(--accentgreen);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-bold-slate-gray-22px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-white-16px {
+  color: var(--white);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-slate-gray-14px-2 {
+  color: var(--slate-gray-5);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-slate-gray-18px {
+  color: var(--textdim);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-l);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-slate-gray-16px-2 {
+  color: var(--slate-gray-5);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-white-16px-2 {
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-wild-sand-16px-2 {
+  color: var(--wild-sand);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-jasper-14px {
+  color: var(--accentred);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-wild-sand-16px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.motivasans-regular-normal-jasper-16px {
+  color: var(--accentred);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-atlantis-16px {
+  color: var(--accentgreen);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-wild-sand-20-2px {
+  color: var(--textmain);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: 20.2px;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-sundance-16px {
+  color: var(--accentyellow);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-m);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-regular-normal-sundance-12px {
+  color: var(--accentyellow);
+  font-family: var(--font-family-motiva_sans-regular);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: 400;
+}
+
+.motivasans-bold-white-22px {
+  color: var(--white);
+  font-family: var(--font-family-motiva_sans-bold);
+  font-size: var(--font-size-xxl);
+  font-style: normal;
+  font-weight: 700;
+}
+
+:root {
+}
+
+
+.group-97 {
+  background-color: transparent;
+  height: 47px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 47px;
+}
+
+.info-outline {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.juxtopposed {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+}
+
+.rectangle-60 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.store-menu {
+  background-color: transparent;
+  height: 22px;
+  position: relative;
+}
+
+.arrow-forward-ios {
+  background-color: transparent;
+  position: relative;
+}
+
+.home {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.image-122 {
+  background-color: transparent;
+  height: 233px;
+  left: 0px;
+  object-fit: cover;
+  position: absolute;
+  top: 0px;
+  width: 240px;
+}
+
+.image-123 {
+  background-color: transparent;
+  height: 233px;
+  left: 0px;
+  object-fit: cover;
+  position: absolute;
+  top: 0px;
+  width: 240px;
+}
+
+.rectangle-115 {
+  -webkit-backdrop-filter: blur(2px) brightness(100%);
+  backdrop-filter: blur(2px) brightness(100%);
+  background-color: var(--alto);
+  border-radius: 5px;
+  height: 233px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 240px;
+}
+
+.rectangle-79 {
+  background-color: var(--colorsecondary);
+  border-radius: 40px;
+  height: 8px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.search {
+  background-color: transparent;
+  position: absolute;
+}
+
+.x2309 {
+  background-color: transparent;
+  height: auto;
+  left: 85px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 22px;
+  width: auto;
+}
+
+.frame-161 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 15px;
+  height: 20px;
+  padding: 3px 0px;
+  position: relative;
+}
+
+.image-191 {
+  background-color: transparent;
+  height: 25px;
+  margin-bottom: -11.00px;
+  margin-top: -11.00px;
+  object-fit: cover;
+  position: relative;
+  width: 25px;
+}
+
+.sprite-0003-1 {
+  background-color: transparent;
+  position: relative;
+}
+
+.x374 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x5 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.award {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.frame-162 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  height: 49px;
+  justify-content: space-between;
+  padding: 3px 0px;
+  position: relative;
+  width: 639px;
+}
+
+.frame-30 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 3px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.frame-31 {
+  align-items: center;
+  background-color: transparent;
+  display: flex;
+  gap: 3px;
+  justify-content: flex-end;
+  left: 106px;
+  position: absolute;
+  top: 0px;
+  width: 32px;
+}
+
+.frame-32 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  gap: 2px;
+  left: 0px;
+  position: absolute;
+  top: 19px;
+  width: 138px;
+}
+
+.funny {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.group-100 {
+  background-color: transparent;
+  height: 72px;
+  margin-right: -2.00px;
+  position: relative;
+  width: 74px;
+}
+
+.image-137 {
+  background-color: transparent;
+  height: 16px;
+  object-fit: cover;
+  position: relative;
+  width: 17px;
+}
+
+.insert-emoticon {
+  background-color: transparent;
+  height: 18px;
+  margin-bottom: -7.50px;
+  margin-top: -7.50px;
+  position: relative;
+  width: 18px;
+}
+
+.no {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.posted-on-12-sep-2023 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.recommended {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.rectangle-120 {
+  background-color: transparent;
+  height: 72px;
+  object-fit: cover;
+  position: relative;
+  width: 72px;
+}
+
+.rectangle-123 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  height: 72px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 72px;
+}
+
+.rectangle-88 {
+  background-color: var(--accentred);
+  border-radius: 2px;
+  flex: 1;
+  flex-grow: 1;
+  height: 4px;
+  opacity: 0.8;
+  position: relative;
+}
+
+.share {
+  background-color: transparent;
+  position: relative;
+}
+
+.was-this-review-helpful {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 9px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.x21302-hrs-on-record {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x3-reviews {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -0.50px;
+  margin-top: -2.50px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x6 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x90 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.yes {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -4.50px;
+  margin-top: -6.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.view-list {
+  background-color: transparent;
+  position: absolute;
+}
+
+.community {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+}
+
+.frame-214 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 9px;
+  position: relative;
+}
+
+.offline {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.frame-34 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 5px;
+  position: relative;
+}
+
+.drag-handle {
+  background-color: transparent;
+  height: 24px;
+  position: relative;
+  width: 24px;
+}
+
+.ellipse-3 {
+  background-color: transparent;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+}
+
+.frame-180 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  position: relative;
+}
+
+.frame-199 {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.frame-200 {
+  flex: 0 0 auto;
+  justify-content: space-between;
+  position: relative;
+}
+
+.frame-201 {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.frame-202 {
+  align-items: center;
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.group-123 {
+  background-color: transparent;
+  height: 30px;
+  margin-right: -2.00px;
+  position: relative;
+  width: 32px;
+}
+
+.group-125 {
+  background-color: transparent;
+  position: relative;
+}
+
+.image-141 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-142 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-143 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-144 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-146 {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.image-147 {
+  background-color: var(--backgroundhighlight);
+  border-radius: 2px;
+  height: 30px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 30px;
+}
+
+.profile-sections {
+  background-color: transparent;
+  position: relative;
+}
+
+.x32 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+}
+
+.construction {
+  background-color: transparent;
+  height: 40px;
+  position: relative;
+  width: 40px;
+}
+
+.frame-136 {
+  display: flex;
+  position: relative;
+}
+
+.frame-221 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  width: 100%;
+}
+
+.frame-311 {
+  align-items: flex-start;
+  align-self: stretch;
+  border-bottom-style: none;
+  border-left-style: solid;
+  border-left-width: 5px;
+  border-radius: 5px;
+  border-right-style: none;
+  border-top-style: none;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 7px;
+  padding: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.frame-407 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 10px;
+  position: relative;
+}
+
+.frame-51 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.icon-select {
+  background-color: transparent;
+  height: 40px;
+  position: relative;
+  width: 40px;
+}
+
+.people {
+  background-color: transparent;
+  position: absolute;
+  top: 6px;
+}
+
+.vector-5 {
+  align-self: stretch;
+  background-color: transparent;
+  height: 1px;
+  margin-bottom: -0.50px;
+  object-fit: cover;
+  position: relative;
+  width: 100%;
+}
+
+.disk-size {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.filter-list {
+  background-color: transparent;
+  height: 24px;
+  left: 1px;
+  position: absolute;
+  top: 1px;
+  width: 24px;
+}
+
+.frame-52 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 536px;
+  position: absolute;
+  top: 65px;
+}
+
+.frame-53 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 691px;
+  position: absolute;
+  top: 65px;
+}
+
+.frame-65 {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.frame-85 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  left: 13px;
+  position: absolute;
+  width: 326px;
+}
+
+.frame-86 {
+  align-items: flex-start;
+  background-color: var(--shark-4);
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  left: 1px;
+  padding: 9px 12px;
+  position: absolute;
+  top: 0px;
+  width: 350px;
+}
+
+.frame-92 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 12px;
+  left: 1007px;
+  position: absolute;
+  top: 65px;
+}
+
+.group-59 {
+  background-color: transparent;
+  height: 44px;
+  left: 826px;
+  position: absolute;
+  top: 65px;
+  width: 159px;
+}
+
+.group-61 {
+  background-color: transparent;
+  height: 126px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 1458px;
+}
+
+.image-94 {
+  background-color: transparent;
+  height: 21px;
+  left: 13px;
+  position: absolute;
+  top: 6px;
+  width: 21px;
+}
+
+.insert-drive-file {
+  background-color: transparent;
+  height: 30px;
+  position: relative;
+  width: 30px;
+}
+
+.last-played {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.play-time {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.rectangle-104 {
+  background-color: var(--shark-3);
+  border-radius: 5px;
+  height: 126px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1456px;
+}
+
+.x2065 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x50-gb {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.frame-292 {
+  background-color: transparent;
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.frame-269 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 13px;
+  justify-content: center;
+  position: relative;
+}
+
+.game-card {
+  background-color: transparent;
+  border-radius: 5px;
+  height: 282px;
+  overflow: hidden;
+  position: relative;
+  width: 191px;
+}
+
+.group-58 {
+  background-color: transparent;
+  height: 74px;
+  left: 0px;
+  position: absolute;
+  top: 290px;
+  width: 191px;
+}
+
+.rectangle-97 {
+  -webkit-backdrop-filter: blur(20px) brightness(100%);
+  backdrop-filter: blur(20px) brightness(100%);
+  background-color: var(--shark);
+  border-radius: 0px 0px 3px 3px;
+  height: 74px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 191px;
+}
+
+.text {
+  background-color: transparent;
+  height: 19px;
+  left: 9px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -22px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.cool-user {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.hi-newcomers {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.x11-mins-ago {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x150000 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  width: fit-content;
+}
+
+.x2500700 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -7.00px;
+  margin-top: -9.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.x5546 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-bottom: -7.00px;
+  margin-top: -9.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+/* screen - games */
+
+.games {
+  background-color: transparent;
+  height: 2156px;
+  overflow: hidden;
+  overflow-x: hidden;
+  position: relative;
+  width: 1920px;
+}
+
+.games .rectangle-89-cFLxN7 {
+  background: radial-gradient(50% 50% at 50% 50%, rgb(33.00000183284283, 43.00000123679638, 69.00000348687172) 2.608180232346058%, rgb(17.256916500627995, 23.94258365035057, 34.19950246810913) 72.6383626461029%, rgb(15.171740390360355, 21.418422795832157, 29.590163603425026) 87.22255825996399%, rgb(14.000000115484, 20.000000707805157, 27.000000290572643) 100%);
+  background-color: transparent;
+  height: 2156px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.games .footer-cFLxN7 {
+  background-color: transparent;
+  height: 325px;
+  left: 0px;
+  position: absolute;
+  top: 1831px;
+  width: 1920px;
+}
+
+.games .rectangle-118-tmXXXF {
+  background-color: var(--backgroundhighlight);
+  height: 325px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.games .image-125-tmXXXF {
+  background-color: transparent;
+  height: 50px;
+  left: 266px;
+  object-fit: cover;
+  position: absolute;
+  top: 53px;
+  width: 176px;
+}
+
+.games .x2023-valve-corporati-tmXXXF {
+  background-color: transparent;
+  height: auto;
+  left: 266px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 132px;
+  width: 367px;
+}
+
+.games .group-tmXXXF {
+  background-color: transparent;
+  height: 50px;
+  left: 456px;
+  position: absolute;
+  top: 53px;
+  width: 210px;
+}
+
+.games .frame-118-tmXXXF {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 16px;
+  left: 1075px;
+  position: absolute;
+  top: 53px;
+}
+
+.games .privacy-policy-XwZItQ {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .legal-XwZItQ {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .steam-subscriber-agreement-XwZItQ {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .refunds-XwZItQ {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .cookies-XwZItQ {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .frame-119-tmXXXF {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 16px;
+  left: 768px;
+  position: absolute;
+  top: 53px;
+}
+
+.games .about-valve-5DqKpR {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .jobs-5DqKpR {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .steamworks-5DqKpR {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .steam-distribution-5DqKpR {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .support-5DqKpR {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .icon-box-tmXXXF {
+  left: 1547px;
+}
+
+.games .facebook-f-qW1LBK {
+  background-color: transparent;
+  height: 30px;
+  left: 9px;
+  position: absolute;
+  top: 9px;
+  width: 30px;
+}
+
+.games .icon-box-3VRht2 {
+  left: 1607px;
+}
+
+.games .twitter-x-kurC2x {
+  background-color: transparent;
+  height: 28px;
+  left: 10px;
+  position: absolute;
+  top: 10px;
+  width: 28px;
+}
+
+.games .frame-210-cFLxN7 {
+  align-items: flex-end;
+  background-color: var(--tuna-2);
+  display: inline-flex;
+  flex-direction: column;
+  gap: 31px;
+  left: 339px;
+  padding: 40px;
+  position: absolute;
+  top: 110px;
+}
+
+.games .frame-210-wMbZUS {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 263px;
+  position: relative;
+}
+
+.games .frame-207-QwVu3W {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 33px;
+  position: relative;
+}
+
+.games .sprite-0003-1-OTNxSg {
+  height: 229px;
+  margin-bottom: -4.00px;
+  margin-left: -4.00px;
+  margin-top: -4.00px;
+  width: 229px;
+}
+
+.games .frame-206-OTNxSg {
+  gap: 59px;
+}
+
+.games .group-122-yknaTP {
+  background-color: transparent;
+  height: 31px;
+  position: relative;
+  width: 193px;
+}
+
+.games .title-tgxL3F {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 0px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.games .keyboard-arrow-down-tgxL3F {
+  background-color: transparent;
+  height: 24px;
+  left: 167px;
+  position: absolute;
+  top: 7px;
+  width: 24px;
+}
+
+.games .im-jux-and-this-is-m-yknaTP {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .frame-201-QwVu3W {
+  align-items: flex-end;
+  background-color: transparent;
+  flex-direction: column;
+  height: 225px;
+  width: 293px;
+}
+
+.games .frame-235-NBhL1l {
+  align-items: flex-start;
+  align-self: stretch;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+}
+
+.games .secondary-button-qn0kfK {
+  height: 44px;
+  width: 145px;
+}
+
+.games .add-to-wishlist-D3cpbq {
+  margin-bottom: -3.50px;
+  margin-left: -38.00px;
+  margin-right: -38.00px;
+  margin-top: -5.50px;
+}
+
+.games .secondary-button-DxFXLc {
+  height: 44px;
+  width: 133px;
+}
+
+.games .add-to-wishlist-zPEu6q {
+  margin-bottom: -3.50px;
+  margin-left: -30.50px;
+  margin-right: -30.50px;
+  margin-top: -5.50px;
+}
+
+.games .frame-236-NBhL1l {
+  align-items: flex-start;
+  background-color: var(--backgroundmain20);
+  border-radius: 5px;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 15px;
+  padding: 10px 15px;
+  position: relative;
+  width: 293px;
+}
+
+.games .frame-127-0Krgmv {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 23px;
+  position: relative;
+}
+
+.games .group-125-ZusLKa {
+  height: 49px;
+  width: 51px;
+}
+
+.games .x60-q4IwGx {
+  background-color: transparent;
+  height: 29px;
+  left: 12px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 10px;
+  width: 30px;
+}
+
+.games .ellipse-3-q4IwGx {
+  border: 2.0416665077209473px solid;
+  border-color: var(--fuchsia-blue);
+  border-radius: 24.5px;
+  height: 49px;
+  width: 49px;
+}
+
+.games .frame-200-ZusLKa {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  height: 63px;
+  padding: 5px 0px;
+}
+
+.games .level-ZONuov {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: 114px;
+}
+
+.games .x30000-xp-ZONuov {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.games .frame-126-0Krgmv {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 17px;
+  position: relative;
+}
+
+.games .image-150-JQZxGv {
+  background-color: transparent;
+  height: 55px;
+  object-fit: cover;
+  position: relative;
+  width: 55.1883544921875px;
+}
+
+.games .frame-200-JQZxGv {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  height: 63px;
+  padding: 5px 0px;
+}
+
+.games .years-of-service-hXevuT {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.games .x300-xp-hXevuT {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.games .frame-209-wMbZUS {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  position: relative;
+  width: 1161px;
+}
+
+.games .frame-205-gn44mb {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 264px;
+  position: relative;
+}
+
+.games .frame-179-3pZDRG {
+  align-items: flex-end;
+  background-color: var(--backgroundmain20);
+  border-radius: 3px;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 11px;
+  padding: 10px;
+  position: relative;
+  width: 839px;
+}
+
+.games .sorting-FkLrXn {
+  align-items: center;
+  align-self: stretch;
+  background-color: var(--backgroundmain);
+  border-radius: 5px;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 172px;
+  padding: 5px;
+  position: relative;
+  width: 100%;
+}
+
+.games .frame-211-vUHWr1 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  position: relative;
+}
+
+.games .frame-34-VVzZ2A {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 5px;
+  position: relative;
+}
+
+.games .sort-filter-KNvwv1 {
+  background-color: var(--backgroundhover);
+}
+
+.games .sort-filter-ixKvUu {
+  background-color: var(--backgroundmain);
+}
+
+.games .sort-filter-U12fxz {
+  background-color: var(--backgroundmain);
+}
+
+.games .sort-filter-og2bzx {
+  background-color: var(--backgroundmain);
+}
+
+.games .frame-240-FkLrXn {
+  align-items: flex-end;
+  align-self: stretch;
+  background-color: var(--backgroundmain50);
+  display: flex;
+  gap: 13px;
+  padding: 15px;
+  width: 100%;
+}
+
+.games .mass-effect-legendary-edition-pIhoie {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .group-55-opVubE {
+  width: 93px;
+}
+
+.games .x3-oct-2023-AcBHiZ {
+  background-color: transparent;
+  height: auto;
+  left: 25px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 3px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.games .group-56-opVubE {
+  width: 78px;
+}
+
+.games .x32-hours-Cmidmu {
+  background-color: transparent;
+  height: auto;
+  left: 25px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 3px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.games .x35127-yd1TE9 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .frame-241-FkLrXn {
+  align-items: flex-end;
+  align-self: stretch;
+  background-color: var(--backgroundmain50);
+  display: flex;
+  flex: 0 0 auto;
+  gap: 13px;
+  padding: 15px;
+  position: relative;
+  width: 100%;
+}
+
+.games .image-120-QbxU0G {
+  background-color: transparent;
+  height: 101px;
+  position: relative;
+  width: 216px;
+}
+
+.games .doom-d5fjn9 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .group-55-UgQ7lW {
+  width: 102px;
+}
+
+.games .x21-aug-2023-2TWTOP {
+  background-color: transparent;
+  height: auto;
+  left: 25px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 3px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.games .group-56-UgQ7lW {
+  width: 78px;
+}
+
+.games .x68-hours-BIaOzD {
+  background-color: transparent;
+  height: auto;
+  left: 25px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 3px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.games .x3557-i1ycEC {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .image-199-CsjhSi {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.games .image-200-CsjhSi {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.games .image-201-CsjhSi {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.games .image-202-CsjhSi {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.games .image-203-CsjhSi {
+  background-color: transparent;
+  height: 30px;
+  object-fit: cover;
+  position: relative;
+  width: 30px;
+}
+
+.games .frame-242-FkLrXn {
+  align-items: flex-end;
+  align-self: stretch;
+  background-color: var(--backgroundmain50);
+  display: flex;
+  flex: 0 0 auto;
+  gap: 13px;
+  padding: 15px;
+  position: relative;
+  width: 100%;
+}
+
+.games .image-198-JWix9c {
+  background-color: transparent;
+  height: 101px;
+  position: relative;
+  width: 216px;
+}
+
+.games .borderlands-2-dK7ish {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .group-55-Anw44c {
+  width: 95px;
+}
+
+.games .x15-jul-2023-Bk5exO {
+  background-color: transparent;
+  height: auto;
+  left: 25px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 3px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.games .group-56-Anw44c {
+  width: 77px;
+}
+
+.games .x15-hours-aHXxdI {
+  background-color: transparent;
+  height: auto;
+  left: 25px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 3px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.games .x3575-fE7m2n {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .frame-188-FkLrXn {
+  align-items: flex-end;
+  background-color: var(--backgroundmain50);
+  display: inline-flex;
+  gap: 13px;
+  padding: 15px;
+}
+
+.games .the-stanley-parable-ultra-deluxe-MP7rS3 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .group-55-b7nTLc {
+  width: 101px;
+}
+
+.games .x20-apr-2023-8Y1uHu {
+  background-color: transparent;
+  height: auto;
+  left: 25px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 3px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.games .group-56-b7nTLc {
+  width: 77px;
+}
+
+.games .x12-hours-Wu66hN {
+  background-color: transparent;
+  height: auto;
+  left: 25px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 3px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.games .x811-ex48bm {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .x3-8WKsXL {
+  height: auto;
+  left: 7px;
+  position: absolute;
+  top: 8px;
+  width: auto;
+}
+
+.games .frame-189-FkLrXn {
+  align-items: flex-end;
+  background-color: var(--backgroundmain50);
+  display: inline-flex;
+  gap: 13px;
+  padding: 15px;
+}
+
+.games .rust-9cOrSW {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .group-55-HVNfxm {
+  width: 98px;
+}
+
+.games .x11-jan-2023-u6AFKm {
+  background-color: transparent;
+  height: auto;
+  left: 25px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 3px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.games .group-56-HVNfxm {
+  width: 78px;
+}
+
+.games .x84-hours-l7WsmJ {
+  background-color: transparent;
+  height: auto;
+  left: 25px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 3px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.games .x4090-JR34JO {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .x40-zxWidq {
+  height: auto;
+  left: 3px;
+  position: absolute;
+  top: 8px;
+  width: auto;
+}
+
+.games .frame-239-FkLrXn {
+  display: flex;
+  justify-content: space-between;
+  width: 418px;
+}
+
+.games .secondary-button-z8kuKq {
+  height: 30px;
+  width: 70px;
+}
+
+.games .add-to-wishlist-7knBRp {
+  margin-bottom: -10.50px;
+  margin-left: -37.50px;
+  margin-right: -37.50px;
+  margin-top: -12.50px;
+}
+
+.games .frame-237-z8kuKq {
+  align-items: flex-end;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 5px;
+  justify-content: center;
+  position: relative;
+}
+
+.games .secondary-button-Mdyk7U {
+  height: 30px;
+  width: 30px;
+}
+
+.games .add-to-wishlist-mCkoE3 {
+  margin-bottom: -10.50px;
+  margin-left: -46.00px;
+  margin-right: -46.00px;
+  margin-top: -12.50px;
+}
+
+.games .secondary-button-NCCRiC {
+  height: 30px;
+  width: 30px;
+}
+
+.games .add-to-wishlist-LGJ9Fy {
+  margin-bottom: -10.50px;
+  margin-left: -46.50px;
+  margin-right: -46.50px;
+  margin-top: -12.50px;
+}
+
+.games .secondary-button-X5U9Vj {
+  height: 30px;
+  width: 30px;
+}
+
+.games .add-to-wishlist-bpU3so {
+  margin-bottom: -10.50px;
+  margin-left: -46.00px;
+  margin-right: -46.00px;
+  margin-top: -12.50px;
+}
+
+.games .secondary-button-LLVoCB {
+  height: 30px;
+  width: 30px;
+}
+
+.games .add-to-wishlist-08n84z {
+  margin-bottom: -10.50px;
+  margin-left: -46.50px;
+  margin-right: -46.50px;
+  margin-top: -12.50px;
+}
+
+.games .secondary-button-Iqbxn9 {
+  height: 30px;
+  width: 30px;
+}
+
+.games .add-to-wishlist-YxesMv {
+  margin-bottom: -10.50px;
+  margin-left: -46.50px;
+  margin-right: -46.50px;
+  margin-top: -12.50px;
+}
+
+.games .x-Mdyk7U {
+  background-color: transparent;
+  height: 23px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  width: 20px;
+}
+
+.games .secondary-button-85wqyo {
+  height: 30px;
+  width: 30px;
+}
+
+.games .add-to-wishlist-R7rB1d {
+  margin-bottom: -10.50px;
+  margin-left: -51.00px;
+  margin-right: -51.00px;
+  margin-top: -12.50px;
+}
+
+.games .secondary-button-cwE0xp {
+  height: 30px;
+  width: 70px;
+}
+
+.games .add-to-wishlist-N0HZZx {
+  margin-bottom: -10.50px;
+  margin-left: -38.50px;
+  margin-right: -38.50px;
+  margin-top: -12.50px;
+}
+
+.games .frame-202-3pZDRG {
+  background-color: var(--backgroundmain20);
+  flex-direction: column;
+  height: 121px;
+  padding: 10px;
+  width: 839px;
+}
+
+.games .frame-185-eHJq9I {
+  align-items: center;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  position: relative;
+  width: 819px;
+}
+
+.games .comments-zIoUp5 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .no-comments-yet-zIoUp5 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .frame-203-eHJq9I {
+  align-items: center;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  position: relative;
+  width: 803px;
+}
+
+.games .sprite-0003-2-AGJE6B {
+  background-color: transparent;
+  height: 43px;
+  margin-left: -1.00px;
+  position: relative;
+  width: 43px;
+}
+
+.games .search-AGJE6B {
+  background-color: transparent;
+  height: 44px;
+  position: relative;
+  width: 752px;
+}
+
+.games .rectangle-70-njNI1L {
+  background-color: var(--backgroundmain);
+  border-radius: 3px;
+  height: 44px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 752px;
+}
+
+.games .search-njNI1L {
+  background-color: transparent;
+  height: auto;
+  left: 19px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 13px;
+  width: auto;
+}
+
+.games .frame-232-gn44mb {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+}
+
+.games .profile-sections-4qXDrM {
+  height: 582px;
+}
+
+.games .frame-196-n2C159 {
+  align-items: flex-start;
+  background-color: var(--backgroundmain50);
+  border-radius: 5px;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  left: 0px;
+  padding: 15px;
+  position: relative;
+  top: -0px;
+}
+
+.games .frame-199-kxwj0x {
+  align-items: center;
+  background-color: var(--backgroundmain);
+  border-radius: 3px;
+  cursor: pointer;
+  flex: 0 0 auto;
+  padding: 10px;
+  width: 263px;
+}
+
+.games .status-V7KV3Z {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .online-V7KV3Z {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .frame-188-kxwj0x {
+  align-items: center;
+  background-color: var(--backgroundmain);
+  border-radius: 3px;
+  display: flex;
+  gap: 157px;
+  justify-content: space-around;
+  padding: 10px;
+  width: 263px;
+}
+
+.games .frame-199-2xWcJN {
+  align-items: flex-start;
+  background-color: transparent;
+  flex-direction: column;
+  height: 82px;
+  width: 243px;
+}
+
+.games .frame-198-E3yQRx {
+  align-items: center;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  position: relative;
+  width: 243px;
+}
+
+.games .badges-BH8xlx {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .x84-BH8xlx {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .frame-197-E3yQRx {
+  background-color: transparent;
+  width: 243px;
+}
+
+.games .image-154-xztKLF {
+  background-color: transparent;
+  height: 45px;
+  object-fit: cover;
+  position: relative;
+  width: 45px;
+}
+
+.games .image-149-xztKLF {
+  background-color: transparent;
+  height: 45px;
+  object-fit: cover;
+  position: relative;
+  width: 45px;
+}
+
+.games .image-151-xztKLF {
+  background-color: transparent;
+  height: 45px;
+  object-fit: cover;
+  position: relative;
+  width: 45px;
+}
+
+.games .image-152-xztKLF {
+  background-color: transparent;
+  height: 45px;
+  object-fit: cover;
+  position: relative;
+  width: 45px;
+}
+
+.games .image-153-xztKLF {
+  background-color: transparent;
+  height: 45px;
+  object-fit: cover;
+  position: relative;
+  width: 45px;
+}
+
+.games .frame-196-kxwj0x {
+  align-items: center;
+  background-color: var(--backgroundhover);
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  padding: 10px;
+  position: relative;
+  width: 263px;
+}
+
+.games .games-A1nVwZ {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .x350-A1nVwZ {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .frame-197-kxwj0x {
+  background-color: var(--backgroundmain);
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 10px;
+  width: 263px;
+}
+
+.games .wishlist-TKaRTi {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .x120-TKaRTi {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .frame-189-kxwj0x {
+  align-items: center;
+  background-color: var(--backgroundmain);
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  width: 263px;
+}
+
+.games .inventory-9qdmEK {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .text-9qdmEK {
+  -webkit-text-stroke: 1px var(--textdim);
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -2.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .frame-190-kxwj0x {
+  align-items: center;
+  background-color: var(--backgroundmain);
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  padding: 10px;
+  position: relative;
+  width: 263px;
+}
+
+.games .screenshots-Jn0zgH {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .x40-Jn0zgH {
+  margin-top: -1.00px;
+  position: relative;
+  width: fit-content;
+}
+
+.games .frame-191-kxwj0x {
+  align-items: center;
+  background-color: var(--backgroundmain);
+  border-radius: 3px;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  padding: 10px;
+  position: relative;
+  width: 263px;
+}
+
+.games .videos-0UahZC {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .x2-0UahZC {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .frame-192-kxwj0x {
+  align-items: center;
+  background-color: var(--backgroundmain);
+  border-radius: 3px;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  padding: 10px;
+  position: relative;
+  width: 263px;
+}
+
+.games .workshop-items-d66uWn {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .x3-d66uWn {
+  margin-top: -1.00px;
+  position: relative;
+  width: fit-content;
+}
+
+.games .frame-193-kxwj0x {
+  align-items: center;
+  background-color: var(--backgroundmain);
+  border-radius: 3px;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  padding: 10px;
+  position: relative;
+  width: 263px;
+}
+
+.games .reviews-xwrrSo {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .x32-xwrrSo {
+  margin-top: -1.00px;
+  position: relative;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .frame-194-kxwj0x {
+  align-items: center;
+  background-color: var(--backgroundmain);
+  border-radius: 3px;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  padding: 10px;
+  position: relative;
+  width: 263px;
+}
+
+.games .guides-xecOGQ {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .x1-xecOGQ {
+  margin-top: -1.00px;
+  position: relative;
+  width: fit-content;
+}
+
+.games .frame-195-kxwj0x {
+  align-items: center;
+  background-color: var(--backgroundmain);
+  border-radius: 3px;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  padding: 10px;
+  position: relative;
+  width: 263px;
+}
+
+.games .artworks-wie10f {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .x13-wie10f {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .profile-sections-iu3RUh {
+  align-items: flex-start;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  padding: 2px 0px;
+}
+
+.games .frame-196-woxxgz {
+  align-items: flex-start;
+  background-color: var(--backgroundmain50);
+  border-radius: 5px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 6px;
+  padding: 15px;
+  position: relative;
+}
+
+.games .frame-202-otmkwp {
+  background-color: transparent;
+  cursor: pointer;
+  flex: 0 0 auto;
+  padding: 10px 5px 10px 0px;
+  width: 263px;
+}
+
+.games .friends-4-CXMpse {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .add-circle-outline-CXMpse {
+  background-color: transparent;
+  height: 24px;
+  position: relative;
+  width: 24px;
+}
+
+.games .frame-196-otmkwp {
+  align-items: center;
+  background-color: var(--backgroundmain);
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  padding: 10px;
+  position: relative;
+  width: 263px;
+}
+
+.games .friend1-4nRkCg {
+  background-color: transparent;
+  height: 50px;
+  margin-bottom: -2.00px;
+  margin-left: -2.00px;
+  margin-top: -2.00px;
+  object-fit: cover;
+  position: relative;
+  width: 50px;
+}
+
+.games .frame-206-4nRkCg {
+  gap: 8px;
+}
+
+.games .friend-1-qYeK1d {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .counter-strike-2-qYeK1d {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .group-125-5I0vZ6 {
+  height: 34px;
+  margin-right: -2.00px;
+  width: 36px;
+}
+
+.games .x72-jG4G5P {
+  background-color: transparent;
+  height: 20px;
+  left: 8px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 7px;
+  width: 21px;
+}
+
+.games .ellipse-3-jG4G5P {
+  border: 1.4166666269302368px solid;
+  border-color: var(--fuchsia-pink);
+  border-radius: 17px;
+  height: 34px;
+  width: 34px;
+}
+
+.games .frame-199-otmkwp {
+  align-items: center;
+  background-color: var(--backgroundmain);
+  border-radius: 3px;
+  cursor: pointer;
+  flex: 0 0 auto;
+  padding: 10px;
+  width: 263px;
+}
+
+.games .friend3-aTMs59 {
+  background-color: transparent;
+  height: 50px;
+  margin-bottom: -2.00px;
+  margin-left: -2.00px;
+  margin-top: -2.00px;
+  object-fit: cover;
+  position: relative;
+  width: 50px;
+}
+
+.games .frame-206-aTMs59 {
+  gap: 8px;
+}
+
+.games .friend-2-O3DNRt {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .away-O3DNRt {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .group-125-MWFMy9 {
+  height: 34px;
+  margin-right: -2.00px;
+  width: 36px;
+}
+
+.games .x45-T6qbQz {
+  background-color: transparent;
+  height: 20px;
+  left: 8px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 7px;
+  width: 21px;
+}
+
+.games .ellipse-3-T6qbQz {
+  border: 1.4166666269302368px solid;
+  border-color: var(--emerald);
+  border-radius: 17px;
+  height: 34px;
+  width: 34px;
+}
+
+.games .frame-200-otmkwp {
+  align-items: center;
+  background-color: var(--backgroundmain);
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  padding: 10px;
+  width: 263px;
+}
+
+.games .friend4-vcAPBZ {
+  background-color: transparent;
+  height: 50px;
+  margin-bottom: -2.00px;
+  margin-left: -2.00px;
+  margin-top: -2.00px;
+  object-fit: cover;
+  position: relative;
+  width: 50px;
+}
+
+.games .frame-206-vcAPBZ {
+  gap: 8px;
+}
+
+.games .friend-3-dx6bF6 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .group-125-bOhScw {
+  height: 34px;
+  margin-right: -2.00px;
+  width: 36px;
+}
+
+.games .x32-0AuCxK {
+  height: 20px;
+  left: 8px;
+  position: absolute;
+  top: 7px;
+  width: 21px;
+}
+
+.games .ellipse-3-0AuCxK {
+  border: 1.4166666269302368px solid;
+  border-color: var(--turmeric);
+  border-radius: 17px;
+  height: 34px;
+  width: 34px;
+}
+
+.games .frame-201-otmkwp {
+  align-items: center;
+  background-color: var(--backgroundmain);
+  border-radius: 3px;
+  cursor: pointer;
+  flex: 0 0 auto;
+  padding: 10px;
+  width: 263px;
+}
+
+.games .friend2-DNiHNx {
+  background-color: transparent;
+  height: 50px;
+  margin-bottom: -2.00px;
+  margin-left: -2.00px;
+  margin-top: -2.00px;
+  object-fit: cover;
+  position: relative;
+  width: 50px;
+}
+
+.games .frame-206-DNiHNx {
+  gap: 8px;
+}
+
+.games .friend-4-FNsbNu {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .group-125-2KQaBf {
+  height: 34px;
+  margin-right: -2.00px;
+  width: 36px;
+}
+
+.games .x18-dD8cka {
+  background-color: transparent;
+  height: 20px;
+  left: 8px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 7px;
+  width: 21px;
+}
+
+.games .ellipse-3-dD8cka {
+  border: 1.4166666269302368px solid;
+  border-color: var(--fuzzy-wuzzy-brown);
+  border-radius: 17px;
+  height: 34px;
+  width: 34px;
+}
+
+.games .client-cFLxN7 {
+  background-color: transparent;
+  height: 1080px;
+  left: 0px;
+  overflow: hidden;
+  position: fixed;
+  top: 0px;
+  width: 1920px;
+}
+
+.games .rectangle-68-XHZe58 {
+  background-color: var(--backgroundmain);
+  height: 59px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 1920px;
+}
+
+.games .frame-11-XHZe58 {
+  align-items: flex-end;
+  background-color: transparent;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  left: 1658px;
+  position: absolute;
+  top: 17px;
+}
+
+.games .frame-2-64MUKI {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 18px;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.games .frame-239-uGUI35 {
+  display: inline-flex;
+  justify-content: flex-end;
+}
+
+.games .help-xTEZGq {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .frame-240-uGUI35 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  justify-content: flex-end;
+}
+
+.games .view-FQIpUv {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  margin-top: -0.50px;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .keyboard-arrow-down-FQIpUv {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.games .minimize-uGUI35 {
+  background-color: transparent;
+  height: 25px;
+  position: relative;
+  width: 25px;
+}
+
+.games .content-copy-uGUI35 {
+  background-color: transparent;
+  height: 25px;
+  position: relative;
+  width: 25px;
+}
+
+.games .close-uGUI35 {
+  background-color: transparent;
+  height: 25px;
+  position: relative;
+  width: 25px;
+}
+
+.games .frame-3-XHZe58 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 66px;
+  left: 94px;
+  position: absolute;
+  top: 18px;
+}
+
+.games .group-DABCTY {
+  background-color: transparent;
+  height: 20.98845863342285px;
+  position: relative;
+  width: 88.00003814697266px;
+}
+
+.games .store-menu-DABCTY {
+  width: 60px;
+}
+
+.games .store-QHENpf {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.games .store-menu-9ydtWZ {
+  cursor: pointer;
+  width: 114px;
+}
+
+.games .community-8lxmdP {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.games .store-menu-X1E76s {
+  width: 131px;
+}
+
+.games .juxtopposed-23A9Gu {
+  height: auto;
+  left: 0px;
+  position: absolute;
+  top: -1px;
+  width: auto;
+}
+
+.games .store-menu-1xQryG {
+  width: 77px;
+}
+
+.games .library-iIC8fc {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.games .frame-233-XHZe58 {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 4px;
+  left: 894px;
+  position: absolute;
+  top: 18px;
+}
+
+.games .store-menu-4QXNaf {
+  cursor: pointer;
+  width: 118px;
+}
+
+.games .downloads-t60O9M {
+  background-color: transparent;
+  height: auto;
+  left: 0px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: -1px;
+  width: auto;
+}
+
+.games .view-list-XHZe58 {
+  background-color: transparent;
+  height: 24px;
+  left: 1873px;
+  position: absolute;
+  top: 349px;
+  width: 24px;
+}
+
+.games .frame-330-XHZe58 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 10px;
+  justify-content: flex-end;
+  left: 1259px;
+  position: absolute;
+  top: 10px;
+}
+
+.games .friends-I2v2Tp {
+  background-color: transparent;
+  height: 37px;
+  position: relative;
+  width: 56px;
+}
+
+.games .group-9-AxJUp2 {
+  background-color: transparent;
+  height: 37px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 56px;
+}
+
+.games .rectangle-61-riKDAf {
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  height: 37px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 56px;
+}
+
+.games .people-riKDAf {
+  background-color: transparent;
+  height: 25px;
+  left: 15px;
+  position: absolute;
+  top: 6px;
+  width: 25px;
+}
+
+.games .notifications-I2v2Tp {
+  background-color: transparent;
+  height: 37px;
+  position: relative;
+  width: 56px;
+}
+
+.games .group-135-NjwhzJ {
+  background-color: transparent;
+  height: 37px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 56px;
+}
+
+.games .group-8-48cx4O {
+  background-color: transparent;
+  height: 37px;
+  left: 0px;
+  position: relative;
+  top: 0px;
+  width: 56px;
+}
+
+.games .rectangle-60-LiqZF4 {
+  height: 37px;
+  width: 56px;
+}
+
+.games .notifications-LiqZF4 {
+  background-color: transparent;
+  height: 25px;
+  left: 15px;
+  position: absolute;
+  top: 6px;
+  width: 25px;
+}
+
+.games .group-12-NjwhzJ {
+  background-color: transparent;
+  height: 16px;
+  left: 43px;
+  position: absolute;
+  top: -2px;
+  width: 18px;
+}
+
+.games .ellipse-2-BiT4xw {
+  background-color: var(--colorprimary);
+  border-radius: 8px;
+  height: 16px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 16px;
+}
+
+.games .x1-BiT4xw {
+  height: auto;
+  left: 5px;
+  position: absolute;
+  top: 1px;
+  width: auto;
+}
+
+.games .component-2-I2v2Tp {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 15px;
+  height: 39px;
+  position: relative;
+}
+
+.games .group-7-5Gsuzo {
+  background-color: transparent;
+  height: 39px;
+  position: relative;
+  width: 210px;
+}
+
+.games .rectangle-60-hBqamI {
+  height: 39px;
+  width: 210px;
+}
+
+.games .frame-1-hBqamI {
+  align-items: center;
+  background-color: transparent;
+  display: inline-flex;
+  gap: 8px;
+  height: 33px;
+  left: 3px;
+  position: absolute;
+  top: 3px;
+}
+
+.games .sprite-0003-1-XcDhf2 {
+  height: 31px;
+  width: 31px;
+}
+
+.games .juxtopposed-XcDhf2 {
+  position: relative;
+  width: fit-content;
+}
+
+.games .x525-XcDhf2 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  width: fit-content;
+}
+
+.games .keyboard-arrow-down-XcDhf2 {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.games .frame-331-XHZe58 {
+  background-color: transparent;
+  height: 24px;
+  left: 22px;
+  position: absolute;
+  top: 17px;
+  width: 53px;
+}
+
+.games .add-to-wishlist {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: left;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .date-range {
+  background-color: transparent;
+  height: 20px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 20px;
+}
+
+.games .frame-181 {
+  align-items: center;
+  background-color: var(--backgroundmain);
+  border-radius: 3px;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  padding: 15px;
+  position: relative;
+  width: 558px;
+}
+
+.games .frame-182 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  position: relative;
+  width: 559px;
+}
+
+.games .frame-183 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 15px;
+  position: relative;
+}
+
+.games .frame-188 {
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.games .frame-189 {
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.games .frame-197 {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  position: relative;
+}
+
+.games .frame-206 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  position: relative;
+}
+
+.games .frame-239 {
+  align-items: center;
+  background-color: transparent;
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.games .frame-240 {
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.games .frame-81 {
+  align-items: flex-start;
+  background-color: transparent;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 26px;
+  position: relative;
+}
+
+.games .group-55 {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+}
+
+.games .group-56 {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+}
+
+.games .group-69 {
+  background-color: transparent;
+  height: 10px;
+  position: relative;
+  width: 228px;
+}
+
+.games .icon-box {
+  background-color: transparent;
+  height: 47px;
+  position: absolute;
+  top: 53px;
+  width: 47px;
+}
+
+.games .image-140 {
+  background-color: transparent;
+  height: 101px;
+  object-fit: cover;
+  position: relative;
+  width: 216px;
+}
+
+.games .more-horiz {
+  background-color: transparent;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.games .new-and-trending {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.games .rectangle-86 {
+  background-color: var(--slate-gray-2);
+  border-radius: 3px;
+  height: 47px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 47px;
+}
+
+.games .secondary-button {
+  align-items: center;
+  background-color: var(--backgroundhighlight);
+  border-radius: 3px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 17px 56px;
+  position: relative;
+}
+
+.games .sort-filter {
+  align-items: center;
+  border-radius: 3.33px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  height: 39px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 7px 20px;
+  position: relative;
+}
+
+.games .stars {
+  background-color: transparent;
+  height: 21px;
+  position: relative;
+  width: 21px;
+}
+
+.games .timelapse {
+  background-color: transparent;
+  height: 20px;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  width: 20px;
+}
+
+.games .x1 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.games .x3 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.games .x30 {
+  background-color: transparent;
+  height: auto;
+  left: 3px;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  position: absolute;
+  text-align: left;
+  top: 8px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.games .x40 {
+  background-color: transparent;
+  letter-spacing: 0.00px;
+  line-height: normal;
+  text-align: left;
+  white-space: nowrap;
+}
+</style><script id="anime-js-script" src="https://cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js" integrity="sha256-98Q574VkbV+PkxXCKSgL6jVq9mrVbS7uCdA+vt0sLS8=" crossorigin="anonymous"></script><script id="imgloaded-js-script" src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script><style id="action-links-styles">
+@import url('https://fonts.googleapis.com/css2?family=Mulish&display=swap');
+
+#anima-interface{
+  transition: all 0.5s ease-in-out;
+}
+
+#anima-watermark {
+  transition: all 0.5s ease-in-out;
+  display: none;
+}
+#anima-watermark-link{
+  position: fixed;
+  bottom:20px;
+  height:30px;
+  border-radius: 1000px;
+  background: #3B3B3B;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  user-select:none;
+  transition: width 0.25s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+  text-decoration:none;
+  color:#fff;
+  padding:8px 16px 8px 11px;
+  font-family:Mulish, sans-serif;
+  font-size:12px;
+}
+#anima-watermark-link .text {
+  margin-left: 6px;
+}
+
+.omniview-anima-action-links .link{
+  height: 30px;
+  width: 30px;
+  border-radius: 1000px;
+  background: #3B3B3B;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  user-select:none;
+  transition: width 0.25s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+  text-decoration:none;
+  color:#fff;
+}
+.omniview-anima-action-links #comment-link .text,.omniview-anima-action-links #code-link .text{
+  display:none;
+  font-size:12px;
+  margin-right:5px;
+}
+.omniview-anima-action-links #comment-link:hover,.omniview-anima-action-links #code-link:hover{
+  width:105px;
+}
+.omniview-anima-action-links #comment-link.pop-active,.omniview-anima-action-links #code-link.pop-active{
+  width:105px;
+  background: #FF6250;
+}
+.omniview-anima-action-links #comment-link.pop-active .text,.omniview-anima-action-links #code-link.pop-active .text{
+  display:block
+}
+.omniview-anima-action-links #comment-link:hover .text,.omniview-anima-action-links #code-link:hover .text{
+  display:block;
+}
+
+.link.navigation{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  width:auto;
+  height:32px;
+  color:#fff;
+  font-size:12px;
+  cursor:default;
+  padding:0 5px;
+}
+.link.navigation .icon{
+  margin:0 6px;
+  fill:none;
+  stroke:currentColor;
+  cursor:pointer;
+}
+.link.navigation .icon.disabled{
+  opacity:0.5;
+  cursor:default;
+}
+
+
+.link.navigation .home-icon{
+  margin-left:6px;
+  fill:currentColor;
+  stroke:currentColor;
+  cursor:pointer;
+}
+
+.omniview-anima-action-links .restart{
+  height: 30px;
+  padding:0 12px;
+  background: #3B3B3B;
+  border-radius: 1000px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  color:#f1f1f1;
+  font-size: 12px;
+}
+
+.omniview-anima-action-links{
+  display:flex;
+  align-items:center;
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  font-family:Mulish, sans-serif;
+  transition: all 0.5s ease-in-out;
+  opacity:1;
+}
+
+.omniview-anima-action-links > * + *{
+   margin-right: 0;
+   margin-left: 10px;
+}
+
+.idle{
+  opacity:0;
+  pointer-events:none;
+}
+
+#popoverOpener {
+  position: absolute;
+  left: 50%;
+  margin-left: -10vw;
+  text-align: center;
+  top: 45vh;
+  width: 20vw;
+}
+
+
+.popover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1060;
+  display: none;
+  font-family: "sans-serif";
+  font-size: 14px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+.popover.top {
+  margin-top: -12px
+}
+
+.popover.right {
+  margin-left: 10px
+}
+
+.popover.bottom {
+  margin-top: 10px
+}
+
+.popover.left {
+  margin-left: -10px
+}
+
+.popover-title {
+  padding: 8px 14px;
+  margin: 0;
+  font-size: 14px;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #ebebeb;
+  border-radius: 5px 5px 0 0
+}
+
+.popover-content {
+  height: 100%;
+  width: 100%;
+  display:flex;
+  overflow:hidden;
+  font-family:Mulish, sans-serif;
+}
+
+
+
+.popover>.arrow,.popover>.arrow:after {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid
+}
+
+.popover>.arrow {
+  border-width: 11px
+}
+
+.popover>.arrow:after {
+  content: "";
+  border-width: 10px
+}
+
+.popover.top>.arrow {
+  bottom: -11px;
+  left: 50%;
+  margin-left: -11px;
+  border-top-color: #999;
+  border-top-color: rgba(0,0,0,.25);
+  border-bottom-width: 0
+}
+
+.popover.top>.arrow:after {
+  bottom: 1px;
+  margin-left: -10px;
+  content: " ";
+  border-top-color: #fff;
+  border-bottom-width: 0
+}
+
+.popover.right>.arrow {
+  top: 50%;
+  left: -11px;
+  margin-top: -11px;
+  border-right-color: #999;
+  border-right-color: rgba(0,0,0,.25);
+  border-left-width: 0
+}
+
+.popover.right>.arrow:after {
+  bottom: -10px;
+  left: 1px;
+  content: " ";
+  border-right-color: #fff;
+  border-left-width: 0
+}
+
+.popover.bottom>.arrow {
+  top: -11px;
+  left: 50%;
+  margin-left: -11px;
+  border-top-width: 0;
+  border-bottom-color: #999;
+  border-bottom-color: rgba(0,0,0,.25)
+}
+
+.popover.bottom>.arrow:after {
+  top: 1px;
+  margin-left: -10px;
+  content: " ";
+  border-top-width: 0;
+  border-bottom-color: #fff
+}
+
+.popover.left>.arrow {
+  top: 50%;
+  right: -11px;
+  margin-top: -11px;
+  border-right-width: 0;
+  border-left-color: #999;
+  border-left-color: rgba(0,0,0,.25)
+}
+
+.popover.left>.arrow:after {
+  right: 1px;
+  bottom: -10px;
+  content: " ";
+  border-right-width: 0;
+  border-left-color: #fff
+}
+
+
+
+#anima-comment-popover,#anima-code-popover{
+  background:#333333;
+  color:#fff;
+}
+
+#anima-comment-popover.top>.arrow,#anima-comment-popover.top>.arrow:after,#anima-code-popover.top>.arrow:after,#anima-code-popover.top>.arrow {
+  border-top-color:#333;
+}
+
+#anima-comment-popover .btn,#anima-code-popover .btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 6px 20px;
+  background: #FF6250;
+  color:#fff;
+  border-radius: 100px;
+  width: max-content;
+  text-decoration:none;
+}
+
+@media screen and (max-width: 550px) {
+  #anima-watermark-link {
+    padding: 6px !important;
+  }
+  #anima-watermark-link .text {
+    display: none !important;
+  }
+}
+
+</style></head><body style="margin: 0px; overflow-x: hidden;" dark-scroll=""><input type="hidden" id="anPageName" name="page" value="games"><div class="container-center-horizontal"><div class="games screen " data-id="455:9708"><div class="rectangle-89-cFLxN7" data-id="455:9709"></div><footer class="footer-cFLxN7" data-id="460:15759"><div class="rectangle-118-tmXXXF" data-id="I460:15759;426:4049"></div><img class="image-125-tmXXXF" data-id="I460:15759;426:4050" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-125@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-125@2x.png" alt="image 125"><p class="x2023-valve-corporati-tmXXXF motivasans-regular-normal-slate-gray-16px" data-id="I460:15759;426:4051">© 2023 Valve Corporation. All rights reserved. All trademarks are property of their respective owners in the US and other countries.<br>VAT included in all prices where applicable.</p><img class="group-tmXXXF" data-id="I460:15759;460:15636" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-36@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-36@2x.png" alt="Group"><div class="frame-118-tmXXXF" data-id="I460:15759;426:4053"><div class="privacy-policy-XwZItQ motivasans-regular-normal-wild-sand-16px" data-id="I460:15759;426:4054">Privacy Policy</div><div class="legal-XwZItQ motivasans-regular-normal-wild-sand-16px" data-id="I460:15759;426:4055">Legal</div><div class="steam-subscriber-agreement-XwZItQ motivasans-regular-normal-wild-sand-16px" data-id="I460:15759;426:4056">Steam Subscriber Agreement</div><div class="refunds-XwZItQ motivasans-regular-normal-wild-sand-16px" data-id="I460:15759;426:4057">Refunds</div><div class="cookies-XwZItQ motivasans-regular-normal-wild-sand-16px" data-id="I460:15759;426:4058">Cookies</div></div><div class="frame-119-tmXXXF" data-id="I460:15759;426:4059"><div class="about-valve-5DqKpR motivasans-regular-normal-wild-sand-16px" data-id="I460:15759;426:4060">About Valve</div><div class="jobs-5DqKpR motivasans-regular-normal-wild-sand-16px" data-id="I460:15759;426:4061">Jobs</div><div class="steamworks-5DqKpR motivasans-regular-normal-wild-sand-16px" data-id="I460:15759;426:4062">Steamworks</div><div class="steam-distribution-5DqKpR motivasans-regular-normal-wild-sand-16px" data-id="I460:15759;426:4063">Steam Distribution</div><div class="support-5DqKpR motivasans-regular-normal-wild-sand-16px" data-id="I460:15759;426:4064">Support</div></div><div class="icon-box-tmXXXF icon-box" data-id="I460:15759;426:4065"><div class="group-97" data-id="I460:15759;426:4066"><div class="rectangle-86" data-id="I460:15759;426:4067"></div><img class="facebook-f-qW1LBK" data-id="I460:15759;426:4068" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/facebook-f.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/facebook-f.svg" alt="Facebook F"></div></div><div class="icon-box-3VRht2 icon-box" data-id="I460:15759;426:4070"><div class="group-97" data-id="I460:15759;426:4071"><div class="rectangle-86" data-id="I460:15759;426:4072"></div><img class="twitter-x-kurC2x" data-id="I460:15759;426:4073" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/twitterx.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/twitterx.svg" alt="TwitterX"></div></div></footer><div class="frame-210-cFLxN7" data-id="457:11862"><div class="frame-210-wMbZUS" data-id="461:25117"><div class="frame-207-QwVu3W" data-id="461:25118"><img class="sprite-0003-1-OTNxSg sprite-0003-1" data-id="461:25119" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-40.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-40.svg" alt="Sprite-0003 1"><div class="frame-206-OTNxSg frame-206" data-id="461:25120"><div class="group-122-yknaTP" data-id="461:25121"><h1 class="title-tgxL3F motivasans-bold-wild-sand-26px" data-id="461:25122">Juxtopposed</h1><img class="keyboard-arrow-down-tgxL3F" data-id="461:25123" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-61.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-61.svg" alt="Keyboard arrow down"></div><p class="im-jux-and-this-is-m-yknaTP motivasans-regular-normal-wild-sand-16px" data-id="461:25125">I’m Jux, and this is my favorite spot on Steam!</p></div></div><div class="frame-201-QwVu3W frame-201" data-id="461:25126"><div class="frame-235-NBhL1l" data-id="461:25127"><article class="secondary-button-qn0kfK secondary-button" data-id="461:25128"><div class="add-to-wishlist-D3cpbq add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I461:25128;84:780">Back to Profile</div></article><article class="secondary-button-DxFXLc secondary-button" data-id="461:25129"><div class="add-to-wishlist-zPEu6q add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I461:25129;84:780">Edit Profile</div></article></div><div class="frame-236-NBhL1l" data-id="461:25269"><div class="frame-127-0Krgmv" data-id="461:25270"><div class="group-125-ZusLKa group-125" data-id="461:25271"><div class="x60-q4IwGx valign-text-middle motivasans-regular-normal-wild-sand-20-2px" data-id="461:25272">60</div><div class="ellipse-3-q4IwGx ellipse-3" data-id="461:25273"></div></div><div class="frame-200-ZusLKa frame-200" data-id="461:25274"><div class="level-ZONuov motivasans-regular-normal-wild-sand-14px" data-id="461:25275">Level</div><div class="x30000-xp-ZONuov motivasans-regular-normal-slate-gray-14px" data-id="461:25276">30,000 XP</div></div></div><div class="frame-126-0Krgmv" data-id="461:25277"><img class="image-150-JQZxGv" data-id="461:25278" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-150.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-150.png" alt="image 150"><div class="frame-200-JQZxGv frame-200" data-id="461:25279"><div class="years-of-service-hXevuT motivasans-regular-normal-wild-sand-14px" data-id="461:25280">Years of Service</div><div class="x300-xp-hXevuT motivasans-regular-normal-slate-gray-14px" data-id="461:25281">300 XP</div></div></div></div></div></div><div class="frame-209-wMbZUS" data-id="457:11888"><div class="frame-205-gn44mb" data-id="457:11889"><div class="frame-179-3pZDRG" data-id="457:11890"><div class="sorting-FkLrXn" data-id="457:12173"><div class="frame-211-vUHWr1" data-id="I457:12173;457:12111"><div class="frame-34-VVzZ2A" data-id="I457:12173;302:1483"><article class="sort-filter-KNvwv1 sort-filter" data-id="I457:12173;302:1484"><div class="new-and-trending valign-text-middle motivasans-regular-normal-wild-sand-16px" data-id="I457:12173;302:1484;296:583">Recently Played (2)</div></article><article class="sort-filter-ixKvUu sort-filter" data-id="I457:12173;302:1485"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="I457:12173;302:1485;296:577">All Games (350)</div></article><article class="sort-filter-U12fxz sort-filter" data-id="I457:12173;302:1486"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="I457:12173;302:1486;296:577">Perfect Games (4)</div></article><article class="sort-filter-og2bzx sort-filter" data-id="I457:12173;302:1487"><div class="new-and-trending valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="I457:12173;302:1487;296:577">Followed (12)</div></article></div></div></div><div class="frame-240-FkLrXn frame-240" data-id="770:11194"><img class="image-140" data-id="770:11195" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-140-1@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-140-1@2x.png" alt="image 140"><div class="frame-183" data-id="770:11196"><div class="frame-182" data-id="770:11197"><div class="mass-effect-legendary-edition-pIhoie motivasans-regular-normal-white-16px" data-id="770:11198">Mass Effect: Legendary Edition</div><div class="frame-81" data-id="770:11199"><div class="group-55-opVubE group-55" data-id="770:11200"><img class="date-range" data-id="770:11201" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/date-range-14.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/date-range-14.svg" alt="Date range"><div class="x3-oct-2023-AcBHiZ motivasans-regular-normal-white-12px" data-id="770:11204">3 Oct 2023</div></div><div class="group-56-opVubE group-56" data-id="770:11205"><div class="x32-hours-Cmidmu motivasans-regular-normal-white-12px" data-id="770:11206">32 hours</div><img class="timelapse" data-id="770:11207" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/timelapse-14.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/timelapse-14.svg" alt="Timelapse"></div><img class="more-horiz" data-id="770:11299" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/more-horiz.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/more-horiz.svg" alt="More horiz"></div></div><div class="frame-181" data-id="770:11210"><img class="stars" data-id="770:11211" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/stars-15.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/stars-15.svg" alt="Stars"><div class="x35127-yd1TE9 motivasans-regular-normal-white-12px" data-id="770:11214">35/127</div><img class="group-69" data-id="770:11215" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-69-6@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-69-6@2x.png" alt="Group 69"><div class="frame-180" data-id="770:11218"><img class="image-141" data-id="770:11219" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-141@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-141@2x.png" alt="image 141"><img class="image-142" data-id="770:11220" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-142@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-142@2x.png" alt="image 142"><img class="image-143" data-id="770:11221" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-143@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-143@2x.png" alt="image 143"><img class="image-144" data-id="770:11222" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-144@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-144@2x.png" alt="image 144"><img class="image-146" data-id="770:11223" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-146@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-146@2x.png" alt="image 146"><div class="group-123" data-id="770:11224"><div class="image-147" data-id="770:11225"></div><div class="x30 motivasans-regular-normal-wild-sand-12px" data-id="770:11226">+30</div></div></div></div></div></div><div class="frame-241-FkLrXn" data-id="770:11227"><img class="image-120-QbxU0G" data-id="770:11228" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-120-1@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-120-1@2x.png" alt="image 120"><div class="frame-183" data-id="770:11229"><div class="frame-182" data-id="770:11230"><div class="doom-d5fjn9 motivasans-regular-normal-white-16px" data-id="770:11231">Doom</div><div class="frame-81" data-id="770:11232"><div class="group-55-UgQ7lW group-55" data-id="770:11233"><img class="date-range" data-id="770:11234" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/date-range-15.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/date-range-15.svg" alt="Date range"><div class="x21-aug-2023-2TWTOP motivasans-regular-normal-white-12px" data-id="770:11237">21 Aug 2023</div></div><div class="group-56-UgQ7lW group-56" data-id="770:11238"><div class="x68-hours-BIaOzD motivasans-regular-normal-white-12px" data-id="770:11239">68 hours</div><img class="timelapse" data-id="770:11240" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/timelapse-15.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/timelapse-15.svg" alt="Timelapse"></div><img class="more-horiz" data-id="770:11296" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/more-horiz-1.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/more-horiz-1.svg" alt="More horiz"></div></div><div class="frame-181" data-id="770:11243"><img class="stars" data-id="770:11244" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/stars-16.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/stars-16.svg" alt="Stars"><div class="x3557-i1ycEC motivasans-regular-normal-white-12px" data-id="770:11247">35/57</div><img class="group-69" data-id="770:11248" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-69-7@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-69-7@2x.png" alt="Group 69"><div class="frame-180" data-id="770:11251"><img class="image-199-CsjhSi" data-id="770:11252" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-199@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-199@2x.png" alt="image 199"><img class="image-200-CsjhSi" data-id="770:11253" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-200@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-200@2x.png" alt="image 200"><img class="image-201-CsjhSi" data-id="770:11254" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-201@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-201@2x.png" alt="image 201"><img class="image-202-CsjhSi" data-id="770:11255" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-202@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-202@2x.png" alt="image 202"><img class="image-203-CsjhSi" data-id="770:11256" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-203@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-203@2x.png" alt="image 203"><div class="group-123" data-id="770:11257"><div class="image-147" data-id="770:11258"></div><div class="x30 motivasans-regular-normal-wild-sand-12px" data-id="770:11259">+30</div></div></div></div></div></div><div class="frame-242-FkLrXn" data-id="770:11260"><img class="image-198-JWix9c" data-id="770:11261" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-198@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-198@2x.png" alt="image 198"><div class="frame-183" data-id="770:11262"><div class="frame-182" data-id="770:11263"><div class="borderlands-2-dK7ish motivasans-regular-normal-white-16px" data-id="770:11264">Borderlands 2</div><div class="frame-81" data-id="770:11265"><div class="group-55-Anw44c group-55" data-id="770:11266"><img class="date-range" data-id="770:11267" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/date-range-16.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/date-range-16.svg" alt="Date range"><div class="x15-jul-2023-Bk5exO motivasans-regular-normal-white-12px" data-id="770:11270">15 Jul 2023</div></div><div class="group-56-Anw44c group-56" data-id="770:11271"><div class="x15-hours-aHXxdI motivasans-regular-normal-white-12px" data-id="770:11272">15 hours</div><img class="timelapse" data-id="770:11273" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/timelapse-16.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/timelapse-16.svg" alt="Timelapse"></div><img class="more-horiz" data-id="770:11293" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/more-horiz-2.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/more-horiz-2.svg" alt="More horiz"></div></div><div class="frame-181" data-id="770:11276"><img class="stars" data-id="770:11277" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/stars-17.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/stars-17.svg" alt="Stars"><div class="x3575-fE7m2n motivasans-regular-normal-white-12px" data-id="770:11280">35/75</div><img class="group-69" data-id="770:11281" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-69-8@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-69-8@2x.png" alt="Group 69"><div class="frame-180" data-id="770:11284"><img class="image-141" data-id="770:11285" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-141-1@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-141-1@2x.png" alt="image 141"><img class="image-142" data-id="770:11286" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-142-1@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-142-1@2x.png" alt="image 142"><img class="image-143" data-id="770:11287" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-143-1@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-143-1@2x.png" alt="image 143"><img class="image-144" data-id="770:11288" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-144-1@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-144-1@2x.png" alt="image 144"><img class="image-146" data-id="770:11289" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-146-1@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-146-1@2x.png" alt="image 146"><div class="group-123" data-id="770:11290"><div class="image-147" data-id="770:11291"></div><div class="x30 motivasans-regular-normal-wild-sand-12px" data-id="770:11292">+30</div></div></div></div></div></div><div class="frame-188-FkLrXn frame-188" data-id="464:4569"><img class="image-140" data-id="464:4570" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-140-2@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-140-2@2x.png" alt="image 140"><div class="frame-183" data-id="464:4571"><div class="frame-182" data-id="464:4572"><p class="the-stanley-parable-ultra-deluxe-MP7rS3 motivasans-regular-normal-white-16px" data-id="464:4573">The Stanley Parable: Ultra Deluxe</p><div class="frame-81" data-id="464:4574"><div class="group-55-b7nTLc group-55" data-id="464:4575"><img class="date-range" data-id="464:4576" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/date-range-17.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/date-range-17.svg" alt="Date range"><div class="x20-apr-2023-8Y1uHu motivasans-regular-normal-white-12px" data-id="464:4579">20 Apr 2023</div></div><div class="group-56-b7nTLc group-56" data-id="464:4580"><div class="x12-hours-Wu66hN motivasans-regular-normal-white-12px" data-id="464:4581">12 hours</div><img class="timelapse" data-id="464:4582" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/timelapse-17.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/timelapse-17.svg" alt="Timelapse"></div><img class="more-horiz" data-id="464:4585" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/more-horiz-3.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/more-horiz-3.svg" alt="More horiz"></div></div><div class="frame-181" data-id="464:4588"><img class="stars" data-id="464:4589" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/stars-18.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/stars-18.svg" alt="Stars"><div class="x811-ex48bm motivasans-regular-normal-white-12px" data-id="464:4592">8/11</div><img class="group-69" data-id="464:4593" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-69-9@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-69-9@2x.png" alt="Group 69"><div class="frame-180" data-id="464:4596"><img class="image-141" data-id="464:4597" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-141-2@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-141-2@2x.png" alt="image 141"><img class="image-142" data-id="464:4598" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-142-2@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-142-2@2x.png" alt="image 142"><img class="image-143" data-id="464:4599" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-143-2@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-143-2@2x.png" alt="image 143"><img class="image-144" data-id="464:4600" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-144-2@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-144-2@2x.png" alt="image 144"><img class="image-146" data-id="464:4601" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-146-2@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-146-2@2x.png" alt="image 146"><div class="group-123" data-id="464:4602"><div class="image-147" data-id="464:4603"></div><div class="x3-8WKsXL x3 motivasans-regular-normal-wild-sand-12px" data-id="464:4604">+3</div></div></div></div></div></div><div class="frame-189-FkLrXn frame-189" data-id="464:4605"><img class="image-140" data-id="464:4606" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-140-3@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-140-3@2x.png" alt="image 140"><div class="frame-183" data-id="464:4607"><div class="frame-182" data-id="464:4608"><div class="rust-9cOrSW motivasans-regular-normal-white-16px" data-id="464:4609">Rust</div><div class="frame-81" data-id="464:4610"><div class="group-55-HVNfxm group-55" data-id="464:4611"><img class="date-range" data-id="464:4612" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/date-range-18.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/date-range-18.svg" alt="Date range"><div class="x11-jan-2023-u6AFKm motivasans-regular-normal-white-12px" data-id="464:4615">11 Jan 2023</div></div><div class="group-56-HVNfxm group-56" data-id="464:4616"><div class="x84-hours-l7WsmJ motivasans-regular-normal-white-12px" data-id="464:4617">84 hours</div><img class="timelapse" data-id="464:4618" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/timelapse-18.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/timelapse-18.svg" alt="Timelapse"></div><img class="more-horiz" data-id="464:4621" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/more-horiz-4.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/more-horiz-4.svg" alt="More horiz"></div></div><div class="frame-181" data-id="464:4624"><img class="stars" data-id="464:4625" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/stars-19.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/stars-19.svg" alt="Stars"><div class="x4090-JR34JO motivasans-regular-normal-white-12px" data-id="464:4628">40/90</div><img class="group-69" data-id="464:4629" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-69-10@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-69-10@2x.png" alt="Group 69"><div class="frame-180" data-id="464:4632"><img class="image-141" data-id="464:4633" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-141-3@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-141-3@2x.png" alt="image 141"><img class="image-142" data-id="464:4634" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-142-3@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-142-3@2x.png" alt="image 142"><img class="image-143" data-id="464:4635" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-143-3@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-143-3@2x.png" alt="image 143"><img class="image-144" data-id="464:4636" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-144-3@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-144-3@2x.png" alt="image 144"><img class="image-146" data-id="464:4637" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-146-3@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-146-3@2x.png" alt="image 146"><div class="group-123" data-id="464:4638"><div class="image-147" data-id="464:4639"></div><div class="x40-zxWidq x40 motivasans-regular-normal-wild-sand-12px" data-id="464:4640">+40</div></div></div></div></div></div><div class="frame-239-FkLrXn frame-239" data-id="505:8470"><div class="secondary-button-z8kuKq secondary-button" data-id="505:8471"><div class="add-to-wishlist-7knBRp add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I505:8471;84:780">Prev</div></div><div class="frame-237-z8kuKq" data-id="505:8472"><div class="secondary-button-Mdyk7U secondary-button" data-id="505:8473"><div class="add-to-wishlist-mCkoE3 add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I505:8473;84:780">1</div></div><div class="secondary-button-NCCRiC secondary-button" data-id="505:8474"><div class="add-to-wishlist-LGJ9Fy add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I505:8474;84:780">2</div></div><div class="secondary-button-X5U9Vj secondary-button" data-id="505:8475"><div class="add-to-wishlist-bpU3so add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I505:8475;84:780">3</div></div><div class="secondary-button-LLVoCB secondary-button" data-id="505:8476"><div class="add-to-wishlist-08n84z add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I505:8476;84:780">4</div></div><div class="secondary-button-Iqbxn9 secondary-button" data-id="505:8477"><div class="add-to-wishlist-YxesMv add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I505:8477;84:780">5</div></div><div class="x-Mdyk7U valign-text-middle motivasans-regular-normal-slate-gray-16px" data-id="505:8478">...</div><div class="secondary-button-85wqyo secondary-button" data-id="505:8479"><div class="add-to-wishlist-R7rB1d add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I505:8479;84:780">10</div></div></div><div class="secondary-button-cwE0xp secondary-button" data-id="505:8480"><div class="add-to-wishlist-N0HZZx add-to-wishlist motivasans-regular-normal-wild-sand-16px" data-id="I505:8480;84:780">Next</div></div></div></div><div class="frame-202-3pZDRG frame-202" data-id="457:11993"><div class="frame-185-eHJq9I" data-id="457:11994"><div class="comments-zIoUp5 motivasans-regular-normal-slate-gray-16px" data-id="457:11995">Comments</div><div class="no-comments-yet-zIoUp5 motivasans-regular-normal-slate-gray-12px-2" data-id="457:11996">No comments yet</div></div><div class="frame-203-eHJq9I" data-id="457:11997"><img class="sprite-0003-2-AGJE6B" data-id="457:11998" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-2-1.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-2-1.svg" alt="Sprite-0003 2"><div class="search-AGJE6B" data-id="457:11999"><div class="rectangle-70-njNI1L" data-id="I457:11999;280:52"></div><div class="search-njNI1L motivasans-regular-normal-slate-gray-14px" data-id="I457:11999;280:53">Add a comment...</div></div></div></div></div><div class="frame-232-gn44mb" data-id="460:16189"><div class="profile-sections-4qXDrM profile-sections" data-id="460:16190"><div class="frame-196-n2C159" data-id="I460:16190;457:12433"><a href="profile"><div class="frame-199-kxwj0x frame-199" data-id="I460:16190;461:24747" data-hotspot-id="hp-0"><div class="status-V7KV3Z motivasans-regular-normal-wild-sand-16px" data-id="I460:16190;461:24748">Status</div><div class="online-V7KV3Z motivasans-regular-normal-malibu-16px" data-id="I460:16190;461:24749">Online</div></div></a><div class="frame-188-kxwj0x frame-188" data-id="I460:16190;457:12434"><div class="frame-199-2xWcJN frame-199" data-id="I460:16190;457:12435"><div class="frame-198-E3yQRx" data-id="I460:16190;457:12436"><div class="badges-BH8xlx motivasans-regular-normal-wild-sand-16px" data-id="I460:16190;457:12437">Badges</div><div class="x84-BH8xlx motivasans-regular-normal-slate-gray-16px" data-id="I460:16190;457:12438">84</div></div><div class="frame-197-E3yQRx frame-197" data-id="I460:16190;457:12439"><img class="image-154-xztKLF" data-id="I460:16190;457:12440" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-154.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-154.png" alt="image 154"><img class="image-149-xztKLF" data-id="I460:16190;457:12441" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-149@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-149@2x.png" alt="image 149"><img class="image-151-xztKLF" data-id="I460:16190;457:12442" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-151@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-151@2x.png" alt="image 151"><img class="image-152-xztKLF" data-id="I460:16190;457:12443" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-152@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-152@2x.png" alt="image 152"><img class="image-153-xztKLF" data-id="I460:16190;457:12444" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-153@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/image-153@2x.png" alt="image 153"></div></div></div><a href="games"><div class="frame-196-kxwj0x" data-id="I460:16190;457:12445" data-hotspot-id="hp-1"><div class="games-A1nVwZ motivasans-regular-normal-wild-sand-16px" data-id="I460:16190;457:12446">Games</div><div class="x350-A1nVwZ motivasans-regular-normal-slate-gray-16px" data-id="I460:16190;457:12447">350</div></div></a><a href="wishlist"><div class="frame-197-kxwj0x frame-197" data-id="I460:16190;457:12448" data-hotspot-id="hp-2"><div class="wishlist-TKaRTi motivasans-regular-normal-wild-sand-16px" data-id="I460:16190;457:12449">Wishlist</div><div class="x120-TKaRTi motivasans-regular-normal-slate-gray-16px" data-id="I460:16190;457:12450">120</div></div></a><div class="frame-189-kxwj0x frame-189" data-id="I460:16190;457:12451"><div class="inventory-9qdmEK motivasans-regular-normal-wild-sand-16px" data-id="I460:16190;457:12452">Inventory</div><div class="text-9qdmEK motivasans-regular-normal-slate-gray-16px" data-id="I460:16190;457:12453"></div></div><a href="screenshots"><div class="frame-190-kxwj0x" data-id="I460:16190;457:12454" data-hotspot-id="hp-3"><div class="screenshots-Jn0zgH motivasans-regular-normal-wild-sand-16px" data-id="I460:16190;457:12455">Screenshots</div><div class="x40-Jn0zgH x40 motivasans-regular-normal-slate-gray-16px" data-id="I460:16190;457:12456">40</div></div></a><div class="frame-191-kxwj0x" data-id="I460:16190;457:12457"><div class="videos-0UahZC motivasans-regular-normal-wild-sand-16px" data-id="I460:16190;457:12458">Videos</div><div class="x2-0UahZC motivasans-regular-normal-slate-gray-16px" data-id="I460:16190;457:12459">2</div></div><div class="frame-192-kxwj0x" data-id="I460:16190;457:12460"><div class="workshop-items-d66uWn motivasans-regular-normal-wild-sand-16px" data-id="I460:16190;457:12461">Workshop Items</div><div class="x3-d66uWn x3 motivasans-regular-normal-slate-gray-16px" data-id="I460:16190;457:12462">3</div></div><div class="frame-193-kxwj0x" data-id="I460:16190;457:12463"><div class="reviews-xwrrSo motivasans-regular-normal-wild-sand-16px" data-id="I460:16190;457:12464">Reviews</div><div class="x32-xwrrSo x32 motivasans-regular-normal-slate-gray-16px" data-id="I460:16190;457:12465">32</div></div><div class="frame-194-kxwj0x" data-id="I460:16190;457:12466"><div class="guides-xecOGQ motivasans-regular-normal-wild-sand-16px" data-id="I460:16190;457:12467">Guides</div><div class="x1-xecOGQ x1 motivasans-regular-normal-slate-gray-16px" data-id="I460:16190;457:12468">1</div></div><div class="frame-195-kxwj0x" data-id="I460:16190;457:12469"><div class="artworks-wie10f motivasans-regular-normal-wild-sand-16px" data-id="I460:16190;457:12470">Artworks</div><div class="x13-wie10f motivasans-regular-normal-slate-gray-16px" data-id="I460:16190;457:12471">13</div></div></div></div><div class="profile-sections-iu3RUh profile-sections" data-id="723:33622"><div class="frame-196-woxxgz" data-id="723:33623"><a href="profile"><div class="frame-202-otmkwp frame-202" data-id="723:33624" data-hotspot-id="hp-4"><div class="friends-4-CXMpse motivasans-regular-normal-slate-gray-16px" data-id="723:33625">Friends (4)</div><img class="add-circle-outline-CXMpse" data-id="723:33626" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/add-circle-outline-1.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/add-circle-outline-1.svg" alt="Add circle outline"></div></a><a href="games"><div class="frame-196-otmkwp" data-id="723:33629" data-hotspot-id="hp-5"><div class="frame-214" data-id="723:33630"><img class="friend1-4nRkCg" data-id="723:33631" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend1@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend1@2x.png" alt="friend1"><div class="frame-206-4nRkCg frame-206" data-id="723:33632"><div class="friend-1-qYeK1d motivasans-regular-normal-malibu-16px" data-id="723:33633">Friend 1</div><div class="counter-strike-2-qYeK1d motivasans-regular-normal-malibu-12px" data-id="723:33634">Counter-Strike 2</div></div></div><div class="group-125-5I0vZ6 group-125" data-id="723:33635"><div class="x72-jG4G5P valign-text-middle motivasans-regular-normal-wild-sand-14px" data-id="723:33636">72</div><div class="ellipse-3-jG4G5P ellipse-3" data-id="723:33637"></div></div></div></a><a href="games"><div class="frame-199-otmkwp frame-199" data-id="723:33638" data-hotspot-id="hp-6"><div class="frame-214" data-id="723:33639"><img class="friend3-aTMs59" data-id="723:33640" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend3@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend3@2x.png" alt="friend3"><div class="frame-206-aTMs59 frame-206" data-id="723:33641"><div class="friend-2-O3DNRt motivasans-regular-normal-sundance-16px" data-id="723:33642">Friend 2</div><div class="away-O3DNRt motivasans-regular-normal-sundance-12px" data-id="723:33643">Away</div></div></div><div class="group-125-MWFMy9 group-125" data-id="723:33644"><div class="x45-T6qbQz valign-text-middle motivasans-regular-normal-wild-sand-14px" data-id="723:33645">45</div><div class="ellipse-3-T6qbQz ellipse-3" data-id="723:33646"></div></div></div></a><a href="games"><div class="frame-200-otmkwp frame-200" data-id="723:33647" data-hotspot-id="hp-7"><div class="frame-214" data-id="723:33648"><img class="friend4-vcAPBZ" data-id="723:33649" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend4@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend4@2x.png" alt="friend4"><div class="frame-206-vcAPBZ frame-206" data-id="723:33650"><div class="friend-3-dx6bF6 motivasans-regular-normal-slate-gray-16px" data-id="723:33651">Friend 3</div><div class="offline motivasans-regular-normal-slate-gray-12px-2" data-id="723:33652">Offline</div></div></div><div class="group-125-bOhScw group-125" data-id="723:33653"><div class="x32-0AuCxK valign-text-middle x32 motivasans-regular-normal-wild-sand-14px" data-id="723:33654">32</div><div class="ellipse-3-0AuCxK ellipse-3" data-id="723:33655"></div></div></div></a><a href="games"><div class="frame-201-otmkwp frame-201" data-id="723:33656" data-hotspot-id="hp-8"><div class="frame-214" data-id="723:33657"><img class="friend2-DNiHNx" data-id="723:33658" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend2@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/friend2@2x.png" alt="friend2"><div class="frame-206-DNiHNx frame-206" data-id="723:33659"><div class="friend-4-FNsbNu motivasans-regular-normal-slate-gray-16px" data-id="723:33660">Friend 4</div><div class="offline motivasans-regular-normal-slate-gray-12px-2" data-id="723:33661">Offline</div></div></div><div class="group-125-2KQaBf group-125" data-id="723:33662"><div class="x18-dD8cka valign-text-middle motivasans-regular-normal-wild-sand-14px" data-id="723:33663">18</div><div class="ellipse-3-dD8cka ellipse-3" data-id="723:33664"></div></div></div></a></div></div></div></div></div><div class="client-cFLxN7" data-id="455:9911"><div class="rectangle-68-XHZe58" data-id="I455:9911;333:2374"></div><div class="frame-11-XHZe58" data-id="I455:9911;333:2375"><div class="frame-2-64MUKI" data-id="I455:9911;333:2381"><div class="frame-239-uGUI35 frame-239" data-id="I455:9911;475:5954"><div class="help-xTEZGq motivasans-regular-normal-slate-gray-16px" data-id="I455:9911;475:4731">Help</div></div><div class="frame-240-uGUI35 frame-240" data-id="I455:9911;618:6950"><div class="view-FQIpUv motivasans-regular-normal-slate-gray-16px" data-id="I455:9911;618:6951">View</div><img class="keyboard-arrow-down-FQIpUv" data-id="I455:9911;618:6952" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down.svg" alt="Keyboard arrow down"></div><img class="minimize-uGUI35" data-id="I455:9911;333:2384" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/minimize-20.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/minimize-20.svg" alt="Minimize"><img class="content-copy-uGUI35" data-id="I455:9911;333:2387" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/content-copy-20.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/content-copy-20.svg" alt="Content copy"><img class="close-uGUI35" data-id="I455:9911;333:2390" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/close-20.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/close-20.svg" alt="Close"></div></div><div class="frame-3-XHZe58" data-id="I455:9911;333:2404"><img class="group-DABCTY" data-id="I455:9911;435:10471" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-1@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/group-1@2x.png" alt="Group"><div class="store-menu-DABCTY store-menu" data-id="I455:9911;333:2405"><div class="store-QHENpf motivasans-bold-wild-sand-18px" data-id="I455:9911;333:2405;18:271">STORE</div></div><a href="community-home"><div class="store-menu-9ydtWZ store-menu" data-id="I455:9911;333:2406" data-hotspot-id="hp-9"><div class="community-8lxmdP motivasans-bold-wild-sand-18px" data-id="I455:9911;333:2406;18:782">COMMUNITY</div></div></a><div class="store-menu-X1E76s store-menu" data-id="I455:9911;333:2407"><div class="juxtopposed-23A9Gu juxtopposed motivasans-bold-malibu-18px" data-id="I455:9911;333:2407;18:879">JUXTOPPOSED</div></div><div class="store-menu-1xQryG store-menu" data-id="I455:9911;333:2408"><div class="library-iIC8fc motivasans-bold-wild-sand-18px" data-id="I455:9911;333:2408;18:832">LIBRARY</div></div></div><div class="frame-233-XHZe58" data-id="I455:9911;460:23404"><a href="download"><div class="store-menu-4QXNaf store-menu" data-id="I455:9911;333:2409" data-hotspot-id="hp-10"><div class="downloads-t60O9M motivasans-bold-wild-sand-18px" data-id="I455:9911;333:2410">DOWNLOADS</div></div></a></div><img class="view-list-XHZe58" data-id="I455:9911;333:2418" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/view-list@2x.png" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/view-list@2x.png" alt="View list"><div class="frame-330-XHZe58" data-id="I455:9911;618:13985"><div class="friends-I2v2Tp" data-id="I455:9911;447:7373"><div class="group-9-AxJUp2" data-id="I455:9911;447:7373;447:3840"><div class="rectangle-61-riKDAf" data-id="I455:9911;447:7373;447:3841"></div><img class="people-riKDAf" data-id="I455:9911;447:7373;447:3842" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/people-23.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/people-23.svg" alt="People"></div></div><div class="notifications-I2v2Tp" data-id="I455:9911;850:10413"><div class="group-135-NjwhzJ" data-id="I455:9911;850:10413;766:10295"><div class="group-8-48cx4O" data-id="I455:9911;850:10413;766:10296"><div class="rectangle-60-LiqZF4 rectangle-60" data-id="I455:9911;850:10413;766:10297"></div><img class="notifications-LiqZF4" data-id="I455:9911;850:10413;766:10298" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/notifications-20.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/notifications-20.svg" alt="Notifications"></div></div><div class="group-12-NjwhzJ" data-id="I455:9911;850:10413;766:10166"><div class="ellipse-2-BiT4xw" data-id="I455:9911;850:10413;766:10167"></div><div class="x1-BiT4xw x1 motivasans-regular-normal-vulcan-12px" data-id="I455:9911;850:10413;766:10168">1</div></div></div><div class="component-2-I2v2Tp" data-id="I455:9911;333:2393"><div class="group-7-5Gsuzo" data-id="I455:9911;333:2393;18:1014"><div class="rectangle-60-hBqamI rectangle-60" data-id="I455:9911;333:2393;18:1015"></div><div class="frame-1-hBqamI" data-id="I455:9911;333:2393;18:1016"><img class="sprite-0003-1-XcDhf2 sprite-0003-1" data-id="I455:9911;333:2393;18:1017" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-41.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/sprite-0003-1-41.svg" alt="Sprite-0003 1"><div class="juxtopposed-XcDhf2 juxtopposed motivasans-regular-normal-wild-sand-14px" data-id="I455:9911;333:2393;18:1018">Juxtopposed</div><div class="x525-XcDhf2 motivasans-regular-normal-slate-gray-14px" data-id="I455:9911;333:2393;18:1019">$5.25</div><img class="keyboard-arrow-down-XcDhf2" data-id="I455:9911;333:2393;18:1020" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-1.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/keyboard-arrow-down-1.svg" alt="Keyboard arrow down"></div></div></div></div><img class="frame-331-XHZe58" data-id="I455:9911;628:10825" src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-331.svg" anima-src="https://cdn.animaapp.com/projects/673b7776a04756fa27c1ca2c/releases/673b7a74a04756fa27c1ca39/img/frame-331.svg" alt="Frame 331"></div></div></div><script src="launchpad-js/launchpad-banner.js" async=""></script><script defer="" src="https://animaapp.s3.amazonaws.com/static/restart-btn.min.js"></script><div id="anima-interface" data-turbo-permanent="true" class="idle"><!---->
+        <div id="anima-comment-popover" class="popover top" role="tooltip" style="left: -205px; top: -220px;">
+          <div class="arrow" style="margin-left: 128px;"></div>
+          <div class="popover-content" style="align-items:center">
+            <div style="display:flex;flex-direction:column;height: 100%;padding: 20px;">
+              <h3 style="font-size:18px;margin-bottom:10px;font-weight:500;line-height: 26px;font-family: Roslindale;">
+                Leave feedback and collaborate
+              </h3>
+              <p style="font-size:12px;margin-bottom:20px;font-weight:400;line-height: 20px;">
+                Login to your account to leave comments. Don't have an account?
+                Sign up for free!
+              </p>
+              <a target="_blank" rel="noopener noreferrer" class="btn" href="https://projects.animaapp.com/p/undefined/s/undefined?mode=comments&amp;utm_campaign=add-comment&amp;utm_medium=add-comment&amp;utm_source=animaapp.io">Add comment</a>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:center;padding-right:20px">
+              <img src="https://animaapp.s3.amazonaws.com/static/comment-illustration.svg">
+            </div>
+          </div>
+        </div>
+        <div id="anima-code-popover" class="popover top" role="tooltip" style="left: -205px; top: -220px;">
+          <div class="arrow" style="margin-left: 168px;"></div>
+          <div class="popover-content" style="align-items:center">
+            <div style="display:flex;flex-direction:column;height: 100%;padding: 20px;">
+              <h3 style="font-size:18px;margin-bottom:10px;font-weight:500;line-height: 26px;font-family: Roslindale;">
+                Get clean code you’ll love with Anima
+              </h3>
+              <p style="font-size:12px;margin-bottom:20px;font-weight:400;line-height: 20px;">
+                Login and easily export HTML, React or Vue of this prototype.
+                Don’t have an account? Sign up for free!
+              </p>
+              <a target="_blank" rel="noopener noreferrer" class="btn" href="https://projects.animaapp.com/p/undefined/s/undefined?mode=code&amp;utm_campaign=get-code&amp;utm_medium=get-code&amp;utm_source=animaapp.io">
+                Get code
+              </a>
+            </div>
+
+            <img src="https://animaapp.s3.amazonaws.com/static/code-illustration.svg">
+          </div>
+        </div>
+        <div class="omniview-anima-action-links" id="actions-wrap">
+          <div class="omniview-anima-action-links">
+            <div id="page-nav" class="link navigation" style="display: none;">
+              <svg id="homepage-icon" class="home-icon" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.151 11a.25.25 0 01-.167-.436l4.349-3.913a.25.25 0 01.334 0l4.349 3.913a.25.25 0 01-.167.436H8.15zM16 12H9v4a1 1 0 001 1h5a1 1 0 001-1v-4z" fill="#fff"></path>
+              </svg>
+
+              <svg class="icon" id="arrow-left" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18l-6-6 6-6" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+
+              <span id="page-num"></span>
+
+              <svg class="icon" id="arrow-right" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+
+            <a class="link" id="comment-link" target="_blank" style="display: none;">
+              <span class="text">Comment</span>
+              <svg width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M4.301 15.137a.551.551 0 01.199-.55c.314-.23.554-.554.718-.965A6.015 6.015 0 014 10 6.006 6.006 0   0110.001 4 6.006 6.006 0 0116 10.001 6.006 6.006 0 019.999 16a5.98 5.98 0 01-3.095-.86 3.165 3.165 0 01-1.65.438 3.6  3.6 0 01-.57-.044c-.191-.03-.34-.186-.383-.397z" fill="#fff"></path>
+              </svg>
+            </a>
+
+            <a class="link" id="code-link" target="_blank" style="display: none;">
+              <span class="text">Get Code</span>
+              <svg width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 15.667a1 1 0 01-.707-1.708l3.626-3.625-3.626-3.626a1 1 0 111.415-1.415l4.333 4.333a1 1 0 010 1.414l-4.333 4.333a.993.993 0 01-.707.294zM7.333 5a1 1 0 01.707 1.708l-3.626 3.625 3.627 3.626a1 1 0 11-1.415 1.415L2.293 11.04a1 1 0 010-1.415l4.333-4.333A.992.992 0 017.333 5z" fill="#fff"></path>
+              </svg>
+            </a>
+
+            <div class="restart" id="restart-btn" style="display: none;">
+              <svg style="margin-right: 6px" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 11.817A5.017 5.017 0 01.994 6.811c0-.207.169-.375.375-.375s.375.168.375.375A4.265 4.265 0 006 11.067a4.265 4.265 0 004.256-4.256A4.265 4.265 0 006 2.555a.376.376 0 01-.375-.376c0-.206.169-.374.375-.374a5.017 5.017 0 015.006 5.006A5.017 5.017 0 016 11.817z" fill="#fff"></path>
+                <path d="M6.75 4.237a.37.37 0 01-.263-.112l-1.65-1.65a.363.363 0 010-.525L6.487.3c.15-.15.375-.15.525 0 .15.15.15.375 0 .525L5.625 2.212 7.012 3.6c.15.15.15.375 0 .525-.056.075-.15.112-.262.112z" fill="#fff"></path>
+              </svg>
+              Restart
+            </div>
+          </div>
+        </div>
+      <!----></div><div id="anima-watermark" style="display: none;" class="idle"><!----><a id="anima-watermark-link" target="_blank" href="https://www.animaapp.com?utm_campaign=public-link-banner&amp;utm_medium=public-link-banner&amp;utm_source=animaapp.io" style="right: 20px; left: auto; padding: 6px;">
+        <svg width="20" height="20" viewBox="0 0 20 20" id="anima-logo-icon" fill="none" xmlns="http://www.w3.org/2000/svg" data-hotspot-id="hp-11">
+          <path d="M4.09293 3.00001H16.5327C16.5484 2.99976 16.5638 3.00351 16.5776 3.01092C16.5913 3.01832 16.603 3.02913 16.6114 3.04231C16.6198 3.0555 16.6247 3.07061 16.6256 3.08622C16.6265 3.10182 16.6233 3.1174 16.6165 3.13146C15.5441 5.29706 13.9276 7.14699 11.9253 8.50009C8.69117 10.6822 5.43436 10.9075 4.09389 10.9196C4.08165 10.9198 4.06949 10.9176 4.05811 10.9131C4.04672 10.9086 4.03636 10.9019 4.02761 10.8933C4.01887 10.8848 4.01192 10.8745 4.00718 10.8633C4.00244 10.852 4 10.8399 4 10.8276V3.09198C4 3.07982 4.00241 3.06778 4.00709 3.05656C4.01177 3.04534 4.01863 3.03516 4.02728 3.02661C4.03592 3.01805 4.04617 3.0113 4.05744 3.00673C4.06871 3.00217 4.08077 2.99988 4.09293 3.00001Z" fill="#FF6250"></path>
+          <path d="M6.77772 17.4446C8.31182 17.4446 9.55545 16.201 9.55545 14.6669C9.55545 13.1328 8.31182 11.8892 6.77772 11.8892C5.24363 11.8892 4 13.1328 4 14.6669C4 16.201 5.24363 17.4446 6.77772 17.4446Z" fill="#FFDF90"></path>
+          <path d="M12.4559 17.2799C11.6701 16.9799 11.2522 16.1151 11.5185 15.3496L13.6153 9.3656C13.884 8.60003 14.7387 8.22302 15.5245 8.52299C16.3103 8.82344 16.7282 9.68772 16.4619 10.4538L14.365 16.4377C14.0964 17.2033 13.2417 17.5808 12.4559 17.2799Z" fill="#3366FF"></path>
+        </svg>
+        <span class="text" style="display: none;">Made with Anima</span>
+      </a><!----></div><div id="hotspots_wrapper"><div class="hotspot" id="hp-0" style="width: 263px; height: 39px; top: 421px; left: 1262px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-1" style="width: 263px; height: 39px; top: 573.5px; left: 1262px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-2" style="width: 263px; height: 39px; top: 618px; left: 1262px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-3" style="width: 263px; height: 39px; top: 707px; left: 1262px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-4" style="width: 263px; height: 44px; top: 1025px; left: 1262px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-5" style="width: 263px; height: 66px; top: 1075px; left: 1262px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-6" style="width: 263px; height: 66px; top: 1147px; left: 1262px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-7" style="width: 263px; height: 66px; top: 1219px; left: 1262px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-8" style="width: 263px; height: 66px; top: 1291px; left: 1262px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-9" style="width: 114px; height: 22px; top: 18px; left: 374px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-10" style="width: 118px; height: 22px; top: 18px; left: 894px; z-index: -1; opacity: 0;"></div><div class="hotspot" id="hp-11" style="top: 0px; left: 0px; z-index: -1; opacity: 0;"></div></div><div id="t_preload_links"><link href="/game-community-hub-workshop" rel="prefetch"><link href="/game-community-hub-discussions" rel="prefetch"><link href="/library-home-detail-view-2" rel="prefetch"><link href="/forum" rel="prefetch"><link href="/library-home-grid-view-2" rel="prefetch"><link href="/library-home-ready-to-play-filter" rel="prefetch"><link href="/library-home-recent-filter" rel="prefetch"><link href="/library-home-grid-view-1" rel="prefetch"><link href="/library-home-filters" rel="prefetch"><link href="/games" rel="prefetch"><link href="/library-collections" rel="prefetch"><link href="/screenshots" rel="prefetch"><link href="/market" rel="prefetch"><link href="/profile-settings" rel="prefetch"><link href="/workshop" rel="prefetch"><link href="/discussions" rel="prefetch"></div></body></html>
