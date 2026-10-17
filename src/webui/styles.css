@@ -1,15 +1,17 @@
 :root {
-  --bg-deep: #0b0e13;
-  --xbox-Acrylic: rgba(20, 24, 31, 0.84);
-  --xbox-card: rgba(28, 34, 44, 0.86);
-  --xbox-card-solid: #1b212b;
+  --bg-deep: #070a0f;
+  --glass-dark: rgba(16, 21, 30, 0.76);
+  --glass-card: rgba(24, 31, 44, 0.82);
+  --glass-card-active: rgba(34, 44, 62, 0.94);
   --xbox-green: #107c10;
-  --xbox-green-bright: #22c55e;
-  --anvil-accent: #ff6537;
+  --xbox-neon: #22c55e;
+  --xbox-glow: rgba(34, 197, 94, 0.45);
+  --anvil-ember: #ff6537;
   --focus-ring: #ffffff;
-  --text-primary: #ffffff;
-  --text-secondary: #a1aab8;
-  --text-muted: #6c7686;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border-glass: rgba(255, 255, 255, 0.12);
+  --border-specular: rgba(255, 255, 255, 0.22);
 }
 
 * {
@@ -31,14 +33,14 @@ html, body {
 }
 
 /* =========================================
-   1. FULL-BLEED DYNAMIC XBOX BACKDROP
+   1. FULL-BLEED DYNAMIC HERO BACKDROP
    ========================================= */
 #backdrop-container {
   position: fixed;
   inset: 0;
   z-index: 0;
   overflow: hidden;
-  background: #0b0e13;
+  background: radial-gradient(circle at 75% 25%, #131d2e 0%, #070a0f 100%);
 }
 
 #backdrop-img {
@@ -48,12 +50,12 @@ html, body {
   height: 100%;
   object-fit: cover;
   object-position: center 15%;
-  transition: opacity 0.35s ease, filter 0.35s ease, transform 0.5s ease;
+  transition: opacity 0.35s ease, filter 0.35s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   opacity: 0.92;
 }
 
 body.subpage #backdrop-img {
-  filter: blur(36px) brightness(0.28) saturate(1.15);
+  filter: blur(38px) brightness(0.26) saturate(1.25);
   transform: scale(1.06);
 }
 
@@ -62,66 +64,66 @@ body.subpage #backdrop-img {
   inset: 0;
   background:
     linear-gradient(180deg,
-      rgba(8, 11, 16, 0.68) 0%,
-      rgba(8, 11, 16, 0.05) 18%,
-      rgba(8, 11, 16, 0.12) 45%,
-      rgba(8, 11, 16, 0.78) 70%,
-      rgba(8, 11, 16, 0.97) 90%,
-      #080b10 100%),
+      rgba(7, 10, 15, 0.72) 0%,
+      rgba(7, 10, 15, 0.08) 20%,
+      rgba(7, 10, 15, 0.18) 46%,
+      rgba(7, 10, 15, 0.84) 72%,
+      rgba(7, 10, 15, 0.98) 92%,
+      #070a0f 100%),
     linear-gradient(90deg,
-      rgba(8, 11, 16, 0.75) 0%,
-      rgba(8, 11, 16, 0.25) 40%,
-      transparent 75%);
+      rgba(7, 10, 15, 0.85) 0%,
+      rgba(7, 10, 15, 0.35) 45%,
+      transparent 80%);
 }
 
 /* =========================================
-   2. XBOX SERIES X FLOATING TOP HEADER
+   2. NEXT-GEN XBOX + FLUENT GLASS TOP HEADER
    ========================================= */
 #xbox-topbar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 74px;
+  height: 72px;
   z-index: 30;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 46px;
+  padding: 0 42px;
 }
 
-/* Top-Left: Gamerpic + Gamertag + Gamerscore (No Boxy Pill Border) */
+/* Top-Left Profile (Clean Floating + Specular Avatar) */
 .xbox-profile {
   display: flex;
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  padding: 6px 10px 6px 6px;
+  padding: 5px 12px 5px 5px;
   border-radius: 999px;
   border: 2px solid transparent;
-  transition: all 0.16s ease;
+  transition: all 0.18s ease;
 }
 
 .xbox-profile:hover,
 .xbox-profile.focused {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
   border-color: var(--focus-ring);
 }
 
 .xbox-avatar {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #107c10 0%, #0a4d0a 100%);
-  border: 2px solid rgba(255, 255, 255, 0.85);
+  background: linear-gradient(135deg, #22c55e 0%, #107c10 100%);
+  border: 2px solid rgba(255, 255, 255, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 17px;
+  font-size: 16px;
   color: #fff;
   position: relative;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 16px rgba(16, 124, 16, 0.55);
 }
 
 .xbox-avatar .online-dot {
@@ -131,122 +133,130 @@ body.subpage #backdrop-img {
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background: #22c55e;
-  border: 2px solid #0b0e13;
+  background: #4ade80;
+  border: 2px solid #070a0f;
 }
 
 .xbox-profile-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .xbox-gamertag {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
   color: #ffffff;
-  letter-spacing: 0.01em;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
 .xbox-gamerscore-row {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #d1d5db;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.75);
+  font-size: 11px;
+  font-weight: 700;
+  color: #cbd5e1;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
 }
 
 .g-icon {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: #ffffff;
-  color: #0b0e13;
-  font-size: 10px;
+  color: #070a0f;
+  font-size: 9px;
   font-weight: 900;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Top-Center: Iconic Xbox Series X Floating Circular Nav Icons */
+/* Top-Center: Modern Frosted Acrylic Pill Dock with LB / RB Badges */
 .xbox-top-nav {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 6px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(14, 19, 28, 0.72);
+  border: 1px solid var(--border-glass);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.top-nav-circle {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: rgba(20, 25, 34, 0.68);
-  backdrop-filter: blur(16px);
-  border: 2.5px solid transparent;
+.bumper-key {
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 10px;
+  font-weight: 800;
+  color: #cbd5e1;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.nav-pill {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: #d1d5db;
+  gap: 7px;
+  padding: 7px 15px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a3b8;
   cursor: pointer;
-  transition: all 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+  border: 2px solid transparent;
+  transition: all 0.18s cubic-bezier(0.22, 1, 0.36, 1);
   position: relative;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 }
 
-.top-nav-circle svg {
-  width: 19px;
-  height: 19px;
+.nav-pill svg {
+  width: 16px;
+  height: 16px;
   fill: currentColor;
 }
 
-.top-nav-circle.active {
-  background: rgba(255, 255, 255, 0.18);
+.nav-pill.active {
+  background: rgba(255, 255, 255, 0.16);
   color: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
-.top-nav-circle.focused {
-  transform: scale(1.14);
-  background: #ffffff;
-  color: #0b0e13;
-  border-color: #ffffff;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35), 0 8px 20px rgba(0, 0, 0, 0.65);
-}
-
-.top-nav-label {
+.nav-pill.active::after {
+  content: "";
   position: absolute;
-  bottom: -22px;
-  white-space: nowrap;
-  font-size: 11px;
-  font-weight: 700;
-  color: #ffffff;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
-  opacity: 0;
-  transform: translateY(-3px);
-  transition: all 0.15s ease;
-  pointer-events: none;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 3px;
+  border-radius: 999px;
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
 }
 
-.top-nav-circle.focused .top-nav-label,
-.top-nav-circle.active .top-nav-label {
-  opacity: 1;
-  transform: translateY(0);
+.nav-pill.focused {
+  background: #ffffff;
+  color: #070a0f;
+  border-color: #ffffff;
+  transform: scale(1.06);
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.55);
 }
 
-/* Top-Right: Clean Floating Console Status (Controller, Wi-Fi, Battery, Clock) */
+/* Top-Right Status Cluster */
 .xbox-status-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 15px;
   color: #ffffff;
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.8));
 }
 
 .status-svg {
-  width: 19px;
-  height: 19px;
+  width: 18px;
+  height: 18px;
   fill: currentColor;
   opacity: 0.92;
 }
@@ -255,7 +265,7 @@ body.subpage #backdrop-img {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -285,13 +295,12 @@ body.subpage #backdrop-img {
   height: 100%;
   background: #22c55e;
   border-radius: 1px;
-  width: 85%;
+  width: 90%;
 }
 
 .xbox-clock {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0.01em;
   white-space: nowrap;
 }
 
@@ -300,8 +309,8 @@ body.subpage #backdrop-img {
    ========================================= */
 #viewport {
   position: fixed;
-  top: 74px;
-  bottom: 40px;
+  top: 72px;
+  bottom: 38px;
   left: 0;
   right: 0;
   z-index: 10;
@@ -310,7 +319,7 @@ body.subpage #backdrop-img {
 .page {
   position: absolute;
   inset: 0;
-  padding: 10px 46px 12px 46px;
+  padding: 8px 42px 10px 42px;
   display: none;
 }
 
@@ -319,75 +328,81 @@ body.subpage #backdrop-img {
 }
 
 /* =========================================
-   PAGE 0: XBOX SERIES X HOME DASHBOARD
+   PAGE 0: MODERN XBOX SERIES X HOME DASHBOARD
    ========================================= */
 #page-home {
   flex-direction: column;
   justify-content: flex-end;
-  gap: 14px;
+  gap: 12px;
 }
 
-/* Middle-Left Game Logo & Meta (leaves upper screen open for Hero Art) */
 .xbox-hero-callout {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 8px;
-  max-width: 560px;
+  gap: 10px;
+  max-width: 620px;
   margin-bottom: 2px;
-  pointer-events: none;
 }
 
 .xbox-hero-logo {
-  max-width: 320px;
-  max-height: 92px;
+  max-width: 330px;
+  max-height: 94px;
   width: auto;
   height: auto;
   object-fit: contain;
   object-position: left bottom;
-  filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.92));
+  filter: drop-shadow(0 10px 26px rgba(0, 0, 0, 0.92));
 }
 
 .xbox-hero-title {
-  font-size: 36px;
+  font-size: 38px;
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.05;
-  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.95);
+  text-shadow: 0 6px 22px rgba(0, 0, 0, 0.95);
 }
 
 .xbox-hero-meta {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: #e2e8f0;
-  text-transform: uppercase;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+  flex-wrap: wrap;
 }
 
 .xbox-tag {
-  padding: 3px 8px;
-  border-radius: 4px;
-  background: rgba(15, 20, 28, 0.78);
-  backdrop-filter: blur(8px);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: rgba(15, 21, 30, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #e2e8f0;
 }
 
 .xbox-tag.green {
-  background: #107c10;
-  color: #fff;
+  background: linear-gradient(135deg, #15803d 0%, #107c10 100%);
+  border-color: rgba(74, 222, 128, 0.45);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(16, 124, 16, 0.4);
+}
+
+.xbox-tag.ember {
+  background: linear-gradient(135deg, #ff6537 0%, #d946ef 100%);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
 }
 
 /* Main Xbox Lower Tile Row — Baseline Aligned */
 .xbox-main-shelf {
   display: flex;
   align-items: flex-end;
-  gap: 14px;
+  gap: 15px;
   overflow-x: auto;
-  padding: 12px 8px 8px 6px;
-  height: 266px;
+  padding: 14px 10px 8px 8px;
+  height: 270px;
   scroll-behavior: smooth;
 }
 
@@ -395,22 +410,18 @@ body.subpage #backdrop-img {
   display: none;
 }
 
-/* Unfocused Game Tile: 100% Opaque, Compact, Crisp */
+/* Unfocused Game Tile: Modern 14px Squircle, Specular Edge, 100% Opaque */
 .xbox-tile {
   position: relative;
-  flex: 0 0 144px;
-  height: 186px;
-  border-radius: 10px;
-  background: var(--xbox-card-solid);
+  flex: 0 0 146px;
+  height: 190px;
+  border-radius: 14px;
+  background: #161d28;
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.65);
-  transition: width 0.2s cubic-bezier(0.22, 1, 0.36, 1),
-              height 0.2s cubic-bezier(0.22, 1, 0.36, 1),
-              flex-basis 0.2s cubic-bezier(0.22, 1, 0.36, 1),
-              transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
-              box-shadow 0.2s ease;
-  border: 3px solid transparent;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  border: 2.5px solid rgba(255, 255, 255, 0.08);
 }
 
 .xbox-tile img.tile-art {
@@ -420,12 +431,12 @@ body.subpage #backdrop-img {
   display: block;
 }
 
-/* Focused Game Tile: Expands Taller like Xbox Series X Active Tile! */
+/* Focused Game Tile: Expands Taller with Neon/White Halo! */
 .xbox-tile.focused {
-  flex: 0 0 184px;
-  height: 244px;
-  border-color: var(--focus-ring);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.28), 0 18px 40px rgba(0, 0, 0, 0.85);
+  flex: 0 0 188px;
+  height: 248px;
+  border-color: #ffffff;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 28px var(--xbox-glow), 0 20px 44px rgba(0, 0, 0, 0.9);
   z-index: 5;
 }
 
@@ -434,9 +445,9 @@ body.subpage #backdrop-img {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 38px;
-  background: linear-gradient(180deg, rgba(14, 18, 24, 0.88) 0%, #0e1218 100%);
-  backdrop-filter: blur(12px);
+  height: 40px;
+  background: linear-gradient(180deg, rgba(12, 16, 23, 0.85) 0%, rgba(8, 11, 16, 0.98) 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -453,7 +464,7 @@ body.subpage #backdrop-img {
 
 .tile-play-text {
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -461,64 +472,65 @@ body.subpage #backdrop-img {
 }
 
 .a-btn-mini {
-  width: 18px;
-  height: 18px;
+  width: 19px;
+  height: 19px;
   border-radius: 50%;
-  background: #ffffff;
-  color: #0b0e13;
+  background: #22c55e;
+  color: #070a0f;
   font-size: 10px;
   font-weight: 900;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
 }
 
 .disc-badge {
   position: absolute;
   top: 8px;
   right: 8px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: rgba(11, 14, 19, 0.82);
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: rgba(8, 11, 16, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   font-size: 9px;
   font-weight: 800;
-  color: #e2e8f0;
-  letter-spacing: 0.04em;
+  color: #f1f5f9;
+  letter-spacing: 0.05em;
 }
 
-/* Bottom Pinned Xbox Quick-Action Row ("My games & apps", "Cartridge Builder", etc.) */
+/* Bottom Pinned Xbox Quick-Action Row */
 .xbox-quick-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 14px;
-  height: 76px;
+  height: 74px;
 }
 
 .xbox-quick-card {
-  border-radius: 10px;
-  background: rgba(24, 30, 40, 0.86);
-  backdrop-filter: blur(20px);
-  padding: 0 18px;
+  border-radius: 14px;
+  background: var(--glass-card);
+  padding: 0 16px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 13px;
   cursor: pointer;
-  border: 3px solid transparent;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-  transition: all 0.16s ease;
+  border: 2.5px solid var(--border-glass);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.18s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .xbox-quick-card.focused {
-  border-color: var(--focus-ring);
-  background: rgba(36, 45, 60, 0.95);
-  transform: translateY(-2px);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25), 0 12px 28px rgba(0, 0, 0, 0.75);
+  border-color: #ffffff;
+  background: var(--glass-card-active);
+  transform: translateY(-3px);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3), 0 0 22px var(--xbox-glow), 0 14px 30px rgba(0, 0, 0, 0.8);
 }
 
 .quick-icon-circle {
   width: 42px;
   height: 42px;
-  border-radius: 10px;
+  border-radius: 11px;
   background: rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
@@ -528,11 +540,13 @@ body.subpage #backdrop-img {
 }
 
 .quick-icon-circle.green {
-  background: #107c10;
+  background: linear-gradient(135deg, #22c55e 0%, #107c10 100%);
+  box-shadow: 0 4px 12px rgba(16, 124, 16, 0.45);
 }
 
 .quick-icon-circle.ember {
-  background: var(--anvil-accent);
+  background: linear-gradient(135deg, #ff7449 0%, #e04a1f 100%);
+  box-shadow: 0 4px 12px rgba(255, 101, 55, 0.45);
 }
 
 .quick-text {
@@ -543,8 +557,8 @@ body.subpage #backdrop-img {
 }
 
 .quick-title {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 800;
   color: #ffffff;
   white-space: nowrap;
 }
@@ -557,20 +571,23 @@ body.subpage #backdrop-img {
 }
 
 /* =========================================
-   PAGE 1: XBOX "MY GAMES & APPS" LIBRARY
+   PAGE 1: MY GAMES & APPS (FULL LIBRARY)
    ========================================= */
 #page-library {
-  gap: 28px;
-  padding-top: 14px;
+  gap: 26px;
+  padding-top: 12px;
 }
 
 .xbox-lib-sidebar {
-  width: 240px;
+  width: 245px;
   height: 100%;
+  background: var(--glass-dark);
+  border: 1px solid var(--border-glass);
+  border-radius: 16px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-right: 12px;
 }
 
 .xbox-lib-nav {
@@ -580,35 +597,42 @@ body.subpage #backdrop-img {
 }
 
 .xbox-lib-header {
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 800;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   letter-spacing: -0.01em;
 }
 
 .xbox-side-item {
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
+  padding: 11px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
   color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 2.5px solid transparent;
+  border: 2px solid transparent;
+  transition: all 0.15s ease;
 }
 
 .xbox-side-item.active {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
   color: #ffffff;
-  font-weight: 700;
+}
+
+.xbox-side-item.focused {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
 }
 
 .xbox-storage-box {
-  background: rgba(22, 28, 38, 0.85);
-  border-radius: 10px;
-  padding: 14px 16px;
+  background: rgba(10, 14, 20, 0.65);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -636,7 +660,7 @@ body.subpage #backdrop-img {
   flex: 1;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  grid-auto-rows: 246px;
+  grid-auto-rows: 242px;
   gap: 16px;
   overflow-y: auto;
   padding: 10px 12px 24px 8px;
@@ -652,13 +676,13 @@ body.subpage #backdrop-img {
 
 .lib-card {
   position: relative;
-  border-radius: 8px;
-  background: var(--xbox-card-solid);
+  border-radius: 12px;
+  background: #161d28;
   overflow: hidden;
   cursor: pointer;
-  border: 3px solid transparent;
+  border: 2.5px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
-  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+  transition: all 0.18s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .lib-card img {
@@ -669,9 +693,9 @@ body.subpage #backdrop-img {
 }
 
 .lib-card.focused {
-  transform: scale(1.04);
-  border-color: var(--focus-ring);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.28), 0 14px 32px rgba(0, 0, 0, 0.8);
+  transform: scale(1.05);
+  border-color: #ffffff;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 22px var(--xbox-glow), 0 14px 32px rgba(0, 0, 0, 0.85);
   z-index: 4;
 }
 
@@ -681,7 +705,7 @@ body.subpage #backdrop-img {
   right: 0;
   bottom: 0;
   padding: 8px 10px;
-  background: rgba(12, 16, 22, 0.92);
+  background: rgba(10, 14, 20, 0.94);
   font-size: 12px;
   font-weight: 700;
   color: #ffffff;
@@ -697,35 +721,40 @@ body.subpage #backdrop-img {
 }
 
 /* =========================================
-   PAGE 2: XBOX STORE
+   PAGE 2 & PAGE 3: STORE & CARTRIDGES
    ========================================= */
-#page-store {
+#page-store,
+#page-cartridges {
   flex-direction: column;
-  gap: 18px;
-  padding-top: 14px;
+  gap: 16px;
+  padding-top: 12px;
 }
 
 /* =========================================
-   PAGE 3: XBOX SETTINGS (Clean Slate Tiles, Single Focus Ring)
+   PAGE 4: SETTINGS
    ========================================= */
 #page-settings {
-  gap: 28px;
-  padding-top: 14px;
+  gap: 26px;
+  padding-top: 12px;
 }
 
 .xbox-settings-sidebar {
-  width: 260px;
+  width: 265px;
   height: 100%;
+  background: var(--glass-dark);
+  border: 1px solid var(--border-glass);
+  border-radius: 16px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
 .xbox-settings-cat {
-  padding: 14px 18px;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 600;
+  padding: 13px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
   color: var(--text-secondary);
   cursor: pointer;
   border: 2.5px solid transparent;
@@ -735,13 +764,13 @@ body.subpage #backdrop-img {
 .xbox-settings-cat.active {
   background: rgba(255, 255, 255, 0.12);
   color: #ffffff;
-  font-weight: 700;
 }
 
 .xbox-settings-cat.focused {
-  border-color: var(--focus-ring);
-  background: rgba(255, 255, 255, 0.18);
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.2);
   color: #ffffff;
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.25);
 }
 
 .xbox-settings-content {
@@ -750,28 +779,27 @@ body.subpage #backdrop-img {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 4px 8px 20px 4px;
+  gap: 14px;
+  padding: 2px 8px 20px 4px;
 }
 
 .xbox-slate-card {
-  background: rgba(26, 32, 42, 0.9);
-  backdrop-filter: blur(20px);
-  border-radius: 10px;
+  background: var(--glass-card);
+  border-radius: 14px;
   padding: 18px 22px;
-  border: 3px solid transparent;
+  border: 2.5px solid var(--border-glass);
   display: flex;
   flex-direction: column;
   gap: 10px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.16s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .xbox-slate-card.focused {
-  border-color: var(--focus-ring);
-  background: rgba(36, 44, 58, 0.96);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25), 0 12px 28px rgba(0, 0, 0, 0.7);
+  border-color: #ffffff;
+  background: var(--glass-card-active);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.28), 0 0 24px var(--xbox-glow), 0 14px 32px rgba(0, 0, 0, 0.75);
 }
 
 .slate-row {
@@ -783,7 +811,7 @@ body.subpage #backdrop-img {
 
 .slate-title {
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 800;
   color: #ffffff;
 }
 
@@ -791,6 +819,7 @@ body.subpage #backdrop-img {
   font-size: 12px;
   color: var(--text-secondary);
   margin-top: 3px;
+  line-height: 1.4;
 }
 
 .xbox-btn {
@@ -799,28 +828,29 @@ body.subpage #backdrop-img {
   gap: 8px;
   height: 40px;
   padding: 0 18px;
-  border-radius: 6px;
+  border-radius: 999px;
   background: #ffffff;
-  color: #0b0e13;
+  color: #070a0f;
   font-size: 13px;
   font-weight: 800;
   border: none;
   cursor: pointer;
   flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.25);
 }
 
 .progress-track {
   width: 100%;
   height: 8px;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.55);
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
   border-radius: 999px;
-  background: #107c10;
+  background: linear-gradient(90deg, #107c10 0%, #22c55e 100%);
 }
 
 .pad-matrix {
@@ -832,27 +862,32 @@ body.subpage #backdrop-img {
 
 .pad-key {
   padding: 10px 6px;
-  border-radius: 6px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   text-align: center;
   font-size: 11px;
   font-weight: 800;
   color: var(--text-secondary);
+  transition: all 0.12s ease;
 }
 
 .pad-key.pressed {
-  background: #ffffff;
-  color: #0b0e13;
+  background: #22c55e;
+  border-color: #ffffff;
+  color: #070a0f;
+  box-shadow: 0 0 14px rgba(34, 197, 94, 0.7);
+  transform: scale(1.05);
 }
 
 /* =========================================
-   4. XBOX GUIDE SLIDE-OUT BLADE (Left Acrylic Drawer)
+   4. XBOX GUIDE SLIDE-OUT BLADE
    ========================================= */
 #guide-backdrop {
   position: fixed;
   inset: 0;
   z-index: 90;
-  background: rgba(4, 6, 10, 0.55);
+  background: rgba(4, 6, 10, 0.6);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease;
@@ -870,11 +905,10 @@ body.subpage #backdrop-img {
   left: 16px;
   width: 390px;
   z-index: 95;
-  border-radius: 16px;
-  background: rgba(20, 25, 33, 0.94);
-  backdrop-filter: blur(32px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 20px 0 60px rgba(0, 0, 0, 0.85);
+  border-radius: 18px;
+  background: rgba(16, 21, 30, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 20px 0 60px rgba(0, 0, 0, 0.88);
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -898,7 +932,7 @@ body.subpage #backdrop-img {
 .guide-tabs {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   color: #ffffff;
 }
 
@@ -906,9 +940,10 @@ body.subpage #backdrop-img {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px 10px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.05);
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .guide-menu-list {
@@ -924,7 +959,7 @@ body.subpage #backdrop-img {
   align-items: center;
   justify-content: space-between;
   padding: 12px 14px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
   color: #e2e8f0;
@@ -934,8 +969,8 @@ body.subpage #backdrop-img {
 }
 
 .guide-item.selected {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: var(--focus-ring);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #ffffff;
   color: #ffffff;
   font-weight: 700;
 }
@@ -964,8 +999,8 @@ body.subpage #backdrop-img {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 22px;
-  padding: 0 46px;
+  gap: 20px;
+  padding: 0 42px;
 }
 
 .hint-item {
@@ -974,7 +1009,7 @@ body.subpage #backdrop-img {
   gap: 7px;
   font-size: 12px;
   font-weight: 600;
-  color: #d1d5db;
+  color: #cbd5e1;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
 }
 
@@ -982,8 +1017,8 @@ body.subpage #backdrop-img {
   width: 19px;
   height: 19px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92);
-  color: #0b0e13;
+  background: #22c55e;
+  color: #070a0f;
   font-size: 10px;
   font-weight: 900;
   display: inline-flex;
@@ -992,15 +1027,15 @@ body.subpage #backdrop-img {
 }
 
 .btn-glyph.dark {
-  background: rgba(30, 38, 50, 0.9);
+  background: rgba(24, 31, 44, 0.92);
   border: 1.5px solid rgba(255, 255, 255, 0.5);
   color: #ffffff;
 }
 
 .pill-glyph {
   padding: 2px 7px;
-  border-radius: 4px;
-  background: rgba(30, 38, 50, 0.9);
+  border-radius: 5px;
+  background: rgba(24, 31, 44, 0.92);
   border: 1.5px solid rgba(255, 255, 255, 0.45);
   font-size: 10px;
   font-weight: 800;
@@ -1008,14 +1043,13 @@ body.subpage #backdrop-img {
 }
 
 /* =========================================
-   6. CARTRIDGE BUILDER & POWER MODALS
+   6. MODALS
    ========================================= */
 .modal-backdrop {
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: rgba(5, 7, 11, 0.8);
-  backdrop-filter: blur(18px);
+  background: rgba(5, 7, 11, 0.82);
   display: none;
   align-items: center;
   justify-content: center;
@@ -1027,10 +1061,10 @@ body.subpage #backdrop-img {
 
 .modal-card {
   width: 660px;
-  border-radius: 14px;
-  background: #161b24;
+  border-radius: 18px;
+  background: #131924;
   border: 2px solid rgba(255, 255, 255, 0.22);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.92);
   padding: 28px;
   display: flex;
   flex-direction: column;
@@ -1042,14 +1076,14 @@ body.subpage #backdrop-img {
   align-items: center;
   justify-content: space-between;
   padding: 14px 18px;
-  border-radius: 8px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.05);
-  border: 3px solid transparent;
+  border: 2.5px solid transparent;
   cursor: pointer;
   transition: all 0.14s ease;
 }
 
 .modal-opt.selected {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: var(--focus-ring);
+  background: rgba(255, 255, 255, 0.14);
+  border-color: #ffffff;
 }

@@ -42,47 +42,31 @@ fi
 # Disable Xalia accessibility helper to avoid headless crash
 export PROTON_USE_XALIA="${PROTON_USE_XALIA:-0}"
 
-# Allow Wine/Proton to access gamepads via SDL and udev/hidraw
+# Route controller strictly through our virtual Microsoft X-Box 360 pad (045e:028e) as Player 1
 export PROTON_NO_STEAMINPUT="1"
-unset PROTON_DISABLE_HIDRAW || true
-unset WINE_DISABLE_HIDRAW || true
-unset SDL_GAMECONTROLLER_IGNORE_DEVICES || true
-unset SDL_GAMECONTROLLER_IGNORE_DEVICES_EXCEPT || true
-# Route controller through SDL2 with accurate Steam Deck mappings
-deck_guid="0300f617de2800000512000000036800"
-deck_guid_alt="03000000de2800000512000011010000"
-deck_guid_std="03000000de2800000512000000036800"
-deck_guid_x="0300000028de00001205000001100000"
+export PROTON_DISABLE_HIDRAW="1"
+export WINE_DISABLE_HIDRAW="1"
+export SDL_GAMECONTROLLER_IGNORE_DEVICES="0x28de/0x1205,0x28de/0x1142"
+export SDL_GAMECONTROLLER_ALLOW_STEAM_VIRTUAL_GAMEPAD="1"
+export SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS="1"
+unset SDL_GAMECONTROLLERCONFIG || true
+unset SDL_GAMEPADCONFIG || true
 
-deck_map="${deck_guid},Steam Deck Controller,a:b3,b:b4,x:b5,y:b6,back:b11,start:b12,guide:b13,leftstick:b14,rightstick:b15,leftshoulder:b7,rightshoulder:b8,lefttrigger:b9,righttrigger:b10,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,leftx:a0,lefty:a1,rightx:a2,righty:a3,platform:Linux,"
-deck_map_alt="${deck_guid_alt},Steam Deck Controller,a:b3,b:b4,x:b5,y:b6,back:b11,start:b12,guide:b13,leftstick:b14,rightstick:b15,leftshoulder:b7,rightshoulder:b8,lefttrigger:b9,righttrigger:b10,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,leftx:a0,lefty:a1,rightx:a2,righty:a3,platform:Linux,"
-deck_map_std="${deck_guid_std},Steam Deck Controller,a:b3,b:b4,x:b5,y:b6,back:b11,start:b12,guide:b13,leftstick:b14,rightstick:b15,leftshoulder:b7,rightshoulder:b8,lefttrigger:b9,righttrigger:b10,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,leftx:a0,lefty:a1,rightx:a2,righty:a3,platform:Linux,"
-deck_map_x="${deck_guid_x},Steam Deck Controller,a:b3,b:b4,x:b5,y:b6,back:b11,start:b12,guide:b13,leftstick:b14,rightstick:b15,leftshoulder:b7,rightshoulder:b8,lefttrigger:b9,righttrigger:b10,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,leftx:a0,lefty:a1,rightx:a2,righty:a3,platform:Linux,"
-
-all_deck_maps="${deck_map}${deck_map_alt}${deck_map_std}${deck_map_x}"
-if [[ -n "${SDL_GAMECONTROLLERCONFIG:-}" ]]; then
-    export SDL_GAMECONTROLLERCONFIG="${all_deck_maps}${SDL_GAMECONTROLLERCONFIG}"
-else
-    export SDL_GAMECONTROLLERCONFIG="${all_deck_maps}"
-fi
-export SDL_GAMEPADCONFIG="$SDL_GAMECONTROLLERCONFIG"
-export SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS=1
-
-# Ensure winebus registry flags in prefix: Enable SDL=1 and remove DisableHidraw
+# Ensure winebus registry flags in prefix: Enable SDL=1 and DisableHidraw=1
+# so Wine always binds 'Microsoft X-Box 360 pad' (evdev/SDL) as XInput Slot 0 (Player 1)
 if [[ -f "$prefix_dir/pfx/system.reg" ]]; then
     python3 -c "
 import re
-path = '$prefix_dir/pfx/system.reg'
+path = '''$prefix_dir/pfx/system.reg'''
 try:
     with open(path, 'r', encoding='utf-8', errors='ignore') as f:
         text = f.read()
     orig = text
-    text = re.sub(r'"DisableHidraw"=dword:00000001\r?\n?', '', text)
-    text = re.sub(r'"Enable SDL"=dword:00000000', '"Enable SDL"=dword:00000001', text)
-    if '"Enable SDL"=dword:00000001' not in text:
-        pattern = re.compile(r'(\[System.*Services.*winebus\])')
-        if pattern.search(text):
-            text = pattern.sub(r'\1\n"Enable SDL"=dword:00000001', text, count=1)
+    text = re.sub(r'\"DisableHidraw\"=dword:[0-9a-fA-F]+\r?\n?', '', text)
+    text = re.sub(r'\"Enable SDL\"=dword:[0-9a-fA-F]+\r?\n?', '', text)
+    pattern = re.compile(r'(\[System.*Services.*winebus\])')
+    if pattern.search(text):
+        text = pattern.sub(r'\1\n\"Enable SDL\"=dword:00000001\n\"DisableHidraw\"=dword:00000001', text, count=1)
     if text != orig:
         with open(path, 'w', encoding='utf-8') as f:
             f.write(text)
@@ -90,10 +74,8 @@ except Exception:
     pass
 " 2>/dev/null || true
 fi
-# Search order for Proton binary:
-# 1. System GE-Proton / custom Proton installed in /opt/proton
-# 2. Steam compatibilitytools.d
-# 3. Steam official Proton
+
+# Search order for Proton binary
 proton_bin=""
 for candidate in \
     $(find /opt/proton -maxdepth 2 -type f -name proton 2>/dev/null | sort -V | tail -n 1) \
@@ -116,7 +98,7 @@ fi
 export STEAM_COMPAT_DATA_PATH="$prefix_dir"
 export STEAM_COMPAT_CLIENT_INSTALL_PATH="${steam_dir}"
 
-# Separate environment variable assignments (like WINEDLLOVERRIDES=...) from exe arguments (like -dx11)
+# Separate environment variable assignments from exe arguments
 env_vars=()
 game_args=()
 
@@ -131,9 +113,14 @@ for opt in "${raw_options[@]}"; do
     done
 done
 
-# Apply env overrides
 for ev in "${env_vars[@]}"; do
     export "$ev"
 done
+
+# Always change working directory to game executable directory (Cartridge preservation)
+game_dir="$(dirname "$exe_path")"
+if [[ -d "$game_dir" ]]; then
+    cd "$game_dir"
+fi
 
 exec "$proton_bin" run "$exe_path" "${game_args[@]}"

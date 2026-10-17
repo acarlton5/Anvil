@@ -1,91 +1,157 @@
 #!/usr/bin/env python3
+"""
+Anvil Xbox 360 Controller Bridge (Zero-Drift + Exclusive Hardware Grab)
+- Grabs Steam Deck Lizard Mode mouse/keyboard (event5, event6) and raw gamepad (event7)
+  so games and UI never receive stray keyboard/mouse inputs or unmapped raw HID events.
+- Hides raw Valve hidraw/js/event nodes from non-root processes so Wine/Proton/SDL2
+  always bind the virtual 'Microsoft X-Box 360 pad' (045e:028e) as Player 1 (Slot 0).
+"""
 import os
 import sys
+import glob
 import time
 import signal
+import subprocess
 import evdev
-from evdev import UInput, ecodes, AbsInfo
+from evdev import UInput, AbsInfo, ecodes
 
-def find_steam_deck_event():
-    input_dir = "/sys/class/input"
-    for ev in sorted(os.listdir(input_dir)):
-        if not ev.startswith("event"):
+
+def read_sys_file(path):
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return f.read().strip().lower()
+    except OSError:
+        return ""
+
+
+def find_steam_deck_devices():
+    """Return (gamepad_event_path, lizard_event_paths_to_grab, raw_nodes_to_hide)"""
+    gamepad_path = None
+    lizard_paths = []
+    hide_nodes = []
+
+    for sys_ev in sorted(glob.glob("/sys/class/input/event*")):
+        ev_name = os.path.basename(sys_ev)
+        dev_path = f"/dev/input/{ev_name}"
+        if not os.path.exists(dev_path):
             continue
-        dev_name_path = os.path.join(input_dir, ev, "device", "name")
-        phys_path = os.path.join(input_dir, ev, "device", "phys")
+        vendor = read_sys_file(f"{sys_ev}/device/id/vendor")
+        product = read_sys_file(f"{sys_ev}/device/id/product")
+        name = read_sys_file(f"{sys_ev}/device/name")
+        phys = read_sys_file(f"{sys_ev}/device/phys")
+
+        if vendor == "28de":
+            hide_nodes.append(dev_path)
+            # Also find matching js* node under this input device
+            for js_dir in glob.glob(f"{sys_ev}/device/js*"):
+                js_dev = f"/dev/input/{os.path.basename(js_dir)}"
+                if os.path.exists(js_dev):
+                    hide_nodes.append(js_dev)
+
+            if "motion" in name:
+                continue
+            elif "input2" in phys or product == "1205" and "steam deck" in name:
+                gamepad_path = dev_path
+            else:
+                lizard_paths.append(dev_path)
+
+    # Also hide Valve hidraw nodes (28de) from non-root user so Wine/SDL2 never open raw HID
+    for sys_hid in sorted(glob.glob("/sys/class/hidraw/hidraw*")):
+        uevent = read_sys_file(f"{sys_hid}/device/uevent")
+        if "28de" in uevent:
+            hid_dev = f"/dev/{os.path.basename(sys_hid)}"
+            if os.path.exists(hid_dev):
+                hide_nodes.append(hid_dev)
+
+    return gamepad_path, lizard_paths, hide_nodes
+
+
+def lock_down_raw_nodes(hide_nodes, virtual_event_path):
+    """Ensure only root can read raw Valve nodes, while virtual Xbox 360 pad is 0666."""
+    for node in hide_nodes:
         try:
-            with open(dev_name_path) as f:
-                name = f.read().strip()
-            phys = ""
-            if os.path.exists(phys_path):
-                with open(phys_path) as f:
-                    phys = f.read().strip()
-            if "Steam Deck" in name and "Motion" not in name:
-                dev_path = os.path.join("/dev/input", ev)
-                if os.path.exists(dev_path):
-                    return dev_path
-            elif "28de" in phys and "input2" in phys:
-                dev_path = os.path.join("/dev/input", ev)
-                if os.path.exists(dev_path):
-                    return dev_path
+            os.chmod(node, 0o600)
         except OSError:
             pass
-    return None
+    if hide_nodes:
+        try:
+            subprocess.run(["setfacl", "-b", *hide_nodes], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except Exception:
+            pass
+
+    # Make sure virtual Xbox 360 pad event* and js* are 0666
+    if virtual_event_path and os.path.exists(virtual_event_path):
+        try:
+            os.chmod(virtual_event_path, 0o666)
+            ev_name = os.path.basename(virtual_event_path)
+            for js_dir in glob.glob(f"/sys/class/input/{ev_name}/device/js*"):
+                js_dev = f"/dev/input/{os.path.basename(js_dir)}"
+                if os.path.exists(js_dev):
+                    os.chmod(js_dev, 0o666)
+        except OSError:
+            pass
+
 
 def apply_deadzone(val, deadzone=4000):
     if abs(val) < deadzone:
         return 0
     return val
 
-def main():
-    print("[Anvil Xbox Bridge] Starting virtual Xbox 360 controller daemon...")
 
-    # Capabilities matching official Microsoft Xbox 360 controller
+def main():
+    print("[Anvil Xbox Bridge] Starting virtual Xbox 360 controller daemon (Player 1 lock)...")
+
     cap = {
         ecodes.EV_KEY: [
-            ecodes.BTN_SOUTH,  # A (304)
-            ecodes.BTN_EAST,   # B (305)
-            ecodes.BTN_NORTH,  # X (307)
-            ecodes.BTN_WEST,   # Y (308)
-            ecodes.BTN_TL,     # LB (310)
-            ecodes.BTN_TR,     # RB (311)
-            ecodes.BTN_SELECT, # Back (314)
-            ecodes.BTN_START,  # Start (315)
-            ecodes.BTN_MODE,   # Guide (316)
-            ecodes.BTN_THUMBL, # L3 (317)
-            ecodes.BTN_THUMBR, # R3 (318)
+            ecodes.BTN_SOUTH,   # A (304)
+            ecodes.BTN_EAST,    # B (305)
+            ecodes.BTN_NORTH,   # X (307)
+            ecodes.BTN_WEST,    # Y (308)
+            ecodes.BTN_TL,      # LB (310)
+            ecodes.BTN_TR,      # RB (311)
+            ecodes.BTN_SELECT,  # Back/View (314)
+            ecodes.BTN_START,   # Start/Menu (315)
+            ecodes.BTN_MODE,    # Guide/STEAM (316)
+            ecodes.BTN_THUMBL,  # L3 (317)
+            ecodes.BTN_THUMBR,  # R3 (318)
         ],
         ecodes.EV_ABS: [
             (ecodes.ABS_X, AbsInfo(0, -32768, 32767, 16, 128, 0)),
             (ecodes.ABS_Y, AbsInfo(0, -32768, 32767, 16, 128, 0)),
             (ecodes.ABS_RX, AbsInfo(0, -32768, 32767, 16, 128, 0)),
             (ecodes.ABS_RY, AbsInfo(0, -32768, 32767, 16, 128, 0)),
-            (ecodes.ABS_Z, AbsInfo(0, 0, 255, 0, 0, 0)),   # LT (0-255)
-            (ecodes.ABS_RZ, AbsInfo(0, 0, 255, 0, 0, 0)),  # RT (0-255)
-            (ecodes.ABS_HAT0X, AbsInfo(0, -1, 1, 0, 0, 0)), # D-pad X
-            (ecodes.ABS_HAT0Y, AbsInfo(0, -1, 1, 0, 0, 0)), # D-pad Y
+            (ecodes.ABS_Z, AbsInfo(0, 0, 255, 0, 0, 0)),     # LT (0-255)
+            (ecodes.ABS_RZ, AbsInfo(0, 0, 255, 0, 0, 0)),    # RT (0-255)
+            (ecodes.ABS_HAT0X, AbsInfo(0, -1, 1, 0, 0, 0)),  # D-pad X
+            (ecodes.ABS_HAT0Y, AbsInfo(0, -1, 1, 0, 0, 0)),  # D-pad Y
         ]
     }
 
-    ui = UInput(cap, name="Microsoft X-Box 360 pad", vendor=0x045e, product=0x028e, version=0x0114, bustype=ecodes.BUS_USB)
-    print(f"[Anvil Xbox Bridge] Virtual controller active at {ui.device.path}")
+    ui = UInput(
+        cap,
+        name="Microsoft X-Box 360 pad",
+        vendor=0x045e,
+        product=0x028e,
+        version=0x0114,
+        bustype=ecodes.BUS_USB
+    )
+    virt_path = ui.device.path if ui.device else None
+    print(f"[Anvil Xbox Bridge] Virtual Xbox 360 pad active at {virt_path}")
 
-    # Map from Steam Deck input codes to Xbox 360 codes
     KEY_MAP = {
-        304: ecodes.BTN_SOUTH,  # A
-        305: ecodes.BTN_EAST,   # B
-        307: ecodes.BTN_NORTH,  # X
-        308: ecodes.BTN_WEST,   # Y
-        310: ecodes.BTN_TL,     # LB
-        311: ecodes.BTN_TR,     # RB
-        314: ecodes.BTN_SELECT, # Back/View
-        315: ecodes.BTN_START,  # Start/Menu
-        316: ecodes.BTN_MODE,   # Steam/Guide
-        317: ecodes.BTN_THUMBL, # L3
-        318: ecodes.BTN_THUMBR, # R3
+        304: ecodes.BTN_SOUTH,   # A
+        305: ecodes.BTN_EAST,    # B
+        307: ecodes.BTN_NORTH,   # X
+        308: ecodes.BTN_WEST,    # Y
+        310: ecodes.BTN_TL,      # LB
+        311: ecodes.BTN_TR,      # RB
+        314: ecodes.BTN_SELECT,  # Back/View
+        315: ecodes.BTN_START,   # Start/Menu
+        316: ecodes.BTN_MODE,    # Steam/Guide
+        317: ecodes.BTN_THUMBL,  # L3
+        318: ecodes.BTN_THUMBR,  # R3
     }
 
-    last_axes = {ecodes.ABS_X: 0, ecodes.ABS_Y: 0, ecodes.ABS_RX: 0, ecodes.ABS_RY: 0}
     running = True
     def handle_sig(sig, frame):
         nonlocal running
@@ -93,19 +159,50 @@ def main():
     signal.signal(signal.SIGINT, handle_sig)
     signal.signal(signal.SIGTERM, handle_sig)
 
+    last_axes = {
+        ecodes.ABS_X: 0,
+        ecodes.ABS_Y: 0,
+        ecodes.ABS_RX: 0,
+        ecodes.ABS_RY: 0,
+    }
+
     while running:
-        dev_path = find_steam_deck_event()
-        if not dev_path:
+        gamepad_path, lizard_paths, hide_nodes = find_steam_deck_devices()
+        lock_down_raw_nodes(hide_nodes, virt_path)
+
+        if not gamepad_path:
             time.sleep(0.5)
             continue
 
         dev = None
+        grabbed_lizards = []
         try:
-            dev = evdev.InputDevice(dev_path)
-            print(f"[Anvil Xbox Bridge] Attached to hardware: {dev.name} ({dev_path})")
+            # Grab Lizard Mode mouse/keyboard interfaces so pressing buttons never sends Enter/Esc/Arrow keys
+            for lp in lizard_paths:
+                try:
+                    ldev = evdev.InputDevice(lp)
+                    ldev.grab()
+                    grabbed_lizards.append(ldev)
+                except Exception:
+                    pass
+
+            dev = evdev.InputDevice(gamepad_path)
+            try:
+                dev.grab()
+            except Exception as ge:
+                print(f"[Anvil Xbox Bridge] Warning: could not grab {gamepad_path}: {ge}")
+
+            print(f"[Anvil Xbox Bridge] Exclusively attached to {dev.name} ({gamepad_path}), hid {len(hide_nodes)} raw nodes.")
+            last_perm_check = time.monotonic()
+
             for event in dev.read_loop():
                 if not running:
                     break
+                now = time.monotonic()
+                if now - last_perm_check > 3.0:
+                    last_perm_check = now
+                    lock_down_raw_nodes(hide_nodes, virt_path)
+
                 if event.type == ecodes.EV_KEY:
                     if event.code in KEY_MAP:
                         ui.write(ecodes.EV_KEY, KEY_MAP[event.code], event.value)
@@ -122,10 +219,10 @@ def main():
                     elif event.code == 547:  # Steam Deck D-pad RIGHT
                         ui.write(ecodes.EV_ABS, ecodes.ABS_HAT0X, 1 if event.value else 0)
                         ui.syn()
-                    elif event.code == 312:  # Steam Deck LT button
+                    elif event.code == 312:  # Steam Deck LT digital
                         ui.write(ecodes.EV_ABS, ecodes.ABS_Z, 255 if event.value else 0)
                         ui.syn()
-                    elif event.code == 313:  # Steam Deck RT button
+                    elif event.code == 313:  # Steam Deck RT digital
                         ui.write(ecodes.EV_ABS, ecodes.ABS_RZ, 255 if event.value else 0)
                         ui.syn()
                 elif event.type == ecodes.EV_ABS:
@@ -135,6 +232,13 @@ def main():
                             last_axes[event.code] = filtered_val
                             ui.write(ecodes.EV_ABS, event.code, filtered_val)
                             ui.syn()
+                    elif event.code in (ecodes.ABS_Z, ecodes.ABS_RZ):
+                        # Analog trigger axes (if reported as 0..32767 or 0..255)
+                        val = event.value
+                        if val > 255:
+                            val = min(255, max(0, val // 128))
+                        ui.write(ecodes.EV_ABS, event.code, val)
+                        ui.syn()
                     elif event.code == ecodes.ABS_HAT0X:
                         ui.write(ecodes.EV_ABS, ecodes.ABS_HAT0X, event.value)
                         ui.syn()
@@ -142,16 +246,30 @@ def main():
                         ui.write(ecodes.EV_ABS, ecodes.ABS_HAT0Y, event.value)
                         ui.syn()
         except (OSError, RuntimeError) as e:
-            print(f"[Anvil Xbox Bridge] Device disconnected or read error: {e}. Reconnecting...")
+            print(f"[Anvil Xbox Bridge] Reconnecting ({e})...")
+        finally:
             if dev:
                 try:
+                    dev.ungrab()
+                except Exception:
+                    pass
+                try:
                     dev.close()
+                except Exception:
+                    pass
+            for ldev in grabbed_lizards:
+                try:
+                    ldev.ungrab()
+                except Exception:
+                    pass
+                try:
+                    ldev.close()
                 except Exception:
                     pass
             time.sleep(0.5)
 
     ui.close()
-    print("[Anvil Xbox Bridge] Stopped.")
+
 
 if __name__ == "__main__":
     main()

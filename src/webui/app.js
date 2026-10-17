@@ -1,9 +1,11 @@
-// Anvil Console OS v3.5 — Authentic Xbox Series X Dashboard Frontend
+// Anvil Console OS v4.0 — Next-Gen Xbox / Fluent Glass Dashboard Frontend
 const state = {
-  tab: 0, // 0: Home, 1: My Games & Apps, 2: Store, 3: Settings
+  tab: 0, // 0: Home, 1: Library, 2: Store, 3: Cartridges, 4: Settings
   homeZone: "shelf", // "top" | "shelf" | "quick"
   topNavIdx: 0,
   quickIdx: 0,
+  storeIdx: 0,
+  cartPageIdx: 0,
   games: [],
   drives: [],
   battery: { percent: 100, charging: false },
@@ -21,7 +23,7 @@ const state = {
   gameRunning: false,
   activeGameName: "",
   lastButton: "NONE",
-  controllerName: "Steam Deck Built-in Controller",
+  controllerName: "Microsoft X-Box 360 pad (Player 1)",
   cartridgeTargets: [
     {
       label: "MicroSD Card Slot (/mnt/sdcard)",
@@ -71,7 +73,6 @@ async function loadState() {
     state.system = data.system || {};
     state.gameRunning = !!data.game_running;
 
-    // Update counts
     const count = state.games.length;
     const topCart = document.getElementById("top-cart-count");
     if (topCart) topCart.textContent = `${count} Cartridges`;
@@ -80,7 +81,6 @@ async function loadState() {
     const libSideCount = document.getElementById("lib-side-count");
     if (libSideCount) libSideCount.textContent = `${count}`;
 
-    // Update live battery bar
     const batFill = document.getElementById("battery-fill");
     const batText = document.getElementById("battery-text");
     if (batFill) batFill.style.width = `${Math.max(8, Math.min(100, state.battery.percent))}%`;
@@ -89,6 +89,7 @@ async function loadState() {
     renderHomeShelf();
     renderLibraryGrid();
     updateSelectedGameHero();
+    renderCartridgesPage();
     renderSettingsPane();
     renderGuideMenu();
     renderCartridgeModalOptions();
@@ -138,7 +139,7 @@ function renderHomeShelf() {
         <span class="a-btn-mini">A</span>
         <span>Play</span>
       </div>
-      <span style="font-size:10px; color:#a1aab8; font-weight:700;">SD</span>
+      <span style="font-size:10px; color:#94a3b8; font-weight:700;">SD</span>
     `;
     tile.appendChild(footer);
 
@@ -186,21 +187,32 @@ function renderLibraryGrid() {
 }
 
 function syncHomeFocusVisuals() {
-  // Top nav circles
-  document.querySelectorAll("#xbox-top-nav .top-nav-circle").forEach((el, idx) => {
+  document.querySelectorAll("#xbox-top-nav .nav-pill").forEach((el, idx) => {
     el.classList.toggle("focused", state.tab === 0 && state.homeZone === "top" && idx === state.topNavIdx);
   });
 
-  // Main shelf tiles
   document.querySelectorAll("#home-carousel .xbox-tile").forEach((el, idx) => {
-    const isFocused = state.homeZone === "shelf" && idx === state.selectedIndex;
-    el.classList.toggle("focused", isFocused);
+    el.classList.toggle("focused", state.homeZone === "shelf" && idx === state.selectedIndex);
   });
 
-  // Bottom quick cards
   document.querySelectorAll("#xbox-quick-row .xbox-quick-card").forEach((el, idx) => {
     el.classList.toggle("focused", state.homeZone === "quick" && idx === state.quickIdx);
   });
+}
+
+function syncStoreFocusVisuals() {
+  for (let i = 0; i < 5; i++) {
+    const el = document.getElementById(`store-card-${i}`);
+    if (el) el.classList.toggle("focused", i === state.storeIdx);
+  }
+}
+
+function selectGameByName(partial) {
+  const idx = state.games.findIndex((g) => (g.name || "").toLowerCase().includes(partial.toLowerCase()));
+  if (idx >= 0) {
+    selectGame(idx);
+    switchTab(0);
+  }
 }
 
 function selectGame(idx) {
@@ -281,39 +293,36 @@ function updateSelectedGameHero() {
   if (storeTitle) storeTitle.textContent = g.name || "ASTROBOTANICA";
 }
 
-function activateTopNav(idx) {
-  state.topNavIdx = idx;
-  if (idx === 0) switchTab(0);
-  else if (idx === 1) switchTab(1);
-  else if (idx === 2) switchTab(2);
-  else if (idx === 3) openCartridgeModal();
-  else if (idx === 4) switchTab(3);
-}
-
 function triggerQuickCard(idx) {
   if (idx === 0) switchTab(1);
-  else if (idx === 1) openCartridgeModal();
+  else if (idx === 1) switchTab(3);
   else if (idx === 2) {
-    switchTab(3);
+    switchTab(4);
     selectSettingCat(1);
   } else if (idx === 3) {
-    switchTab(3);
+    switchTab(4);
     selectSettingCat(0);
   }
 }
 
 function switchTab(newTab) {
-  const count = 4;
+  // Always close any open modal/drawer when switching tabs so LB/RB never gets stuck!
+  closeCartridgeModal();
+  closeGuideBlade();
+  if (state.powerModalOpen) togglePowerModal();
+
+  const count = 5;
   state.tab = ((newTab % count) + count) % count;
+  state.topNavIdx = state.tab;
 
   document.body.classList.toggle("subpage", state.tab !== 0);
 
-  const navMap = { 0: 0, 1: 1, 2: 2, 3: 4 };
-  document.querySelectorAll("#xbox-top-nav .top-nav-circle").forEach((el, idx) => {
-    el.classList.toggle("active", idx === navMap[state.tab]);
+  document.querySelectorAll("#xbox-top-nav .nav-pill").forEach((el, idx) => {
+    el.classList.toggle("active", idx === state.tab);
+    el.classList.remove("focused");
   });
 
-  const pages = ["page-home", "page-library", "page-store", "page-settings"];
+  const pages = ["page-home", "page-library", "page-store", "page-cartridges", "page-settings"];
   pages.forEach((id, idx) => {
     const el = document.getElementById(id);
     if (el) el.classList.toggle("active", idx === state.tab);
@@ -325,19 +334,62 @@ function switchTab(newTab) {
     selectGame(state.selectedIndex);
   } else if (state.tab === 1) {
     selectGame(state.selectedIndex);
+  } else if (state.tab === 2) {
+    state.storeIdx = 0;
+    syncStoreFocusVisuals();
   } else if (state.tab === 3) {
+    state.cartPageIdx = 0;
+    renderCartridgesPage();
+  } else if (state.tab === 4) {
     state.settingsFocusSide = true;
     renderSettingsPane();
   }
 }
 
+function renderCartridgesPage() {
+  const container = document.getElementById("cartridges-page-list");
+  if (!container) return;
+
+  const drivesHtml = state.drives
+    .map(
+      (d, idx) => `
+    <div class="xbox-slate-card ${state.cartPageIdx === idx + 1 ? "focused" : ""}" onclick="openCartridgeModal()">
+      <div class="slate-row">
+        <div>
+          <div class="slate-title">${d.name} <span style="font-size:12px; color:var(--text-secondary); font-weight:600;">(${d.path})</span></div>
+          <div class="slate-sub">
+            ${d.mounted ? `${d.used_gb} GB used of ${d.total_gb} GB (${d.free_gb} GB free)` : "Slot Ready — Insert USB Drive to Mount"}
+            ${d.game_count > 0 ? `  •  <strong style="color:#22c55e;">${d.game_count} Cartridge Games Mounted</strong>` : ""}
+          </div>
+        </div>
+        <span class="xbox-tag ${d.id === "sdcard" ? "green" : ""}">${d.role}</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width:${d.percent || 3}%;"></div>
+      </div>
+    </div>
+  `
+    )
+    .join("");
+
+  container.innerHTML = `
+    <div class="xbox-slate-card ${state.cartPageIdx === 0 ? "focused" : ""}" onclick="openCartridgeModal()">
+      <div class="slate-row">
+        <div>
+          <span class="xbox-tag ember" style="margin-bottom:6px; display:inline-block;">CARTRIDGE PROVISIONER</span>
+          <div class="slate-title">Make a Drive, SD Card, or Folder into an Anvil Cartridge</div>
+          <div class="slate-sub">Initializes <code>Games/</code> + <code>cartridge.meta</code> on any removable drive or folder and registers it in Anvil OS without touching internal storage.</div>
+        </div>
+        <button class="xbox-btn"><span class="a-btn-mini">A</span><span>Initialize Drive</span></button>
+      </div>
+    </div>
+    ${drivesHtml}
+  `;
+}
+
 function selectSettingCat(catIdx) {
   state.settingsCat = Math.max(0, Math.min(4, catIdx));
   state.settingsRightIdx = 0;
-  document.querySelectorAll("#settings-cat-list .xbox-settings-cat").forEach((el, i) => {
-    el.classList.toggle("active", i === state.settingsCat);
-    el.classList.toggle("focused", state.settingsFocusSide && i === state.settingsCat);
-  });
   renderSettingsPane();
 }
 
@@ -381,7 +433,7 @@ function renderSettingsPane() {
             <div class="slate-title">Make a Drive, SD Card, or Folder into an Anvil Cartridge</div>
             <div class="slate-sub">Formats <code>Games/</code> + <code>cartridge.meta</code> and registers the mount without touching internal storage.</div>
           </div>
-          <button class="xbox-btn"><span class="a-btn-mini" style="background:#0b0e13; color:#fff;">A</span><span>Configure Drive</span></button>
+          <button class="xbox-btn"><span class="a-btn-mini">A</span><span>Configure Drive</span></button>
         </div>
       </div>
       ${drivesHtml}
@@ -396,10 +448,10 @@ function renderSettingsPane() {
       <div class="xbox-slate-card ${!state.settingsFocusSide ? "focused" : ""}">
         <div class="slate-row">
           <div>
-            <div class="slate-title">Zero-Drift Deadzone & Gyro Filter</div>
-            <div class="slate-sub">Analog stick deadzone locked at <strong>4000</strong>  •  IMU motion sensors isolated from joystick axes.</div>
+            <div class="slate-title">Player 1 Exclusive Xbox 360 Bridge & Zero-Drift Filter</div>
+            <div class="slate-sub">Locks <code>Microsoft X-Box 360 pad</code> as XInput Slot 0 (Player 1), hides raw Lizard HID/Gyro, and enforces <strong>4000</strong> deadzone.</div>
           </div>
-          <span class="xbox-tag green">CALIBRATED</span>
+          <span class="xbox-tag green">PLAYER 1 LOCKED</span>
         </div>
       </div>
       <div class="xbox-slate-card">
@@ -467,7 +519,7 @@ function renderSettingsPane() {
         <div class="slate-row">
           <div>
             <div class="slate-title">${state.system.model || "Valve Steam Deck (Jupiter)"}</div>
-            <div class="slate-sub">AMD Custom APU 0405  •  16 GB LPDDR5  •  Anvil Console OS v3.5 (Xbox Series X Shell)</div>
+            <div class="slate-sub">AMD Custom APU 0405  •  16 GB LPDDR5  •  Anvil Console OS v4.0 (Next-Gen Xbox Shell)</div>
           </div>
           <span class="xbox-tag green">ONLINE</span>
         </div>
@@ -486,8 +538,8 @@ function getGuideItems() {
     { label: "Home", badge: "DASHBOARD", action: () => { closeGuideBlade(); switchTab(0); } },
     { label: `My games & apps (${state.games.length})`, badge: "LIBRARY", action: () => { closeGuideBlade(); switchTab(1); } },
     { label: "Make a Drive / SD Card into Cartridge", badge: "BUILDER", action: () => { closeGuideBlade(); openCartridgeModal(); } },
-    { label: "Controller & Zero-Drift Status", badge: "4000DZ", action: () => { closeGuideBlade(); switchTab(3); selectSettingCat(1); } },
-    { label: "Settings", badge: "SYSTEM", action: () => { closeGuideBlade(); switchTab(3); selectSettingCat(0); } },
+    { label: "Controller & Zero-Drift Status", badge: "PLAYER 1", action: () => { closeGuideBlade(); switchTab(4); selectSettingCat(1); } },
+    { label: "Settings", badge: "SYSTEM", action: () => { closeGuideBlade(); switchTab(4); selectSettingCat(0); } },
     { label: "Sleep Console", badge: "SUSPEND", action: () => { closeGuideBlade(); triggerPower("sleep"); } },
     { label: "Switch to Desktop Mode", badge: "EXIT", action: () => { closeGuideBlade(); triggerPower("desktop"); } },
     { label: "Restart Console", badge: "REBOOT", action: () => { closeGuideBlade(); triggerPower("restart"); } },
@@ -593,6 +645,7 @@ async function initializeCartridgeTarget(idx) {
         banner.textContent = `✓ ${data.message}`;
         banner.style.color = "#22c55e";
       }
+      renderCartridgesPage();
       renderSettingsPane();
       renderHomeShelf();
       renderLibraryGrid();
@@ -686,13 +739,14 @@ window.onAnvilInput = function (action, family, controllerName) {
     left: "LEFT",
     right: "RIGHT",
     select: "SELECT",
+    back: "SELECT",
     start: "START",
     guide: "GUIDE"
   };
   state.lastButton = btnMap[action] || action.toUpperCase();
 
   // Live controller input test in Settings
-  if (state.tab === 3 && state.settingsCat === 1) {
+  if (state.tab === 4 && state.settingsCat === 1) {
     document.querySelectorAll(".pad-key").forEach((el) => el.classList.remove("pressed"));
     const keyEl = document.getElementById(`pad-key-${state.lastButton}`);
     if (keyEl) keyEl.classList.add("pressed");
@@ -723,7 +777,17 @@ window.onAnvilInput = function (action, family, controllerName) {
     return;
   }
 
-  // 2. Xbox Guide Blade handling (when on Dashboard)
+  // 2. LB / RB ALWAYS switches tabs cleanly (even if a modal/blade was open, so it NEVER gets stuck!)
+  if (action === "lb") {
+    switchTab(state.tab - 1);
+    return;
+  }
+  if (action === "rb") {
+    switchTab(state.tab + 1);
+    return;
+  }
+
+  // 3. Xbox Guide Blade handling (when on Dashboard)
   if (state.guideOpen) {
     const items = getGuideItems();
     if (action === "up") {
@@ -734,13 +798,13 @@ window.onAnvilInput = function (action, family, controllerName) {
       renderGuideMenu();
     } else if (action === "south") {
       items[state.guideIdx]?.action();
-    } else if (action === "east" || action === "select") {
+    } else if (action === "east" || action === "select" || action === "back") {
       closeGuideBlade();
     }
     return;
   }
 
-  // 3. Power Modal handling
+  // 4. Power Modal handling
   if (state.powerModalOpen) {
     const actions = ["sleep", "desktop", "restart", "shutdown", "cancel"];
     if (action === "up") {
@@ -762,7 +826,7 @@ window.onAnvilInput = function (action, family, controllerName) {
     return;
   }
 
-  // 4. Cartridge Builder Modal handling
+  // 5. Cartridge Builder Modal handling
   if (state.cartridgeModalOpen) {
     const total = state.cartridgeTargets.length;
     if (action === "up") {
@@ -779,21 +843,13 @@ window.onAnvilInput = function (action, family, controllerName) {
     return;
   }
 
-  // 5. Global Dashboard Shortcuts
-  if (action === "select") {
+  // 6. Global Dashboard Shortcuts
+  if (action === "select" || action === "back") {
     toggleGuideBlade();
     return;
   }
   if (action === "start") {
     togglePowerModal();
-    return;
-  }
-  if (action === "lb") {
-    switchTab(state.tab - 1);
-    return;
-  }
-  if (action === "rb") {
-    switchTab(state.tab + 1);
     return;
   }
   if (action === "west") {
@@ -809,13 +865,14 @@ window.onAnvilInput = function (action, family, controllerName) {
     return;
   }
 
-  // 6. Page-Specific Controller Navigation
+  // 7. Tab-Specific Controller Navigation
   if (state.tab === 0) {
     if (state.homeZone === "shelf") {
       if (action === "left") selectGame(state.selectedIndex - 1);
       else if (action === "right") selectGame(state.selectedIndex + 1);
       else if (action === "up") {
         state.homeZone = "top";
+        state.topNavIdx = state.tab;
         syncHomeFocusVisuals();
       } else if (action === "down") {
         state.homeZone = "quick";
@@ -834,7 +891,7 @@ window.onAnvilInput = function (action, family, controllerName) {
         state.homeZone = "shelf";
         syncHomeFocusVisuals();
       } else if (action === "south") {
-        activateTopNav(state.topNavIdx);
+        switchTab(state.topNavIdx);
       }
     } else if (state.homeZone === "quick") {
       if (action === "left") {
@@ -856,7 +913,31 @@ window.onAnvilInput = function (action, family, controllerName) {
     else if (action === "up") selectGame(state.selectedIndex - 5);
     else if (action === "down") selectGame(state.selectedIndex + 5);
     else if (action === "south") launchSelectedGame();
+  } else if (state.tab === 2) {
+    if (action === "down" && state.storeIdx === 0) state.storeIdx = 1;
+    else if (action === "up" && state.storeIdx > 0) state.storeIdx = 0;
+    else if (action === "left" && state.storeIdx > 1) state.storeIdx--;
+    else if (action === "right" && state.storeIdx >= 1 && state.storeIdx < 4) state.storeIdx++;
+    else if (action === "south") {
+      if (state.storeIdx === 0) launchSelectedGame();
+      else if (state.storeIdx === 1) selectGameByName("Crash Bandicoot");
+      else if (state.storeIdx === 2) selectGameByName("Aquapark Tycoon");
+      else if (state.storeIdx === 3) selectGameByName("Jak");
+      else if (state.storeIdx === 4) selectGameByName("Jackbox");
+    }
+    syncStoreFocusVisuals();
   } else if (state.tab === 3) {
+    const maxCart = state.drives.length;
+    if (action === "up") {
+      state.cartPageIdx = Math.max(0, state.cartPageIdx - 1);
+      renderCartridgesPage();
+    } else if (action === "down") {
+      state.cartPageIdx = Math.min(maxCart, state.cartPageIdx + 1);
+      renderCartridgesPage();
+    } else if (action === "south") {
+      openCartridgeModal();
+    }
+  } else if (state.tab === 4) {
     if (state.settingsFocusSide) {
       if (action === "up") selectSettingCat(state.settingsCat - 1);
       else if (action === "down") selectSettingCat(state.settingsCat + 1);
@@ -880,8 +961,6 @@ window.onAnvilInput = function (action, family, controllerName) {
         openCartridgeModal();
       }
     }
-  } else {
-    if (action === "south") launchSelectedGame();
   }
 };
 
@@ -908,4 +987,8 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-window.addEventListener("DOMContentLoaded", loadState);
+loadState();
+setTimeout(() => {
+  if (!state.games || state.games.length === 0) loadState();
+}, 600);
+
