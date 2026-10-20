@@ -75,20 +75,47 @@ except Exception:
 " 2>/dev/null || true
 fi
 
-# Search order for Proton binary
+# Search order for Proton binary: check requested target first if provided
 proton_bin=""
-for candidate in \
-    $(find /opt/proton -maxdepth 2 -type f -name proton 2>/dev/null | sort -V | tail -n 1) \
-    $(find "$steam_dir/compatibilitytools.d" -maxdepth 2 -type f -name proton 2>/dev/null | sort -V | tail -n 1) \
-    "$steam_dir/steamapps/common/Proton - Experimental/proton" \
-    "$steam_dir/steamapps/common/Proton 9.0 (Beta)/proton" \
-    "$steam_dir/steamapps/common/Proton 8.0/proton" \
-    /usr/share/steam/compatibilitytools.d/*/proton; do
-    if [[ -x "$candidate" ]]; then
-        proton_bin="$candidate"
-        break
+
+if [[ -n "${proton_target:-}" && "$proton_target" != "default" && "$proton_target" != "Proton Experimental" ]]; then
+    for candidate in \
+        "$steam_dir/steamapps/common/$proton_target/proton" \
+        "$steam_dir/steamapps/common/Proton $proton_target/proton" \
+        "$steam_dir/compatibilitytools.d/$proton_target/proton" \
+        "/opt/proton/$proton_target/proton" \
+        "/opt/proton/$proton_target/files/bin/proton" \
+        "/usr/share/steam/compatibilitytools.d/$proton_target/proton"; do
+        if [[ -x "$candidate" ]]; then
+            proton_bin="$candidate"
+            break
+        fi
+    done
+
+    if [[ -z "$proton_bin" ]]; then
+        for candidate in $(find "$steam_dir/steamapps/common" "$steam_dir/compatibilitytools.d" /opt/proton -maxdepth 2 -iname "*${proton_target}*" -name proton 2>/dev/null); do
+            if [[ -x "$candidate" ]]; then
+                proton_bin="$candidate"
+                break
+            fi
+        done
     fi
-done
+fi
+
+if [[ -z "$proton_bin" ]]; then
+    for candidate in \
+        $(find /opt/proton -maxdepth 2 -type f -name proton 2>/dev/null | sort -V | tail -n 1) \
+        $(find "$steam_dir/compatibilitytools.d" -maxdepth 2 -type f -name proton 2>/dev/null | sort -V | tail -n 1) \
+        "$steam_dir/steamapps/common/Proton - Experimental/proton" \
+        "$steam_dir/steamapps/common/Proton 9.0 (Beta)/proton" \
+        "$steam_dir/steamapps/common/Proton 8.0/proton" \
+        /usr/share/steam/compatibilitytools.d/*/proton; do
+        if [[ -x "$candidate" ]]; then
+            proton_bin="$candidate"
+            break
+        fi
+    done
+fi
 
 if [[ -z "$proton_bin" || ! -f "$proton_bin" ]]; then
     echo "ERROR: Proton binary not found. Checked /opt/proton and Steam compatibility tools." >&2
