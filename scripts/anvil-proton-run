@@ -49,8 +49,14 @@ export WINE_DISABLE_HIDRAW="1"
 export SDL_GAMECONTROLLER_IGNORE_DEVICES="0x28de/0x1205,0x28de/0x1142"
 export SDL_GAMECONTROLLER_ALLOW_STEAM_VIRTUAL_GAMEPAD="1"
 export SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS="1"
-unset SDL_GAMECONTROLLERCONFIG || true
-unset SDL_GAMEPADCONFIG || true
+xbox360_mapping="030000005e0400008e02000014010000,Microsoft X-Box 360 pad,a:b0,b:b1,x:b2,y:b3,back:b6,start:b7,guide:b8,leftstick:b9,rightstick:b10,leftshoulder:b4,rightshoulder:b5,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,leftx:a0,lefty:a1,rightx:a3,righty:a4,lefttrigger:a2,righttrigger:a5,platform:Linux,"
+if [[ -z "${SDL_GAMECONTROLLERCONFIG:-}" ]]; then
+    export SDL_GAMECONTROLLERCONFIG="$xbox360_mapping"
+elif [[ "${SDL_GAMECONTROLLERCONFIG}" != *"045e"* && "${SDL_GAMECONTROLLERCONFIG}" != *"Microsoft X-Box 360 pad"* ]]; then
+    export SDL_GAMECONTROLLERCONFIG="${SDL_GAMECONTROLLERCONFIG}
+$xbox360_mapping"
+fi
+export SDL_GAMEPADCONFIG="$SDL_GAMECONTROLLERCONFIG"
 
 # Ensure winebus registry flags in prefix: Enable SDL=1 and DisableHidraw=1
 # so Wine always binds 'Microsoft X-Box 360 pad' (evdev/SDL) as XInput Slot 0 (Player 1)
@@ -172,6 +178,38 @@ done
 game_dir="$(dirname "$exe_path")"
 if [[ -d "$game_dir" ]]; then
     cd "$game_dir"
+fi
+
+# Auto-detect Steam Deck hardware and enforce native 1280x800 display resolution
+is_steam_deck=0
+if [[ -f /sys/class/dmi/id/product_name ]] && grep -iqE "(jupiter|galileo|steamdeck)" /sys/class/dmi/id/product_name; then
+    is_steam_deck=1
+elif [[ "$(hostname 2>/dev/null)" == "steamdeck" ]] || [[ -f /sys/devices/virtual/dmi/id/product_name && $(cat /sys/devices/virtual/dmi/id/product_name 2>/dev/null) =~ [Jj]upiter|[Gg]alileo ]]; then
+    is_steam_deck=1
+fi
+
+if [[ "$is_steam_deck" -eq 1 ]]; then
+    export STEAM_DECK="1"
+    export SteamDeck="1"
+    export STEAM_GAME_RESOLUTIONS="1280x800"
+
+    has_res_flag=0
+    for arg in "${game_args[@]}"; do
+        if [[ "$arg" =~ -screen-width|-ResX|-w$|-width ]]; then
+            has_res_flag=1
+            break
+        fi
+    done
+
+    if [[ "$has_res_flag" -eq 0 ]]; then
+        # Check if Unity engine (UnityPlayer.dll or *_Data directory)
+        if [[ -f "${game_dir}/UnityPlayer.dll" || -n "$(find "$game_dir" -maxdepth 2 -name "UnityPlayer.dll" 2>/dev/null)" ]]; then
+            game_args+=("-screen-fullscreen" "1" "-screen-width" "1280" "-screen-height" "800")
+        # Check if Unreal Engine
+        elif [[ "$exe_path" =~ -Win64-Shipping\.exe$ || -d "${game_dir}/../../Content" || -d "${game_dir}/../../../Engine" ]]; then
+            game_args+=("-ResX=1280" "-ResY=800" "-fullscreen")
+        fi
+    fi
 fi
 
 exec "$proton_bin" run "$exe_path" "${game_args[@]}"
