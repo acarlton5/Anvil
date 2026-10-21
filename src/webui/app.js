@@ -1009,8 +1009,8 @@ function renderSettingsPane() {
       <div class="console-setting-row ${f(2)}">
         <div class="console-setting-top">
           <div class="console-setting-info">
-            <strong>${state.system.model || "Valve Steam Deck (Jupiter)"}</strong>
-            <small>AMD Custom APU 0405  •  16 GB LPDDR5  •  Kernel ${state.system.kernel || "6.12-hypeos"}  •  Anvil OS 5.0</small>
+            <strong>${state.system.model || "Framework Laptop 13"}</strong>
+            <small>${state.system.cpu || "AMD Ryzen"}  •  ${state.system.mem || "16 GB RAM"}  •  Kernel ${state.system.kernel || "Linux"}  •  Anvil OS 5.0</small>
           </div>
           <span class="settings-pill-value">VERIFIED</span>
         </div>
