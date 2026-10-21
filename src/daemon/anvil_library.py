@@ -228,11 +228,14 @@ def find_game_drives():
     for custom in load_custom_cartridge_drives():
         c_path = custom.get("path") if isinstance(custom, dict) else custom
         if c_path and os.path.isdir(c_path):
-            add_drive(c_path, c_path)
+            has_sub = False
             for sub in GAMES_DIR_NAMES:
                 candidate = os.path.join(c_path, sub)
                 if os.path.isdir(candidate):
                     add_drive(candidate, c_path)
+                    has_sub = True
+            if not has_sub:
+                add_drive(c_path, c_path)
 
     # 1. Parse active system mounts in /proc/mounts
     if os.path.isfile("/proc/mounts"):
