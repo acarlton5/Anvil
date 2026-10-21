@@ -2,16 +2,21 @@
 set -euo pipefail
 
 # Helper to switch from Anvil gaming session back to HypeShell desktop session
-TARGET_DESKTOP="/usr/share/wayland-sessions/hyprland.desktop"
+TARGET_DESKTOP="/usr/local/share/wayland-sessions/hypeshell-hyprland.desktop"
+if [ ! -f "$TARGET_DESKTOP" ]; then
+    TARGET_DESKTOP="/usr/share/wayland-sessions/hyprland.desktop"
+fi
+
 MEMORY_FILE="/var/cache/hype-greeter/.local/state/memory.json"
-CURRENT_USER="${SUDO_USER:-${USER:-morphine}}"
+CURRENT_USER="${SUDO_USER:-${USER:-morph}}"
 
 if [ -d "/var/cache/hype-greeter/.local/state" ]; then
-    printf "{\n  \"lastSessionId\": \"%s\",\n  \"lastSuccessfulUser\": \"%s\"\n}\n" "$TARGET_DESKTOP" "$CURRENT_USER" > "$MEMORY_FILE" 2>/dev/null || true
+    printf '{\n  "lastSessionId": "%s",\n  "lastSuccessfulUser": "%s"\n}\n' "$TARGET_DESKTOP" "$CURRENT_USER" > "$MEMORY_FILE" 2>/dev/null || true
     chmod 664 "$MEMORY_FILE" 2>/dev/null || true
 fi
 
 # Exit the current Hyprland compositor (Anvil session)
 if command -v hyprctl >/dev/null 2>&1; then
-    hyprctl dispatch exit || true
+    hyprctl eval "hl.dispatch(hl.dsp.exit())" >/dev/null 2>&1 || true
 fi
+pkill -TERM -f "Hyprland.*hyprland-anvil" 2>/dev/null || true
