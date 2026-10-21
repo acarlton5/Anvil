@@ -98,6 +98,12 @@ hl.config({
             enabled = false
         }
     },
+    cursor = {
+        no_warps = true,
+        inactive_timeout = 0.5,
+        hide_on_key_press = true,
+        hide_on_touch = true
+    },
     misc = {
         disable_hyprland_logo = true,
         disable_splash_rendering = true,

@@ -668,22 +668,29 @@ function renderSettingsPane() {
 
   // 0: SYSTEM & UPDATES
   if (state.settingsCat === 0) {
+    const upd = state.update || {};
+    const count = upd.pending_count || (upd.packages ? upd.packages.length : 0);
+    const isUpgrading = upd.phase === "upgrading";
+    const isChecking = upd.phase === "refreshing" || state.updateChecking;
+    const tagText = isUpgrading ? `${Math.round(upd.progress || 0)}% UPDATING` : isChecking ? "CHECKING" : count > 0 ? `${count} PENDING` : "UP TO DATE";
+    const tagClass = isUpgrading ? "" : isChecking ? "" : count > 0 ? "" : "green";
+
     pane.innerHTML = `
       <div class="settings-detail-head">
         <div>
           <p>ANVIL CONSOLE OS 5.0</p>
           <h2>System & Software Updates</h2>
         </div>
-        <span class="xbox-tag green">UP TO DATE</span>
+        <span class="xbox-tag ${tagClass}">${tagText}</span>
       </div>
 
       <div class="console-setting-row ${f(0)}" onclick="openUpdateModal()">
         <div class="console-setting-top">
           <div class="console-setting-info">
-            <strong>Software Update Status</strong>
-            <small>Anvil Console OS 5.0 (Build ${state.update.build || "20261017.8"})  •  Last checked: ${state.update.last_checked || "Just now"}</small>
+            <strong>${isUpgrading ? (upd.status_step || "Applying System Updates...") : count > 0 ? `${count} Updates Available` : "System is Up to Date"}</strong>
+            <small>Connected to HypeShell Core  •  Last checked: ${upd.last_checked || "Just now"}</small>
           </div>
-          <button class="xbox-btn"><span class="a-btn-mini">A</span><span>Check for Updates</span></button>
+          <button class="xbox-btn"><span class="a-btn-mini">A</span><span>${isUpgrading ? "View Progress" : count > 0 ? "Review & Update" : "Check for Updates"}</span></button>
         </div>
       </div>
 
@@ -1017,6 +1024,7 @@ function renderSettingsPane() {
    ================================================= */
 function openUpdateModal() {
   state.updateModalOpen = true;
+  syncUpdateModalUI(state.update);
   const modal = document.getElementById("update-modal");
   if (modal) modal.classList.add("open");
 }
@@ -1027,43 +1035,147 @@ function closeUpdateModal() {
   if (modal) modal.classList.remove("open");
 }
 
+function syncUpdateModalUI(upd) {
+  if (!upd) return;
+  const statusText = document.getElementById("update-status-text");
+  const subText = document.getElementById("update-sub-text");
+  const fill = document.getElementById("update-progress-fill");
+  const pctEl = document.getElementById("update-pct-text");
+  const bannerMsg = document.getElementById("update-banner-msg");
+  const pkgCard = document.getElementById("update-packages-card");
+  const pkgList = document.getElementById("update-packages-list");
+  const checkBtn = document.getElementById("update-check-btn");
+  const applyBtn = document.getElementById("update-apply-btn");
+  const btnLabel = document.getElementById("update-btn-label");
+
+  const count = upd.pending_count || (upd.packages ? upd.packages.length : 0);
+  const phase = upd.phase || "idle";
+  const isUpgrading = phase === "upgrading";
+  const isChecking = phase === "refreshing" || state.updateChecking;
+
+  if (isUpgrading) {
+    const pct = Math.round(upd.progress || 0);
+    if (statusText) statusText.textContent = upd.status_step || "Applying System Updates...";
+    if (subText) subText.textContent = upd.current_item ? `Current: ${upd.current_item}` : "Running background package upgrade...";
+    if (fill) fill.style.width = `${Math.max(5, pct)}%`;
+    if (pctEl) {
+      pctEl.textContent = `${pct}%`;
+      pctEl.className = "xbox-tag";
+    }
+    if (bannerMsg) {
+      bannerMsg.textContent = "Updating system components in background without terminal interruption...";
+      bannerMsg.style.color = "#38bdf8";
+    }
+    if (checkBtn) checkBtn.style.display = "none";
+    if (applyBtn) applyBtn.style.display = "none";
+  } else if (isChecking) {
+    if (statusText) statusText.textContent = "Checking for System Updates...";
+    if (subText) subText.textContent = "Querying pacman, paru AUR, flatpak and hypeshell core...";
+    if (fill) fill.style.width = "40%";
+    if (pctEl) {
+      pctEl.textContent = "CHECKING";
+      pctEl.className = "xbox-tag";
+    }
+    if (bannerMsg) {
+      bannerMsg.textContent = "Synchronizing package databases with HypeShell...";
+      bannerMsg.style.color = "#fbbf24";
+    }
+    if (btnLabel) btnLabel.textContent = "Checking...";
+    if (applyBtn) applyBtn.style.display = "none";
+  } else if (count > 0) {
+    if (statusText) statusText.textContent = `${count} System Update${count > 1 ? "s" : ""} Available`;
+    if (subText) subText.textContent = `Channel: ${upd.channel || "Stable"}  •  HypeShell Core Verified`;
+    if (fill) fill.style.width = "0%";
+    if (pctEl) {
+      pctEl.textContent = `${count} PENDING`;
+      pctEl.className = "xbox-tag";
+    }
+    if (bannerMsg) {
+      bannerMsg.textContent = `✓ ${count} updates ready to install cleanly via HypeShell background service.`;
+      bannerMsg.style.color = "#22c55e";
+    }
+    if (pkgCard && pkgList && upd.packages && upd.packages.length > 0) {
+      pkgCard.style.display = "flex";
+      pkgList.innerHTML = upd.packages.map(p => `
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.06); padding:3px 0;">
+          <span style="font-weight:700;">${p.name || p}</span>
+          <span style="color:var(--text-secondary); font-size:11px;">${p.newVersion || p.version || "update"}</span>
+        </div>
+      `).join("");
+    }
+    if (checkBtn) checkBtn.style.display = "flex";
+    if (btnLabel) btnLabel.textContent = "Check Again";
+    if (applyBtn) applyBtn.style.display = "flex";
+  } else {
+    if (statusText) statusText.textContent = "Anvil Console OS 5.0 is Up to Date";
+    if (subText) subText.textContent = `Channel: ${upd.channel || "Stable"}  •  Last checked: ${upd.last_checked || "Just now"}`;
+    if (fill) fill.style.width = "100%";
+    if (pctEl) {
+      pctEl.textContent = "UP TO DATE";
+      pctEl.className = "xbox-tag green";
+    }
+    if (bannerMsg) {
+      bannerMsg.textContent = "✓ All system packages, runtimes, and components are up to date.";
+      bannerMsg.style.color = "#4ade80";
+    }
+    if (pkgCard) pkgCard.style.display = "none";
+    if (checkBtn) checkBtn.style.display = "flex";
+    if (btnLabel) btnLabel.textContent = "Check for Updates";
+    if (applyBtn) applyBtn.style.display = "none";
+  }
+}
+
 async function runSystemUpdateCheck() {
   if (state.updateChecking) return;
   state.updateChecking = true;
   playUiSound("confirm");
 
-  const statusText = document.getElementById("update-status-text");
-  const subText = document.getElementById("update-sub-text");
-  const fill = document.getElementById("update-progress-fill");
-  const pctEl = document.getElementById("update-pct-text");
-  const btnLabel = document.getElementById("update-btn-label");
-
-  const steps = [
-    { pct: 25, msg: "Querying Anvil OS Release Manifest (Stable Channel)...", sub: "Connecting to Anvil Console repository..." },
-    { pct: 60, msg: "Verifying GE-Proton11-9 & Xbox 360 Bridge Signatures...", sub: "Checking /usr/local/share/anvil integrity..." },
-    { pct: 90, msg: "Synchronizing Cartridge Mounts & PipeWire Audio Profiles...", sub: "Validating 48 MicroSD cartridges..." },
-    { pct: 100, msg: "Anvil Console OS 5.0 is Up to Date", sub: "All system components, Proton runners, and audio drivers are current." }
-  ];
-
-  if (btnLabel) btnLabel.textContent = "Checking...";
-
-  for (const s of steps) {
-    if (statusText) statusText.textContent = s.msg;
-    if (subText) subText.textContent = s.sub;
-    if (fill) fill.style.width = `${s.pct}%`;
-    if (pctEl) pctEl.textContent = s.pct < 100 ? `${s.pct}%` : "UP TO DATE";
-    await new Promise((r) => setTimeout(r, 420));
-  }
+  syncUpdateModalUI(state.update);
 
   try {
-    const res = await fetch("/api/update", { method: "POST" });
+    const res = await fetch("/api/update/check", { method: "POST" });
     const data = await res.json();
     if (data.update) state.update = data.update;
   } catch (e) {}
 
-  if (btnLabel) btnLabel.textContent = "Check Again";
   state.updateChecking = false;
+  syncUpdateModalUI(state.update);
   if (state.tab === 4 && state.settingsCat === 0) renderSettingsPane();
+}
+
+async function applySystemUpdates() {
+  playUiSound("confirm");
+  try {
+    const res = await fetch("/api/update/apply", { method: "POST" });
+    const data = await res.json();
+    if (data.update) state.update = data.update;
+  } catch (e) {}
+
+  syncUpdateModalUI(state.update);
+  pollUpdateProgress();
+}
+
+let updatePollTimer = null;
+function pollUpdateProgress() {
+  if (updatePollTimer) clearInterval(updatePollTimer);
+  updatePollTimer = setInterval(async () => {
+    try {
+      const res = await fetch("/api/update");
+      const data = await res.json();
+      if (data.update) {
+        state.update = data.update;
+        syncUpdateModalUI(state.update);
+        if (state.tab === 4 && state.settingsCat === 0) renderSettingsPane();
+        if (data.update.phase === "idle") {
+          clearInterval(updatePollTimer);
+          updatePollTimer = null;
+        }
+      }
+    } catch (e) {
+      clearInterval(updatePollTimer);
+      updatePollTimer = null;
+    }
+  }, 1000);
 }
 
 /* =================================================

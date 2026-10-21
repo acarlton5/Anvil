@@ -465,28 +465,36 @@
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div>
             <div style="font-size:16px; font-weight:800; color:#ffffff;" id="update-status-text">Anvil Console OS 5.0 (SteamOS 3.6 Deck Edition)</div>
-            <div style="font-size:12px; color:var(--text-secondary); margin-top:2px;" id="update-sub-text">Channel: Stable (Steam Deck Jupiter)  •  Build 2026.10.17</div>
+            <div style="font-size:12px; color:var(--text-secondary); margin-top:2px;" id="update-sub-text">Channel: Stable (Steam Deck Jupiter)  •  HypeShell Core</div>
           </div>
           <span class="xbox-tag green" id="update-pct-text">UP TO DATE</span>
         </div>
-        <div class="slider-track">
-          <div class="slider-fill" id="update-progress-fill" style="width:100%;"></div>
+        <div class="slider-track" style="height:8px; border-radius:4px; background:rgba(255,255,255,0.1); overflow:hidden;">
+          <div class="slider-fill" id="update-progress-fill" style="width:100%; transition:width 0.3s ease;"></div>
         </div>
-        <div style="font-size:12px; font-weight:700; color:#4ade80;">✓ All system components, GE-Proton runners, and 48 cartridge manifests are up to date.</div>
+        <div id="update-banner-msg" style="font-size:12px; font-weight:700; color:#4ade80;">✓ All system packages, runtimes, and components are up to date.</div>
+      </div>
+
+      <div id="update-packages-card" style="display:none; flex-direction:column; gap:6px;">
+        <div style="font-size:11px; font-weight:800; color:var(--text-secondary); letter-spacing:0.06em;">PENDING UPDATES</div>
+        <div id="update-packages-list" style="display:flex; flex-direction:column; gap:6px; font-size:12px; color:#e2e8f0; background:rgba(0,0,0,0.3); padding:10px 14px; border-radius:10px; max-height:140px; overflow-y:auto;">
+        </div>
       </div>
 
       <div style="display:flex; flex-direction:column; gap:6px;">
         <div style="font-size:11px; font-weight:800; color:var(--text-secondary); letter-spacing:0.06em;">WHAT'S NEW IN ANVIL OS 5.0</div>
         <div style="display:flex; flex-direction:column; gap:6px; font-size:12px; color:#e2e8f0; background:rgba(0,0,0,0.3); padding:12px 16px; border-radius:10px;">
+          <div>• Zero-Terminal System Updates Connected Live to HypeShell Core</div>
+          <div>• Suppressed Mouse Cursor Across Gaming Session for Pure Console Feel</div>
           <div>• Zero-Lag RAM-Cached Hero Backdrops (/dev/shm/anvil-art) with GPU Crossfading</div>
           <div>• Authentic SteamOS 3.6 Settings Panel with Divided Rows, Pill Toggles & Sliders</div>
           <div>• Full-Height SteamOS Left (STEAM) & Right (•••) Quick Settings Drawers</div>
-          <div>• Exclusive Player 1 Xbox 360 Controller Bridge with 4000 Deadzone Lock</div>
         </div>
       </div>
 
       <div style="display:flex; justify-content:flex-end; gap:12px;">
-        <button class="xbox-btn" onclick="runSystemUpdateCheck()"><span class="a-btn-mini">A</span><span id="update-btn-label">Check for Updates Now</span></button>
+        <button id="update-check-btn" class="xbox-btn" onclick="runSystemUpdateCheck()"><span class="a-btn-mini">X</span><span id="update-btn-label">Check for Updates</span></button>
+        <button id="update-apply-btn" class="xbox-btn" style="display:none; background:#107c10; color:#fff;" onclick="applySystemUpdates()"><span class="a-btn-mini">A</span><span>Apply Updates</span></button>
       </div>
     </div>
   </div>

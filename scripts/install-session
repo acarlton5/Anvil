@@ -142,6 +142,16 @@ stage_file "$anvil_root/src/daemon/anvil-library-bridge" src/daemon/anvil-librar
 anvil_library_bridge_src="$STAGED_RESULT"
 stage_file "$anvil_root/src/daemon/anvil_library.py" src/daemon/anvil_library.py
 anvil_library_src="$STAGED_RESULT"
+webui_daemon_src=""
+if [ -f "$anvil_root/scripts/anvil-webui-daemon" ]; then
+    stage_file "$anvil_root/scripts/anvil-webui-daemon" scripts/anvil-webui-daemon
+    webui_daemon_src="$STAGED_RESULT"
+fi
+webui_dir_src=""
+if [ -d "$anvil_root/src/webui" ]; then
+    stage_tree "$anvil_root/src/webui" src/webui
+    webui_dir_src="$STAGED_RESULT"
+fi
 
 sudo install -D -m 755 "$session_src" /usr/local/bin/anvil-session
 sudo install -D -m 755 "$runner_src" /usr/local/bin/anvil-proton-run
@@ -211,6 +221,15 @@ if [ -n "$xbox_bridge_service_src" ]; then
         sudo systemctl daemon-reload || true
         sudo systemctl enable --now anvil-xbox-bridge.service || true
     fi
+fi
+
+if [ -n "$webui_daemon_src" ]; then
+    sudo install -D -m 755 "$webui_daemon_src" /usr/local/share/anvil/scripts/anvil-webui-daemon
+fi
+if [ -n "$webui_dir_src" ]; then
+    sudo install -d -m 755 /usr/local/share/anvil/src/webui
+    sudo cp -R "$webui_dir_src"/. /usr/local/share/anvil/src/webui/
+    sudo chmod -R u=rwX,go=rX /usr/local/share/anvil/src/webui
 fi
 
 release_file="$(mktemp)"

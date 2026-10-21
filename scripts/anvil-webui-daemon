@@ -297,26 +297,82 @@ def get_network_info():
     }
 
 
+def get_hypeshell_sock():
+    uid = os.getuid()
+    socks = glob.glob(f"/run/user/{uid}/HYPESHELL-*.sock")
+    return socks[0] if socks else None
+
+
+def call_hypeshell_rpc(method, params=None, timeout=3.0):
+    sock_path = get_hypeshell_sock()
+    if not sock_path or not os.path.exists(sock_path):
+        return None
+    try:
+        s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        s.settimeout(timeout)
+        s.connect(sock_path)
+        s.recv(4096)  # discard greeting
+        req = {"jsonrpc": "2.0", "method": method, "params": params or {}, "id": 1}
+        s.sendall(json.dumps(req).encode("utf-8") + b"\n")
+        raw = b""
+        while True:
+            chunk = s.recv(4096)
+            if not chunk:
+                break
+            raw += chunk
+            if b"\n" in chunk:
+                break
+        s.close()
+        res = json.loads(raw.decode("utf-8"))
+        return res.get("result")
+    except Exception:
+        return None
+
+
 def get_update_info():
-    """Return Anvil OS version, kernel, and update changelog."""
-    kernel = "Linux 6.x Steam Deck"
+    """Return Anvil OS version, kernel, and real HypeShell update status."""
+    kernel = "Linux 6.x"
     try:
         kernel = subprocess.check_output(["uname", "-sr"], stderr=subprocess.DEVNULL, timeout=1.0).decode("utf-8", errors="ignore").strip()
     except Exception:
         pass
+
+    state = call_hypeshell_rpc("sysupdate.getState")
+    packages = []
+    count = 0
+    phase = "idle"
+    progress = 0
+    status_step = ""
+    current_item = ""
+
+    if state:
+        phase = state.get("phase", "idle")
+        packages = state.get("packages") or []
+        count = state.get("count", len(packages))
+        progress = state.get("progress", 0)
+        status_step = state.get("statusStep", "")
+        current_item = state.get("currentItem", "")
+
     return {
-        "current_version": "Anvil Console OS 4.5.0 (SteamOS + Xbox Fluent Edition)",
-        "build_id": "2026.10.17-51e74bd",
+        "current_version": "Anvil Console OS 5.0 (SteamOS 3.6 Deck Edition)",
+        "build_id": "2026.10.21-live",
         "channel": "Stable (Steam Deck Jupiter)",
         "kernel": kernel,
-        "up_to_date": True,
+        "up_to_date": (count == 0 and phase == "idle"),
+        "pending_count": count,
+        "packages": packages,
+        "phase": phase,
+        "progress": progress,
+        "status_step": status_step,
+        "current_item": current_item,
         "last_checked": time.strftime("%I:%M %p"),
         "changelog": [
+            "HypeShell Real-Time System Updates Bridge with Zero-Terminal Background Execution",
+            "Hardware-Accelerated WebKit2GTK Console UI with Clean Hidden Mouse Cursor",
             "SteamOS 3.6 + Xbox Series X Hybrid Console UI with Widescreen Hero Stage",
             "Full PipeWire Audio & Microphone Settings + Top-Center Volume/Brightness OSD",
             "STEAM Button (Left Guide Blade) & Three-Dot ••• (Right Quick Settings Drawer)",
-            "Player 1 Exclusive Xbox 360 Controller Bridge with 4000 Deadzone Lock",
-            "Instant 0ms Game Launch Curtain & Workspace 2 Fullscreen Compositor Isolation"
+            "Player 1 Exclusive Xbox 360 Controller Bridge with 4000 Deadzone Lock"
         ]
     }
 
@@ -660,6 +716,16 @@ class AnvilAPIHandler(SimpleHTTPRequestHandler):
             elif action == "desktop":
                 subprocess.Popen(["sh", "-c", "command -v anvil-switch-desktop >/dev/null 2>&1 && anvil-switch-desktop || hyprctl eval 'hl.dispatch(hl.dsp.exit())'"])
             self.send_json({"ok": True})
+            return
+
+        if parsed.path == "/api/update/check":
+            call_hypeshell_rpc("sysupdate.refresh")
+            self.send_json({"ok": True, "update": get_update_info()})
+            return
+
+        if parsed.path == "/api/update/apply":
+            call_hypeshell_rpc("sysupdate.upgrade")
+            self.send_json({"ok": True, "update": get_update_info()})
             return
 
         self.send_json({"ok": False}, 404)
