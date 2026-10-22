@@ -156,8 +156,11 @@ def update_labels():
                 display = label.upper() if shift else label.lower()
             btn.set_label(display)
 
-def on_click(btn, key):
+def on_click(btn, r_idx, c_idx):
     global shift, symbols
+    current_rows = ROWS_SYMBOLS if symbols else ROWS_NORMAL
+    key = current_rows[r_idx][c_idx]
+
     if key == "HIDE":
         on_term()
     elif key == "SHIFT":
@@ -190,7 +193,7 @@ for r_idx, row in enumerate(current_rows):
             b.set_size_request(85, -1)
         else:
             b.set_hexpand(True)
-        b.connect("clicked", on_click, key)
+        b.connect("clicked", on_click, r_idx, c_idx)
         hbox.pack_start(b, True, True, 0)
         row_btns.append(b)
     button_grid.append(row_btns)
