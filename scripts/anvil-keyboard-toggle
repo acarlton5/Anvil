@@ -1,37 +1,14 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -e
 
-anvil_root="${1:-${ANVIL_ROOT:-}}"
-if [ -z "$anvil_root" ]; then
-    for candidate in \
-        "/usr/local/share/anvil" \
-        "$HOME/.config/HypeShell/plugins/hypeAnvil" \
-        "$HOME/Projects/Projects/Anvil" \
-        "$HOME/DevBox/Projects/Anvil" \
-        "$HOME/Projects/Anvil"; do
-        if [ -f "$candidate/src/ui/AnvilDaemon.qml" ]; then
-            anvil_root="$candidate"
-            break
-        fi
-    done
+daemon="/usr/local/share/anvil/src/ui/AnvilKeyboardDaemon.qml"
+
+# Check if keyboard daemon is running
+if ! pgrep -f "AnvilKeyboardDaemon.qml" >/dev/null 2>&1; then
+    export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-1}"
+    export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+    qs -p "$daemon" >/dev/null 2>&1 &
+    sleep 0.2
 fi
 
-if [ -z "$anvil_root" ] || [ ! -f "$anvil_root/src/ui/AnvilDaemon.qml" ]; then
-    echo "Anvil root not found for keyboard toggle." >&2
-    exit 1
-fi
-
-daemon="$anvil_root/src/ui/AnvilDaemon.qml"
-if qs ipc --any-display -p "$daemon" call anvil toggleKeyboard >/dev/null 2>&1; then
-    exit 0
-fi
-
-for lock in /run/user/1000/quickshell/by-id/*/instance.lock; do
-    if [ -f "$lock" ] && grep -q "AnvilDaemon" "$lock" 2>/dev/null; then
-        inst_dir="$(dirname "$lock")"
-        inst_id="$(basename "$inst_dir")"
-        if qs ipc --any-display -i "$inst_id" call anvil toggleKeyboard >/dev/null 2>&1; then
-            exit 0
-        fi
-    fi
-done
+qs ipc -p "$daemon" call anvilKeyboard toggle >/dev/null 2>&1 || true
