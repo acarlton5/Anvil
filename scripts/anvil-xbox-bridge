@@ -102,18 +102,17 @@ def main():
 
     cap = {
         ecodes.EV_KEY: [
-            ecodes.BTN_BASE,    # Three-Dot QAM button (294)
-            ecodes.BTN_SOUTH,   # A (304)
-            ecodes.BTN_EAST,    # B (305)
-            ecodes.BTN_NORTH,   # X (307)
-            ecodes.BTN_WEST,    # Y (308)
-            ecodes.BTN_TL,      # LB (310)
-            ecodes.BTN_TR,      # RB (311)
-            ecodes.BTN_SELECT,  # Back/View (314)
-            ecodes.BTN_START,   # Start/Menu (315)
-            ecodes.BTN_MODE,    # Guide/STEAM (316)
-            ecodes.BTN_THUMBL,  # L3 (317)
-            ecodes.BTN_THUMBR,  # R3 (318)
+            ecodes.BTN_SOUTH,   # A (304) -> Button 0
+            ecodes.BTN_EAST,    # B (305) -> Button 1
+            ecodes.BTN_NORTH,   # X (307) -> Button 2
+            ecodes.BTN_WEST,    # Y (308) -> Button 3
+            ecodes.BTN_TL,      # LB (310) -> Button 4
+            ecodes.BTN_TR,      # RB (311) -> Button 5
+            ecodes.BTN_SELECT,  # Back/View (314) -> Button 6
+            ecodes.BTN_START,   # Start/Menu (315) -> Button 7
+            ecodes.BTN_MODE,    # Guide/STEAM (316) -> Button 8
+            ecodes.BTN_THUMBL,  # L3 (317) -> Button 9
+            ecodes.BTN_THUMBR,  # R3 (318) -> Button 10
         ],
         ecodes.EV_ABS: [
             (ecodes.ABS_X, AbsInfo(0, -32768, 32767, 16, 128, 0)),
@@ -139,7 +138,6 @@ def main():
     print(f"[Anvil Xbox Bridge] Virtual Xbox 360 pad active at {virt_path}")
 
     KEY_MAP = {
-        294: ecodes.BTN_BASE,    # Three-Dot (...) Quick Access Menu button
         304: ecodes.BTN_SOUTH,   # A
         305: ecodes.BTN_EAST,    # B
         307: ecodes.BTN_NORTH,   # X
@@ -215,9 +213,16 @@ def main():
                         if now - last_chord_time > 0.5:
                             last_chord_time = now
                             subprocess.Popen([
-                                "su", "-", "morphine", "-c",
-                                "WAYLAND_DISPLAY=wayland-1 XDG_RUNTIME_DIR=/run/user/1000 /usr/local/bin/anvil-keyboard-toggle"
+                                "runuser", "-u", "morphine", "--",
+                                "env", "WAYLAND_DISPLAY=wayland-1", "XDG_RUNTIME_DIR=/run/user/1000",
+                                "/usr/local/bin/anvil-keyboard-toggle"
                             ])
+                        continue
+
+                    # Three-Dot (...) Quick Access Menu button -> trigger QAM overlay directly
+                    if event.code == 294:
+                        if event.value == 1:
+                            subprocess.Popen(["curl", "-s", "http://127.0.0.1:19480/api/overlay?mode=qam"])
                         continue
 
                     if event.code in KEY_MAP:
