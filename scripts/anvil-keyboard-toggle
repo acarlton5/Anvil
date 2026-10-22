@@ -1,14 +1,2 @@
 #!/usr/bin/env bash
-set -e
-
-daemon="/usr/local/share/anvil/src/ui/AnvilKeyboardDaemon.qml"
-
-# Check if keyboard daemon is running
-if ! pgrep -f "AnvilKeyboardDaemon.qml" >/dev/null 2>&1; then
-    export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-1}"
-    export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-    qs -p "$daemon" >/dev/null 2>&1 &
-    sleep 0.2
-fi
-
-qs ipc -p "$daemon" call anvilKeyboard toggle >/dev/null 2>&1 || true
+exec /usr/local/bin/anvil-virtual-keyboard

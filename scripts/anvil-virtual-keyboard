@@ -1,0 +1,201 @@
+#!/usr/bin/env python3
+"""
+Lightweight Standalone Virtual Keyboard Overlay for Anvil / Wayland.
+Uses PyGObject (GTK3 / GtkLayerShell) to present an instant on-screen touch keyboard.
+"""
+import sys
+import os
+import signal
+import subprocess
+
+PID_FILE = "/run/user/1000/anvil-keyboard.pid"
+
+def toggle():
+    if os.path.exists(PID_FILE):
+        try:
+            with open(PID_FILE, "r") as f:
+                pid = int(f.read().strip())
+            os.kill(pid, signal.SIGTERM)
+            os.remove(PID_FILE)
+            return
+        except Exception:
+            pass
+
+    # Start keyboard process
+    subprocess.Popen([sys.executable, __file__, "--run"])
+
+if "--run" not in sys.argv:
+    toggle()
+    sys.exit(0)
+
+# Run GUI
+import gi
+gi.require_version('Gtk', '3.0')
+try:
+    gi.require_version('GtkLayerShell', '0.1')
+    from gi.repository import GtkLayerShell
+    HAS_LAYER_SHELL = True
+except Exception:
+    HAS_LAYER_SHELL = False
+
+from gi.repository import Gtk, Gdk, GLib
+
+with open(PID_FILE, "w") as f:
+    f.write(str(os.getpid()))
+
+def on_term(*args):
+    if os.path.exists(PID_FILE):
+        try:
+            os.remove(PID_FILE)
+        except Exception:
+            pass
+    Gtk.main_quit()
+
+signal.signal(signal.SIGTERM, on_term)
+signal.signal(signal.SIGINT, on_term)
+
+win = Gtk.Window()
+win.set_title("Anvil Virtual Keyboard")
+win.set_decorated(False)
+win.set_skip_taskbar_hint(True)
+
+if HAS_LAYER_SHELL:
+    GtkLayerShell.init_for_window(win)
+    GtkLayerShell.set_layer(win, GtkLayerShell.Layer.OVERLAY)
+    GtkLayerShell.set_anchor(win, GtkLayerShell.Edge.BOTTOM, True)
+    GtkLayerShell.set_anchor(win, GtkLayerShell.Edge.LEFT, True)
+    GtkLayerShell.set_anchor(win, GtkLayerShell.Edge.RIGHT, True)
+    GtkLayerShell.set_keyboard_mode(win, GtkLayerShell.KeyboardMode.NONE)
+
+win.set_size_request(-1, 280)
+
+css = b"""
+window {
+    background-color: #12141a;
+    border-top: 2px solid #10b981;
+}
+button {
+    background: #1e222b;
+    color: #f1f5f9;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    margin: 3px;
+    min-height: 48px;
+}
+button:hover {
+    background: #334155;
+    border-color: #10b981;
+}
+button:active {
+    background: #10b981;
+    color: #ffffff;
+}
+button.special {
+    background: #0f172a;
+    color: #94a3b8;
+}
+"""
+style_provider = Gtk.CssProvider()
+style_provider.load_from_data(css)
+Gtk.StyleContext.add_provider_for_screen(
+    Gdk.Screen.get_default(),
+    style_provider,
+    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+)
+
+vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+vbox.set_margin_top(8)
+vbox.set_margin_bottom(8)
+vbox.set_margin_start(8)
+vbox.set_margin_end(8)
+win.add(vbox)
+
+shift = False
+symbols = False
+
+ROWS_NORMAL = [
+    ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+    ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+    ["SHIFT", "z", "x", "c", "v", "b", "n", "m", "BKSP"],
+    ["HIDE", "?123", "SPACE", ".", "ENTER"]
+]
+
+ROWS_SYMBOLS = [
+    ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
+    ["-", "/", ":", ";", "(", ")", "$", "&", "@"],
+    ["SHIFT", ".", ",", "?", "!", "'", "%", "\"", "BKSP"],
+    ["HIDE", "ABC", "SPACE", ".", "ENTER"]
+]
+
+button_grid = []
+
+def send_key(txt):
+    env = os.environ.copy()
+    env["WAYLAND_DISPLAY"] = env.get("WAYLAND_DISPLAY", "wayland-1")
+    env["XDG_RUNTIME_DIR"] = env.get("XDG_RUNTIME_DIR", "/run/user/1000")
+    if txt == "ENTER":
+        subprocess.Popen(["wtype", "-k", "Return"], env=env)
+    elif txt == "BKSP":
+        subprocess.Popen(["wtype", "-k", "BackSpace"], env=env)
+    elif txt == "SPACE":
+        subprocess.Popen(["wtype", "-k", "space"], env=env)
+    elif txt == "TAB":
+        subprocess.Popen(["wtype", "-k", "Tab"], env=env)
+    else:
+        subprocess.Popen(["wtype", txt], env=env)
+
+def update_labels():
+    current_rows = ROWS_SYMBOLS if symbols else ROWS_NORMAL
+    for r_idx, row in enumerate(current_rows):
+        for c_idx, label in enumerate(row):
+            btn = button_grid[r_idx][c_idx]
+            display = label
+            if len(label) == 1 and label.isalpha():
+                display = label.upper() if shift else label.lower()
+            btn.set_label(display)
+
+def on_click(btn, key):
+    global shift, symbols
+    if key == "HIDE":
+        on_term()
+    elif key == "SHIFT":
+        shift = not shift
+        update_labels()
+    elif key in ("?123", "ABC"):
+        symbols = not symbols
+        update_labels()
+    else:
+        char = key
+        if len(key) == 1 and key.isalpha():
+            char = key.upper() if shift else key.lower()
+            if shift:
+                shift = False
+                update_labels()
+        send_key(char)
+
+current_rows = ROWS_NORMAL
+for r_idx, row in enumerate(current_rows):
+    hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+    hbox.set_homogeneous(False)
+    row_btns = []
+    for key in row:
+        b = Gtk.Button(label=key)
+        if key in ("SHIFT", "BKSP", "HIDE", "?123", "ABC", "ENTER"):
+            b.get_style_context().add_class("special")
+        if key == "SPACE":
+            b.set_hexpand(True)
+        elif key in ("SHIFT", "BKSP", "ENTER", "HIDE", "?123", "ABC"):
+            b.set_size_request(85, -1)
+        else:
+            b.set_hexpand(True)
+        b.connect("clicked", on_click, key)
+        hbox.pack_start(b, True, True, 0)
+        row_btns.append(b)
+    button_grid.append(row_btns)
+    vbox.pack_start(hbox, True, True, 0)
+
+win.connect("destroy", on_term)
+win.show_all()
+Gtk.main()
