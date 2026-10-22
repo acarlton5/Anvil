@@ -771,6 +771,8 @@ class AnvilAPIHandler(SimpleHTTPRequestHandler):
                 subprocess.Popen(["systemctl", "poweroff"])
             elif action == "desktop":
                 subprocess.Popen(["sh", "-c", "command -v anvil-switch-desktop >/dev/null 2>&1 && anvil-switch-desktop || hyprctl eval 'hl.dispatch(hl.dsp.exit())'"])
+            elif action == "keyboard":
+                subprocess.Popen(["/usr/local/bin/anvil-keyboard-toggle"])
             self.send_json({"ok": True})
             return
 

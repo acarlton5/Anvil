@@ -1,3 +1,10 @@
+function toggleKeyboard() {
+  fetch("/api/power", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "keyboard" })
+  }).catch(() => {});
+}
 // Anvil Console OS v5.0 — SteamOS 3.6 + Xbox Series X Flagship Dashboard Frontend
 const state = {
   tab: 0, // 0: Home, 1: Library, 2: Store, 3: Cartridges, 4: Settings
@@ -1200,6 +1207,7 @@ function getGuideItems() {
     items.push({ icon: GUIDE_SVGS.stop, label: "Quit Game to Dashboard", badge: "STOP", action: () => quitGameSession() });
   }
   items.push(
+    { icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z"/></svg>`, label: "Virtual Keyboard (STEAM+X)", badge: "OSK", action: () => { toggleKeyboard(); } },
     { icon: GUIDE_SVGS.home, label: "Home", badge: "HOME", action: () => { closeGuideBlade(); switchTab(0); } },
     { icon: GUIDE_SVGS.lib, label: `Library (${state.games.length})`, badge: "48 GAMES", action: () => { closeGuideBlade(); switchTab(1); } },
     { icon: GUIDE_SVGS.cart, label: "Cartridge Builder", badge: "SD / USB", action: () => { closeGuideBlade(); openCartridgeModal(); } },
@@ -1748,7 +1756,11 @@ window.onAnvilInput = function (action, family, controllerName) {
     return;
   }
 
-  // 2. STEAM Button (Left Guide Sidebar) & Three-Dot ••• Button (Right Quick Access Sidebar)
+  // 2. STEAM Button chords & sidebars
+  if (action === "west" && state.guideOpen) {
+    toggleKeyboard();
+    return;
+  }
   if (action === "guide" || action === "select" || action === "back") {
     toggleGuideBlade();
     return;
