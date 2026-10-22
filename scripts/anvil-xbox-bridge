@@ -194,6 +194,8 @@ def main():
 
             print(f"[Anvil Xbox Bridge] Exclusively attached to {dev.name} ({gamepad_path}), hid {len(hide_nodes)} raw nodes.")
             last_perm_check = time.monotonic()
+            guide_pressed = False
+            last_chord_time = 0.0
 
             for event in dev.read_loop():
                 if not running:
@@ -204,6 +206,17 @@ def main():
                     lock_down_raw_nodes(hide_nodes, virt_path)
 
                 if event.type == ecodes.EV_KEY:
+                    # Track STEAM (Guide) button state for hardware chords
+                    if event.code == 316:  # Steam button
+                        guide_pressed = bool(event.value)
+
+                    # Hardware chord: STEAM (316) + X (307) toggles on-screen keyboard
+                    if guide_pressed and event.code == 307 and event.value == 1:
+                        if now - last_chord_time > 0.5:
+                            last_chord_time = now
+                            subprocess.Popen(["/usr/local/bin/anvil-keyboard-toggle"])
+                        continue
+
                     if event.code in KEY_MAP:
                         ui.write(ecodes.EV_KEY, KEY_MAP[event.code], event.value)
                         ui.syn()
